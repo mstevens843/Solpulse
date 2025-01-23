@@ -1,0 +1,82 @@
+/* Notifications.css */
+
+/* Page Layout */
+.notifications-container {
+    @apply container mx-auto mt-6;
+}
+
+/* Header */
+.notifications-header {
+    @apply text-3xl font-bold text-solana-primary mb-6 text-center;
+}
+
+/* Filter Section */
+.notifications-filter {
+    @apply flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 bg-solana-light p-4 rounded-md shadow-md;
+}
+
+.notifications-filter label {
+    @apply text-solana-text-light font-semibold;
+}
+
+.notifications-filter select {
+    @apply form-input hover:bg-solana-secondary focus:ring-2 focus:ring-solana-primary;
+}
+
+/* Notifications List */
+.notifications-list {
+    @apply space-y-4;
+}
+
+/* Notification Item Replacement (instead of using card) */
+.notification-item {
+    @apply bg-solana-light p-4 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105;
+}
+
+.notification-item p {
+    @apply text-solana-text-dark mb-2;
+}
+
+.notification-item span {
+    @apply text-sm text-solana-text-light;
+}
+
+/* Mark All as Read Button */
+.mark-read-btn {
+    @apply button-primary mt-4 hover:bg-solana-secondary focus:ring-2 focus:ring-solana-primary;
+}
+
+/* Error Banner */
+.notifications-error {
+    @apply error-banner mb-4;
+}
+
+/* Loader */
+.notifications-loader {
+    @apply loading-spinner;
+}
+
+
+
+
+
+/* Design Features:
+Header:
+Styled as a bold, centered title with Solana branding colors.
+Filter Section:
+Inputs and labels styled for readability and visual appeal.
+Ensures consistent spacing and alignment across devices.
+Notifications List:
+Cards with hover effects and rounded corners for a modern, responsive feel.
+Error Handling:
+Error messages styled with a consistent banner design from the global file.
+Mark All as Read:
+Uses a primary button style with hover and scaling effects for interactivity.
+Loader:
+Centered spinner for async operations. */
+
+/* Notifications.css
+Styled the page container for a clean layout.
+Designed the filter dropdown and button.
+Applied consistent styles to the notifications list.
+Enhanced error and loader styling for clarity and accessibility. */

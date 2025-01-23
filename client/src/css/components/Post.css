@@ -1,0 +1,262 @@
+/* Individual Post Container */
+.individual-post-container {
+  background: #1f4068;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+  border: 2px solid #00ffcc;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.individual-post-container:hover {
+  transform: scale(1.03);
+}
+
+/* Post Header */
+.individual-post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #00ffcc;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.individual-post-author {
+  font-size: 1.3rem; /* Reduced font size */
+  font-weight: bold;
+  color: #00ffcc;
+}
+
+.individual-post-date {
+  font-size: 0.8rem; /* Reduced font size */
+  color: #fff8f8;
+}
+
+/* Post Content Section */
+.individual-post-content {
+  font-size: 1.3rem; /* Reduced font size */
+  color: #ffffff;
+  margin-top: 1rem;
+  margin-bottom: 4rem;
+}
+
+/* Media */
+.individual-post-media {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #00ffcc;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+}
+
+/* Tip Section */
+.individual-crypto-tip-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to right, #00ffcc, #ffcc00);
+  color: #1a1a2e;
+  font-weight: bold;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+.individual-crypto-tip-title {
+  font-size: 1.1rem; /* Reduced font size */
+}
+
+.individual-crypto-tip-input {
+  width: 20%;
+  padding: 0.6rem; /* Reduced padding */
+  border: 2px solid #00ffcc;
+  border-radius: 8px;
+  background: #16213e;
+  color: #ffffff;
+}
+
+/* Actions */
+.individual-post-actions {
+  display: flex;
+  gap: 0.5rem; /* Reduced spacing between buttons */
+  justify-content: flex-start;
+  margin-top: 1rem;
+}
+
+.individual-post-actions button {
+  background: linear-gradient(to right, #00ffcc, #ffcc00);
+  color: #1a1a2e;
+  font-size: 0.7rem; /* Further reduced font size */
+  font-weight: bold;
+  padding: 0.4rem 0.8rem; /* Further reduced padding */
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.individual-post-actions button:hover {
+  background-color: #ffcc00;
+}
+
+/* Comments Section */
+.individual-post-comments-section {
+  background: #1f4068;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+  border: 2px solid #00ffcc;
+  margin-top: 1rem;
+}
+
+.individual-comments-title {
+  font-size: 1.3rem; /* Reduced font size */
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 1rem;
+}
+
+.individual-comment-input {
+  width: 100%;
+  padding: 0.6rem; /* Further reduced padding */
+  border: 2px solid #00ffcc;
+  border-radius: 8px;
+  background: #16213e;
+  color: #ffffff;
+  font-size: 0.9rem; /* Further reduced font size */
+  margin-bottom: 1rem;
+}
+
+.individual-comment-button {
+  background: linear-gradient(to right, #00ffcc, #ffcc00);
+  color: #1a1a2e;
+  font-weight: bold;
+  padding: 0.3rem 0.6rem; /* Further reduced padding */
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.individual-comment-button:hover {
+  background-color: #ffcc00;
+}
+
+
+/* Delete Post Button */
+.delete-post-button {
+  background: linear-gradient(to right, #ff4d4d, #ff0000);
+  color: #ffffff;
+  font-size: 0.9rem; 
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.delete-post-button:hover {
+  background: linear-gradient(to right, #ff0000, #b30000);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+}
+
+.delete-post-button:disabled {
+  background: #555;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Error Message Styling */
+.delete-error-message {
+  color: #ff4d4d;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Toastify Container */
+.Toastify__toast-container {
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  width: 350px;
+}
+
+/* Toastify Toast */
+.Toastify__toast {
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+  border: 2px solid #00ffcc;
+  background: #1f4068;
+  color: #ffffff;
+}
+
+/* Toastify Close Button */
+.Toastify__close-button {
+  color: #ffcc00;
+  opacity: 1;
+}
+
+.Toastify__close-button:hover {
+  color: #ff0000;
+}
+
+/* Toastify Progress Bar */
+.Toastify__progress-bar {
+  background: linear-gradient(to right, #00ffcc, #ffcc00);
+}
+
+/* Success Toast */
+.Toastify__toast--success {
+  background: linear-gradient(to right, #00ffcc, #00ff66);
+  color: #1a1a2e;
+  font-weight: bold;
+}
+
+/* Error Toast */
+.Toastify__toast--error {
+  background: linear-gradient(to right, #ff4d4d, #ff0000);
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Toast Text */
+.Toastify__toast-body {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* Animation Overrides */
+.Toastify__bounce-enter--top-right, 
+.Toastify__bounce-enter--bottom-right {
+  animation-duration: 0.5s;
+}
+
+.Toastify__bounce-exit--top-right, 
+.Toastify__bounce-exit--bottom-right {
+  animation-duration: 0.5s;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .individual-post-container {
+      padding: 1rem;
+  }
+
+  .individual-post-actions button {
+      font-size: 0.6rem; /* Further reduced font size */
+  }
+
+  .individual-crypto-tip-input {
+      width: 50%;
+  }
+}
+
+

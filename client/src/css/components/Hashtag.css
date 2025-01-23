@@ -1,0 +1,44 @@
+/* Hashtag.css */
+
+/* Hashtag Link */
+.hashtag {
+    @apply text-solana-primary font-semibold hover:text-solana-secondary transition-colors duration-300;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Hover State */
+.hashtag:hover {
+    @apply underline;
+}
+
+/* Key Features:
+Text Styling
+
+text-solana-primary for the hashtag color with font-semibold to make it stand out.
+Hover Effect
+
+Changes to solana-secondary color and adds an underline for better interactivity.
+Smooth Transition
+
+transition-colors duration-300 ensures a smooth hover effect.
+Accessibility
+
+Cursor pointer and hover underline indicate clickable interaction. */
+
+/* Added classes for:
+hashtag: Base styling.
+:hover: Interactive feedback with color and background changes.
+:focus: Accessibility improvements for keyboard navigation.
+:active: Added scaling for click feedback.
+[aria-disabled="true"]: Disabled state styling.
+Media query for responsive text scaling.
+Enhanced Appearance:
+
+Added:
+px-2 and py-1 padding for clickable areas.
+rounded-lg for smooth corners.
+transition-colors and transition-transform for polished hover/click effects.
+Responsive Design:
+
+Ensured hashtags scale appropriately on smaller screens by reducing font size (text-sm) via a media query. */

@@ -1,0 +1,52 @@
+/* Loader Container */
+.loader-container {
+    @apply flex justify-center items-center mt-6 mb-6; /* Centered using Tailwind's flex utilities */
+    background: var(--solana-gradient); /* Solana-inspired gradient */
+    padding: 1rem;
+    border-radius: 0.75rem; /* Rounded edges for a modern look */
+    box-shadow: var(--shadow-lg); /* Deep shadow for better visual hierarchy */
+}
+
+/* Circular Loader Animation */
+.loader {
+    width: 3rem;
+    height: 3rem;
+    border: 0.4rem solid var(--solana-light); /* Outer border color */
+    border-top: 0.4rem solid var(--solana-primary); /* Accent border for animation */
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* Smooth spinning animation */
+}
+
+/* Loading Text */
+.loader-text {
+    @apply mt-4 text-solana-text-light font-medium;
+    text-shadow: 1px 1px 6px var(--solana-secondary); /* Subtle glow effect */
+}
+
+/* Keyframes for Spinning Animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Design Aesthetic
+Gradient Background: Ties into Solana's visual identity with smooth, eye-catching gradients.
+Animated Spinner: A sleek, rotating border conveys activity.
+Responsive Design: Utility classes ensure adaptability across various screen sizes and contexts. */
+/* 
+Key Features and Updates
+Component (Loader.js)
+
+Added className="loader-text" to the loading text for proper styling and alignment with the CSS file.
+CSS (Loader.css)
+
+Centered Design: Utilized your global centered utility for alignment.
+Gradient Background: Applied var(--solana-gradient) to give the loader a vibrant Solana-themed background.
+Circular Loader Animation:
+Smooth spin animation for a modern effect.
+Used var(--solana-primary) for the accent border and var(--solana-light) for the base.
+Loading Text Styling:
+Light text color with text-solana-text-light for readability.
+Subtle glow effect using text-shadow with var(--solana-secondary). */

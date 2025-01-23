@@ -1,0 +1,202 @@
+/* Dashboard Container */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  min-height: 100vh;
+  padding: 5rem;
+  color: #fff;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Ensure spacing to avoid overlapping */
+.dashboard-section {
+  margin-bottom: 4rem; /* Increased margin to separate sections */
+}
+
+
+/* Dashboard Header */
+.dashboard-header {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Error and Loading Messages */
+.dashboard-error, .dashboard-loading {
+  color: #ff4d4d;
+  background: rgba(255, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 500px;
+}
+
+/* Section Title */
+.dashboard-section-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 0rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Scorecard Sections */
+.dashboard-scorecards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+  max-width: 1500px;
+  margin-top: 0rem;
+  margin-bottom: 2rem;
+}
+
+/* Scorecard Layout */
+.scorecard {
+  background: #1f4068;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
+  text-align: center;
+  flex: 1 1 22%;
+  max-width: 350px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 250px;
+}
+
+.scorecard:hover {
+  background: #0f3460;
+}
+
+.scorecard h3 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 1rem;
+}
+
+.scorecard p {
+  font-size: 1.5rem;
+  color: #ffcc00;
+}
+
+/* Transactions Section */
+.dashboard-transactions {
+  background: #1f4068;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  width: 100%;
+  max-width: 1300px;
+  text-align: center;
+  margin-top: 5rem; /* Added space to prevent overlap */
+  margin-bottom: 4rem;
+}
+
+/* Feed and Messages Side-by-Side */
+.dashboard-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto 3rem;
+  align-items: flex-start;
+}
+
+/* Feed Section */
+.dashboard-feed, .dashboard-messages {
+  background: #1f4068;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-top: 50px;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  max-height: 450px;
+  overflow-y: auto;
+  width: calc(50% - 1rem);
+  transition: max-height 0.3s ease; /* Smooth expansion */
+}
+
+/* Ensure feed/messages expand when content is added */
+.dashboard-feed.expanded, .dashboard-messages.expanded {
+  max-height: 650px;
+}
+
+/* Feed and Messages Headers */
+.dashboard-feed h2, .dashboard-messages h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 1rem;
+}
+
+/* Feed Posts */
+.feed-post {
+  background: #16213e;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+}
+
+.feed-post h3 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 0.5rem;
+}
+
+.feed-post p {
+  font-size: 1rem;
+  color: #fff;
+}
+
+/* Action buttons */
+.feed-post .actions {
+  display: flex;
+  justify-content: flex-end;
+  color: #00ffcc;
+  font-size: 0.9rem;
+  gap: 1rem;
+}
+
+/* Make scorecards clickable */
+.clickable {
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.clickable:hover {
+  background: #00ffcc;
+  color: #1a1a2e;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dashboard-scorecards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .scorecard {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .dashboard-main {
+    flex-direction: column;
+  }
+
+  .dashboard-feed, .dashboard-messages {
+    width: 100%;
+  }
+}

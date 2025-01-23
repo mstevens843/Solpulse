@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+      "allowJs": true,
+      "checkJs": false,
+      "resolveJsonModule": true,
+      "target": "es6",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "baseUrl": "./"
+  },
+  "include": [
+      "cypress/**/*.js",
+      "src/**/*.js",
+      "src/api/userService.jsx",
+      "src/api/apiConfig.jsx",
+      "src/context/AuthContext.jsx",
+      "src/socket.js",
+  ]
+}

@@ -1,0 +1,82 @@
+/* Community Feed Container */
+.community-feed-container {
+  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  padding: 4rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+  max-width: 1000px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Community Feed Title */
+.community-feed-title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 1.5rem;
+}
+
+/* Feed List */
+.community-feed-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Individual Feed Post */
+.community-feed-post {
+  background: #1f4068;
+
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  text-align: left;
+}
+
+.community-feed-post:hover {
+  transform: scale(1.05);
+}
+
+/* Loading Message */
+.community-feed-loading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #bbbbbb;
+  margin-top: 2rem;
+}
+
+/* Error Message */
+.community-feed-error {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff4d4d;
+  background: rgba(255, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* Empty Message */
+.community-feed-empty {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+  
+  
+  
+/* // Styling Updates Feed.css)
+// Container and Title:
+
+// Styled the feed container and title to match the Solana theme.
+// Post Items:
+
+// Added hover effects with scaling (hover:scale-105) for interactivity.
+// Loading and Error States:
+
+// Styled loading and error messages for better visibility and consistency.
+// Responsive Design:
+
+// Ensured the feed looks great across screen sizes with spacing and alignment adjustments. */

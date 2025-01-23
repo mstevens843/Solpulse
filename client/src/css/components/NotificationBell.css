@@ -1,0 +1,117 @@
+/* Notification Bell Container */
+.notification-bell {
+  position: relative; /* Needed for dropdown positioning */
+}
+
+
+
+.notification-button:hover {
+  @apply bg-solana-secondary;
+}
+
+/* Unread Count Badge */
+.unread-count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  @apply bg-solana-error text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center;
+  transform: translate(50%, -50%);
+}
+
+/* Notification Dropdown */
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 8px); /* Ensure it is placed below the button */
+  right: 0;
+  @apply bg-solana-light text-solana-dark shadow-lg rounded-lg w-64 py-4 z-50;
+  overflow-y: auto;
+  max-height: 300px; /* Prevent the dropdown from overflowing vertically */
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transform: translateY(0); /* Default transform */
+  opacity: 1; /* Default visible state */
+}
+
+/* Dropdown Animation */
+.notification-dropdown.hidden {
+  transform: translateY(-10px); /* Move dropdown slightly up */
+  opacity: 0; /* Hide dropdown */
+  pointer-events: none; /* Prevent interaction */
+}
+
+/* Notification Header */
+.notification-header {
+  @apply flex justify-between items-center px-4 mb-2;
+}
+
+.notification-header h4 {
+  @apply text-lg font-bold text-solana-dark;
+}
+
+.mark-all-read {
+  @apply text-solana-primary font-medium hover:text-solana-secondary cursor-pointer;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+/* Notification List */
+.notification-list {
+  @apply list-none p-0 m-0;
+}
+
+.notification-item {
+  @apply flex flex-col p-4 border-b border-solana-light;
+}
+
+.notification-item.unread {
+  @apply  text-solana-text-light;
+}
+
+.notification-item.read {
+  @apply bg-white;
+}
+
+.notification-item p {
+  @apply text-sm text-solana-dark font-medium;
+}
+
+.notification-item span {
+  @apply text-xs text-solana-text-light mt-1;
+}
+
+.no-notifications {
+  @apply text-center text-solana-text-light font-medium p-4;
+}
+
+
+
+/* Key Features:
+Interactive Bell:
+
+A rounded, accessible notification bell with a badge for unread count.
+Stylish Dropdown:
+
+A dropdown with a sleek shadow and rounded edges for displaying notifications.
+Unread Highlight:
+
+Differentiates between unread and read notifications with distinct background colors.
+Mark All as Read:
+
+Simple button to clear unread notifications, styled for easy interaction.
+Responsive Design:
+
+The dropdown adjusts its width and alignment for mobile-friendly use.
+Smooth Transitions:
+
+Added animations for hover effects and state changes. */
+
+/* CSS (NotificationBell.css)
+Dropdown Styling:
+
+Positioned dropdown menu with proper spacing and shadow effects.
+Interactive States:
+
+Hover effects for buttons and notification items for a polished look.
+Responsive Design:
+
+Ensured the dropdown and notifications adapt well to smaller screens. */

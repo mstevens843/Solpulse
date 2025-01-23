@@ -1,0 +1,105 @@
+/* Container styling */
+.post-detail-container {
+    @apply bg-solana-dark text-solana-text-dark p-6 rounded-lg shadow-lg;
+    @apply max-w-3xl mx-auto mt-6 animate-fade-in;
+}
+
+/* Post information */
+.post-info {
+    @apply mb-6 text-center;
+}
+
+.post-info h2 {
+    @apply text-solana-primary text-3xl font-bold mb-2;
+}
+
+.post-info p {
+    @apply text-solana-text-light mb-3 leading-relaxed;
+}
+
+/* Post actions */
+.post-actions {
+    @apply flex justify-center gap-4 mb-6;
+}
+
+.post-actions .like-button {
+    @apply button-primary hover:bg-solana-secondary focus:ring-2 focus:ring-solana-primary;
+}
+
+.post-actions .liked {
+    @apply bg-solana-secondary text-white;
+}
+
+/* Comments section */
+.comments-section {
+    @apply mt-8 space-y-6 sm:space-y-4;
+}
+
+.comments-section h3 {
+    @apply text-solana-primary text-2xl font-semibold mb-4;
+}
+
+.comments-section textarea {
+    @apply form-input hover:bg-solana-light focus:ring-2 focus:ring-solana-primary mb-4;
+}
+
+.comments-section button {
+    @apply button-secondary w-full;
+}
+
+/* Error handling */
+.error-container {
+    @apply bg-solana-error text-solana-text-dark p-4 rounded-lg text-center;
+}
+
+.error-container button {
+    @apply button-secondary mt-4;
+}
+
+/* Custom Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+
+
+
+/* 
+PostDetail.css: Key Features
+Container Styling
+
+Centered layout with Solana dark theme, rounded corners, padding, and fade-in animation.
+Post Information
+
+Author name in Solana primary color, large bold text.
+Post content with light text and relaxed spacing.
+Post Actions
+
+Flexbox layout for Like/Retweet buttons with Solana gradient hover effects.
+Comments Section
+
+Clean layout for comments using global form styles and secondary buttons.
+Error Handling
+
+Error banner with Solana error red and retry button.
+Responsiveness & Animations
+
+Fully responsive with subtle animations for smooth user experience. */
+
+/* PostDetail.css:
+
+Dynamic Styles:
+Added styles for liked state of the like button.
+Interactive Elements:
+Improved hover, focus, and active states for buttons.
+Responsiveness:
+Updated spacing for mobile and desktop view */

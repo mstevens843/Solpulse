@@ -1,0 +1,47 @@
+
+
+
+
+
+
+  /* Global.css Design Features
+  Color Theme:
+  
+  Uses Solana-inspired colors for a vibrant and consistent design:
+  --solana-primary (purple) and --solana-secondary (green) for branding.
+  Dark and light background themes ensure readability.
+  Gradient styles (--solana-gradient) add visual appeal to buttons and highlights.
+  Typography:
+  
+  Headers (h1, h2, h3) and paragraphs have consistent spacing and boldness.
+  Text colors balance accessibility and aesthetics, with light text on dark backgrounds.
+  Buttons:
+  
+  button-primary features gradients and hover effects for interactivity.
+  button-disabled and button-secondary styles differentiate between states and use cases.
+  Cards:
+  
+  Includes hover scaling (hover:scale-105) and shadow effects for depth and modernity.
+  Lists:
+  
+  Structured with vertical spacing (space-y-4) and subtle borders for clarity.
+  Forms:
+  
+  Inputs and labels styled for usability, with clear focus and error states.
+  Utility classes for borders, padding, and responsive design.
+  Animations:
+  
+  fadeIn and slideIn animations enhance user experience with smooth transitions.
+  Containers:
+  
+  container ensures layouts are responsive and centered across devices.
+  centered flex utilities simplify alignment.
+  Error and Loading States:
+  
+  Styled banners (error-banner, success-banner) provide clear feedback.
+  loading-spinner ensures a consistent experience during asynchronous operations.
+  Shadows:
+  
+  Multiple shadow levels (shadow-sm, shadow-lg, etc.) create depth for interactive elements.
+  Utility Spacing:
+  Predefined margin classes (mt-4, mb-6) ensure consistent spacing across layouts. */

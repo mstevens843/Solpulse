@@ -3,19 +3,49 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "@fontsource/inter": "^5.1.0",
+    "@heroicons/react": "^2.0.18",
+    "@solana/addresses": "^2.0.0",
+    "@solana/assertions": "^2.0.0",
+    "@solana/codecs": "^2.0.0",
+    "@solana/errors": "^2.0.0",
+    "@solana/rpc": "^2.0.0",
+    "@solana/transaction-messages": "^2.0.0",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-react-ui": "^0.9.35",
+    "@solana/wallet-adapter-wallets": "^0.19.32",
+    "@solana/web3.js": "^1.20.0",
+    "axios": "^1.7.9",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "chart.js": "^4.4.7",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "crypto-browserify": "^3.12.0",
+    "https-browserify": "^1.0.0",
+    "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
+    "nth-check": "^2.1.1",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.4.0",
+    "react-refresh": "^0.14.2",
+    "react-router": "^6.15.0",
+    "react-router-dom": "^6.15.0",
+    "react-toastify": "^11.0.3",
+    "socket.io-client": "^4.8.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.0",
+    "vm-browserify": "^1.1.2",
+    "web-vitals": "^4.2.4",
+    "webpack": "^5.88.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "vite build",
+    "test": "vite test"
   },
   "eslintConfig": {
     "extends": [
@@ -34,5 +64,44 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.1",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "axios-mock-adapter": "^2.1.0",
+    "babel-jest": "^29.7.0",
+    "cypress": "^13.7.0",
+    "eslint": "^8.52.0",
+    "eslint-plugin-tailwindcss": "^3.11.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "postcss": "^8.4.24",
+    "postcss-loader": "^8.1.1",
+    "prettier": "^3.0.1",
+    "process": "^0.11.10",
+    "tailwindcss": "^3.4.7",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx|mjs)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!axios)"
+    ],
+    "moduleNameMapper": {
+      "\\.css$": "identity-obj-proxy"
+    }
+  },
+  "resolutions": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-refresh": "0.14.2"
   }
 }

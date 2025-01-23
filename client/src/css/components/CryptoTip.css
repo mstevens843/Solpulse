@@ -1,0 +1,65 @@
+/* CryptoTip Container */
+.crypto-tip-container {
+    @apply bg-solana-dark p-6 rounded-lg shadow-lg text-solana-text-dark;
+}
+
+/* Tip Heading */
+.crypto-tip-heading {
+    @apply text-solana-primary text-xl font-bold mb-4 text-center;
+}
+
+/* Tip Form */
+.crypto-tip-form {
+    @apply flex flex-col gap-4;
+}
+
+/* Tip Input Field */
+.crypto-tip-input {
+    @apply w-full p-2 border border-solana-primary rounded-md bg-solana-light text-solana-dark focus:outline-none focus:ring-2 focus:ring-solana-secondary;
+}
+
+/* Tip Message Input (Optional) */
+.crypto-tip-message-input {
+    @apply w-full p-2 border border-solana-primary rounded-md bg-solana-light text-solana-dark focus:outline-none focus:ring-2 focus:ring-solana-secondary resize-none h-24;
+}
+
+/* Preset Tip Buttons */
+.crypto-tip-preset-container {
+    @apply flex justify-center gap-2;
+}
+
+.crypto-tip-preset-button {
+    @apply bg-solana-secondary text-solana-dark font-medium py-1 px-3 rounded-md hover:bg-solana-primary transition-colors duration-300;
+}
+
+/* Submit Button */
+.crypto-tip-submit-button {
+    @apply bg-solana-gradient text-solana-dark font-semibold py-2 px-4 rounded-md hover:bg-solana-secondary transition-all duration-300;
+}
+
+.crypto-tip-submit-button:disabled {
+    @apply bg-gray-500 text-gray-300 cursor-not-allowed;
+}
+
+/* Feedback Message */
+.crypto-tip-message {
+    @apply text-center font-semibold mt-4 text-solana-text-light;
+}
+
+/* 
+Changes and Enhancements:
+New Styling for Tip Message Input:
+
+Added a .crypto-tip-message-input class to style the optional message textarea. Includes a fixed height for consistent UI and resize-none to prevent resizing issues.
+Improved Disabled Button State:
+
+Enhanced the .crypto-tip-submit-button:disabled style for clear visual feedback.
+Consistent Layout and Spacing:
+
+Used gap utilities in .crypto-tip-form and .crypto-tip-preset-container for better spacing between elements.
+Hover Effects:
+
+Added smooth transitions to .crypto-tip-preset-button and .crypto-tip-submit-button for a responsive feel.
+Alignment with Solana Theme:
+
+Ensured the colors and hover effects maintain a cohesive Solana-themed look across the component. */

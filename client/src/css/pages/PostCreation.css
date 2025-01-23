@@ -1,0 +1,124 @@
+/* Post Creation Wrapper */
+.post-creation-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full screen centering */
+    width: 100%;
+  }
+  
+  /* Post Creation Container - Increased width without affecting content */
+  .post-creation-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    min-height: 100vh;
+    padding: 5rem;
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  
+    width: 1880px; /* Increase width to make the container wider */
+    max-width: 100%; /* Ensure it doesn't get too wide on larger screens */
+  }
+  
+  /* Header */
+  .post-creation-container h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #00ffcc;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  /* Form Styling */
+  .post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    width: 100%;
+    max-width: 800px; /* Keep form width fixed inside container */
+  }
+  
+  /* Textarea Styling */
+  .post-content-textarea {
+    width: 100%;
+    padding: 2rem;
+    border: 2px solid #00ffcc;
+    border-radius: 15px;
+    background-color: #1f4068;
+    color: #ffffff;
+    font-size: 1.5rem;
+    resize: vertical;
+    height: 300px;
+    line-height: 1.6;
+    box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+  }
+  
+  /* Media Upload Section */
+  .media-upload {
+    width: 100%;
+    border: 2px dashed #00ffcc;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background-color: #1f4068;
+    color: #ffffff;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  
+  /* Crypto Tag Input */
+  .crypto-tag-input {
+    width: 100%;
+    padding: 1.5rem;
+    border: 1px solid #00ffcc;
+    border-radius: 10px;
+    background-color: #1f4068;
+    color: #ffffff;
+    font-size: 1.2rem;
+  }
+  
+  /* Submit Button */
+  .submit-button {
+    background: #00ffcc;
+    color: #1a1a2e;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+  }
+  
+  .submit-button:hover {
+    background: #ffcc00;
+  }
+  
+  .submit-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .post-creation-container {
+      padding: 3rem;
+      width: 95%; /* Adjust width for smaller screens */
+    }
+  
+    .post-content-textarea {
+      height: 200px;
+      font-size: 1.2rem;
+    }
+  
+    .submit-button {
+      font-size: 1.2rem;
+    }
+  }
+  

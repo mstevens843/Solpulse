@@ -1,0 +1,117 @@
+/* Login Page with TrendingCrypto Theme */
+
+/* Background and Layout */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  min-height: 100vh;
+  padding: 5rem 2rem;
+  color: #fff;
+}
+
+/* Login Header */
+.login-header h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Login Form */
+.login-form {
+  background: #1f4068;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Form Inputs */
+.login-form input {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #00ffcc;
+  border-radius: 10px;
+  background-color: #16213e;
+  color: #ffffff;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.login-form input::placeholder {
+  color: #00ffcc;
+}
+
+.login-form input:focus {
+  border-color: #ffcc00;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+/* Error Messages */
+.login-error {
+  color: #ff4d4d;
+  background: rgba(255, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+/* Login Button */
+.login-form button {
+  background: linear-gradient(to right, #00ffcc, #ffcc00);
+  color: #1a1a2e;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  border: none;
+}
+
+.login-form button:hover {
+  background: linear-gradient(to right, #ffcc00, #00ffcc);
+}
+
+/* Footer Links */
+.login-links {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+}
+
+.login-links a {
+  color: #00ffcc;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.login-links a:hover {
+  color: #ffcc00;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 3rem 1.5rem;
+  }
+
+  .login-form {
+    padding: 2rem;
+  }
+
+  .login-header h2 {
+    font-size: 2rem;
+  }
+}

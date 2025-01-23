@@ -1,0 +1,119 @@
+:root {
+    --navbar-height: 4rem; /* Adjust based on navbar height */
+}
+
+/* Apply Solana gradient text */
+.text-solana-gradient {
+    background: var(--solana-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* Navbar Container */
+.navbar {
+    @apply fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 shadow-md;
+    height: var(--navbar-height); 
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+    border-bottom: 2px solid #00ffcc;
+}
+
+/* Navbar Item */
+.navbar-item {
+    @apply font-medium text-lg transition-all duration-300; 
+    color: #00ffcc; /* Matching the trade page theme */
+    text-decoration: none;
+    position: relative;
+}
+
+/* Active Link */
+.active-link {
+    font-weight: bold;
+    @apply text-solana-gradient;
+}
+
+/* Wallet Multi Button */
+.wallet-adapter-button {
+    @apply font-bold py-2 px-6 rounded-md transition-all duration-300;
+    background: #00ffcc;
+    color: #1a1a2e;
+    border: 1px solid #00ffcc;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+}
+
+/* Notification Bell Container */
+.notification-bell-container {
+    @apply flex items-center;
+}
+
+.notification-button {
+    @apply font-bold p-2 rounded-full transition duration-300;
+    background: #00ffcc;
+    color: #1a1a2e;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.notification-button:hover {
+    @apply text-solana-gradient;
+}
+
+/* Align Left and Right Items */
+.navbar-left, 
+.navbar-right {
+    @apply flex items-center space-x-8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem 1.5rem;
+    }
+
+    .navbar-item {
+        font-size: 1rem;
+    }
+
+    .wallet-adapter-button {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
+}
+
+
+
+
+
+
+
+
+
+/* Key Features:
+Sticky Top Navbar:
+
+Ensures the navbar remains fixed at the top (fixed top-0) for better user navigation.
+Horizontal Menu Layout:
+
+A flexbox-based layout for evenly spaced navigation links.
+Active Link Highlighting:
+
+Distinctive active-link styling to indicate the current page with solana-secondary color.
+Smooth Transitions:
+
+Hover effects for menu items and buttons to provide a seamless interactive experience.
+Responsive Design:
+
+Designed for mobile and desktop with clean spacing and alignment for readability. */
+/* CSS (NavBar.css)
+Responsive Design:
+
+Added a media query for smaller screens (max-width: 768px).
+Adjusted the layout to stack items vertically when space is constrained.
+Hover and Focus Effects:
+
+Enhanced hover effects with smooth transitions.
+Added a distinct underline for active links to improve navigation clarity.
+Wallet Button:
+
+Styled the WalletMultiButton (wallet-adapter-button) to match the Solana theme. */

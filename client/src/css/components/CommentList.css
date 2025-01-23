@@ -1,0 +1,158 @@
+/* Comment List Overlay */
+.comment-list-overlay {
+  @apply fixed inset-0 z-50 bg-black bg-opacity-70 flex justify-center items-center;
+}
+
+/* Comment List Container */
+.comment-list-container {
+  @apply bg-solana-dark text-white p-6 rounded-lg shadow-lg max-w-3xl w-full relative;
+  border: 2px solid #00ffcc;
+}
+
+/* Comment List Header */
+.comment-list-header {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #00ffcc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Close Button */
+.close-overlay-button {
+  @apply text-white text-2xl font-bold cursor-pointer transition-all absolute top-4 right-4;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.close-overlay-button:hover {
+  color: #ffcc00;
+}
+
+/* Comment List */
+.comment-list {
+  @apply space-y-4 overflow-y-auto max-h-96 border-t pt-4;
+}
+
+/* Individual Comment */
+.comment-item {
+  @apply p-4 bg-solana-dark border border-solana-primary rounded-lg shadow-sm;
+}
+
+.comment-author {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #00ffcc;
+}
+
+.comment-content {
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+/* Load More Button */
+.load-more-button {
+  @apply bg-gradient-to-r from-green-400 to-yellow-500 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all mt-4 w-full;
+}
+
+.load-more-button:hover {
+  @apply bg-green-500;
+}
+
+/* New Comment Input Section */
+.comment-input-container {
+  @apply flex flex-col gap-4 mt-4;
+}
+
+/* Comment Input */
+.comment-input {
+  @apply w-full p-3 border border-yellow-500 rounded-md bg-solana-light text-solana-dark focus:outline-none focus:ring-2 focus:ring-solana-primary transition-all;
+}
+
+/* Add Comment Button */
+.comment-button {
+  @apply bg-gradient-to-r from-green-400 to-yellow-500 text-white font-bold py-2 px-6 rounded-md shadow-md transition-all;
+}
+
+.comment-button:hover {
+  @apply bg-yellow-400;
+}
+
+/* Error Message */
+.comment-list-error {
+  @apply text-red-400 font-medium text-center mt-2;
+}
+
+/* Empty Comments Message */
+.comment-list-empty {
+  @apply text-gray-400 italic text-center mt-4;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .comment-list-container {
+      @apply w-full max-w-md p-4;
+  }
+
+  .close-overlay-button {
+      @apply text-lg;
+  }
+
+  .comment-button {
+      @apply text-sm py-2 px-4;
+  }
+}
+
+/* Delete Comment Button */
+.delete-comment-button {
+  @apply bg-gradient-to-r from-red-400 to-red-600 text-white font-bold py-2 px-4 rounded-md shadow-md transition-all;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-comment-button:hover {
+  @apply bg-red-500;
+}
+
+/* Disabled Delete Button */
+.delete-comment-button:disabled {
+  @apply bg-gray-600 cursor-not-allowed opacity-50;
+}
+
+/* Delete Confirmation Dialog */
+.delete-confirmation-dialog {
+  @apply bg-solana-dark text-white p-6 rounded-lg shadow-lg border-2 border-red-400 max-w-md mx-auto text-center;
+}
+
+.delete-confirmation-dialog h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff4d4d;
+}
+
+.delete-confirmation-buttons {
+  @apply flex justify-center gap-4 mt-4;
+}
+
+.delete-confirm-button {
+  @apply bg-red-500 text-white font-bold py-2 px-4 rounded-md shadow-md transition-all;
+}
+
+.delete-confirm-button:hover {
+  @apply bg-red-600;
+}
+
+.delete-cancel-button {
+  @apply bg-gray-600 text-white font-bold py-2 px-4 rounded-md shadow-md transition-all;
+}
+
+.delete-cancel-button:hover {
+  @apply bg-gray-500;
+}
+
+/* Error Message for Deletion */
+.delete-error-message {
+  @apply text-red-400 font-medium text-center mt-2;
+}

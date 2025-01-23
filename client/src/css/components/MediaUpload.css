@@ -1,0 +1,79 @@
+/* Container Styles */
+.media-upload {
+    @apply flex flex-col gap-4 items-start bg-solana-light p-4 rounded-lg shadow-md;
+}
+
+/* Label Styles */
+.media-upload-label {
+    @apply text-solana-text-dark font-semibold text-sm cursor-pointer mb-2;
+}
+
+.media-upload-content-label,
+.media-upload-crypto-label {
+    @apply text-solana-text-dark font-medium mb-1;
+}
+
+/* Input Styles */
+.media-upload-input,
+.media-upload-crypto-input {
+    @apply w-full text-solana-text-dark border border-solana-primary rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-solana-secondary transition-all;
+}
+
+/* Textarea Styles */
+.media-upload-textarea {
+    @apply w-full text-solana-text-dark border border-solana-primary rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-solana-secondary transition-all;
+}
+
+/* Error Message */
+.media-upload-error {
+    @apply text-solana-error text-xs mt-2;
+}
+
+/* File Information */
+.selected-file {
+    @apply text-sm font-medium text-solana-dark mt-2;
+}
+
+/* Button Styles */
+.upload-button {
+    @apply bg-solana-primary text-solana-dark font-semibold py-2 px-4 rounded-lg transition-transform duration-300;
+}
+
+.upload-button:hover {
+    @apply bg-solana-secondary transform scale-105;
+}
+
+.upload-button:disabled {
+    @apply bg-solana-light text-solana-text-light cursor-not-allowed;
+}
+
+/* Key Features:
+Clean Container Design
+
+media-upload provides a visually appealing and accessible layout with padding, rounded corners, and a shadow effect.
+Intuitive Label and Input
+
+The file input and label are styled for ease of use and accessibility.
+Error Display
+
+Errors are highlighted in solana-error color for immediate attention.
+Dynamic File Details
+
+Selected file details are displayed with appropriate spacing and formatting.
+Interactive Upload Button
+
+The button includes hover effects, scaling animation, and a clear disabled state. */
+/* 
+MediaUpload.css
+Container and Layout:
+
+Styled the upload container with Solana-themed utilities (bg-solana-light, rounded-lg, shadow-md).
+Inputs and Textarea:
+
+Added focus and hover effects (focus:ring-solana-secondary, transition-all).
+Error and File Info:
+
+Styled error messages (text-solana-error) and file details for a clean look.
+Buttons:
+
+Enhanced buttons with hover and disabled states (hover:bg-solana-secondary, cursor-not-allowed). */

@@ -1,0 +1,24 @@
+const path = require('path');
+
+module.exports = {
+  'config': path.resolve('config', 'config.js'), // Path to your config file
+  'models-path': path.resolve('models'),        // Path to your models folder
+  'seeders-path': path.resolve('seeders'),      // Path to your seeders folder
+  'migrations-path': path.resolve('migrations') // Path to your migrations folder
+};
+
+
+// Steps to Add the File
+// Create a file named .sequelizerc in the root of your project directory.
+// Paste the above code into it and save.
+// Explanation
+// config: Points to the Sequelize configuration file for environment settings (development, test, production).
+// models-path: Specifies the directory where your models are stored.
+// seeders-path: Specifies the directory for seeders (e.g., seeders folder).
+// migrations-path: Specifies the directory for migrations (e.g., migrations folder).
+// Benefits
+// Prevents Sequelize from creating unexpected nested folders like seeders/seeders.
+// Ensures all CLI operations (db:migrate, db:seed:all, etc.) work seamlessly with the correct folder structure.
+// Once added, this file ensures a clean and consistent project structure!
+
+// Run npx sequelize-cli db:seed:all to confirm everything works as expected.

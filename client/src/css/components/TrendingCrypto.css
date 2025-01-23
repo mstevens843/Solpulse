@@ -1,0 +1,102 @@
+/* Ticker Container */
+.crypto-ticker-container {
+  @apply bg-solana-dark p-4 rounded-lg shadow-md text-solana-text-dark;
+  width: 300px;
+  margin-left: 1rem;
+  position: relative;
+}
+
+/* Coin List */
+.crypto-price-list {
+  @apply list-none p-0 space-y-2; /* Reduce space between items */
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* Individual Coin Item */
+.coin-item {
+  @apply flex items-center space-x-2 bg-solana-light text-black p-2 rounded-md shadow-sm;
+  justify-content: space-between;
+}
+
+/* Coin Image */
+.crypto-coin-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Coin Details */
+.coin-details {
+  @apply flex flex-col;
+  flex-grow: 1;
+}
+
+/* Coin Name */
+.coin-name {
+  @apply font-bold text-sm text-black;
+  margin-bottom: 0.2rem;
+}
+
+/* Coin Price */
+.coin-price {
+  @apply text-xs text-gray-600;
+}
+
+/* Trade Button */
+.trade-button {
+  @apply bg-gradient-to-r from-green-500 to-blue-500 text-white text-xs font-bold py-1 px-3 rounded-md;
+}
+
+/* Refresh Button */
+.refresh-button {
+  @apply bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 rounded-md mt-4;
+  transition: all 0.2s ease-in-out;
+}
+.refresh-button:hover {
+  @apply transform scale-105;
+}
+
+
+/* Mini Chart */
+.crypto-mini-chart {
+  width: 50px; /* Chart size */
+  height: 20px;
+  margin-left: auto; /* Align chart to the right */
+}
+
+/* Adjust Trending Coins container */
+.trending-list-container.trending-coins {
+  height: auto; /* Keep height flexible */
+  max-height: 35vh; /* Limit the height */
+  overflow-y: auto; /* Allow scrolling if needed */
+}
+
+/* Reduce Trending Coins Image Size */
+.trending-coins .coin-item img {
+  width: 40px; /* Smaller width */
+  height: 40px; /* Smaller height */
+  border-radius: 50%;
+}
+
+/* Adjust Coin Item Spacing */
+.trending-coins .coin-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem; /* Adjust spacing */
+  padding: 0.5rem 0.8rem; /* Reduce padding */
+  margin-bottom: 0.5rem; /* Reduce margin */
+  font-size: 0.9rem; /* Reduce font size */
+}
+
+/* Ensure responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .trending-coins .coin-item img {
+    width: 30px;
+    height: 30px;
+  }
+  .trending-coins .coin-item {
+    padding: 0.4rem 0.6rem;
+  }
+}

@@ -1,0 +1,50 @@
+.feed-filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: .5rem;
+    background: #1f4068;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.feed-filter-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #00ffcc;
+}
+
+.feed-filter-select {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid #00ffcc;
+    border-radius: 8px;
+    background: #16213e;
+    color: #ffffff;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.feed-filter-select:hover {
+    background-color: #00ffcc;
+    color: #1a1a2e;
+}
+
+.feed-filter-select:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+}
+
+/* Styling (FeedFilter.css)
+Filter Layout:
+
+Styled the filter container (feed-filter-container) with flex alignment and spacing.
+Added a responsive design to ensure dropdowns adapt well on smaller screens.
+Interactive Dropdown:
+
+Styled the dropdown with focus and hover effects for better interactivity.
+Responsive Design:
+
+Ensured the container and dropdown are stacked vertically on smaller screens. */

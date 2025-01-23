@@ -1,0 +1,52 @@
+/* Wallet Integration Container */
+.crypto-wallet-integration {
+    @apply bg-solana-dark text-solana-text-dark p-6 rounded-lg shadow-md space-y-4;
+}
+
+/* Wallet Balance */
+.wallet-balance {
+    @apply text-solana-secondary font-semibold text-lg;
+}
+
+/* Error and Success Messages */
+.wallet-error {
+    @apply text-solana-error font-medium;
+}
+
+.wallet-success {
+    @apply text-solana-secondary font-medium;
+}
+
+/* Form */
+.wallet-form {
+    @apply space-y-4;
+}
+
+.wallet-input {
+    @apply w-full p-2 border border-solana-primary bg-solana-light text-solana-dark rounded-md focus:outline-none focus:ring-2 focus:ring-solana-primary transition;
+}
+
+.wallet-input:disabled {
+    @apply bg-solana-dark text-solana-text-light cursor-not-allowed;
+}
+
+/* Submit Button */
+.wallet-submit-button {
+    @apply w-full bg-solana-gradient text-solana-dark font-semibold py-2 px-4 rounded-md hover:bg-solana-secondary transition-all duration-300;
+}
+
+.wallet-submit-button:disabled {
+    @apply bg-solana-light text-solana-text-light cursor-not-allowed;
+}
+
+
+/* In CryptoWalletIntegration.css
+Styling for Balance and Messages:
+
+Styled wallet balance, error, and success messages for better readability.
+Improved Form Inputs:
+
+Styled inputs and disabled states for clarity and accessibility.
+Submit Button:
+
+Added hover and disabled states for visual feedback. */

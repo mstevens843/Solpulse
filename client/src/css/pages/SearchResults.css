@@ -1,0 +1,73 @@
+/* Container */
+.search-results-container {
+    @apply container mx-auto mt-6 p-6 bg-solana-dark text-solana-text-dark rounded-lg shadow-lg space-y-6;
+}
+
+/* Header */
+.search-results-container h2 {
+    @apply text-2xl font-bold text-solana-primary mb-4 text-center;
+}
+
+/* Search Bar */
+.search-bar {
+    @apply mb-6;
+}
+
+/* Result List */
+.results-list {
+    @apply space-y-4;
+}
+
+.result-item {
+    @apply bg-solana-light p-4 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105;
+}
+
+/* Error Section */
+.error-container {
+    @apply text-center bg-solana-error text-solana-text-dark p-4 rounded-lg space-y-3;
+}
+
+.error-container button {
+    @apply button-secondary;
+}
+
+/* No Results Message */
+.no-results {
+    @apply text-solana-text-light italic text-center mt-4;
+}
+
+.no-results a {
+    @apply text-solana-primary font-medium hover:text-solana-secondary transition-colors;
+}
+
+/* Load More Button */
+.load-more {
+    @apply text-center mt-6;
+}
+
+.load-more button {
+    @apply button-primary;
+}
+
+
+/* Design Features:
+Search Results Container:
+
+Centralized, visually distinct container with padding and shadow effects.
+Uses a dark background to align with the Solana theme.
+Headers and Text:
+
+Highlighted query in the header for a clear user focus.
+Italicized and styled "no results" message for consistency.
+Search Bar:
+
+Positioned with spacing to make the page visually appealing.
+Results List:
+
+Each result styled as a card with hover effects to create a dynamic UI.
+Error Handling:
+
+Clearly styled error container with a retry button.
+Mobile Responsiveness:
+
+Results stack vertically, and text adjusts for readability on smaller screens. */

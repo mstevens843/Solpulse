@@ -1,0 +1,116 @@
+/* User Card Container */
+.user-card {
+    background: #1f4068;
+    padding: 4rem;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    text-align: center;
+}
+
+/* Hover Effect */
+.user-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.5);
+}
+
+/* Avatar */
+.user-avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 4px solid #00ffcc;
+    object-fit: cover;
+    margin-bottom: 1rem;
+}
+
+/* User Info */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-username {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #00ffcc;
+    margin-bottom: 1rem;
+}
+
+/* Follow Button */
+.follow-button {
+    background: linear-gradient(to right, #00ffcc, #ffcc00);
+    color: #1a1a2e;
+    font-size: 1.4rem;
+    font-weight: bold;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.follow-button:hover {
+    background: linear-gradient(to right, #ffcc00, #00ffcc);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .user-card {
+        max-width: 100%;
+        padding: 1.5rem;
+    }
+
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+    }
+
+    .user-username {
+        font-size: 1.5rem;
+    }
+
+    .follow-button {
+        font-size: 1.2rem;
+        padding: 0.8rem 1.5rem;
+    }
+}
+
+
+/* Key Features:
+Card Design:
+
+A clean, compact card with a Solana-inspired background.
+Subtle hover scaling effect for interactivity.
+Avatar Styling:
+
+Circular avatar with a border-2 for highlighting user identity.
+Adjusted size and spacing for better alignment.
+Typography:
+
+Clear, readable username styled with text-lg and font-semibold.
+Follow Button Integration:
+
+Embedded FollowButton styled to blend seamlessly with the card.
+Button uses hover and transition effects for smooth interaction. */
+
+/* CSS (UserCard.css)
+Responsive Design:
+
+Adjusted layout for smaller screens with a media query.
+Hover Effects:
+
+Added a hover shadow effect to make the card more interactive.
+Avatar and Button Styling:
+
+Added borders to the avatar and refined button hover states.
+Consistent Padding and Alignment:
+
+Ensured proper spacing between avatar, user info, and follow button. */

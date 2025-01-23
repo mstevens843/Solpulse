@@ -1,0 +1,124 @@
+/* Explore Page Container */
+.explore-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  min-height: 100vh;
+  width: 100%;
+  padding: 5rem 2rem;
+  text-align: center;
+  gap: 2rem;
+}
+
+/* Header */
+.explore-header h2 {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 1.5rem;
+}
+
+/* Search Bar Section */
+.search-bar-container {
+  max-width: 1000px;
+  width: 100%;
+  
+}
+
+/* Trending Topics Section */
+.trending-section {
+  margin-top: 3rem;
+  width: 100%;
+  max-width: 1000px;
+  padding: 2rem;
+  border-radius: 12px;
+  background: #1f4068;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+}
+
+.trending-title {
+  font-size: 2.5rem;
+  color: #00ffcc;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+
+/* Trending Posts Grid */
+.trending-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* Trending Post Card */
+.trending-post {
+  background: #1f4068;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.trending-post:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+}
+
+.trending-post h4 {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 1rem;
+}
+
+.trending-post p {
+  font-size: 1.2rem;
+  color: #bbbbbb;
+}
+
+/* Error and Loading Messages */
+.explore-error {
+  color: #ff4d4d;
+  background: rgba(255, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.explore-loading {
+  color: #bbbbbb;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* Empty State */
+.trending-empty {
+  font-size: 1.3rem;
+  color: #bbbbbb;
+  font-style: italic;
+  margin-top: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .explore-container {
+    padding: 3rem 1.5rem;
+  }
+
+  .explore-header h2 {
+    font-size: 2.5rem;
+  }
+
+  .trending-posts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trending-section {
+    width: 100%;
+}
+}

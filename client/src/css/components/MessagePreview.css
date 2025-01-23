@@ -1,0 +1,80 @@
+/* Message Preview Container */
+.message-preview {
+    @apply bg-solana-light p-4 rounded-lg shadow-md;
+}
+
+/* Header Styles */
+.message-preview-title {
+    @apply text-solana-primary font-semibold text-lg mb-4;
+}
+
+/* Loading Message */
+.message-preview-loading {
+    @apply text-sm text-solana-secondary font-medium;
+}
+
+/* Error Message */
+.message-preview-error {
+    @apply text-solana-error font-medium text-sm;
+}
+
+/* Empty State Message */
+.message-preview-empty {
+    @apply text-sm text-solana-text-dark italic mt-2;
+}
+
+/* Message List Styles */
+.message-list {
+    @apply space-y-2;
+}
+
+/* Individual Message Styles */
+.message-item {
+    @apply p-3 bg-solana-dark rounded-md text-solana-text-dark shadow-sm;
+}
+
+.message-item:hover {
+    @apply bg-solana-primary text-solana-dark transform scale-105 transition-transform duration-300;
+}
+
+/* Message Content */
+.message-item p {
+    @apply text-sm;
+}
+
+.message-item strong {
+    @apply font-bold text-solana-secondary;
+}
+
+
+/* Key Features:
+Light Container Theme
+
+message-preview uses a light background with shadowing for a sleek design.
+Stylized List Items
+
+message-item highlights individual messages with rounded corners and hover effects.
+Readable Fonts
+
+Message text and sender names are styled for clarity, with senders in bold secondary color.
+Dynamic Hover Animation
+
+Hovering over messages scales them slightly and changes the background color.
+Error and Loading Feedback
+
+Errors are prominently styled with the Solana error color, and loading indicators are subtle but clear. */
+
+/* CSS (MessagePreview.css)
+Container and Header:
+
+Styled the main container (bg-solana-light, shadow-md) and header (text-solana-primary).
+Loading and Error Messages:
+
+Used distinct styles (text-solana-secondary, text-solana-error) for better clarity.
+Message List and Items:
+
+Added hover effects (transform scale-105, bg-solana-primary) for interactivity.
+Ensured responsive font sizes and spacing.
+Empty State Styling:
+
+Styled the "No recent messages" message with a soft italic design. */

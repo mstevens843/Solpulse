@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Map CSS Variables to Tailwind Utilities */
+:root {
+  --solana-primary: #6c43ff;
+  --solana-secondary: #14f195;
+  --solana-light: #f3f4f6;
+  --solana-dark: #1c1c1e;
+  --solana-text-light: #a1a1aa;
+  --solana-text-dark: #1c1c1e;
+  --solana-error: #ff4d4d;
+  --solana-gradient: linear-gradient(135deg, #9945ff, #14f195);
+}
+
+/* Base Styles */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @apply bg-solana-dark text-solana-text-dark font-sans leading-relaxed;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+a {
+  @apply text-solana-primary font-medium transition-colors duration-300;
+}
+
+a:hover {
+  @apply text-solana-secondary;
+}
+
+/* Typography */
+h1, h2, h3 {
+  @apply mb-4 font-bold;
+}
+
+p {
+  @apply mb-3 leading-relaxed;
+}
+
+/* Utilities */
+@layer utilities {
+  .bg-solana-dark {
+    background-color: var(--solana-dark);
+  }
+  .bg-solana-light {
+    background-color: var(--solana-light);
+  }
+  .bg-solana-primary {
+    background-color: var(--solana-primary);
+  }
+  .bg-solana-secondary {
+    background-color: var(--solana-secondary);
+  }
+  .text-solana-dark {
+    color: var(--solana-text-dark);
+  }
+  .text-solana-light {
+    color: var(--solana-text-light);
+  }
+  .text-solana-primary {
+    color: var(--solana-primary);
+  }
+  .text-solana-secondary {
+    color: var(--solana-secondary);
+  }
+  .bg-solana-gradient {
+    background: var(--solana-gradient);
+  }
+  .border-solana-dark {
+    border-color: var(--solana-dark);
+  }
+  .text-solana-light {
+    color: var(--solana-text-light);
+  }
+  .text-solana-gradient {
+    color: linear-gradient(to right, var(--solana-primary), var(--solana-secondary));
+  }
+}
+
+/* Custom Components */
+@layer components {
+  /* Buttons */
+  .button-primary {
+    @apply bg-gradient-to-r from-[var(--solana-primary)] to-[var(--solana-secondary)] text-solana-dark font-bold py-2 px-4 rounded-md hover:bg-solana-secondary transition-all duration-300;
+  }
+
+  .button-primary:active {
+    @apply scale-95;
+  }
+
+  .button-disabled {
+    @apply bg-solana-light text-solana-text-light cursor-not-allowed;
+  }
+
+  /* Button Secondary */
+  .button-secondary {
+    @apply bg-solana-secondary text-solana-dark font-medium py-2 px-4 rounded-md hover:bg-solana-primary transition-all duration-300;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-solana-light p-4 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105;
+  }
+
+  /* Success Banner */
+  .success-banner {
+    @apply bg-solana-secondary text-solana-dark text-center font-medium p-4 rounded-lg;
+  }
+
+  /* Form Elements */
+  .form-input {
+    @apply w-full p-2 border border-solana-primary bg-solana-light text-solana-dark rounded-md focus:outline-none focus:ring-2 focus:ring-solana-primary transition-all;
+  }
+
+  .form-label {
+    @apply block text-solana-text-light font-semibold mb-2;
+  }
+
+  .form-error {
+    @apply text-solana-error font-medium;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  /* Containers */
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 animate-fade-in;
+  }
+
+  /* Error Banner */
+  .error-banner {
+    @apply bg-solana-error text-solana-text-dark text-center font-medium p-4 rounded-lg;
+  }
+
+  /* Loading Spinner */
+  .loading-spinner {
+    @apply flex justify-center items-center my-6;
+  }
+
+  /* Custom Classes for Reusability */
+  .centered {
+    @apply flex justify-center items-center;
+  }
+}

@@ -1,0 +1,24 @@
+# Dependencies and build files
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+debug.log
+
+# Local environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.testing
+
+# Database files
+/db.sqlite
+/db.sqlite-journal
+/sequelize-meta.json
+
+# Misc
+/.vscode/
+/.idea/
+/coverage/

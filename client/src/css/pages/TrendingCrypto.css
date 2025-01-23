@@ -1,0 +1,442 @@
+/* TrendingCrypto.css */
+
+.trending-crypto-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  min-height: 100vh;
+  padding: 5rem;
+  color: #fff;
+}
+
+.trending-crypto-container h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  z-index: 10;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #00ffcc;
+  border-radius: 10px;
+  background-color: #1f4068;
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #1f4068;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+}
+
+.search-results li {
+  padding: 1rem;
+  border-bottom: 1px solid #00ffcc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-results li img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.search-results li:hover {
+  background: #0f3460;
+}
+
+.selected-coin-info {
+  position: absolute; /* Make it float over content */
+  top: 100px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1f4068;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  max-width: 400px;
+  z-index: 20; /* Ensure it appears above other content */
+  display: none; /* Hide by default */
+}
+
+.selected-coin-info.show {
+  display: block; /* Show when a coin is selected */
+}
+
+.selected-coin-info img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+
+
+/* Section Containers */
+.trending-crypto-lists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  width: 100%;
+  margin-top: 3rem; /* Ensure space between charts and lists */
+}
+
+.trending-list-container {
+  background: #1f4068;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
+  width: calc(35% - 1rem);
+  max-width: 350px;
+  text-align: center;
+  height: 35%;
+  overflow-y: auto; /* Add scrolling if needed */
+}
+
+.trending-list-container h3 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 1rem;
+}
+
+/* Lists Styling */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Coin List Items - Adjust spacing and padding */
+.gainers-list li,
+.losers-list li,
+.nft-list li,
+.coins-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #16213e;
+  padding: 0.5rem 0.8rem; /* Reduce padding */
+  margin-bottom: 0.5rem;  /* Reduce margin */
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 0.9rem; /* Decrease font size for better compactness */
+}
+
+.gainers-list li:hover,
+.losers-list li:hover,
+.nft-list li:hover,
+.coins-list li:hover {
+  background: #0f3460;
+}
+
+/* Coin Image */
+/* Coin Image - Reduce size */
+.crypto-coin-image {
+  width: 20px; /* Reduce width */
+  height: 20px; /* Reduce height */
+  border-radius: 50%;
+}
+
+
+
+/* Coin Details */
+.coin-details {
+  flex-grow: 1;
+  margin-left: 0.5rem;
+}
+
+.coin-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00ffcc;
+}
+
+.coin-price {
+  font-size: 0.9rem;
+  color: #ffcc00;
+}
+
+/* Trade Button */
+.trade-button {
+  background: #00ffcc;
+  color: #1a1a2e;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.trade-button:hover {
+  background: #ffcc00;
+}
+
+/* Refresh Button */
+
+button.refresh-button {
+  background: #00ffcc;
+  color: #1a1a2e;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 2rem;
+}
+
+button.refresh-button:hover {
+  background: #ffcc00;
+}
+/* Error Message */
+.text-red-500 {
+  color: #ff4d4d;
+  background: rgba(255, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 500px;
+}
+
+/* Adjust Trending Coins container specifically */
+.trending-coins {
+  max-height: 50vh; /* Set a reasonable max height */
+  overflow-y: auto; /* Enable scrolling if needed */
+  padding: 1rem;
+}
+
+/* Reduce image size specifically for trending coins */
+.trending-coins .coin-item img {
+  width: 50px; /* Adjusted smaller size */
+  height: 50px; /* Adjusted smaller size */
+  border-radius: 50%;
+}
+
+/* Adjust Coin Item Spacing */
+.trending-coins .coin-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Reduce spacing */
+  padding: 0.4rem 0.6rem; /* Adjust padding */
+  margin-bottom: 0.5rem; /* Reduce margin */
+  font-size: 0.9rem;
+}
+
+/* Adjust coin name and price to fit better */
+.trending-coins .coin-details .coin-name {
+  font-size: 1rem;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trending-coins .coin-details .coin-price {
+  font-size: 0.9rem;
+  color: #ffcc00;
+}
+
+/* Ensure responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .trending-coins .coin-item img {
+    width: 40px;
+    height: 40px;
+  }
+  .trending-coins .coin-item {
+    padding: 0.3rem 0.5rem;
+  }
+}
+
+.coin-selection {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.coin-selection .trade-button {
+  background: #00ffcc;
+  color: #1a1a2e;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.coin-selection .trade-button:hover {
+  background: #ffcc00;
+}
+
+
+.nft-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.nft-item {
+  background: #1f4068;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.nft-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.nft-details {
+  font-size: 1rem;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.nft-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #00ffcc;
+}
+
+.nft-floor-price, .nft-sales, .nft-change {
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.nft-change.positive {
+  color: #00ff00;
+}
+
+.nft-change.negative {
+  color: #ff0000;
+}
+
+/* Responsive fix for smaller screens */
+@media (max-width: 1024px) {
+  .chart-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chart-container {
+    max-width: 100%;  /* Full width for smaller screens */
+  }
+}
+
+
+.chart-container {
+  flex: 1 1 48%;
+  max-width: 48%;  /* Ensure charts take up equal width */
+  height: 50vh;
+  background-color: #1f4068;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chart-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 3rem;  /* Added margin-bottom to prevent overlap with lists */
+  align-items: flex-start;
+}
+
+.chart-container h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 1rem;  /* Reduce margin to bring the chart closer */
+  text-align: center;
+}
+
+/* TrendingCrypto.css */
+.chart-container-2 {
+  flex: 1 1 48%;
+  max-width: 48%;
+  height: 50vh;
+  background-color: #1f4068;
+  padding: 4rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.chart-container-2 h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 0rem;
+  text-align: center;
+}
+
+.loader {
+  margin-top: 10px;
+  border: 4px solid rgba(0, 255, 204, 0.3);
+  border-top: 4px solid #00ffcc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: #ff4d4d;
+  background: rgba(255, 0, 0, 0.2);
+  padding: 0.8rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: 0.5rem;
+}
