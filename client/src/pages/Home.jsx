@@ -96,7 +96,6 @@ export default Home;
 
 
 
-
 // NotificationBell Component: Added to display the number of unread notifications.
 // NotificationBell: to display unread notifications.
 // FeedFiltering: Helps users filter the feed to show only the content they are interested in (e.g., posts or transactions).

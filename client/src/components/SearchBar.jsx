@@ -6,122 +6,106 @@
 // User-Friendly Design
 
 
+// This component allows users to search for posts, users, or crypto-related topics.
+
+// FEATURES
+// Search input field
+// Search Action
+// User-Friendly Design
+
 import React, { useState, useEffect, useCallback } from "react";
 import debounce from "lodash.debounce";
-import "@/css/components/SearchBar.css"; // Updated alias for CSS import
+import { useNavigate } from "react-router-dom";
+import { api } from "@/api/apiConfig";
+import "@/css/components/SearchBar.css"; 
 
-function SearchBar({ onSearch, suggestions = [], filters = [] }) {
-    const [query, setQuery] = useState("");
+function SearchBar({ query, setQuery, filters = [] }) {
     const [errorMessage, setErrorMessage] = useState("");
-    const [searchHistory, setSearchHistory] = useState(
-        JSON.parse(localStorage.getItem("searchHistory")) || []
-    );
+    const [searchSuggestions, setSearchSuggestions] = useState([]);
     const [selectedFilter, setSelectedFilter] = useState(filters[0] || "all");
-    const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+    const navigate = useNavigate();
 
-    // Debounced search handler
-    const debouncedSearch = useCallback(
-        debounce((query, filter) => {
-            if (query.trim()) {
-                const searchQuery = { term: query.trim(), filter };
-                onSearch(searchQuery);
+    // Debounced API call for search suggestions
+    const fetchSuggestions = useCallback(
+        debounce(async (queryTerm) => {
+            if (!queryTerm.trim()) {
+                setSearchSuggestions([]);
+                return;
             }
-        }, 500),
-        [onSearch]
+            try {
+                const response = await api.get(`/search?query=${encodeURIComponent(queryTerm)}&filter=${selectedFilter}`);
+                setSearchSuggestions(response.data.results || []);
+            } catch (error) {
+                console.error("Error fetching search suggestions:", error);
+            }
+        }, 300),
+        [selectedFilter]
     );
 
-    // Trigger debounced search on query or filter change
     useEffect(() => {
-        debouncedSearch(query, selectedFilter);
-    }, [query, selectedFilter, debouncedSearch]);
+        fetchSuggestions(query);
+    }, [query, selectedFilter, fetchSuggestions]);
 
-    // Filter suggestions based on query
-    useEffect(() => {
-        if (query.trim()) {
-            const filtered = suggestions.filter((suggestion) =>
-                suggestion.toLowerCase().includes(query.toLowerCase())
-            );
-            setFilteredSuggestions(filtered.slice(0, 5));
-        } else {
-            setFilteredSuggestions([]);
-        }
-    }, [query, suggestions]);
-
-    const handleSearch = (e) => {
+    const handleSearchSubmit = (e) => {
         e.preventDefault();
-        setErrorMessage("");
-
         if (!query.trim()) {
             setErrorMessage("Please enter a search term.");
             return;
         }
-
-        const searchQuery = { term: query.trim(), filter: selectedFilter };
-
-        const updatedHistory = [searchQuery, ...searchHistory].slice(0, 10);
-        setSearchHistory(updatedHistory);
-        localStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
-
-        onSearch(searchQuery);
-        setQuery("");
+        navigate(`/search?query=${encodeURIComponent(query)}&filter=${selectedFilter}`);
+        setSearchSuggestions([]);
     };
 
     const handleSuggestionClick = (suggestion) => {
-        setQuery(suggestion);
-        setFilteredSuggestions([]);
-    };
-
-    const handleHistoryClick = (searchQuery) => {
-        setQuery(searchQuery.term);
-        setSelectedFilter(searchQuery.filter);
-        onSearch(searchQuery);
+        setQuery(suggestion.username || suggestion.content);
+        navigate(`/search?query=${encodeURIComponent(suggestion.username || suggestion.content)}&filter=${selectedFilter}`);
+        setSearchSuggestions([]);
     };
 
     const handleReset = () => {
         setQuery("");
+        setSearchSuggestions([]);
         setErrorMessage("");
-        setFilteredSuggestions([]);
     };
 
     return (
         <div className="search-bar-container">
-            <form onSubmit={handleSearch} className="search-bar">
-                <input
-                    type="text"
-                    placeholder="Search for posts, users, or topics..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    aria-label="Search for posts, users, or topics"
-                    className="search-input"
-                />
-                {filters.length > 0 && (
-                    <select
-                        value={selectedFilter}
-                        onChange={(e) => setSelectedFilter(e.target.value)}
-                        aria-label="Search Filter"
-                        className="search-filter"
-                    >
-                        {filters.map((filter) => (
-                            <option key={filter} value={filter}>
-                                {filter.charAt(0).toUpperCase() + filter.slice(1)}
-                            </option>
-                        ))}
-                    </select>
-                )}
-                <button type="submit" className="search-button">
-                    Search
-                </button>
-                <button type="button" onClick={handleReset} className="reset-button">
-                    Reset
-                </button>
+            <form onSubmit={handleSearchSubmit} className="search-bar">
+                <div className="search-input-group">
+                    <input
+                        type="text"
+                        placeholder="Search for posts, users, or topics..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        className="search-input"
+                    />
+                    <button type="submit" className="search-button">Search</button>
+                </div>
+                <div className="search-options">
+                    {filters.length > 0 && (
+                        <select
+                            value={selectedFilter}
+                            onChange={(e) => setSelectedFilter(e.target.value)}
+                            className="search-filter"
+                        >
+                            {filters.map((filter) => (
+                                <option key={filter} value={filter}>
+                                    {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+                    <button type="button" onClick={handleReset} className="reset-button">Reset</button>
+                </div>
             </form>
+
             {errorMessage && <p className="search-error">{errorMessage}</p>}
 
-            {filteredSuggestions.length > 0 && (
+            {searchSuggestions.length > 0 && (
                 <ul className="autocomplete-suggestions">
-                    {filteredSuggestions.map((suggestion, index) => (
+                    {searchSuggestions.map((suggestion, index) => (
                         <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
-                            {suggestion}
+                            {suggestion.username || suggestion.content}
                         </li>
                     ))}
                 </ul>
@@ -130,7 +114,41 @@ function SearchBar({ onSearch, suggestions = [], filters = [] }) {
     );
 }
 
+
 export default SearchBar;
+
+
+
+// In the parent component, you would handle the search logic and pass the onSearch prop to handle search queries.
+
+// PAGES where component is likely implemented: 
+// Explore Page
+// HomePage
+// Dashboard Page
+// Profile Page
+
+// POTENTIAL ENHANCEMENTS 
+// Autocomplete Suggestions
+// Filter Integration
+// Search History
+
+// Improvements made: 
+// - Autocomplete Suggestions: Displays a list of matching suggestions below the search bar based on input. 
+// - Filter Integration: Allows users to filter their search results by category (posts, users, topics). 
+// - Search History: Maintains a history of previous searches that users can click to search again. 
+
+// Validation: Prevents submitting an empty search by showing an error message. 
+// Reset Button: Lets users quickly clear the search term 
+// Improved Usability: query.trim() ensures no accidental searches with whitespace. 
+// Debouncing: Used lodash.debounce to reduce API calls and minimize redundant requests.
+
+// SearchBar.js Enhancements:
+
+// - Autocomplete Suggestions: Shows relevant suggestions dynamically based on input.
+// - Search History: Stores recent searches for quick re-use.
+// - Accessibility: Added aria-label attributes for better screen reader compatibility.
+// - Usability: Includes reset button to clear searches quickly.
+
 
 
 

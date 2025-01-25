@@ -104,6 +104,22 @@
   color: #ffcc00;
 }
 
+/* Remember Me Checkbox */
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+  color: #00ffcc;
+}
+
+.remember-me input {
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .login-container {

@@ -39,7 +39,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: process.env.CORS_ORIGIN || "http://localhost:3000", // Use centralized configuration
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // Allowed methods
     credentials: true, // Allow credentials for WebSocket
   },
   transports: ['websocket', 'polling'], // Enable WebSocket and polling transports

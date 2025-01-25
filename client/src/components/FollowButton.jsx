@@ -8,43 +8,45 @@
 
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig"; // Updated to use centralized API config
 import Loader from "@/components/Loader"; // Updated alias for Loader component
 import "@/css/components/FollowButton.css"; // Updated alias for CSS import
 
-const FollowButton = React.memo(({ userId }) => {
-    const [isFollowing, setIsFollowing] = useState(false);
+const FollowButton = ({ userId, updateCounts }) => {
+    const [isFollowing, setIsFollowing] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-    useEffect(() => {
-        const fetchFollowStatus = async () => {
-            try {
-                const response = await api.get(`/users/${userId}/is-following`); // Using `api`
-                setIsFollowing(response.data.isFollowing);
-            } catch (error) {
-                console.error("Error fetching follow status:", error);
-                setErrorMessage("Failed to load follow status.");
-            }
-        };
-
-        fetchFollowStatus();
+    const fetchFollowStatus = useCallback(async () => {
+        try {
+            const response = await api.get(`/users/${userId}/is-following`);
+            setIsFollowing(response.data.isFollowing);
+        } catch (error) {
+            console.error("Error fetching follow status:", error);
+            setErrorMessage("Failed to load follow status.");
+        }
     }, [userId]);
 
-    const toggleFollow = async () => {
-        if (loading) return;
+    useEffect(() => {
+        fetchFollowStatus();
+    }, [fetchFollowStatus]);
 
+    const toggleFollow = async () => {
+        if (loading || isFollowing === null) return;
         setLoading(true);
         setErrorMessage("");
+
         try {
             if (isFollowing) {
-                await api.post(`/users/${userId}/unfollow`); // Using `api`
+                await api.delete(`/users/${userId}/unfollow`);
+                updateCounts(-1);
             } else {
-                await api.post(`/users/${userId}/follow`); // Using `api`
+                await api.post(`/users/${userId}/follow`);
+                updateCounts(1);
             }
-            setIsFollowing((prev) => !prev);
+            setIsFollowing(!isFollowing);
         } catch (error) {
             console.error("Error toggling follow:", error);
             setErrorMessage("Failed to update follow status.");
@@ -53,30 +55,24 @@ const FollowButton = React.memo(({ userId }) => {
         }
     };
 
-    const buttonLabel = isFollowing ? "Unfollow" : "Follow";
-
     return (
         <div className="follow-button-container">
-            <button
+            <button 
                 className={`follow-button ${isFollowing ? "is-following" : ""}`}
                 onClick={toggleFollow}
                 disabled={loading}
-                aria-label={buttonLabel}
-                aria-busy={loading}
             >
-                {loading ? <Loader size="small" /> : buttonLabel}
+                {loading ? <Loader size="small" /> : isFollowing ? "Following" : "Follow"}
             </button>
-            {errorMessage && (
-                <p className="follow-error" aria-live="polite">
-                    {errorMessage}
-                </p>
-            )}
+            {errorMessage && <p className="follow-error">{errorMessage}</p>}
         </div>
     );
-});
+};
+
 
 FollowButton.propTypes = {
     userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    updateCounts: PropTypes.func.isRequired,
 };
 
 export default FollowButton;

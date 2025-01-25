@@ -14,7 +14,6 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Explore from "./pages/Explore";
-import FollowersFollowing from "./pages/FollowersFollowing";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
 import PostCreation from "./pages/PostCreation";
@@ -69,7 +68,6 @@ function App() {
                                     <Route path="/dashboard" element={<Dashboard />} />
                                     <Route path="/profile/:id" element={<Profile />} />
                                     <Route path="/explore" element={<Explore />} />
-                                    <Route path="/followers-following" element={<FollowersFollowing />} />
                                     <Route path="/messages" element={<Messages />} />
                                     <Route path="/notifications" element={<Notifications />} />
                                     <Route path="/post/create" element={<PostCreation />} />

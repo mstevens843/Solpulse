@@ -10,7 +10,6 @@
 import React, { useState } from "react";
 import { api } from "@/api/apiConfig";
 import MediaUpload from "@/components/MediaUpload";
-import debounce from "lodash.debounce";
 import "@/css/pages/PostCreation.css"; // Updated alias for Vite compatibility
 
 function PostCreation() {
@@ -20,11 +19,6 @@ function PostCreation() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
-  // Debounced content handler to reduce frequent state updates
-  const handleContentChange = debounce((value) => {
-    setContent(value);
-  }, 300);
 
   const validateMedia = (file) => {
     const allowedTypes = ["image/jpeg", "image/png", "video/mp4"];
@@ -73,9 +67,11 @@ function PostCreation() {
     if (cryptoTag) formData.append("cryptoTag", cryptoTag);
 
     try {
+      const token = localStorage.getItem("token");
       await api.post("/posts", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -105,7 +101,7 @@ function PostCreation() {
         <form onSubmit={handleSubmit} className="post-form">
           <textarea
             value={content}
-            onChange={(e) => handleContentChange(e.target.value)}
+            onChange={(e) => setContent(e.target.value)}
             placeholder="What's happening?"
             maxLength="280"
             className="post-content-textarea"
@@ -129,6 +125,12 @@ function PostCreation() {
             aria-label="Crypto tag"
           />
 
+          {media && (
+            <div className="media-preview">
+              <img src={URL.createObjectURL(media)} alt="Selected media" className="preview-image" />
+            </div>
+          )}
+
           <button type="submit" disabled={loading} className="submit-button" aria-busy={loading}>
             {loading ? "Posting..." : "Post"}
           </button>
@@ -139,6 +141,7 @@ function PostCreation() {
 }
 
 export default PostCreation;
+
 
 
 

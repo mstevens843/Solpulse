@@ -72,7 +72,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError({});
-  
+    
     if (!validateInputs()) return;
   
     setLoading(true);
@@ -99,16 +99,31 @@ const Signup = () => {
   
         toast.success("Signup successful! Redirecting to login page...", {
           position: "top-center",
-          autoClose: 3000,
+          autoClose: 1500,
+          onClose: () => navigate("/login"),
         });
-  
-        setTimeout(() => navigate("/login"), 3000);
       } else {
         setError({ form: "Signup failed. Please try again." });
       }
     } catch (err) {
       console.error("Signup Error:", err.response?.data);
-      setError({ form: err.response?.data?.error || "Signup failed. Please try again." });
+  
+      if (err.response?.data?.errors) {
+        // Handle Sequelize validation errors
+        const formattedErrors = {};
+        err.response.data.errors.forEach((error) => {
+          formattedErrors[error.path] = error.message;
+        });
+        setError(formattedErrors);
+  
+        // Show error notification
+        toast.error("Signup failed. Please check your inputs.", {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      } else {
+        setError({ form: err.response?.data?.message || "Signup failed. Please try again." });
+      }
     } finally {
       setLoading(false);
     }

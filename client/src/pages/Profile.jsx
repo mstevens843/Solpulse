@@ -4,6 +4,7 @@ import UserCard from "@/components/UserCard";
 import Post from "@/components/Post";
 import CryptoTip from "@/components/CryptoTip";
 import { ToastContainer, toast } from "react-toastify";
+// import UserCardModal from "@/components/UserCardModal"; // Import the modal component
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from "@/components/Loader";
 import { AuthContext } from "@/context/AuthContext";
@@ -15,12 +16,16 @@ function Profile() {
     const { user: currentUser } = useContext(AuthContext);
     const { id: userId } = useParams();
     const [user, setUser] = useState(null);
+    const [followersCount, setFollowersCount] = useState(0);
+    const [followingCount, setFollowingCount] = useState(0);
     const [posts, setPosts] = useState([]);
     const [editMode, setEditMode] = useState(false);
     const [bio, setBio] = useState("");
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [showTipModal, setShowTipModal] = useState(false);
+    const [showUserCardModal, setShowUserCardModal] = useState(false); // Add state to toggle modal
+    const [profilePicture, setProfilePicture] = useState(""); // New state for profile picture
     const [successMessage, setSuccessMessage] = useState("");
 
 
@@ -33,12 +38,22 @@ function Profile() {
             try {
                 console.log(`Fetching profile for user ID: ${userId}`);
                 
-                // Fetch user profile
+                // Fetch user profile, including followers/following counts and profile picture
                 const userResponse = await api.get(`/users/${userId}`);
-                const { user } = userResponse.data;
-                setUser(user);
-                setBio(user.bio || "");
-    
+                const { user, followersCount, followingCount } = userResponse.data;
+                
+                setUser({
+                    ...user,
+                    followersCount: followersCount ?? 0,  // Ensure default value if undefined
+                    followingCount: followingCount ?? 0,  // Ensure default value if undefined
+                });
+                console.log("Setting profile picture:", user.profilePicture);
+                setProfilePicture(user.profilePicture || "/default-avatar.png");  // Ensure the latest profile picture
+                
+                setBio(user.bio || "");  // Default empty string if null
+                setFollowersCount(followersCount ?? 0);
+                setFollowingCount(followingCount ?? 0);
+                
                 // Fetch posts specific to the user
                 const postsResponse = await api.get(`/posts?userId=${userId}`);
                 setPosts(postsResponse.data.posts);
@@ -63,8 +78,48 @@ function Profile() {
     useEffect(() => {
         fetchProfile();
     }, [fetchProfile]);
-    
 
+
+    const handleProfilePictureUpdate = async (file) => {
+        if (!file) {
+            toast.error('Please select a valid file.');
+            return;
+        }
+    
+        const formData = new FormData();
+        formData.append('profilePicture', file);
+    
+        try {
+            console.log("Uploading file:", file.name);
+    
+            const response = await api.post('/users/upload-profile-picture', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`,  
+                    'x-auth-token': localStorage.getItem("token"), 
+                },
+            });
+    
+            console.log("Upload successful. Response:", response.data);
+    
+            // Trigger profile refetch to persist changes
+            await fetchProfile();
+    
+            toast.success('Profile picture updated successfully.');
+        } catch (error) {
+            console.error("Error uploading profile picture:", error.response?.data || error.message);
+    
+            if (error.response?.status === 400) {
+                toast.error('Invalid file upload. Please select an image.');
+            } else if (error.response?.status === 401) {
+                toast.error('Unauthorized. Please log in again.');
+            } else {
+                toast.error('Failed to upload profile picture.');
+            }
+        }
+    };
+
+    
     const handleSave = async () => {
         try {
             await api.put(`/users/profile/${userId}`, 
@@ -100,6 +155,7 @@ function Profile() {
             });
         }
     };
+
 
     const handleTip = async ({ toUserId, recipientWallet, amount, message }) => {
         try {
@@ -147,7 +203,7 @@ function Profile() {
     return (
         <div className="profile-container">
             <ToastContainer />
-
+    
             {loading ? (
                 <div className="profile-loader">
                     <Loader />
@@ -160,7 +216,11 @@ function Profile() {
             ) : (
                 <>
                     <div className="user-card-container">
-                        <UserCard user={user} />
+                    <UserCard 
+                        user={{ ...user, profilePicture }}  // Ensure updated picture is passed
+                        currentUser={currentUser}  
+                        onProfilePictureChange={handleProfilePictureUpdate} 
+                    />
                         {user.walletAddress && (
                             <button
                                 className="crypto-tip-btn"
@@ -171,9 +231,9 @@ function Profile() {
                             </button>
                         )}
                     </div>
-
+    
                     {showTipModal && (
-                        <div className="modal-overlay" onClick={() => setShowTipModal(false)}>
+                        <div className="tip-modal-overlay" onClick={() => setShowTipModal(false)}>
                             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                                 <h3>Send Crypto Tip</h3>
                                 <CryptoTip 
@@ -185,9 +245,11 @@ function Profile() {
                             </div>
                         </div>
                     )}
-
-
-
+    
+                    {showUserCardModal && (
+                        <UserCardModal user={user} onClose={() => setShowUserCardModal(false)} />
+                    )}
+    
                     {editMode && (
                         <div className="edit-bio-overlay" onClick={() => setEditMode(false)}>
                             <div className="edit-bio-content" onClick={(e) => e.stopPropagation()}>
@@ -205,14 +267,14 @@ function Profile() {
                             </div>
                         </div>
                     )}
-
+    
                     <div className="bio-display">
                         <p>{user.bio || "No bio available."}</p>
                         {currentUser?.id === user.id && (
                             <button onClick={() => setEditMode(true)}>Edit Bio</button>
                         )}
                     </div>
-
+    
                     <section className="posts-container">
                         <h3>Posts</h3>
                         <div className="posts-list">

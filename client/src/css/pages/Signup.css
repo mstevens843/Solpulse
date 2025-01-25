@@ -25,7 +25,7 @@
 .account-already p a {
   font-size: 1.6rem;
   font-weight: bold;
-  color: #00ffcc; /* Teal color */
+  color: #00ffcc;
   margin-top: 2rem;
   text-align: center;
   padding: .5rem;
@@ -70,7 +70,7 @@
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
 }
 
-/* Error Messages */
+/* General Error Messages */
 .signup-error {
   color: #ff4d4d;
   background: rgba(255, 0, 0, 0.2);
@@ -79,6 +79,37 @@
   text-align: center;
   font-weight: bold;
   margin-bottom: 1.5rem;
+}
+
+/* Specific Field Error Messages */
+.field-error {
+  color: #ff4d4d;
+  font-size: 1.2rem;
+  text-align: left;
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Input Error Styling */
+.input-error {
+  border-color: #ff4d4d !important;
+  box-shadow: 0 0 10px rgba(255, 77, 77, 0.6);
+}
+
+/* Password Mismatch Error */
+.password-error {
+  color: #ff4d4d;
+  font-size: 1.2rem;
+  margin-top: -1rem;
+  text-align: left;
+}
+
+/* Wallet Address Error */
+.wallet-error {
+  color: #ff4d4d;
+  font-size: 1.2rem;
+  margin-top: -1rem;
+  text-align: left;
 }
 
 /* Submit Button */
@@ -134,7 +165,7 @@
 
 /* Toastify Notifications */
 .Toastify__toast-container {
-  top: 80px !important; /* Position the toast below the navbar */
+  top: 80px !important;
   right: 20px;
 }
 
@@ -166,29 +197,14 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .signup-container {
-      padding: 3rem 1.5rem;
+    padding: 3rem 1.5rem;
   }
 
   .signup-form {
-      padding: 2rem;
+    padding: 2rem;
   }
 
   .signup-header h2 {
-      font-size: 2.5rem;
+    font-size: 2.5rem;
   }
-}
-
-/* Input Error Styling */
-.input-error {
-  border-color: #ff4d4d !important;
-  box-shadow: 0 0 10px rgba(255, 77, 77, 0.6);
-}
-
-/* Field Error Messages */
-.field-error {
-  color: #ff4d4d;
-  font-size: 1.2rem;
-  text-align: left;
-  margin-top: -1rem;
-  margin-bottom: 1.5rem;
 }

@@ -1,117 +1,245 @@
-/* Login Page with TrendingCrypto Theme */
-
-/* Background and Layout */
-.login-container {
+/* Messages Page Container */
+.messages-container {
+  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
-  min-height: 100vh;
-  padding: 5rem 2rem;
+  padding: 4rem;
+  font-family: Arial, sans-serif;
   color: #fff;
 }
 
-/* Login Header */
-.login-header h2 {
+/* Header */
+.messages-header {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #00ffcc;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-/* Login Form */
-.login-form {
-  background: #1f4068;
-  padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-}
-
-/* Form Inputs */
-.login-form input {
-  width: 100%;
+  color: #00ffcc; /* Teal color */
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
   padding: 1rem;
-  margin-bottom: 1.5rem;
-  border: 1px solid #00ffcc;
-  border-radius: 10px;
-  background-color: #16213e;
-  color: #ffffff;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
+  margin-bottom: 20px; /* Reduce margin to bring closer to message list */
+  text-align: center;
 }
 
-.login-form input::placeholder {
+/* Message List */
+.message-list {
+  width: 100%;
+  max-width: 600px;
+  background: #1f4068;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 255, 204, 0.3);
+  padding: 1.5rem;
+  
+}
+/* Individual Message Item */
+.message-item {
+  background: #16213e;
+  padding: .85rem;
+  border-bottom: 1px solid #00ffcc;
+  transition: all 0.3s ease-in-out;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+  overflow-y: auto;
+}
+
+/* Hover effect without blurring */
+.message-item:hover {
+  background: #1a1a2e;
+  color: #fff; /* Keep text white */
+  transform: translateZ(0); /* Prevent subpixel blurring */
+}
+
+/* Read and Unread Messages */
+.message-item.read {
+  opacity: 0.7;
+}
+
+.message-item.unread {
+  font-weight: bold;
+}
+
+/* Sender */
+.message-item strong {
   color: #00ffcc;
+  font-size: 1.2rem;
 }
 
-.login-form input:focus {
-  border-color: #ffcc00;
-  outline: none;
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+/* Message Content */
+.message-item p {
+  margin-top: 0.5rem;
+  font-size: 1rem;
 }
 
-/* Error Messages */
-.login-error {
-  color: #ff4d4d;
+/* Error and Success Messages */
+.messages-error,
+.messages-success {
   background: rgba(255, 0, 0, 0.2);
+  color: #ff4d4d;
+  font-size: 1.2rem;
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 1rem;
 }
 
-/* Login Button */
-.login-form button {
-  background: linear-gradient(to right, #00ffcc, #ffcc00);
+.messages-success {
+  background: rgba(0, 255, 0, 0.2);
+  color: #00ffcc;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.pagination button {
+  background: #00ffcc;
+  border: none;
   color: #1a1a2e;
-  font-size: 1.2rem;
   font-weight: bold;
-  padding: 1rem;
-  border-radius: 10px;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  width: 100%;
-  border: none;
 }
 
-.login-form button:hover {
+.pagination button:hover {
+  background: #ffcc00;
+}
+
+.pagination button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* New Message Button */
+.new-message-btn {
+  position: fixed;
+  bottom: 6rem;
+  right: 4rem;
+  background: #00ffcc;
+  color: #1a1a2e;
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border-radius: 100%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+
+.new-message-btn:hover {
   background: linear-gradient(to right, #ffcc00, #00ffcc);
 }
 
-/* Footer Links */
-.login-links {
+
+/* Empty Messages */
+.messages-empty {
+  font-size: 1.3rem;
+  color: #ffffff;
   text-align: center;
+  margin-top: 1.5rem;
+}
+
+/* Loader */
+.messages-loader {
   margin-top: 2rem;
-  font-size: 1.1rem;
 }
 
-.login-links a {
-  color: #00ffcc;
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.pagination-btn {
+  background-color: #00ffcc;
+  color: #1a1a2e;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  margin: 0 0.5rem;
+  border-radius: 8px;
   font-weight: bold;
-  text-decoration: none;
-  transition: color 0.3s ease;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.login-links a:hover {
-  color: #ffcc00;
+.pagination-btn:hover {
+  background-color: #ffcc00;
 }
+
+.pagination-btn:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+
+.suggested-users {
+  position: absolute;
+  background: #1a1a1a;  /* Dark mode background */
+  border: 1px solid #444;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 10px;
+  margin-top: 5px;
+  z-index: 1000;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow effect */
+}
+
+.suggested-users li {
+  padding: 12px 15px;
+  cursor: pointer;
+  color: #ddd;
+  font-weight: 500;
+  border-bottom: 1px solid #333;  /* Slight divider for separation */
+}
+
+.suggested-users li:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.suggested-users li:last-child {
+  border-bottom: none;
+}
+
+
+
+/* .overflow-y-auto {
+  overflow-y: auto;
+} */
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .login-container {
-    padding: 3rem 1.5rem;
+  .messages-container {
+    padding: 1.5rem;
   }
 
-  .login-form {
-    padding: 2rem;
+  .message-item {
+    padding: 0.8rem;
   }
 
-  .login-header h2 {
-    font-size: 2rem;
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .pagination button {
+    padding: 0.6rem 1.2rem;
   }
 }

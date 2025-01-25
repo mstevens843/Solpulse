@@ -1,9 +1,50 @@
 const express = require('express');
+const path = require('path');  // Add this line
 const { User, Follower, Post, Notification } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const { param, validationResult } = require('express-validator');
 const router = express.Router();
+const multer = require('multer');
 
+
+// Setup Multer storage
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/'); // Save files to the 'uploads' directory
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Use current timestamp as the filename
+    }
+  });
+  
+  const upload = multer({ storage: storage });
+
+  // Route to upload profile picture
+router.post('/upload-profile-picture', authMiddleware, upload.single('profilePicture'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded.' });
+      }
+  
+      // Get the user ID from the authenticated user
+      const user = await User.findByPk(req.user.id);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+  
+      // Update the user's profile picture
+      user.profilePicture = `/uploads/${req.file.filename}`;
+      await user.save();
+  
+      res.json({ message: 'Profile picture updated successfully.', profilePicture: user.profilePicture });
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      res.status(500).json({ message: 'An error occurred while uploading the profile picture.' });
+    }
+  });
+  
+  
 
 // Get the authenticated user's details
 router.get('/me', authMiddleware, async (req, res) => {
@@ -32,7 +73,7 @@ router.get('/:id', async (req, res) => {
         console.log(`Fetching profile for user ID: ${id}`);
 
         const user = await User.findByPk(id, {
-            attributes: ['id', 'username', 'bio', 'walletAddress']
+            attributes: ['id', 'username', 'bio', 'walletAddress', 'profilePicture']
         });
 
         if (!user) {
@@ -40,6 +81,10 @@ router.get('/:id', async (req, res) => {
         }
 
         console.log("User fetched:", user);
+        // Get followers and following count
+        const followersCount = await Follower.count({ where: { followingId: id } });
+        const followingCount = await Follower.count({ where: { followerId: id } });
+
 
         const posts = await Post.findAll({
             where: { userId: id },
@@ -50,6 +95,8 @@ router.get('/:id', async (req, res) => {
 
         res.json({
             user,
+            followersCount,
+            followingCount,
             posts: posts || [] // Ensure an empty array is returned if no posts found
         });
     } catch (error) {
@@ -58,7 +105,40 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// Get list of followers for a user
+router.get('/:id/followers', async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        const followers = await Follower.findAll({
+            where: { followingId: id },
+            include: [{ model: User, as: 'follower', attributes: ['id', 'username', 'profilePicture'] }]
+        });
+
+        res.json({ followers: followers.map(f => f.follower) });
+    } catch (error) {
+        console.error("Error fetching followers:", error);  // Log full error
+        res.status(500).json({ message: "An error occurred while fetching followers.", error: error.message });
+    }
+});
+
+// Get list of following users
+router.get('/:id/following', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const following = await Follower.findAll({
+            where: { followerId: id },
+            include: [{ model: User, as: 'following', attributes: ['id', 'username', 'profilePicture'] }]
+        });
+        
+
+        res.json({ following: following.map(f => f.following) });
+    } catch (error) {
+        console.error("Error fetching following users:", error);
+        res.status(500).json({ message: "An error occurred while fetching following users." });
+    }
+});
 
 
 

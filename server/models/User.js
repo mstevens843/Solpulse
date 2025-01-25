@@ -53,9 +53,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
                 validate: {
-                    isUrl: true,
-                },
-            },
+                    notEmpty: true  // Replace with another validation if needed
+                }
+            }
+            
         },
         {
             timestamps: true,

@@ -1,7 +1,8 @@
-/* Comment Trigger Container */
+/* Comment Trigger */
 .comment-trigger {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
 }
@@ -10,14 +11,14 @@
     color: #00ffcc;
 }
 
-/* Comment Icon Button */
+/* Comment Icon */
 .comment-icon-button {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     background: none;
     border: none;
     cursor: pointer;
-    margin-right: 8px;
     transition: transform 0.2s ease-in-out;
+    color: #00ffcc;
 }
 
 .comment-icon-button:hover {
@@ -26,7 +27,7 @@
 
 /* Comment Text beside Icon */
 .comment-text {
-    font-size: .8rem;
+    font-size: 0.9rem;
     font-weight: bold;
     color: #ffffff;
     transition: color 0.3s ease;
@@ -75,22 +76,15 @@
     color: #00ffcc;
 }
 
-.comment-item {
-    border: 1.5px solid #00ffcc;
-    margin-right: 20px;
-    
-}
-
-
 /* Comment Input */
 .comment-input {
     width: 100%;
-    padding: 1rem;
+    padding: 0.8rem;
     border: 2px solid #00ffcc;
     border-radius: 8px;
     background: #16213e;
     color: #ffffff;
-    font-size: 1.2rem;
+    font-size: 1rem;
     margin-bottom: 1rem;
 }
 
@@ -99,15 +93,7 @@
     background: linear-gradient(to right, #00ffcc, #ffcc00);
     color: #1a1a2e;
     font-weight: bold;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.3s ease;
-}
-
-.comment-button:hover {
-    background-color: #ffcc00;
+    padding: 0.6rem 1.2rem;
 }
 
 

@@ -1,82 +1,105 @@
-/* Notifications.css */
-
-/* Page Layout */
-.notifications-container {
-    @apply container mx-auto mt-6;
-}
-
-/* Header */
-.notifications-header {
-    @apply text-3xl font-bold text-solana-primary mb-6 text-center;
-}
-
-/* Filter Section */
-.notifications-filter {
-    @apply flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 bg-solana-light p-4 rounded-md shadow-md;
-}
-
-.notifications-filter label {
-    @apply text-solana-text-light font-semibold;
-}
-
-.notifications-filter select {
-    @apply form-input hover:bg-solana-secondary focus:ring-2 focus:ring-solana-primary;
-}
-
-/* Notifications List */
-.notifications-list {
-    @apply space-y-4;
-}
-
-/* Notification Item Replacement (instead of using card) */
-.notification-item {
-    @apply bg-solana-light p-4 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105;
-}
-
-.notification-item p {
-    @apply text-solana-text-dark mb-2;
-}
-
-.notification-item span {
-    @apply text-sm text-solana-text-light;
-}
-
-/* Mark All as Read Button */
-.mark-read-btn {
-    @apply button-primary mt-4 hover:bg-solana-secondary focus:ring-2 focus:ring-solana-primary;
-}
-
-/* Error Banner */
-.notifications-error {
-    @apply error-banner mb-4;
-}
-
-/* Loader */
-.notifications-loader {
-    @apply loading-spinner;
-}
-
-
-
-
-
-/* Design Features:
-Header:
-Styled as a bold, centered title with Solana branding colors.
-Filter Section:
-Inputs and labels styled for readability and visual appeal.
-Ensures consistent spacing and alignment across devices.
-Notifications List:
-Cards with hover effects and rounded corners for a modern, responsive feel.
-Error Handling:
-Error messages styled with a consistent banner design from the global file.
-Mark All as Read:
-Uses a primary button style with hover and scaling effects for interactivity.
-Loader:
-Centered spinner for async operations. */
-
-/* Notifications.css
-Styled the page container for a clean layout.
-Designed the filter dropdown and button.
-Applied consistent styles to the notifications list.
-Enhanced error and loader styling for clarity and accessibility. */
+/* Notifications Page */
+.notifications-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    min-height: 100vh;
+    padding: 5rem;
+    color: #fff;
+  }
+  
+  /* Page Title */
+  .notifications-page-header {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #00ffcc;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  /* Notification List */
+  .notifications-page-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 700px;
+  }
+  
+  /* Individual Notification */
+  .notifications-page-item {
+    background: #1f4068;
+    padding: 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .notifications-page-item:hover {
+    background: #0f3460;
+  }
+  
+  /* Read and Unread Notifications */
+  .notifications-page-item.read {
+    opacity: 0.7;
+  }
+  
+  .notifications-page-item.unread {
+    font-weight: bold;
+  }
+  
+  /* Notification Content */
+  .notifications-page-item p {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin: 0;
+  }
+  
+  /* Notification Timestamp */
+  .notifications-page-time {
+    font-size: 1rem;
+    color: #ffcc00;
+  }
+  
+  /* Mark as Read Button */
+  .notifications-page-mark-read-btn {
+    background: none;
+    border: none;
+    color: #00ffcc;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    align-self: flex-end;
+  }
+  
+  .notifications-page-mark-read-btn:hover {
+    color: #ffcc00;
+  }
+  
+  /* Empty Notification Message */
+  .notifications-page-no-notifications {
+    font-size: 1.5rem;
+    color: #00ffcc;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .notifications-page-container {
+      padding: 3rem 1rem;
+    }
+  
+    .notifications-page-item {
+      padding: 1rem;
+    }
+  
+    .notifications-page-header {
+      font-size: 2rem;
+    }
+  }

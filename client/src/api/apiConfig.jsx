@@ -8,15 +8,18 @@ export const api = axios.create({
 });
 
 // Attach tokens to every request
+const excludedRoutes = [
+    "/auth/login",
+    "/auth/register",
+    "/trendingCrypto",
+    "/trade",
+];
+
 api.interceptors.request.use(
     (config) => {
-        console.log("Intercepting request:", config.url); // Debugging
-
-        // Ensure skipping token attachment for registration
-        if (config.url.includes("/auth/login") || 
-            config.url.includes("/auth/register") || 
-            config.url.includes("/trendingCrypto") || 
-            config.url.includes("/trade"))  {
+        // Check if the request URL matches any excluded routes
+        const shouldSkip = excludedRoutes.some(route => config.url.includes(route));
+        if (shouldSkip) {
             console.log(`Skipping token attachment for: ${config.url}`);
             return config;
         }
@@ -24,7 +27,7 @@ api.interceptors.request.use(
         const token = localStorage.getItem("token");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
-            config.headers["x-auth-token"] = token; // Include x-auth-token for added compatibility
+            config.headers["x-auth-token"] = token;  // Optional header
         } else {
             console.warn("No token found in localStorage");
         }

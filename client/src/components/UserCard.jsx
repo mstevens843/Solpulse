@@ -9,49 +9,109 @@
 // - integrates follow/unfollow functionality by passing the user's unique id to the FollowButton component.
 // SIMPLE AND COMPACT LAYOUT - Combines all user details into a clean and cohesive card-style layout, making it suitable for lists and grids. 
 
-import React from "react";
+import { React, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import FollowButton from "@/components/FollowButton"; // Updated alias for FollowButton
-import { api } from "@/api/apiConfig"; // Centralized API config
-import "@/css/components/UserCard.css"; // Updated alias for CSS import
+import FollowButton from "@/components/FollowButton";
+import FollowersFollowing from "./FollowersFollowing";
+import "@/css/components/UserCard.css"; 
 
-function UserCard({ user }) {
-    if (!user || !user.id || !user.username) {
-        console.error("Invalid user data provided to UserCard:", user);
-        return null;
-    }
+function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
+    const [followersCount, setFollowersCount] = useState(user.followersCount || 0);
+    const [followingCount, setFollowingCount] = useState(user.followingCount || 0);
+    const [showModal, setShowModal] = useState(false);
+    const [viewingType, setViewingType] = useState(""); // 'followers' or 'following'
+    
+    // Use user.profilePicture directly instead of local state to prevent desync issues
+    const displayedProfilePicture = user?.profilePicture || "/default-avatar.png";
+
+    // Sync followers/following count when user prop updates
+    useEffect(() => {
+        setFollowersCount(user.followersCount || 0);
+        setFollowingCount(user.followingCount || 0);
+    }, [user.followersCount, user.followingCount]);
+
+    const updateCounts = (change) => {
+        setFollowersCount((prev) => Math.max(prev + change, 0)); // Prevent negative values
+    };
+
+    const openModal = (type) => {
+        setViewingType(type);
+        setShowModal(true);
+    };
+
+    const handleProfilePictureChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            onProfilePictureChange(file);
+        }
+    };
 
     return (
-        <div className="user-card" aria-label={`User card for ${user.username}`}>
-            {/* User Avatar */}
-            <img
-                src={user.avatar || `/default-avatar.png`}
-                alt={`${user.username}'s avatar`}
-                className="user-avatar"
-                loading="lazy"
-                onError={(e) => {
-                    e.target.src = "/default-avatar.png"; // Fallback to public default avatar
-                }}
+        <div className={isInModal ? "user-card-modal" : "user-card"}>
+            <img 
+                src={`${user?.profilePicture ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${user.profilePicture}` : "/default-avatar.png"}?timestamp=${new Date().getTime()}`} 
+                alt={`${user.username}'s profile picture`} 
+                className={isInModal ? "user-avatar-modal" : "user-avatar"} 
             />
+            {user.id === currentUser?.id && (
+                <>
+                    <button 
+                        className="edit-profile-btn" 
+                        onClick={() => document.getElementById("profile-pic-input").click()}
+                    >
+                        Edit Profile Picture
+                    </button>
 
-            {/* User Info */}
+                    <input 
+                        id="profile-pic-input" 
+                        type="file" 
+                        style={{ display: 'none' }} 
+                        onChange={handleProfilePictureChange} 
+                    />
+                </>
+            )}
+
             <div className="user-info">
                 <h4 className="user-username">{user.username}</h4>
-                <FollowButton userId={user.id} /> {/* FollowButton for user */}
+                <p onClick={() => openModal("followers")} className="follow-link">
+                    Followers: {followersCount}
+                </p>
+                <p onClick={() => openModal("following")} className="follow-link">
+                    Following: {followingCount}
+                </p>
+                <FollowButton userId={user.id} updateCounts={updateCounts} />
             </div>
+
+            {showModal && (
+                <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="close-btn" onClick={() => setShowModal(false)}>X</button>
+                        <h3>{viewingType === "followers" ? "Followers" : "Following"}</h3>
+                        <FollowersFollowing userId={user.id} type={viewingType} />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
 UserCard.propTypes = {
     user: PropTypes.shape({
-        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        id: PropTypes.number.isRequired,
         username: PropTypes.string.isRequired,
-        avatar: PropTypes.string,
+        profilePicture: PropTypes.string,
+        followersCount: PropTypes.number,
+        followingCount: PropTypes.number,
     }).isRequired,
+    currentUser: PropTypes.object.isRequired,  
+    onProfilePictureChange: PropTypes.func.isRequired, 
+    isInModal: PropTypes.bool
 };
 
 export default UserCard;
+
+
+
 
 
 

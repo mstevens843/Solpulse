@@ -92,7 +92,7 @@ function MediaUpload({
                 className="media-upload-input"
             />
 
-            <div>
+            {/* <div>
                 <label htmlFor="content" className="media-upload-content-label">
                     Post Content (optional):
                 </label>
@@ -104,9 +104,9 @@ function MediaUpload({
                     rows="2"
                     className="media-upload-textarea"
                 />
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
                 <label htmlFor="cryptoTag" className="media-upload-crypto-label">
                     Crypto Tag (optional):
                 </label>
@@ -118,7 +118,7 @@ function MediaUpload({
                     placeholder="Tag a crypto asset (e.g., SOL, BTC)"
                     className="media-upload-crypto-input"
                 />
-            </div>
+            </div> */}
 
             {error && <p className="media-upload-error" role="alert">{error}</p>}
 

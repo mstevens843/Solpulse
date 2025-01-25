@@ -3,7 +3,7 @@
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
     border-radius: 12px;
     padding: 2rem;
-    max-width: 1200px; /* Ensure it matches trending section */
+    max-width: 1200px; 
     width: 100%;
     background: #1f4068; 
     margin: 0 auto;
@@ -21,12 +21,19 @@
     width: 100%;
 }
 
-/* Make input full width */
-.search-input {
+/* Input and Search Button Row */
+.search-input-group {
+    display: flex;
+    align-items: center;
     width: 90%;
-    max-width: 900px; /* Set max width to match trending topics */
-    padding: 1.5rem;
-    margin-top: 15px;
+    max-width: 1000px;
+    gap: 1.5rem; /* Space between input and button */
+}
+
+/* Longer Search Input */
+.search-input {
+    flex: 1;
+    padding: 2rem;
     border: 2px solid #00ffcc;
     border-radius: 8px;
     background-color: #1a1a2e;
@@ -41,33 +48,35 @@
     box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
 }
 
-/* Button Group */
-.search-buttons {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    margin-top: 2rem;
-}
-
-/* Buttons */
+/* Search Button */
 .search-button {
-    flex: 1;
-    padding: 1.5rem 3rem;
+    padding: .8rem 2rem;
     border: none;
     background: linear-gradient(to right, #9945ff, #14f195);
     color: #000000;
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     transition: all 0.3s ease;
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
     text-align: center;
 }
 
-.reset-button { 
-    padding: 1rem;
+/* Filter and Reset Buttons stacked */
+.search-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 900px;
+    margin-top: 1.5rem;
+}
 
+/* Filter and Reset Button Styling */
+.search-filter, .reset-button { 
+    width: 20%;
+    padding: .7rem;
     border: none;
     background: linear-gradient(to right, #9945ff, #14f195);
     color: #000000;
@@ -80,9 +89,11 @@
     text-align: center;
     max-height: 75px;
     height: 100%;
+    margin-bottom: 1rem;
 }
 
-.search-button:hover, .reset-button:hover {
+.search-button:hover, 
+.reset-button:hover {
     background-color: #ffcc00;
     box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
 }
@@ -93,24 +104,25 @@
         padding: 2rem;
     }
 
-    .search-bar {
+    .search-input-group {
         flex-direction: column;
+        gap: 1rem;
     }
 
     .search-input {
         width: 100%;
     }
 
-    .search-buttons {
-        flex-direction: column;
-    }
-
     .search-button {
         width: 100%;
         font-size: 1.2rem;
     }
-    .reset-button {
+
+    .search-options {
         width: 100%;
-        font-size: .5rem;
+    }
+
+    .reset-button, .search-filter {
+        width: 100%;
     }
 }

@@ -26,6 +26,9 @@ const NavBar = () => {
     const [walletMenuVisible, setWalletMenuVisible] = useState(false);
     const navigate = useNavigate();
 
+    console.log("NavBar User ID:", user?.id);
+
+
     // Logout Handler
     const handleLogout = async () => {
         try {
@@ -90,10 +93,15 @@ const NavBar = () => {
                             <NotificationBell />
                         </div>
                         <li className="navbar-item" key="profile">
-                            <NavLink to={`/profile/${user?.id || ""}`} className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Profile">
+                            <NavLink 
+                                to={user?.id ? `/profile/${user.id}` : "/profile"} 
+                                className={({ isActive }) => (isActive ? "active-link" : "")} 
+                                aria-label="Profile"
+                            >
                                 Profile
                             </NavLink>
                         </li>
+
                         <li className="navbar-item" key="settings">
                             <NavLink to="/settings" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Settings">
                                 Settings

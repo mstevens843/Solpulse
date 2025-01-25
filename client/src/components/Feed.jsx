@@ -35,7 +35,7 @@ function Feed({ currentUser }) {
             if (response.data && response.data.posts) {
                 const sanitizedPosts = response.data.posts.map((post) => ({
                     ...post,
-                    userId: post.userId || "Anonymous",
+                    user: post.user || { username: 'Unknown' },
                     comments: post.comments || [],
                 }));
 

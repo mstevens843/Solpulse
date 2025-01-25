@@ -15,11 +15,14 @@ import UserCard from "@/components/UserCard";
 import Post from "@/components/Post";
 import Loader from "@/components/Loader";
 import { api } from "@/api/apiConfig"; // Using centralized API instance
+import "@/css/pages/SearchResults.css";
 
 function SearchResults() {
   const location = useLocation();
   const navigate = useNavigate();
   const query = new URLSearchParams(location.search).get("query") || "";
+  const filter = new URLSearchParams(location.search).get("filter") || "all";
+
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -28,16 +31,19 @@ function SearchResults() {
 
   /**
    * Fetch search results based on the current query and page.
-   * Supports paginated results.
    */
   const fetchSearchResults = useCallback(
     async (page = 1) => {
+      if (!query.trim()) return;
+
       setLoading(true);
       setErrorMessage("");
+
       try {
-        const response = await api.get(`/search`, {
-          params: { query, page },
+        const response = await api.get("/search", {
+          params: { query, filter, page },
         });
+
         if (page === 1) {
           setResults(response.data.results || []);
         } else {
@@ -46,6 +52,7 @@ function SearchResults() {
             ...(response.data.results || []),
           ]);
         }
+
         setHasMore(page < (response.data.totalPages || 1));
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -54,16 +61,15 @@ function SearchResults() {
         setLoading(false);
       }
     },
-    [query]
+    [query, filter]
   );
 
   /**
    * Update search results when a new query is submitted.
    */
-  const handleSearch = (searchQuery) => {
-    const searchTerm = searchQuery.term || "";
-    if (searchTerm !== query) {
-      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+  const handleSearch = ({ term, filter }) => {
+    if (term !== query || filter !== filter) {
+      navigate(`/search?query=${encodeURIComponent(term)}&filter=${filter}`);
       setResults([]); // Clear previous results when a new search is performed
       setPage(1);
     }
@@ -79,16 +85,21 @@ function SearchResults() {
   };
 
   /**
-   * Trigger fetching results when the query changes.
+   * Previously, the search results updated automatically whenever the query or filter changed.
+   * However, to reduce server load, automatic updates have been disabled.
+   * Uncomment the effect below to re-enable automated search updates when needed.
    */
+
+  /*
   useEffect(() => {
-    if (query) {
+    if (query.trim()) {
       fetchSearchResults(1);
     }
-  }, [query, fetchSearchResults]);
+  }, [query, filter, fetchSearchResults]);
+  */
 
   /**
-   * Fetch additional results when the page number is updated.
+   * Fetch search results only when the page number is updated.
    */
   useEffect(() => {
     if (page > 1) {
@@ -100,9 +111,10 @@ function SearchResults() {
     <div className="search-results-container">
       <h2>Search Results for "{query}"</h2>
       <SearchBar
-        initialQuery={query}
+        query={query}
+        setQuery={(q) => navigate(`/search?query=${encodeURIComponent(q)}&filter=${filter}`)}
         onSearch={handleSearch}
-        suggestions={[]} // You can pass dynamic suggestions here
+        filters={["all", "posts", "users"]}
       />
 
       {errorMessage && (
@@ -144,6 +156,7 @@ function SearchResults() {
 }
 
 export default SearchResults;
+
 
 
 

@@ -4,20 +4,29 @@
 // - Authentication via an API request, with successful logins storing a JWT token in local storage. 
 // - A clean and user-friendly interface for seamless account access. 
 
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/api/apiConfig";
 import "@/css/pages/Login.css";
 import { AuthContext } from "@/context/AuthContext";
 
 const Login = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState(localStorage.getItem("rememberedEmail") || "");
+    const [password, setPassword] = useState(localStorage.getItem("rememberedPassword") || "");
+    const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe") === "true");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const { setIsAuthenticated, setUser } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (rememberMe && email && password) {
+            localStorage.setItem("rememberedEmail", email);
+            localStorage.setItem("rememberedPassword", password);
+        }
+    }, [rememberMe, email, password]);
+
 
     const validateForm = () => {
         if (!email.trim().includes("@")) {
@@ -51,6 +60,16 @@ const Login = () => {
             if (response.data.token) {
                 localStorage.setItem("token", response.data.token);
                 localStorage.setItem("user", JSON.stringify(response.data.user));
+
+                if (rememberMe) {
+                    localStorage.setItem("rememberedEmail", email);
+                    localStorage.setItem("rememberedPassword", password);
+                    localStorage.setItem("rememberMe", "true");
+                } else {
+                    localStorage.removeItem("rememberedEmail");
+                    localStorage.removeItem("rememberedPassword");
+                    localStorage.removeItem("rememberMe");
+                }
      
                 setUser(response.data.user);
                 setIsAuthenticated(true);
@@ -114,6 +133,16 @@ const Login = () => {
                     </span>
                 </div>
 
+                <div className="form-group remember-me">
+                    <input
+                        type="checkbox"
+                        id="rememberMe"
+                        checked={rememberMe}
+                        onChange={() => setRememberMe(!rememberMe)}
+                    />
+                    <label htmlFor="rememberMe">Remember Me</label>
+                </div>
+
                 <button type="submit" disabled={loading} aria-label="Submit login form">
                     {loading ? "Logging in..." : "Login"}
                 </button>
@@ -137,7 +166,9 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Login; //
+
+
 
 
 

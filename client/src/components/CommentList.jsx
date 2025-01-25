@@ -15,6 +15,11 @@ function CommentList({ postId, currentUser, onClose }) {
 
     useEffect(() => {
         fetchComments();
+        document.body.classList.add("overlay-open");
+
+        return () => {
+            document.body.classList.remove("overlay-open");
+        };
     }, [postId]);
 
     const fetchComments = async (page = 1) => {
@@ -38,7 +43,6 @@ function CommentList({ postId, currentUser, onClose }) {
             await api.delete(`/comments/${commentId}`);
             setComments(comments.filter(comment => comment.id !== commentId));
 
-            // Show success notification
             toast.success("Comment deleted successfully!", {
                 position: "top-right",
                 autoClose: 3000,
@@ -72,9 +76,9 @@ function CommentList({ postId, currentUser, onClose }) {
     };
 
     return (
-        <div className="comment-list-overlay">
+        <div className="comment-list-overlay" onClick={onClose}>
             <ToastContainer />
-            <div className="comment-list-container">
+            <div className="comment-list-container" onClick={(e) => e.stopPropagation()}>
                 <div className="comment-list-header">
                     <h3>Comments</h3>
                     <button className="close-overlay-button" onClick={onClose}>✖</button>

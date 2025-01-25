@@ -4,10 +4,10 @@
 // The page dynamically updates the displayed posts based on the search input or trending data. 
 
 
+
 import React, { useState, useEffect, useCallback } from "react";
-import { api } from "@/api/apiConfig"; // Use centralized API configuration
+import { api } from "@/api/apiConfig";
 import SearchBar from "@/components/SearchBar";
-import Hashtag from "@/components/Hashtag";
 import "@/css/pages/Explore.css";
 
 function Explore() {
@@ -16,13 +16,17 @@ function Explore() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Fetch trending posts
+    // Fetch trending posts sorted by likes
     const fetchTrending = useCallback(async () => {
         setLoading(true);
         setError("");
         try {
             const response = await api.get("/posts/trending");
-            setTrendingPosts(response.data.posts || []);
+            if (response.data.posts.length === 0) {
+                setError("No trending posts available.");
+            } else {
+                setTrendingPosts(response.data.posts || []);
+            }
         } catch (error) {
             console.error("Error fetching trending posts:", error);
             setError("Failed to load trending posts. Please refresh and try again.");
@@ -31,23 +35,6 @@ function Explore() {
         }
     }, []);
 
-    // Search functionality for posts
-    const handleSearch = async () => {
-        if (!searchQuery.trim()) return;
-        setLoading(true);
-        setError("");
-        try {
-            const response = await api.get(`/posts/search?query=${encodeURIComponent(searchQuery)}`);
-            setTrendingPosts(response.data.posts || []);
-        } catch (error) {
-            console.error("Error searching posts:", error);
-            setError("Failed to fetch search results. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // On component mount, fetch trending posts
     useEffect(() => {
         fetchTrending();
     }, [fetchTrending]);
@@ -57,12 +44,16 @@ function Explore() {
             <header className="explore-header">
                 <h2>Explore</h2>
             </header>
-    
+
             {/* Search Bar */}
             <section className="search-bar-container">
-                <SearchBar query={searchQuery} setQuery={setSearchQuery} onSearch={handleSearch} />
+                <SearchBar 
+                    query={searchQuery}
+                    setQuery={setSearchQuery}
+                    filters={["all", "posts", "users"]}
+                />
             </section>
-    
+
             {/* Trending Topics */}
             <section className="trending-section">
                 <h3 className="trending-title">Trending Topics</h3>
@@ -75,6 +66,7 @@ function Explore() {
                             <div key={post.id} className="trending-post">
                                 <h4>{post.author || "Anonymous"}</h4>
                                 <p>{post.content || "No content available."}</p>
+                                <p>Likes: {post.likes}</p>
                             </div>
                         ))}
                     </div>
@@ -87,6 +79,9 @@ function Explore() {
 }
 
 export default Explore;
+
+
+
 
 
 

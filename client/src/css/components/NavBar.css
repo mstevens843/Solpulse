@@ -48,15 +48,20 @@
 }
 
 .notification-button {
-    @apply font-bold p-2 rounded-full transition duration-300;
+    @apply font-bold p-1 rounded-full transition duration-300; /* Reduced padding */
     background: #00ffcc;
     color: #1a1a2e;
     border: none;
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.5); /* Reduced shadow */
+    font-size: 1rem; /* Adjust font size if needed */
+    width: 38px;  /* Define fixed size */
+    height: 46px; /* Define fixed size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .notification-button:hover {
-    @apply text-solana-gradient;
 }
 
 /* Align Left and Right Items */

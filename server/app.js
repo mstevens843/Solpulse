@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -16,12 +17,14 @@ const app = express();
 app.use(
     cors({
         origin: process.env.CORS_ORIGIN || "http://localhost:3000",
-        methods: ["GET", "POST", "PUT", "DELETE"],
+        methods: ["GET", "POST", 'PATCH', "PUT", "DELETE"],
         credentials: true,
     })
 );
 
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 if (process.env.NODE_ENV !== "production") app.use(morgan("dev"));
@@ -38,6 +41,9 @@ app.use(
 app.options("*", cors());  // Handle all OPTIONS requests
 
 app.use("/api", apiRoutes);
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 app.get("/", (req, res) => {
     res.send("Welcome to the SolPulse API!");

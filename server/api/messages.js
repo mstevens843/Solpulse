@@ -1,7 +1,9 @@
 const express = require('express');
+
 const { Message, User, Notification } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
+const { Op } = require('sequelize'); // import sequelize operators
 const router = express.Router();
 
 /**
@@ -12,7 +14,7 @@ const formatMessages = (messages) => {
     id: msg.id,
     sender: msg.sender.username,
     content: msg.content,
-    cryptoTip: msg.cryptoTip || null,
+    cryptoTip: msg.cryptoTip !== undefined && msg.cryptoTip !== null ? msg.cryptoTip : 0.0,  // Default to 0.0
     read: msg.read,
     readAt: msg.readAt || null,
     createdAt: msg.createdAt,
@@ -20,8 +22,39 @@ const formatMessages = (messages) => {
 };
 
 /**
+ * GET /api/messages/search-users
+ * Search users based on query input for message recipient suggestions
+ * Placed at the top to allow searching functionality before fetching messages
+ */
+router.get('/search-users', authMiddleware, async (req, res) => {
+  const { query } = req.query;
+
+  if (!query || query.trim() === "") {
+    return res.status(400).json({ error: "Search query is required" });
+  }
+
+  try {
+    const users = await User.findAll({
+      where: {
+        username: {
+          [Op.iLike]: `%${query}%`, // Case-insensitive search
+        }
+      },
+      attributes: ['username'],
+      limit: 10, // Limit results for better performance
+    });
+
+    res.json({ users });
+  } catch (err) {
+    console.error("Error searching users:", err);
+    res.status(500).json({ error: "Error searching users." });
+  }
+});
+
+/**
  * GET /api/messages/recent
  * Fetch the 5 most recent messages for the logged-in user
+ * Placed after search to allow suggestions first
  */
 router.get('/recent', authMiddleware, async (req, res) => {
   try {
@@ -32,7 +65,6 @@ router.get('/recent', authMiddleware, async (req, res) => {
       order: [['createdAt', 'DESC']],
       limit: 5,
     });
-    console.log('Fetched messages:', recentMessages);
 
     res.json({ messages: formatMessages(recentMessages) });
   } catch (err) {
@@ -48,7 +80,6 @@ router.get('/recent', authMiddleware, async (req, res) => {
 router.get('/', authMiddleware, async (req, res) => {
   const { page = 1, limit = 10 } = req.query; // Pagination query parameters
   const offset = (page - 1) * limit;
-  console.log('Pagination Query Params:', { page, limit });
 
   try {
     console.log('Fetching paginated messages for user:', req.user.id);
@@ -59,7 +90,6 @@ router.get('/', authMiddleware, async (req, res) => {
       limit: parseInt(limit),
       offset: parseInt(offset),
     });
-    console.log('Paginated messages count:', count);
 
     res.json({
       messages: formatMessages(rows),
@@ -82,7 +112,6 @@ router.patch('/:id/read', authMiddleware, async (req, res) => {
     console.log('Marking message as read. User:', req.user.id, 'Message ID:', req.params.id);
     const message = await Message.findByPk(req.params.id);
     if (!message || message.recipientId !== req.user.id) {
-      console.warn('Message not found or unauthorized:', req.params.id);
       return res.status(404).json({ error: 'Message not found or unauthorized.' });
     }
 
@@ -120,7 +149,6 @@ router.post(
       console.log('Fetching recipient user...');
       const recipientUser = await User.findOne({ where: { username: recipient } });
       if (!recipientUser) {
-        console.warn('Recipient not found:', recipient);
         return res.status(404).json({ error: 'Recipient not found.' });
       }
 
@@ -129,21 +157,19 @@ router.post(
         senderId: req.user.id,
         recipientId: recipientUser.id,
         content: message.trim(),
-        cryptoTip: cryptoTip ? parseFloat(cryptoTip) : null,
+        cryptoTip: cryptoTip !== undefined && cryptoTip !== null ? parseFloat(cryptoTip) : 0.0, // Default to 0.0 if missing
         read: false,
       });
 
       console.log('Creating notification for recipient...');
-      console.log('Sender username:', req.user.username);
       await Notification.create({
         userId: recipientUser.id,
         actorId: req.user.id,
-        type: 'message', // Ensure this matches the database enum
+        type: 'message',
         message: `You have a new message from ${req.user.username || 'Unknown User'}.`,
         isRead: false,
       });
 
-      console.log('Message and notification created successfully.');
       res.status(201).json({
         id: newMessage.id,
         sender: req.user.username,
@@ -158,11 +184,8 @@ router.post(
     }
   }
 );
-
 module.exports = router;
 
-
-  
 
 
 
