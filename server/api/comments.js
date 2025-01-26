@@ -1,5 +1,5 @@
 const express = require('express');
-const { Comment, Notification, Post } = require('../models/Index');
+const { Comment, Notification, Post, User } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const checkCommentOwnership = require('../middleware/checkCommentOwnership');
@@ -49,6 +49,66 @@ const handleValidationErrors = (errors) => {
 
 // *** Route Definitions in Correct Order ***
 
+
+router.get('/detailed', authMiddleware, async (req, res) => {
+    const { page = 1 } = req.query;
+    
+    const limit = 10;  // Fixed pagination limit
+    const offset = (page - 1) * limit;
+  
+    try {
+      console.log('Fetching comments on posts for user:', req.user.id);
+  
+      // Step 1: Find all posts created by the logged-in user
+      const userPosts = await Post.findAll({
+        where: { userId: req.user.id },
+        attributes: ['id'],
+      });
+  
+      if (!userPosts.length) {
+        return res.status(404).json({ error: 'No posts found for this user.' });
+      }
+  
+      // Extract post IDs
+      const postIds = userPosts.map(post => post.id);
+  
+      // Step 2: Find comments on the user's posts
+      const { count, rows } = await Comment.findAndCountAll({
+        where: { postId: postIds },
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'username'],
+          },
+        ],
+        order: [['createdAt', 'DESC']],
+        limit,
+        offset,
+      });
+  
+      if (!rows.length) {
+        return res.status(404).json({ error: 'No comments found on your posts.' });
+      }
+  
+      res.json({
+        comments: rows.map((comment) => ({
+          id: comment.id,
+          author: comment.user?.username || `User ${comment.user?.id || 'unknown'}`,
+          content: comment.content,
+          createdAt: comment.createdAt,
+        })),
+        totalComments: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: parseInt(page),
+      });
+    } catch (err) {
+      console.error('Error fetching detailed comments:', err);
+      res.status(500).json({ error: 'Failed to fetch comments.' });
+    }
+  });
+  
+  
 /**
  * Fetch total comment count for a post.
  * This needs to come first to ensure `/count` is not overridden by `/comments/:id`.

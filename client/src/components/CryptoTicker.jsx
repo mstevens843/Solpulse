@@ -142,7 +142,7 @@ function CryptoTicker() {
 
     return (
         <div className="crypto-ticker-container">
-            <h3>All Solana Ecosystem Coins</h3>
+            <h3>Explore Solana Ecosystem</h3>
             <input
                 type="text"
                 placeholder="Search coins..."
@@ -187,7 +187,7 @@ function CryptoTicker() {
                                 </div>
                                 <div className="crypto-price-right">
                                     <span className="crypto-marketcap">
-                                        MCap: ${coin.market_cap.toLocaleString()}
+                                    MCap: ${Number(coin.market_cap).toLocaleString()}
                                     </span>
                                     <span
                                         className={`crypto-change ${
@@ -203,13 +203,13 @@ function CryptoTicker() {
                         ))}
                 </ul>
             )}
-            <button
+            {/* <button
                 onClick={fetchPrices}
                 className="crypto-refresh-button"
                 aria-label="Refresh cryptocurrency prices"
             >
                 Refresh Prices
-            </button>
+            </button> */}
         </div>
     );
 }

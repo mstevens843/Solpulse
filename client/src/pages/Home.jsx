@@ -6,17 +6,17 @@
 // Welcomes users with header, shows latest trends in Solana ecosystem with a CryptoTicker, displays public feed of posts, and encourages
 // users to sign up or login with links.
 
+
 import React, { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
-import Feed from "@/components/Feed";
+import { Link, useNavigate } from "react-router-dom";
 import CryptoTicker from "@/components/CryptoTicker";
-import { api } from "@/api/apiConfig";
 import "@/css/pages/Home.css";
 
 function Home() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const fetchUser = useCallback(async () => {
         try {
@@ -24,7 +24,6 @@ function Home() {
             setUser(response.data);
         } catch (err) {
             console.error("Error fetching user data:", err);
-            // setError("Unable to load user data. Please check your connection or log in again.");
         } finally {
             setLoading(false);
         }
@@ -36,56 +35,43 @@ function Home() {
 
     return (
         <div className="home-container">
-            {error && (
-                <div className="error-banner" role="alert">
-                    {error}
-                </div>
-            )}
-            <header className="home-header">
-                <h1>Welcome to SolPulse</h1>
-                {loading ? (
-                    <p className="home-welcome" role="status" aria-live="polite">
-                        Loading user information...
-                    </p>
-                ) : user ? (
-                    <p className="home-welcome">
-                        Hello, {user.username}! Stay updated with the latest Solana trends.
-                    </p>
-                ) : (
-                    <p className="home-welcome">
-                        Connect with Solana enthusiasts, share insights, and stay up to date with the latest trends!
-                    </p>
-                )}
-            </header>
-
-            <div className="homepage-layout">
-                <div className="crypto-ticker-container">
+            <div className="home-content">
+                <div className="crypto-info">
+                    <h1>Welcome to SolPulse</h1>
+                    <p>Explore the world of Solana social media, share insights, and connect with like-minded enthusiasts.</p>
                     <CryptoTicker />
                 </div>
-                <div className="community-feed-container">
-                    {!loading && user ? <Feed currentUser={user} /> : <p>Loading feed...</p>}
+
+                <div className="auth-section">
+                    {loading ? (
+                        <p className="loading-text">Loading user information...</p>
+                    ) : user ? (
+                        <div>
+                            <p className="user-greeting">Hello, {user.username}!</p>
+                            <button className="feed-button" onClick={() => navigate('/feed')}>
+                                Go to Feed
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <h2>Log in to your account</h2>
+                            <input type="text" placeholder="Username or email" />
+                            <input type="password" placeholder="Password" />
+                            <button className="login-btn" onClick={() => navigate('/feed')}>Log In</button>
+                            <p>
+                                Don't have an account?{" "}
+                                <Link to="/signup" className="signup-link">Sign up</Link>
+                            </p>
+                        </>
+                    )}
                 </div>
             </div>
-
-            <footer className="home-cta">
-                <p>
-                    Don't have an account?{" "}
-                    <Link to="/signup" className="button-primary">
-                        Sign Up Now
-                    </Link>
-                </p>
-                <p>
-                    Already have an account?{" "}
-                    <Link to="/login" className="button-secondary">
-                        Log in
-                    </Link>
-                </p>
-            </footer>
         </div>
     );
 }
 
 export default Home;
+
 
 
 

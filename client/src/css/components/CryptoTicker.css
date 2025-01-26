@@ -1,158 +1,150 @@
-/* Ticker Container */
+/* Crypto Ticker Container */
 .crypto-ticker-container {
-    @apply bg-solana-dark p-4 rounded-lg shadow-md text-solana-text-dark flex flex-col space-y-10 w-full h-full; /* Ensure it takes full width and height */
+    flex: 0.5;
+    max-width: 400px;
+    width: 100%;
+    background: #1f1f1f;
+    padding: 0rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 /* Ticker Heading */
 .crypto-ticker-container h3 {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #00ffcc;
-    margin-bottom: 1.5rem;
 }
 
 /* Search Bar */
 .crypto-search-input {
-    @apply w-full mb-4 p-2 border border-solana-primary rounded-md bg-solana-light text-solana-dark focus:outline-none focus:ring-2 focus:ring-solana-secondary;
+    display: block;
+    width: 100%;
+    max-width: 80%;  /* Adjusting width */
+    margin: 0 auto 1rem auto;
+    padding: 0.5rem;  /* Reduced padding */
+    border: 1px solid #00ffcc;
+    border-radius: 5px;
+    background: #121212;
+    color: #fff;
+    font-size: 0.9rem;  /* Smaller font size */
+    outline: none;  /* Removes the blue outline */
+    box-shadow: none;  /* Prevents additional focus effects */
 }
 
-/* Adjust the width of the list and input to match the container */
+/* Price List */
 .crypto-price-list {
-    @apply w-full h-auto overflow-y-auto; /* Make it adapt to parent width and allow vertical scrolling if needed */
+    width: 100%;
+    height: 250px;  /* Smaller height to fit inside */
+    overflow-y: auto;  /* Enable scrolling */
+    padding-right: 10px;
+    margin-bottom: 1rem;
 }
 
 /* Individual Coin Price */
 .crypto-price-item {
-    @apply flex justify-between items-center p-2 bg-solana-light text-solana-dark rounded-md hover:bg-solana-secondary transition-colors duration-300;
-    gap: 4rem; /* Add spacing between left and right sections */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #1c1c1c;
+    color: #fff;
+    border-bottom: 1px solid #333;
+    border-radius: 5px;
+    transition: background 0.3s ease;
 }
 
-/* Left Section (Symbol, Name, Ticker) */
-.crypto-left {
-    @apply flex items-center gap-6; /* Increased gap for better spacing */
-    flex-grow: .10; /* Ensures proper alignment with the price */
+.crypto-price-item:hover {
+    background: #292929;
 }
 
 /* Coin Image */
 .crypto-coin-image {
-    width: 50px;
-    height: 50px;
+    width: 40px;  /* Reduced size */
+    height: 40px;
     border-radius: 50%;
 }
 
 /* Coin Details */
 .crypto-details {
-    @apply flex flex-col; /* Stack name and ticker vertically */
-    flex-grow: 1; /* Ensure this section stretches within the container */
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-size: 0.85rem;  /* Smaller font */
 }
 
 /* Coin Name and Symbol */
 .crypto-name {
-    @apply font-semibold text-solana-dark; /* Bold for emphasis */
+    font-weight: bold;
+    color: #00ffcc;
+    font-size: 1rem;
 }
 
-
 .crypto-symbol {
-    @apply text-solana-secondary text-sm font-medium; /* Subtle and smaller */
+    font-size: 0.8rem;
+    color: #1cd487;
 }
 
 /* Coin Price Inline */
 .crypto-price {
-    @apply font-bold text-solana-dark text-lg; /* Larger and bold for emphasis */
-    margin-left: auto; /* Align to the right */
+    font-weight: bold;
+    font-size: 1rem;
 }
-
 
 /* Right Section (Market Cap, Changes) */
 .crypto-price-right {
-    @apply flex flex-col items-end text-right;
-    gap: 0.2rem; /* Slight spacing between lines */
+    text-align: right;
 }
-
 
 .crypto-marketcap,
 .crypto-change {
-    @apply text-sm font-light;
+    font-size: 1rem;
+    padding: .75rem;
 }
 
-
+/* Positive & Negative Change Colors */
 .crypto-change-positive {
-    @apply text-green-500;
+    color: #00ddaa;
 }
 
 .crypto-change-negative {
-    @apply text-red-500;
-}
-
-.crypto-change-same {
-    @apply text-gray-400;
+    color: #ff4d4d;
 }
 
 /* Refresh Button */
 .crypto-refresh-button {
-    background: linear-gradient(to right, #00ffcc, #ffcc00);
-    color: #1a1a2e;
-    font-size: 1.4rem;
+    background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+    color: #ffffff;
+    font-size: 1.2rem;
     font-weight: bold;
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100%;
     border: none;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
 }
 
 .crypto-refresh-button:active {
-    @apply scale-95;
+    transform: scale(0.95);
 }
 
-/* Spinner (Loading State) */
-.crypto-spinner {
-    @apply flex justify-center items-center text-solana-primary font-semibold mt-4;
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .crypto-ticker-container {
+        max-width: 100%;
+    }
 
-/* Modal Overlay */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+    .crypto-search-input {
+        max-width: 100%;
+    }
 
-/* Modal Content */
-.modal-content {
-    background-color: var(--solana-light);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    max-width: 500px;
-    width: 90%;
-    position: relative;
-}
-
-/* Close Modal Button */
-.close-modal {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--solana-dark);
-}
-
-/* Chart */
-.crypto-chart {
-    width: 100%;
-    max-height: 200px;
-    object-fit: contain;
-    margin-top: 8px;
+    .crypto-price-list {
+        height: 200px; /* Adjusted for smaller screens */
+    }
 }

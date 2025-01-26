@@ -1,5 +1,5 @@
 const express = require('express');
-const { Notification, User } = require('../models/Index');
+const { Notification, User, Comment, Message } = require('../models/Index'); // Include Comment and Message model
 const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 
@@ -54,6 +54,57 @@ const formatNotifications = async (notifications) => {
   );
 };
 
+router.get('/full', authMiddleware, async (req, res) => {
+  try {
+    const notifications = await Notification.findAll({
+      where: { userId: req.user.id },
+      order: [['createdAt', 'DESC']],
+    });
+
+    const detailedNotifications = await Promise.all(
+      notifications.map(async (notification) => {
+        const actor = await User.findByPk(notification.actorId, {
+          attributes: ['username'],
+        });
+
+        let content = null;
+        let message;
+
+        switch (notification.type) {
+          case 'comment':
+            const comment = await Comment.findByPk(notification.entityId);
+            content = comment ? comment.content : "Comment not found";
+            message = `${actor.username} commented on your post`;
+            break;
+          case 'message':
+            const msg = await Message.findByPk(notification.entityId);
+            content = msg ? msg.content : "Message not found";
+            message = `${actor.username} sent you a message`;
+            break;
+          default:
+            message = `${actor.username} ${notification.type}`;
+        }
+
+        return {
+          id: notification.id,
+          user: notification.userId,
+          actor: actor.username,
+          type: notification.type,
+          message: message,
+          content: content,  // Include full content for comments/messages
+          isRead: notification.isRead,
+          createdAt: notification.createdAt,
+        };
+      })
+    );
+
+    res.json({ notifications: detailedNotifications });
+  } catch (err) {
+    console.error('Error fetching notifications:', err);
+    res.status(500).json({ error: 'Failed to fetch notifications' });
+  }
+});
+
 /**
  * GET /api/notifications
  * Fetch all notifications for the authenticated user with pagination
@@ -91,6 +142,8 @@ router.get('/', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch notifications' });
   }
 });
+
+
 
 router.put('/mark-all-read', authMiddleware, async (req, res) => {
   try {

@@ -22,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
             },
         },
         {
-            timestamps: false,
-            paranoid: false,
+            timestamps: true,  // Enable timestamps for createdAt and updatedAt
+            paranoid: false,   // No soft delete
             tableName: 'Followers',
             indexes: [
                 {

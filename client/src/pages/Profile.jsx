@@ -55,8 +55,8 @@ function Profile() {
                 setFollowingCount(followingCount ?? 0);
                 
                 // Fetch posts specific to the user
-                const postsResponse = await api.get(`/posts?userId=${userId}`);
-                setPosts(postsResponse.data.posts);
+                const postsResponse = await api.get(`/posts/${userId}/profile-feed`);
+            setPosts(postsResponse.data.posts);
     
                 setLoading(false);
                 return;
@@ -280,13 +280,18 @@ function Profile() {
                         <div className="posts-list">
                             {posts.length > 0 ? (
                                 posts.map((post) => (
-                                    <Post
-                                        key={post.id}
-                                        post={post}
-                                        onCommentAdd={(newComment) =>
-                                            addCommentToPost(post.id, newComment)
-                                        }
-                                    />
+                                    <div key={post.id} className="post-container">
+                                        {post.isRetweet && (
+                                            <p className="retweet-indicator">
+                                                Retweeted from <strong>{post.originalUser}</strong>
+                                            </p>
+                                        )}
+                                        <Post
+                                            post={post}
+                                            currentUser={currentUser}
+                                            onCommentAdd={(newComment) => addCommentToPost(post.id, newComment)}
+                                        />
+                                    </div>
                                 ))
                             ) : (
                                 <p>No posts available</p>

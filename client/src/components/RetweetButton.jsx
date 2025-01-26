@@ -2,28 +2,43 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "@/css/components/PostButtons.css"; // Updated alias for CSS import
 import { api } from "@/api/apiConfig"; // Centralized API instance
+import { toast } from "react-toastify";
 
-function RetweetButton({ postId, initialRetweets = 0, currentUser }) {
+function RetweetButton({ postId, initialRetweets = 0, currentUser, onRetweet }) {
     const [retweetCount, setRetweetCount] = useState(initialRetweets);
     const [hasRetweeted, setHasRetweeted] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
 
     const handleRetweet = async () => {
         if (loading || hasRetweeted || !currentUser?.id) {
-            if (!currentUser?.id) setError("You need to log in to retweet posts.");
+            if (!currentUser?.id) toast.error("You need to log in to retweet posts.");
             return;
         }
+    
         setLoading(true);
-        setError("");
-
         try {
             const response = await api.post(`/posts/${postId}/retweet`, { userId: currentUser.id });
-            setRetweetCount(response.data.retweets); // Ensure the retweet count is updated from response
-            setHasRetweeted(true); // Prevent multiple retweets from the same user
+            
+            // Update retweet count immediately in UI
+            setRetweetCount((prev) => prev + 1);
+            setHasRetweeted(true);
+
+            // Notify parent component to update the posts feed
+            if (onRetweet) {
+                onRetweet({
+                    id: postId,
+                    userId: currentUser.id,
+                    createdAt: post.createdAt,  // Keep original post creation time
+                    retweetedAt: new Date().toISOString(),
+                    originalUser: currentUser.username,
+                    isRetweet: true,
+                });
+            }
+
+            toast.success("Post retweeted successfully!");
         } catch (err) {
             console.error("Error retweeting post:", err);
-            setError("Failed to retweet the post. Please try again.");
+            toast.error("Failed to retweet the post.");
         } finally {
             setLoading(false);
         }
@@ -39,7 +54,6 @@ function RetweetButton({ postId, initialRetweets = 0, currentUser }) {
             >
                 {loading ? "Retweeting..." : `Retweet (${retweetCount})`}
             </button>
-            {error && <p className="retweet-error" role="alert">{error}</p>}
         </div>
     );
 }
@@ -49,7 +63,9 @@ RetweetButton.propTypes = {
     initialRetweets: PropTypes.number,
     currentUser: PropTypes.shape({
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        username: PropTypes.string.isRequired,
     }).isRequired,
+    onRetweet: PropTypes.func.isRequired,
 };
 
 export default RetweetButton;

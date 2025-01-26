@@ -1,116 +1,156 @@
 module.exports = (sequelize, DataTypes) => {
-    const Post = sequelize.define(
-      'Post',
-      {
-        userId: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          references: {
-            model: 'Users', // Reference to User model
-            key: 'id',
-          },
-        },
-        content: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          validate: {
-            len: {
-              args: [1, 280], // Content length validation
-              msg: 'Content must be between 1 and 280 characters.',
-            },
-          },
-        },
-        mediaUrl: {
-          type: DataTypes.STRING,
-          allowNull: true,
-          validate: {
-            isUrl: {
-              msg: 'Media URL must be a valid URL.',
-            },
-          },
-        },
-        mediaType: {
-          type: DataTypes.ENUM('image', 'video', 'audio', 'none'),
-          allowNull: true,
-          defaultValue: 'none',
-        },
-        cryptoTag: {
-          type: DataTypes.STRING, // Changed from ENUM to STRING
-          allowNull: true,
-          validate: {
-            isAlphanumeric: {
-              msg: 'cryptoTag must only contain letters and numbers.',
-            },
-          },
-        },
-        likes: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          defaultValue: 0,
-        },
-        retweets: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          defaultValue: 0,
+  const Post = sequelize.define(
+    'Post',
+    {
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Users', // Ensure correct table reference
+          key: 'id',
         },
       },
-      {
-        timestamps: true,
-        paranoid: true, // Enable soft deletes
-      }
-    );
-  
-    // Associations
-    Post.associate = function (models) {
-      Post.belongsTo(models.User, {
-        foreignKey: 'userId',
-        as: 'user',
-        onDelete: 'CASCADE', // Ensure cascade delete
-        hooks: true, // Required for CASCADE to work
-      });
-  
-      Post.hasMany(models.Comment, {
-        foreignKey: 'postId',
-        as: 'comments',
-        onDelete: 'CASCADE', // Ensure cascade delete
-        hooks: true, // Required for CASCADE to work
-      });
-    };
-  
-    // Hooks for preprocessing and validation
-    Post.beforeCreate((post) => {
-      if (!post.cryptoTag && post.content) {
-        const tags = ['bitcoin', 'ethereum', 'solana', 'dogecoin'];
-        for (const tag of tags) {
-          if (post.content.toLowerCase().includes(tag)) {
-            post.cryptoTag = tag;
-            break;
-          }
+      content: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: {
+            args: [1, 280], // Enforce character limit for better UX
+            msg: 'Content must be between 1 and 280 characters.',
+          },
+        },
+      },
+      mediaUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        validate: {
+          isUrl: {
+            msg: 'Media URL must be a valid URL.',
+          },
+        },
+      },
+      mediaType: {
+        type: DataTypes.ENUM('image', 'video', 'audio', 'none'),
+        allowNull: true,
+        defaultValue: 'none',
+        validate: {
+          isIn: {
+            args: [['image', 'video', 'audio', 'none']],
+            msg: 'Invalid media type. Allowed values: image, video, audio, none.',
+          },
+        },
+      },
+      cryptoTag: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        validate: {
+          isAlphanumeric: {
+            msg: 'cryptoTag must only contain letters and numbers.',
+          },
+        },
+      },
+      likes: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      retweets: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      deletedAt: {
+        type: DataTypes.DATE, // Enable soft deletes
+        allowNull: true,
+      },
+    },
+    {
+      tableName: 'Posts', // Explicitly match the table name in DB
+      timestamps: true,
+      paranoid: true, // Enable soft deletes
+      indexes: [
+        {
+          fields: ['userId'], // Index for performance on user-based queries
+        },
+        {
+          fields: ['cryptoTag'], // Index for tag-based searches
+        },
+      ],
+    }
+  );
+
+  // Associations
+  Post.associate = function (models) {
+    Post.belongsTo(models.User, {
+      foreignKey: 'userId',
+      as: 'user',
+      onDelete: 'CASCADE',
+      hooks: true,
+    });
+
+    Post.hasMany(models.Comment, {
+      foreignKey: 'postId',
+      as: 'comments',
+      onDelete: 'CASCADE',
+      hooks: true,
+    });
+
+    // Many-to-many relationship for likes
+    Post.belongsToMany(models.User, {
+      through: models.Like,
+      as: 'likedByUsers',
+      foreignKey: 'postId',
+      otherKey: 'userId',
+      onDelete: 'CASCADE',
+    });
+
+    // Many-to-many relationship for retweets
+    Post.belongsToMany(models.User, {
+      through: models.Retweet,
+      as: 'retweetedByUsers',
+      foreignKey: 'postId',
+      otherKey: 'userId',
+      onDelete: 'CASCADE',
+    });
+  };
+
+  // Hooks for preprocessing and validation
+  Post.beforeCreate((post) => {
+    if (!post.cryptoTag && post.content) {
+      const tags = ['bitcoin', 'ethereum', 'solana', 'dogecoin'];
+      for (const tag of tags) {
+        if (post.content.toLowerCase().includes(tag)) {
+          post.cryptoTag = tag;
+          break;
         }
       }
-    });
-  
-    // Custom instance methods for the Post model
-    Post.prototype.incrementLikes = async function () {
-      this.likes += 1;
-      await this.save();
-      return this.likes;
-    };
-  
-    Post.prototype.incrementRetweets = async function () {
-      this.retweets += 1;
-      await this.save();
-      return this.retweets;
-    };
-  
-    return Post;
-  };
-  
-  
-  
-  
+    }
+  });
 
-  
+  // Hook to extract hashtags and mentions
+  Post.beforeCreate((post) => {
+    const hashtagRegex = /#\w+/g;
+    const mentionRegex = /@\w+/g;
+    post.hashtags = post.content.match(hashtagRegex) || [];
+    post.mentions = post.content.match(mentionRegex) || [];
+  });
+
+  // Custom instance methods for post actions
+  Post.prototype.incrementLikes = async function () {
+    this.likes += 1;
+    await this.save();
+    return this.likes;
+  };
+
+  Post.prototype.incrementRetweets = async function () {
+    this.retweets += 1;
+    await this.save();
+    return this.retweets;
+  };
+
+  return Post;
+};
+
 
 // Indexes:
 // Add indexes for frequently queried columns like userId and cryptoTag to optimize query performance.

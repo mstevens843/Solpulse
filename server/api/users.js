@@ -105,6 +105,51 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+
+router.get('/followers/notifications', authMiddleware, async (req, res) => {
+    const { page = 1 } = req.query;
+    const limit = 10; // Pagination limit
+    const offset = (page - 1) * limit;
+
+    try {
+        console.log('Fetching follower notifications for user:', req.user.id);
+
+        const { count, rows } = await Follower.findAndCountAll({
+            where: { followingId: req.user.id },
+            include: [
+                {
+                    model: User,
+                    as: 'follower',
+                    attributes: ['id', 'username', 'profilePicture'],
+                },
+            ],
+            order: [['createdAt', 'DESC']],
+            limit,
+            offset,
+        });
+
+        if (!rows.length) {
+            return res.status(404).json({ error: 'No new followers found.' });
+        }
+
+        res.json({
+            followers: rows.map(follow => ({
+                id: follow.follower.id,
+                actor: follow.follower.username,
+                profilePicture: follow.follower.profilePicture || null,
+                message: `${follow.follower.username} started following you`,
+                createdAt: follow.createdAt,
+            })),
+            totalFollowers: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: parseInt(page),
+        });
+    } catch (error) {
+        console.error('Error fetching follower notifications:', error);
+        res.status(500).json({ error: 'Failed to fetch follower notifications.' });
+    }
+});
+
 // Get list of followers for a user
 router.get('/:id/followers', async (req, res) => {
     const { id } = req.params;

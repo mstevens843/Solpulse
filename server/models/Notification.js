@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             },
             type: {
-                type: DataTypes.ENUM('like', 'comment', 'follow', 'transaction'), // Type of notification
+                type: DataTypes.ENUM('like', 'comment', 'follow', 'retweet', 'transaction'), // Type of notification
                 allowNull: false,
             },
             message: {
@@ -56,6 +56,7 @@ module.exports = (sequelize, DataTypes) => {
                 like: 'Your post was liked.',
                 comment: 'Your post received a comment.',
                 follow: 'You have a new follower.',
+                retweet: 'Your post was retweeted.',
                 transaction: `You received ${notification.amount} SOL.`,
             };
             notification.message = typeMessages[notification.type] || 'You have a new notification.';

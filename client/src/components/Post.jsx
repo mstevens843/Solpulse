@@ -11,7 +11,7 @@ import CommentList from "@/components/CommentList";
 import socket from "@/socket";
 import "@/css/components/Post.css";
 
-function Post({ post, currentUser, onNewComment }) {
+function Post({ post, currentUser, onNewComment, setPosts }) {
     const [postComments, setPostComments] = useState(post.comments || []);
     const [commentCount, setCommentCount] = useState(0);
     const [isOverlayVisible, setOverlayVisible] = useState(false);
@@ -90,27 +90,29 @@ function Post({ post, currentUser, onNewComment }) {
 
     const handleDeletePost = async () => {
         setIsDeleting(true);
+
         try {
-            await api.delete(`/posts/${post.id}`);
+            setPosts((prevPosts) =>
+                prevPosts.map((p) => (p.id === post.id ? { ...p, fading: true } : p))
+            );
 
-            // Show success toast
-            toast.success("Post deleted successfully!", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "dark",
-            });
+            setTimeout(async () => {
+                await api.delete(`/posts/${post.id}`);
 
-            setTimeout(() => {
-                window.location.reload(); // Reload page to reflect changes
-            }, 3000);
+                setPosts((prevPosts) => prevPosts.filter((p) => p.id !== post.id));
+
+                toast.success("Post deleted successfully!", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    theme: "dark",
+                });
+            }, 300);
         } catch (error) {
             console.error("Error deleting post:", error);
-
-            // Show error toast
             toast.error("Failed to delete post. Please try again.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -120,13 +122,19 @@ function Post({ post, currentUser, onNewComment }) {
                 draggable: true,
                 theme: "dark",
             });
+
+            setPosts((prevPosts) =>
+                prevPosts.map((p) => (p.id === post.id ? { ...p, fading: false } : p))
+            );
         } finally {
             setIsDeleting(false);
         }
     };
 
+    
+    
     return (
-        <div className="individual-post-container">
+        <div className={`individual-post-container ${post.fading ? "fading" : ""}`}>
             <ToastContainer />
             <img
                 src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${profilePicture}?timestamp=${new Date().getTime()}`}
@@ -145,9 +153,10 @@ function Post({ post, currentUser, onNewComment }) {
                         <button
                             className="delete-post-button"
                             onClick={handleDeletePost}
+                            disabled={isDeleting}
                         >
-                            Delete
-                        </button>
+                            {isDeleting ? "Deleting..." : "Delete"}
+                            </button>
                     )}
                 </div>
     
@@ -177,9 +186,14 @@ function Post({ post, currentUser, onNewComment }) {
                     </div>
                 )}
     
-                <div className="individual-post-actions">
+    <div className="individual-post-actions">
                     <LikeButton postId={post.id} currentUser={currentUser} initialLikes={post.likes || 0} />
-                    <RetweetButton postId={post.id} currentUser={currentUser} initialRetweets={post.retweets || 0} />
+                    <RetweetButton 
+                        postId={post.id} 
+                        currentUser={currentUser} 
+                        initialRetweets={post.retweets || 0} 
+                        onRetweet={(retweetData) => setPosts((prevPosts) => [retweetData, ...prevPosts])}
+                    />                    
                     <CommentSection postId={post.id} onNewComment={onNewComment} />
                 </div>
     

@@ -21,6 +21,53 @@ const formatMessages = (messages) => {
   }));
 };
 
+// Create a new route to fetch messages ensuring sender username is included:
+router.get('/detailed', authMiddleware, async (req, res) => {
+  const { page = 1 } = req.query;  // Default page is 1
+  const limit = 10;  // Fixed pagination limit
+  const offset = (page - 1) * limit;
+
+  try {
+    console.log('Fetching messages with sender details for user:', req.user.id);
+    
+    const { count, rows } = await Message.findAndCountAll({
+      where: { recipientId: req.user.id },
+      include: [
+        {
+          model: User,
+          as: 'sender',
+          attributes: ['id', 'username'], 
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+
+    if (!rows.length) {
+      return res.status(404).json({ error: 'No messages found.' });
+    }
+
+    res.json({
+      messages: rows.map((msg) => ({
+        id: msg.id,
+        sender: msg.sender?.username || `User ${msg.sender?.id || 'unknown'}`,
+        content: msg.content,
+        cryptoTip: msg.cryptoTip !== undefined ? msg.cryptoTip : 0.0,
+        read: msg.read,
+        readAt: msg.readAt || null,
+        createdAt: msg.createdAt,
+      })),
+      totalMessages: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: parseInt(page),
+    });
+  } catch (err) {
+    console.error('Error fetching detailed messages:', err);
+    res.status(500).json({ error: 'Failed to fetch messages.' });
+  }
+});
+
 /**
  * GET /api/messages/search-users
  * Search users based on query input for message recipient suggestions

@@ -1,217 +1,130 @@
-/* Home Container */
 .home-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between; 
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
   min-height: 100vh;
-  width: 100%;
-  padding: 5rem 2rem;
+  background: #121212;
   color: #fff;
-  text-align: center;
-  box-sizing: border-box;
+  padding: 2rem;
 }
 
-/* Homepage Layout */
-.homepage-layout {
-  display: grid;
-  grid-template-columns: 2fr 3fr; /* Adjusted to space out sections */
-  gap: 5rem; /* Increased gap to push sections apart */
+.home-content {
+  display: flex;
+  flex-direction: row;  /* Ensure elements are side by side */
+  align-items: center;
+  justify-content: space-between; /* Add spacing between sections */
+  max-width: 1200px;
   width: 100%;
-  max-width: 1500px; /* Adjusted max-width for larger screens */
-  margin-top: 3rem;
-  align-items: flex-start;
+  text-align: center;
+  gap: 4rem; /* Space between the ticker and login form */
+}
+
+/* Crypto Info Section */
+.crypto-info {
+  flex: 1;
+  text-align: left;
+}
+
+.crypto-info h1 {
+color: #00ffcc;
+font-weight: bold;
+font-size: 3rem;
+}
+
+.crypto-info p {
+  font-size: 1.5rem;
+  margin-bottom: 3rem;
 }
 
 /* Crypto Ticker Container */
 .crypto-ticker-container {
-  background: #1f4068;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-  text-align: center;
-  width: 100%;
-}
-
-/* Community Feed Container */
-.community-feed-container {
-  background: #1f4068;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-  width: 100%;
-}
-
-/* Header */
-.home-header h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  color: #00ffcc;
-  margin-bottom: 1rem;
-}
-
-.home-header p {
-  font-size: 1.5rem;
-  color: #ffcc00;
-  max-width: 800px;
-}
-
-/* Search Bar */
-.home-search-bar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
   width: 100%;
   max-width: 600px;
-  margin-top: 2rem;
-  flex-wrap: wrap;
+  max-height: 400px;  
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: #1f1f1f;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+
 }
 
-.home-search-input {
-  flex: 1;
-  padding: 1.2rem;
-  border: 1px solid #00ffcc;
-  border-radius: 8px;
-  background-color: #1f4068;
-  color: #ffffff;
-  font-size: 1.2rem;
-  width: 100%;
-}
-
-.home-search-button {
-  padding: 1.2rem 2rem;
-  border: none;
-  background-color: #00ffcc;
-  color: #1a1a2e;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 1.2rem;
-}
-
-.home-search-button:hover {
-  background-color: #ffcc00;
-}
-
-/* Feed and CTA Sections */
-.home-feed-section,
-.home-cta {
-  margin-top: 3rem;
-  width: 100%;
-  max-width: 800px;
-  padding: 4rem;
-  border-radius: 12px;
-  background: #1f4068;
-  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-  text-align: center;
-}
-
-.home-feed-section h2,
-.home-cta h2 {
-  font-size: 2rem;
-  color: #00ffcc;
-  margin-bottom: 1.5rem;
-}
-
-.home-feed-section p,
-.home-cta p {
-  font-size: 1.3rem;
-  color: #bbbbbb;
-}
-
-.home-cta a {
-  background: #00ffcc;
-  color: #1a1a2e;
-  font-weight: bold;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.3s ease;
+.crypto-ticker-container h2 {
+  margin-bottom: 1rem;
   font-size: 1.4rem;
-}
-
-.home-cta a:hover {
-  background: #ffcc00;
-}
-
-/* Crypto Ticker */
-
-.crypto-price-list li {
-  background: #16213e;
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  color: #ffffff;
-  font-size: 1.1rem;
-}
-
-.crypto-price-list li span {
-  font-weight: bold;
   color: #00ffcc;
+}
+
+/* Ensure ticker text doesn't overflow */
+.crypto-ticker-container .ticker-content {
+  display: flex;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.crypto-ticker-container .ticker-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* Auth Section */
+.auth-section {
+  flex: 0.5;
+  max-width: 400px;
+  width: 100%;
+  background: #1f1f1f;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+}
+
+.auth-section h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.auth-section input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border: 1px solid #00ffcc;
+  border-radius: 5px;
+  background: #121212;
+  color: #fff;
+}
+
+.feed-button, .login-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: #0da688;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.feed-button:hover, .login-btn:hover {
+  background-color: #00ddaa;
+}
+
+.signup-link {
+  color: #00ffcc;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-  .homepage-layout {
-    grid-template-columns: 1fr;
-    gap: 2rem; /* Reduced gap for smaller screens */
-  }
-}
-
-@media (max-width: 992px) {
-  .homepage-layout {
-    grid-template-columns: 1fr;
-  }
-  
-  .home-container {
-    padding: 3rem 1.5rem;
-  }
-
-  .home-header h1 {
-    font-size: 2.5rem;
-  }
-
-  .home-search-bar {
-    flex-direction: column;
-  }
-
-  .home-search-button {
-    width: 100%;
-  }
-
-  .home-feed-section,
-  .home-cta {
-    max-width: 100%;
-    padding: 3rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .home-header h1 {
-    font-size: 2rem;
-  }
-
-  .home-header p {
-    font-size: 1.2rem;
-  }
-
-  .home-search-input {
-    font-size: 1rem;
-    padding: 1rem;
-  }
-
-  .home-search-button {
-    font-size: 1rem;
-    padding: 1rem;
-  }
-
-  .crypto-price-list li {
-    font-size: 1rem;
+@media (max-width: 1024px) {
+  .home-content {
+      flex-direction: column;  /* Stack vertically for smaller screens */
+      gap: 2rem;
   }
 }

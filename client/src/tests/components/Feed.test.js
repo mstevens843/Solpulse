@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import Feed from '../../components/Feed';
+import Feed from '../../pages/Feed';
 
 // Mock Axios
 jest.mock('axios');

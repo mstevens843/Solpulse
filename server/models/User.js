@@ -53,14 +53,14 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
                 validate: {
-                    notEmpty: true  // Replace with another validation if needed
+                    notEmpty: true,  
                 }
             }
-            
         },
         {
+            tableName: 'Users', // Ensure explicit table name
             timestamps: true,
-            paranoid: true, // Correctly re-enable paranoid mode
+            paranoid: true, 
             defaultScope: {
                 attributes: { exclude: ['password'] },
             },
@@ -91,7 +91,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'userId',
             as: 'posts',
             onDelete: 'CASCADE',
-            hooks: true, // Ensure cascading deletion works
+            hooks: true, 
         });
         User.hasMany(models.Comment, {
             foreignKey: 'userId',
@@ -123,10 +123,31 @@ module.exports = (sequelize, DataTypes) => {
             as: 'wallets',
             onDelete: 'CASCADE',
         });
+
+        // Many-to-many relationship for likes
+        User.belongsToMany(models.Post, {
+            through: models.Like,
+            as: 'likedPosts',
+            foreignKey: 'userId',
+            otherKey: 'postId',
+            onDelete: 'CASCADE',
+            hooks: true, // Ensure cascading deletion works
+        });
+
+        // Many-to-many relationship for retweets
+        User.belongsToMany(models.Post, {
+            through: models.Retweet,
+            as: 'retweetedPosts',
+            foreignKey: 'userId',
+            otherKey: 'postId',
+            onDelete: 'CASCADE',
+            hooks: true, // Ensure cascading deletion works
+        });
     };
 
     return User;
 };
+
 
 
 

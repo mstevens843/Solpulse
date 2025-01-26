@@ -11,7 +11,7 @@
 // Provides a clean, intuitive interface for accessing critical parts of the app. 
 
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -21,13 +21,29 @@ import { api } from "@/api/apiConfig";
 import "@/css/components/NavBar.css";
 
 const NavBar = () => {
-    const { user, isAuthenticated, setIsAuthenticated, setUser } = useContext(AuthContext);
+    const { isAuthenticated, setIsAuthenticated, setUser } = useContext(AuthContext);
+    const [fetchedUser, setFetchedUser] = useState(null);
     const wallet = useWallet();
     const [walletMenuVisible, setWalletMenuVisible] = useState(false);
     const navigate = useNavigate();
 
-    console.log("NavBar User ID:", user?.id);
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await api.get("/auth/me");
+                setFetchedUser(response.data);
+                setUser(response.data);
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
+        };
 
+        if (isAuthenticated && !fetchedUser) {
+            fetchUser();
+        }
+    }, [isAuthenticated, fetchedUser, setUser]);
+
+    console.log("NavBar User ID:", fetchedUser?.id);
 
     // Logout Handler
     const handleLogout = async () => {
@@ -42,6 +58,7 @@ const NavBar = () => {
             console.error("Logout failed:", error);
         }
     };
+
     return (
         <nav className="navbar" aria-label="Main Navigation">
             {/* Left Side Navigation */}
@@ -94,7 +111,7 @@ const NavBar = () => {
                         </div>
                         <li className="navbar-item" key="profile">
                             <NavLink 
-                                to={user?.id ? `/profile/${user.id}` : "/profile"} 
+                                to={fetchedUser?.id ? `/profile/${fetchedUser.id}` : "/profile"} 
                                 className={({ isActive }) => (isActive ? "active-link" : "")} 
                                 aria-label="Profile"
                             >

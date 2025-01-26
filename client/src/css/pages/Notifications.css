@@ -1,105 +1,207 @@
 /* Notifications Page */
 .notifications-page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: linear-gradient(to bottom, #1a1a2e, #16213e);
-    min-height: 100vh;
-    padding: 5rem;
-    color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  min-height: 100vh;
+  padding: 5rem;
+  color: #fff;
+}
+
+/* Page Title */
+.notifications-page-header {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Notification List */
+.notifications-page-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 700px;
+}
+
+
+
+.notifications-page-item:hover {
+  background: #0f3460;
+}
+
+/* Read and Unread Notifications */
+.notifications-page-item.read {
+  opacity: 0.7;
+}
+
+.notifications-page-item.unread {
+  font-weight: bold;
+}
+
+/* Notification Content */
+.notifications-page-item p {
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* Notification Timestamp */
+.notifications-page-time {
+  font-size: 1rem;
+  color: #ffcc00;
+}
+
+/* Mark as Read Button */
+.notifications-page-mark-read-btn {
+  background: none;
+  border: none;
+  color: #00ffcc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  align-self: flex-end;
+}
+
+.notifications-page-mark-read-btn:hover {
+  color: #ffcc00;
+}
+
+/* Empty Notification Message */
+.notifications-page-no-notifications {
+  font-size: 1.5rem;
+  color: #00ffcc;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .notifications-page-container {
+    padding: 3rem 1rem;
   }
-  
-  /* Page Title */
-  .notifications-page-header {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #00ffcc;
-    margin-bottom: 2rem;
-    text-align: center;
-  }
-  
-  /* Notification List */
-  .notifications-page-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-    max-width: 700px;
-  }
-  
-  /* Individual Notification */
+
   .notifications-page-item {
-    background: #1f4068;
-    padding: 1.2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    padding: 1rem;
   }
-  
-  .notifications-page-item:hover {
-    background: #0f3460;
+
+  .notifications-page-header {
+    font-size: 2rem;
   }
-  
-  /* Read and Unread Notifications */
-  .notifications-page-item.read {
-    opacity: 0.7;
-  }
-  
-  .notifications-page-item.unread {
-    font-weight: bold;
-  }
-  
-  /* Notification Content */
-  .notifications-page-item p {
-    font-size: 1.2rem;
-    color: #ffffff;
-    margin: 0;
-  }
-  
-  /* Notification Timestamp */
-  .notifications-page-time {
-    font-size: 1rem;
-    color: #ffcc00;
-  }
-  
-  /* Mark as Read Button */
-  .notifications-page-mark-read-btn {
-    background: none;
-    border: none;
-    color: #00ffcc;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    align-self: flex-end;
-  }
-  
-  .notifications-page-mark-read-btn:hover {
-    color: #ffcc00;
-  }
-  
-  /* Empty Notification Message */
-  .notifications-page-no-notifications {
-    font-size: 1.5rem;
-    color: #00ffcc;
-    text-align: center;
-    padding: 2rem;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .notifications-page-container {
-      padding: 3rem 1rem;
-    }
-  
-    .notifications-page-item {
-      padding: 1rem;
-    }
-  
-    .notifications-page-header {
-      font-size: 2rem;
-    }
-  }
+}
+
+
+/* Notifications Page */
+.notifications-tabs {
+display: flex;
+gap: 1rem;
+justify-content: center;
+margin-bottom: 2rem;
+}
+
+.notifications-tab {
+padding: 0.8rem 1.5rem;
+font-size: 1.2rem;
+background: #1f4068;
+border: none;
+border-radius: 8px;
+color: #00ffcc;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.notifications-tab:hover {
+background: #0f3460;
+}
+
+.notifications-tab.active {
+background: #00ffcc;
+color: #1a1a2e;
+font-weight: bold;
+}
+
+/* Notification content */
+.notifications-page-content {
+font-size: 1.1rem;
+color: #ffcc00;
+margin-top: 0.5rem;
+}
+
+
+.notifications-page-mark-all-btn {
+  background: #00ffcc;
+  border: none;
+  color: #1a1a2e;
+  font-size: 1.2rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.notifications-page-mark-all-btn:hover {
+  background: #ffcc00;
+}
+
+/* Fade-out animation when marking as read */
+.notifications-page-item.fade-out {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.notifications-page-item {
+  background: #1f4068;
+  padding: 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.notifications-page-item.read {
+  opacity: 0.7;
+}
+
+.notifications-page-item.unread {
+  font-weight: bold;
+}
+
+.notifications-page-item:hover {
+  background: #0f3460;
+}
+
+/* Notification timestamp */
+.notifications-page-time {
+  font-size: 1rem;
+  color: #ffcc00;
+}
+
+/* Mark as Read button */
+.notifications-page-mark-read-btn {
+  background: none;
+  border: none;
+  color: #00ffcc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  align-self: flex-end;
+}
+
+.notifications-page-mark-read-btn:hover {
+  color: #ffcc00;
+}
+
+
+.removed {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}

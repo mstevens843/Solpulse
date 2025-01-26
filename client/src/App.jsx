@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ConnectionProvider } from "@solana/wallet-adapter-react";
 import { WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
@@ -9,8 +9,9 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adap
 import { AuthProvider } from "@/context/AuthContext"; // Auth Context
 import socket from "./socket"; // WebSocket instance
 
-import NavBar from "./components/Navbar";
+import NavBar from "@/components/Navbar";
 import Home from "./pages/Home";
+import Feed from "@/pages/Feed"
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Explore from "./pages/Explore";
@@ -60,32 +61,43 @@ function App() {
             <ConnectionProvider endpoint={endpoint}>
                 <WalletProvider wallets={wallets} autoConnect>
                     <BrowserRouter>
-                        <div className="app-container">
-                            <NavBar />
-                            <main>
-                                <Routes>
-                                    <Route path="/" element={<Home />} />
-                                    <Route path="/dashboard" element={<Dashboard />} />
-                                    <Route path="/profile/:id" element={<Profile />} />
-                                    <Route path="/explore" element={<Explore />} />
-                                    <Route path="/messages" element={<Messages />} />
-                                    <Route path="/notifications" element={<Notifications />} />
-                                    <Route path="/post/create" element={<PostCreation />} />
-                                    <Route path="/post/:id" element={<PostDetail />} />
-                                    <Route path="/search" element={<SearchResults />} />
-                                    <Route path="/signup" element={<Signup />} />
-                                    <Route path="/trending-crypto" element={<TrendingCrypto />} />
-                                    <Route path="/login" element={<Login />} />
-                                    <Route path="/settings" element={<Settings />} />
-                                    <Route path="/trade" element={<Trade />} />
-                                    <Route path="*" element={<NotFound />} />
-                                </Routes>
-                            </main>
-                        </div>
+                        <AppContent />
                     </BrowserRouter>
                 </WalletProvider>
             </ConnectionProvider>
         </AuthProvider>
+    );
+}
+
+function AppContent() {
+    const location = useLocation();
+    const hideNavbarOnPaths = ["/"];
+
+    return (
+        <div className="app-container">
+            {/* Conditionally render the NavBar */}
+            {!hideNavbarOnPaths.includes(location.pathname) && <NavBar />}
+            <main>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/feed" element={<Feed />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/profile/:id" element={<Profile />} />  {/* Correct path */}
+                    <Route path="/explore" element={<Explore />} />
+                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/post/create" element={<PostCreation />} />
+                    <Route path="/post/:id" element={<PostDetail />} />
+                    <Route path="/search" element={<SearchResults />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/trending-crypto" element={<TrendingCrypto />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/trade" element={<Trade />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </main>
+        </div>
     );
 }
 
