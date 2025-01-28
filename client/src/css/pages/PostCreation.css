@@ -1,124 +1,208 @@
 /* Post Creation Wrapper */
 .post-creation-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* Full screen centering */
-    width: 100%;
-  }
-  
-  /* Post Creation Container - Increased width without affecting content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #121212; /* Match background color with Landing & Home */
+  color: #fff;
+  width: 100%;
+  padding: 2rem; /* Consistent padding */
+}
+
+/* Post Creation Container */
+.post-creation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #1f1f1f;
+  min-height: 80vh;
+  padding: 4rem;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+  width: 90%;
+  max-width: 1200px;
+  text-align: center;
+}
+
+/* Header */
+.post-creation-container h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 2rem;
+  text-align: center;
+  background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Form Styling */
+.post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+/* Textarea Styling */
+.post-content-textarea {
+  width: 100%;
+  padding: 1.5rem;
+  border: 2px solid #00ffcc;
+  border-radius: 10px;
+  background: #121212;
+  color: #ffffff;
+  font-size: 1.2rem;
+  resize: vertical;
+  height: 250px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+}
+
+/* Input Fields */
+input,
+textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #00ffcc;
+  border-radius: 5px;
+  background: #0da688; /* Teal background */
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  border-color: #00ffcc;
+}
+
+/* File Choose Button */
+input[type="file"] {
+  width: 100%;
+  padding: 1rem;
+  border: 2px dashed #00ffcc;
+  border-radius: 8px;
+  background: #121212;
+  color: #ffffff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+input[type="file"]:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #00ffcc;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  background: #0da688; /* Teal color for button */
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background: #00ddaa;
+}
+
+/* Media Upload Section */
+.media-upload {
+  width: 100%;
+  border: 2px solid #00ffcc;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  background: #121212;
+  color: #ffffff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.media-upload:hover {
+  background-color: #121212;
+  border-color: #ffcc00;
+}
+
+/* Crypto Tag Input */
+.crypto-tag-input {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #00ffcc;
+  border-radius: 8px;
+  background-color: #121212;
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+.crypto-tag-input:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+/* Submit Button */
+.submit-button {
+  background: #0da688;
+  color: #121212;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-transform: uppercase;
+}
+
+.submit-button:hover {
+  background: #00ffcc;
+  color: #000000;
+}
+
+.submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Remove Focus Outline on Checkbox */
+input[type="checkbox"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
   .post-creation-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(to bottom, #1a1a2e, #16213e);
-    min-height: 100vh;
-    padding: 5rem;
-    color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
-  
-    width: 1880px; /* Increase width to make the container wider */
-    max-width: 100%; /* Ensure it doesn't get too wide on larger screens */
+    padding: 2rem;
+    max-width: 95%;
   }
-  
-  /* Header */
-  .post-creation-container h2 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #00ffcc;
-    margin-bottom: 2rem;
-    margin-top: 1rem;
-    text-align: center;
-  }
-  
-  /* Form Styling */
-  .post-form {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    width: 100%;
-    max-width: 800px; /* Keep form width fixed inside container */
-  }
-  
-  /* Textarea Styling */
+
   .post-content-textarea {
-    width: 100%;
-    padding: 2rem;
-    border: 2px solid #00ffcc;
-    border-radius: 15px;
-    background-color: #1f4068;
-    color: #ffffff;
-    font-size: 1.5rem;
-    resize: vertical;
-    height: 300px;
-    line-height: 1.6;
-    box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+    height: 200px;
+    font-size: 1rem;
   }
-  
-  /* Media Upload Section */
-  .media-upload {
-    width: 100%;
-    border: 2px dashed #00ffcc;
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    background-color: #1f4068;
-    color: #ffffff;
-    font-size: 1.2rem;
-    cursor: pointer;
-  }
-  
-  /* Crypto Tag Input */
-  .crypto-tag-input {
-    width: 100%;
-    padding: 1.5rem;
-    border: 1px solid #00ffcc;
-    border-radius: 10px;
-    background-color: #1f4068;
-    color: #ffffff;
-    font-size: 1.2rem;
-  }
-  
-  /* Submit Button */
+
   .submit-button {
-    background: #00ffcc;
-    color: #1a1a2e;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 10px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
+    font-size: 1rem;
   }
-  
-  .submit-button:hover {
-    background: #ffcc00;
+}
+
+@media (max-width: 768px) {
+  .post-creation-wrapper {
+    padding: 1rem;
   }
-  
-  .submit-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+
+  .post-content-textarea {
+    height: 150px;
+    font-size: 0.9rem;
   }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .post-creation-container {
-      padding: 3rem;
-      width: 95%; /* Adjust width for smaller screens */
-    }
-  
-    .post-content-textarea {
-      height: 200px;
-      font-size: 1.2rem;
-    }
-  
-    .submit-button {
-      font-size: 1.2rem;
-    }
-  }
-  
+}

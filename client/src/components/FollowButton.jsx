@@ -13,6 +13,8 @@ import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig"; // Updated to use centralized API config
 import Loader from "@/components/Loader"; // Updated alias for Loader component
 import "@/css/components/FollowButton.css"; // Updated alias for CSS import
+import { FaUserPlus, FaUserCheck } from "react-icons/fa";
+
 
 const FollowButton = ({ userId, updateCounts }) => {
     const [isFollowing, setIsFollowing] = useState(null);
@@ -33,14 +35,13 @@ const FollowButton = ({ userId, updateCounts }) => {
         fetchFollowStatus();
     }, [fetchFollowStatus]);
 
-    const toggleFollow = async () => {
-        if (loading || isFollowing === null) return;
-        setLoading(true);
-        setErrorMessage("");
+    const handleFollowToggle = async () => {
+        if (loading) return;
 
+        setLoading(true);
         try {
             if (isFollowing) {
-                await api.delete(`/users/${userId}/unfollow`);
+                await api.post(`/users/${userId}/unfollow`);
                 updateCounts(-1);
             } else {
                 await api.post(`/users/${userId}/follow`);
@@ -48,8 +49,7 @@ const FollowButton = ({ userId, updateCounts }) => {
             }
             setIsFollowing(!isFollowing);
         } catch (error) {
-            console.error("Error toggling follow:", error);
-            setErrorMessage("Failed to update follow status.");
+            console.error("Error updating follow status:", error);
         } finally {
             setLoading(false);
         }
@@ -57,13 +57,15 @@ const FollowButton = ({ userId, updateCounts }) => {
 
     return (
         <div className="follow-button-container">
-            <button 
-                className={`follow-button ${isFollowing ? "is-following" : ""}`}
-                onClick={toggleFollow}
-                disabled={loading}
-            >
-                {loading ? <Loader size="small" /> : isFollowing ? "Following" : "Follow"}
-            </button>
+            <button
+            className={`follow-btn ${isFollowing ? "following" : ""}`}
+            onClick={handleFollowToggle}
+            disabled={loading}
+            aria-label={isFollowing ? "Unfollow user" : "Follow user"}
+        >
+            {isFollowing ? <FaUserCheck /> : <FaUserPlus />}
+            {isFollowing ? " Following" : " Follow"}
+        </button>
             {errorMessage && <p className="follow-error">{errorMessage}</p>}
         </div>
     );

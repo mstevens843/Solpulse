@@ -30,7 +30,8 @@
     padding-right: 1rem;
     text-align: left; /* Ensure heading is left-aligned */
   }
-  
+
+
   .modal-content input,
   .modal-content textarea {
     width: 100%;
@@ -46,7 +47,7 @@
   
   /* Message Content */
   .message-content {
-    background: #16213e;
+    background: #121212;
     color: #fff;
     overflow-wrap: break-word;
     font-weight: 600;  /* Slightly less bold */
@@ -59,36 +60,14 @@
     text-align: left; /* Align text to the left */
   }
   
-  /* Reply and Close Button Styling */
-  .close-btn {
-    background: linear-gradient(to right, #00ffcc, #ffcc00);
-    color: #1a1a2e;
-    font-weight: bold;
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
-    border-radius: 8px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-  }
+
   
-  .reply-btn {
-    background: linear-gradient(to right, #00ffcc, #ffcc00);
-    color: #1a1a2e;
-    font-weight: bold;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.3s ease;
-  }
   
   .modal-content button:hover {
     background-color: #ffcc00;
   }
 
-  .modal-content button {
+  button.reply-btn {
     background: linear-gradient(to right, #00ffcc, #ffcc00);
     color: #1a1a2e;
     font-size: 1.4rem;
@@ -102,6 +81,24 @@
     margin-top: 1.5rem;
   }
 
+
+  button.close-btn {
+    background: linear-gradient(to right, #00ffcc, #ffcc00);
+    color: #1a1a2e;
+    font-size: 1.4rem;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width:20%;
+    border: none;
+    margin-top: 1rem;
+    margin-right: .8rem;
+  }
+
+  
+  
+
   .modal-content label {
     font-size: 1.2rem;
     font-weight: bold;
@@ -114,18 +111,7 @@
     margin-top: 1.5rem;
   }
   
-  /* Close Modal Button */
-  .modal-content .close-overlay-button {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 2rem;
-    color: #ffcc00;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    background: none;
-    border: none;
-  }
+
   
   .close-overlay-button:hover {
     color: #00ffcc;

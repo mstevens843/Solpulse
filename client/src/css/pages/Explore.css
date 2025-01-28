@@ -1,63 +1,88 @@
-/* Explore Page Container */
-.explore-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
-  min-height: 100vh;
-  width: 100%;
-  padding: 5rem 2rem;
-  text-align: center;
-  gap: 2rem;
-}
+
 
 /* Header */
 .explore-header h2 {
-  font-size: 3rem;
+  font-size: 2.2rem;
+  margin-top: rem;
   font-weight: bold;
-  color: #00ffcc;
-  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin-top: 1.5rem;
 }
 
-/* Search Bar Section */
-/* .search-bar-container {
+ .search-bar-container {
   max-width: 1000px;
   width: 100%;
-  
-} */
+  margin-bottom: 10px
+ }
+
 
 /* Trending Topics Section */
 .trending-section {
-  margin-top: 3rem;
+  margin-top: 0rem;
   width: 100%;
   max-width: 1000px;
-  padding: 2rem;
+  height: 715px; /* Set fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
   border-radius: 12px;
-  background: #1f4068;
-  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+  background: #1c1c1e;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #00ffcc #121212; /* Custom scrollbar colors */
+}
+
+.trending-section::-webkit-scrollbar {
+  width: 10px;
+}
+
+.trending-section::-webkit-scrollbar-track {
+  background: #121212;
+  border-radius: 10px;
+}
+.trending-section::-webkit-scrollbar-thumb {
+  background: #00ffcc;
+  border-radius: 10px;
+}
+
+/* Ensure smooth scrolling */
+.trending-section {
+  scroll-behavior: smooth;
+}
+
+.home-right {
+  position: sticky;
+  top: 2rem;
+  max-height: calc(100vh - 4rem); /* Adjust height to fit viewport */
+  overflow-y: visible;
 }
 
 .trending-title {
-  font-size: 2.5rem;
+  font-size: 1.9rem;
   color: #00ffcc;
-  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   font-weight: bold;
+  text-align: center;
 }
 
 
 /* Trending Posts Grid */
 .trending-posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0rem;
+  margin-top: 0rem;
+  padding-left:1rem;
+  margin-right: 12px;
 }
 
 /* Trending Post Card */
 .trending-post {
-  background: #1f4068;
-  padding: 2rem;
+  background: #113f5e;
+  max-height: 9rem;
+  padding: 1rem;
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
   transition: all 0.3s ease;
@@ -70,15 +95,15 @@
 }
 
 .trending-post h4 {
-  font-size: 1.6rem;
+  font-size: 1rem;
   font-weight: bold;
-  color: #00ffcc;
+  color: #ffffff;
   margin-bottom: 1rem;
 }
 
 .trending-post p {
-  font-size: 1.2rem;
-  color: #bbbbbb;
+  font-size: 1rem;
+  color: #ffffff;
 }
 
 /* Error and Loading Messages */

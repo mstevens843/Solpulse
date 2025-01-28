@@ -1,130 +1,216 @@
-.home-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #121212;
-  color: #fff;
-  padding: 2rem;
+/* Home Page Layout */
+/* Home Page Layout */
+.home-page-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1.3fr;  /* Left, Middle, Right */
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    margin-top: 50px;
+    color: #fff;
+    min-height: 100vh;
+    z-index: 1; /* Ensure it sits above background */
+}
+.home-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #121212;
+    z-index: -1; /* Ensure it's behind content */
 }
 
-.home-content {
-  display: flex;
-  flex-direction: row;  /* Ensure elements are side by side */
-  align-items: center;
-  justify-content: space-between; /* Add spacing between sections */
-  max-width: 1200px;
-  width: 100%;
-  text-align: center;
-  gap: 4rem; /* Space between the ticker and login form */
+/* Left Section (Crypto Ticker) */
+.home-left {
+    margin-top:5rem;
+    max-width: 320px;
+    width: 100%;
+    max-height: 1000px;
+    height: 100%;
+    position: sticky;
+    top: 3rem;
 }
 
-/* Crypto Info Section */
-.crypto-info {
-  flex: 1;
-  text-align: left;
+/* Middle Section (Feed) */
+.home-middle {
+    margin-top:1%;
+    width: 100%;
+    max-width: 600px;
 }
 
-.crypto-info h1 {
-color: #00ffcc;
-font-weight: bold;
-font-size: 3rem;
-}
-
-.crypto-info p {
-  font-size: 1.5rem;
-  margin-bottom: 3rem;
-}
-
-/* Crypto Ticker Container */
-.crypto-ticker-container {
-  width: 100%;
-  max-width: 600px;
-  max-height: 400px;  
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  background: #1f1f1f;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
-
-}
-
-.crypto-ticker-container h2 {
-  margin-bottom: 1rem;
-  font-size: 1.4rem;
-  color: #00ffcc;
-}
-
-/* Ensure ticker text doesn't overflow */
-.crypto-ticker-container .ticker-content {
-  display: flex;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-.crypto-ticker-container .ticker-content::-webkit-scrollbar {
-  display: none;
-}
-
-/* Auth Section */
-.auth-section {
-  flex: 0.5;
-  max-width: 400px;
-  width: 100%;
-  background: #1f1f1f;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
-}
-
-.auth-section h2 {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.auth-section input {
-  display: block;
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  border: 1px solid #00ffcc;
-  border-radius: 5px;
-  background: #121212;
-  color: #fff;
-}
-
-.feed-button, .login-btn {
-  width: 100%;
-  padding: 1rem;
-  background-color: #0da688;
-  border: none;
-  border-radius: 5px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.feed-button:hover, .login-btn:hover {
-  background-color: #00ddaa;
-}
-
-.signup-link {
-  color: #00ffcc;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-.signup-link:hover {
-  text-decoration: underline;
+/* Right Section (Explore and Search) */
+.home-right {
+    max-width: 400px;
+    width: 100%;
+    position: sticky;
+    top: 2rem;
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .home-content {
-      flex-direction: column;  /* Stack vertically for smaller screens */
-      gap: 2rem;
-  }
+@media (max-width: 1200px) {
+    .home-page-container {
+        grid-template-columns: 1fr 3fr;  /* Collapse right panel */
+    }
+
+    .home-right {
+        display: none; /* Hide explore on smaller screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .home-page-container {
+        grid-template-columns: 1fr;  /* Stack all sections vertically */
+        gap: 1rem;
+    }
+
+    .home-left, .home-right {
+        max-width: 100%;
+        position: relative;
+    }
+}
+
+
+.crypto-ticker-container {
+    max-height: 1000px;
+    height: 100%;
+}
+
+.crypto-price-list  {
+    max-height: 1000px;
+    height: 100%;
+}
+
+
+.crypto-ticker-container h3 {
+    font-size: 1.35rem;
+    }
+
+.community-feed-ttitle {
+
+}
+
+
+.trending-post {
+    background: #103d3d;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+
+.trending-posts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.search-bar-container .search-button:hover, 
+.search-bar-container .reset-button:hover {
+    background-color: #00ddaa;
+}
+
+.search-bar-container .search-button {
+    display: block; /* Ensure the button takes full width of its parent */
+    width: 100%;  /* Adjust width as needed */
+    max-width: 300px; /* Limit the width to prevent shrinking */
+    margin: 0 auto;  /* Center the button */
+    padding: 0.6rem;
+    background: linear-gradient(to right, #0da688, #00ddaa);
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #000000;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    text-align: center;
+}
+
+.search-bar-container .reset-button {
+    display: block; /* Ensure the button takes full width of its parent */
+    width: 90%;  /* Adjust width as needed */
+    max-width: 300px; /* Limit the width to prevent shrinking */
+    margin: 0 auto;  /* Center the button */
+    padding: 0.6rem;
+    background: linear-gradient(to right, #0da688, #00ddaa);
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #000000;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    text-align: center;
+}
+
+/* Ensure input retains its original size */
+.search-bar-container .search-input {
+    width: 100%;
+    margin-bottom: 10px;
+    max-width: 600px; /* Adjust to desired size */
+    padding: 1rem;
+    border: .5px solid #00ffcc;
+    border-radius: 8px;
+    background-color: #1a1a2e;
+    color: #ffffff;
+    font-size: 1.3rem; /* Keep the input text size consistent */
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input::placeholder {
+    font-size: 1.1rem; /* Placeholder text size */
+    color: #ffffff;
+}
+
+
+/* Adjust text size inside the crypto ticker boxes */
+.crypto-price-item {
+    font-size: 0.9rem;  /* Reduce text size */
+}
+
+.crypto-name, 
+.crypto-symbol, 
+.crypto-price, 
+.crypto-marketcap, 
+.crypto-change {
+    font-size: 0.85rem; /* Reduce text size for specific elements */
+}
+
+/* Adjust search input placeholder and text size */
+.crypto-search-input {
+    font-size: 1rem;
+}
+
+/* Ensure ticker header text size remains visually balanced */
+.crypto-ticker-container h3 {
+    font-size: 1.2rem;  /* Slightly smaller header */
+}
+
+/* Reduce the font size of market cap values on homepage */
+.home-page-container .crypto-price-right {
+    display: flex;
+    flex-direction: column;  /* Stack elements vertically */
+    align-items: flex-start;
+}
+
+/* Reduce the font size of market cap values on homepage */
+.home-page-container .crypto-marketcap {
+    font-size: 0.75rem;  /* Smaller font size */
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* Reduce the font size of the 24h change value */
+.home-page-container .crypto-change {
+    font-size: 0.75rem;  /* Smaller font size */
+    font-weight: bold;
+}
+
+/* Reduce the font size of the 24h change value */
+.home-page-container .crypto-change {
+    font-size: 0.75rem; /* Smaller text size */
+    font-weight: bold;
 }

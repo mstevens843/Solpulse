@@ -4,76 +4,123 @@
 
 /* Apply Solana gradient text */
 .text-solana-gradient {
-    background: var(--solana-gradient);
+    background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-weight: bold;
 }
-
 
 /* Navbar Container */
 .navbar {
-    @apply fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 shadow-md;
-    height: var(--navbar-height); 
-    background: linear-gradient(to bottom, #1a1a2e, #16213e);
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--navbar-height);
+    padding: 1rem 2rem;
+    background: #1f1f1f;
     border-bottom: 2px solid #00ffcc;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
-/* Navbar Item */
-.navbar-item {
-    @apply font-medium text-lg transition-all duration-300; 
-    color: #00ffcc; /* Matching the trade page theme */
+/* Left and Right Navbar Sections */
+.navbar-left, 
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Navbar Brand */
+.navbar-brand {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Navbar Items */
+.navbar-item a {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #00ffcc;
     text-decoration: none;
     position: relative;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-item:hover {
+    color: #14F195;
+    transform: scale(1.05);
 }
 
 /* Active Link */
-.active-link {
+.navbar-item.active {
+    background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     font-weight: bold;
-    @apply text-solana-gradient;
 }
 
 /* Wallet Multi Button */
-.wallet-adapter-button {
-    @apply font-bold py-2 px-6 rounded-md transition-all duration-300;
-    background: #00ffcc;
+.navbar-wallet-button {
+    font-size: 1.1rem;
+    padding: 0.75rem 1.8rem;
+    border-radius: 8px;
+    background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;font-weight: bold;    
+    border: none;
     color: #1a1a2e;
-    border: 1px solid #00ffcc;
-    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.wallet-adapter-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
 }
 
 /* Notification Bell Container */
 .notification-bell-container {
-    @apply flex items-center;
+    display: flex;
+    align-items: center;
 }
 
 .notification-button {
-    @apply font-bold p-1 rounded-full transition duration-300; /* Reduced padding */
-    background: #00ffcc;
+    width: 42px;
+    height: 42px;
+    background: #14F195;
     color: #1a1a2e;
+    border-radius: 50%;
     border: none;
-    box-shadow: 0 0 5px rgba(0, 255, 204, 0.5); /* Reduced shadow */
-    font-size: 1rem; /* Adjust font size if needed */
-    width: 38px;  /* Define fixed size */
-    height: 46px; /* Define fixed size */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
 .notification-button:hover {
-}
-
-/* Align Left and Right Items */
-.navbar-left, 
-.navbar-right {
-    @apply flex items-center space-x-8;
+    background: #14F195;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
-        padding: 1rem 1.5rem;
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .navbar-left, 
+    .navbar-right {
+        flex-direction: column;
+        gap: 1rem;
     }
 
     .navbar-item {
@@ -85,40 +132,3 @@
         padding: 0.8rem 1.5rem;
     }
 }
-
-
-
-
-
-
-
-
-
-/* Key Features:
-Sticky Top Navbar:
-
-Ensures the navbar remains fixed at the top (fixed top-0) for better user navigation.
-Horizontal Menu Layout:
-
-A flexbox-based layout for evenly spaced navigation links.
-Active Link Highlighting:
-
-Distinctive active-link styling to indicate the current page with solana-secondary color.
-Smooth Transitions:
-
-Hover effects for menu items and buttons to provide a seamless interactive experience.
-Responsive Design:
-
-Designed for mobile and desktop with clean spacing and alignment for readability. */
-/* CSS (NavBar.css)
-Responsive Design:
-
-Added a media query for smaller screens (max-width: 768px).
-Adjusted the layout to stack items vertically when space is constrained.
-Hover and Focus Effects:
-
-Enhanced hover effects with smooth transitions.
-Added a distinct underline for active links to improve navigation clarity.
-Wallet Button:
-
-Styled the WalletMultiButton (wallet-adapter-button) to match the Solana theme. */

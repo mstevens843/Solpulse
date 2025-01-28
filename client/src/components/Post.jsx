@@ -135,83 +135,91 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
     
     return (
         <div className={`individual-post-container ${post.fading ? "fading" : ""}`}>
-            <ToastContainer />
-            <img
-                src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${profilePicture}?timestamp=${new Date().getTime()}`}
-                alt={`${post.author}'s profile`}
-                className="post-profile-picture"
-            />
-            <div className="individual-post-content-wrapper">
-                <div className="individual-post-header">
-                    <div className="post-author-details">
-                        <Link to={`/profile/${post.userId}`} className="post-author-link">
-                            <h4 className="individual-post-author">{post.author}</h4>
-                        </Link>
-                        <p className="individual-post-date">{formatDate(post.createdAt)}</p>
-                    </div>
-                    {currentUser?.id === post.userId && (
-                        <button
-                            className="delete-post-button"
-                            onClick={handleDeletePost}
-                            disabled={isDeleting}
-                        >
-                            {isDeleting ? "Deleting..." : "Delete"}
-                            </button>
-                    )}
+        <ToastContainer />
+        
+        {post.isRetweet && (
+            <p className="repost-indicator">
+                Reposted
+            </p>
+        )}
+    
+        <img
+            src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${profilePicture}?timestamp=${new Date().getTime()}`}
+            alt={`${post.author}'s profile`}
+            className="post-profile-picture"
+        />
+        <div className="individual-post-content-wrapper">
+            <div className="individual-post-header">
+                <div className="post-author-details">
+                    <Link to={`/profile/${post.userId}`} className="post-author-link">
+                        <h4 className="individual-post-author">{post.author}</h4>
+                    </Link>
+                    <p className="individual-post-date">{formatDate(post.createdAt)}</p>
                 </div>
-    
-                {/* Post Content Section */}
-                <div className="individual-post-content">
-                    <p>{post.content || "No content available."}</p>
-                    
-                    {/* CryptoTag Section */}
-                    {post.cryptoTag && (
-                        <p className="individual-post-crypto-tag">
-                            <span role="img" aria-label="crypto-tag">🏷️</span> {post.cryptoTag}
-                        </p>
-                    )}
-                </div>
-    
-                {/* Media Content */}
-                {post.mediaUrl && (
-                    <div className="individual-post-media">
-                        {post.mediaUrl.endsWith(".mp4") ? (
-                            <video controls className="post-video">
-                                <source src={post.mediaUrl} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
-                        ) : (
-                            <img src={post.mediaUrl} alt="Post media" className="post-image" />
-                        )}
-                    </div>
-                )}
-    
-    <div className="individual-post-actions">
-                    <LikeButton postId={post.id} currentUser={currentUser} initialLikes={post.likes || 0} />
-                    <RetweetButton 
-                        postId={post.id} 
-                        currentUser={currentUser} 
-                        initialRetweets={post.retweets || 0} 
-                        onRetweet={(retweetData) => setPosts((prevPosts) => [retweetData, ...prevPosts])}
-                    />                    
-                    <CommentSection postId={post.id} onNewComment={onNewComment} />
-                </div>
-    
-                <div className="view-comments-link">
-                    <a href="#" onClick={handleToggleOverlay} className="view-comments-link">
-                         View All Comments ({commentCount})
-                    </a>
-                </div>
-    
-                {isOverlayVisible && (
-                    <CommentList 
-                        postId={post.id} 
-                        currentUser={currentUser} 
-                        onClose={handleToggleOverlay} 
-                    />
+                {currentUser?.id === post.userId && (
+                    <button
+                        className="delete-post-button"
+                        onClick={handleDeletePost}
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? "Deleting..." : "Delete"}
+                    </button>
                 )}
             </div>
+    
+            {/* Post Content Section */}
+            <div className="individual-post-content">
+                <p>{post.content || "No content available."}</p>
+                
+                {/* CryptoTag Section */}
+                {post.cryptoTag && (
+                    <p className="individual-post-crypto-tag">
+                        <span role="img" aria-label="crypto-tag">🏷️</span> {post.cryptoTag}
+                    </p>
+                )}
+            </div>
+    
+            {/* Media Content */}
+            {post.mediaUrl && (
+                <div className="individual-post-media">
+                    {post.mediaUrl.endsWith(".mp4") ? (
+                        <video controls className="post-video">
+                            <source src={post.mediaUrl} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    ) : (
+                        <img src={post.mediaUrl} alt="Post media" className="post-image" />
+                    )}
+                </div>
+            )}
+    
+            <div className="individual-post-actions">
+                <LikeButton postId={post.id} currentUser={currentUser} initialLikes={post.likes || 0} />
+                <RetweetButton 
+                    postId={post.id} 
+                    currentUser={currentUser} 
+                    initialRetweets={post.retweets || 0} 
+                    onRetweet={(retweetData) => setPosts((prevPosts) => [retweetData, ...prevPosts])}
+                />          
+                <CommentSection postId={post.id} onNewComment={onNewComment} />
+            </div>
+    
+            <div className="view-comments-link">
+                <a href="#" onClick={handleToggleOverlay} className="view-comments-link">
+                     View All Comments ({commentCount})
+                </a>
+            </div>
+    
+            {isOverlayVisible && (
+                <CommentList 
+                    postId={post.id} 
+                    currentUser={currentUser} 
+                    onClose={handleToggleOverlay} 
+                />
+            )}
         </div>
+    </div>
+    
     );
 }
 

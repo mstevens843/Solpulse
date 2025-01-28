@@ -1,0 +1,174 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #121212;
+  color: #fff;
+  padding: 2rem;
+}
+
+.home-content {
+  display: flex;
+  flex-direction: row;  /* Ensure elements are side by side */
+  align-items: center;
+  justify-content: space-between; /* Add spacing between sections */
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+  gap: 4rem; /* Space between the ticker and login form */
+}
+
+/* Crypto Info Section */
+.crypto-info {
+  flex: 1;
+  text-align: left;
+}
+
+.crypto-info h1 {
+  background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;font-weight: bold;
+font-size: 3rem;
+}
+
+.crypto-info p {
+  font-size: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+/* Crypto Ticker Container */
+.crypto-ticker-container {
+  width: 100%;
+  max-width: 600px;
+  max-height: 400px;  
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: #1f1f1f;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+
+}
+
+.crypto-ticker-container h2 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  color: #00ffcc;
+}
+
+/* Ensure ticker text doesn't overflow */
+.crypto-ticker-container .ticker-content {
+  display: flex;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.crypto-ticker-container .ticker-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* Auth Section */
+.auth-section {
+  flex: 0.5;
+  max-width: 400px;
+  width: 100%;
+  background: #1f1f1f;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+}
+
+.auth-section h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.auth-section input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border: 1px solid #00ffcc;
+  border-radius: 5px;
+  background: #121212;
+  color: #fff;
+}
+
+.feed-button, .login-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: #0da688;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.feed-button:hover, .login-btn:hover {
+  background-color: #00ddaa;
+}
+
+.signup-link {
+  color: #00ffcc;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
+
+/* Remember Me Section */
+.remember-me-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align to the left */
+  color: #ffffff;
+  width: 40%; /* Ensure it takes full width */
+  margin-top: 0.5rem; /* Adjust positioning */
+}
+
+/* Remember Me Label */
+.remember-me-label {
+  font-size: .95rem;;
+  font-weight: normal;
+  margin-bottom: 16px;
+  white-space: nowrap;  /* Prevent wrapping */
+
+
+}
+
+/* Checkbox Styling */
+.remember-me-checkbox {
+  .remember-me-checkbox {
+    width: 0.7rem;
+    height: 0.7rem; /* Fixing typo: 'height: .7srem' to 'height: 0.7rem' */
+    cursor: pointer;
+  
+    /* Align to bottom of the screen */
+    position: fixed;
+    bottom: 0;
+    left: 50%; /* Optional: centers horizontally */
+    transform: translateX(-50%); /* Optional: centers horizontally */
+  }
+}
+
+input[type="checkbox"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .home-content {
+      flex-direction: column;  /* Stack vertically for smaller screens */
+      gap: 2rem;
+  }
+}
+
+

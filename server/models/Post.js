@@ -59,6 +59,20 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 0,
       },
+      isRetweet: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      originalPostId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: "Posts",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+      },
       deletedAt: {
         type: DataTypes.DATE, // Enable soft deletes
         allowNull: true,
@@ -112,7 +126,14 @@ module.exports = (sequelize, DataTypes) => {
       otherKey: 'userId',
       onDelete: 'CASCADE',
     });
-  };
+
+  // **Retweet Relationship**
+  Post.belongsTo(models.Post, {
+    foreignKey: "originalPostId",
+    as: "originalPost",
+    onDelete: "SET NULL",
+  });
+};
 
   // Hooks for preprocessing and validation
   Post.beforeCreate((post) => {

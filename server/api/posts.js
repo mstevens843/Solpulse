@@ -22,17 +22,22 @@ const upload = multer({ storage });
  * Utility function to format post responses
  */
 const formatPost = (post) => ({
-  id: post.id,
-  userId: post.userId,
-  author: post.user.username,
-  profilePicture: post.user.profilePicture,
-  content: post.content,
-  mediaUrl: post.mediaUrl,
-  cryptoTag: post.cryptoTag,
+  id: post.id || null,
+  userId: post.userId || null,
+  author: post.isRetweet && post.originalPost ? post.originalPost.user?.username : post.user?.username || 'Unknown',
+  profilePicture: post.isRetweet && post.originalPost ? post.originalPost.user?.profilePicture : post.user?.profilePicture || '/default-avatar.png',
+  content: post.content || '',
+  mediaUrl: post.mediaUrl || null,
+  cryptoTag: post.cryptoTag || null,
   likes: post.likes || 0,
   retweets: post.retweets || 0,
-  createdAt: post.createdAt,
-  updatedAt: post.updatedAt,
+  isRetweet: post.isRetweet || false,
+  originalPostId: post.originalPostId || null,
+  originalAuthor: post.isRetweet && post.originalPost ? post.originalPost.user?.username : null,
+  originalProfilePicture: post.isRetweet && post.originalPost ? post.originalPost.user?.profilePicture : null,
+  retweetedAt: post.retweetedAt || null,
+  createdAt: post.createdAt || new Date(),
+  updatedAt: post.updatedAt || new Date(),
 });
 
 
@@ -373,42 +378,52 @@ router.post('/:id/retweet', authMiddleware, async (req, res) => {
     const userId = req.user.id;
 
     // Check if the post exists
-    const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ message: 'Post not found.' });
+    const originalPost = await Post.findByPk(id, {
+      include: [{ model: User, as: "user", attributes: ["username", "profilePicture"] }]
+    });
+
+    if (!originalPost) {
+      return res.status(404).json({ message: "Post not found." });
+    }
 
     // Check if the user already retweeted the post
-    const existingRetweet = await Retweet.findOne({
-      where: { postId: id, userId },
+    const existingRetweet = await Post.findOne({
+      where: { userId, isRetweet: true, originalPostId: id },
     });
 
     if (existingRetweet) {
-      return res.status(400).json({ message: 'You have already retweeted this post.' });
+      return res.status(400).json({ message: "You have already retweeted this post." });
     }
 
-    // Create a retweet record
-    await Retweet.create({
-      postId: id,
+    // Create a new post entry for the retweet
+    const retweetedPost = await Post.create({
       userId,
+      author: originalPost.user.username, // Preserve original author's name
+      profilePicture: originalPost.user.profilePicture, // Preserve profile picture
+      content: originalPost.content,
+      mediaUrl: originalPost.mediaUrl,
+      cryptoTag: originalPost.cryptoTag,
+      isRetweet: true,
+      originalPostId: originalPost.id, // Store reference to original post
     });
 
     // Increment retweet count on the original post
-    post.retweets += 1;
-    await post.save();
+    originalPost.retweets += 1;
+    await originalPost.save();
 
     res.status(201).json({
-      message: 'Post retweeted successfully!',
-      retweets: post.retweets,
-      retweetData: {
-        postId: post.id,
-        userId,
-        createdAt: new Date(),
-      },
+      message: "Post retweeted successfully!",
+      retweets: originalPost.retweets,
+      retweetData: formatPost(retweetedPost), // Return formatted retweet post
     });
   } catch (error) {
-    console.error('Error retweeting post:', error);
-    res.status(500).json({ message: 'An error occurred while retweeting the post.' });
+    console.error("Error retweeting post:", error);
+    res.status(500).json({ message: "An error occurred while retweeting the post." });
   }
 });
+
+
+
 /**
  * @route   DELETE /api/posts/:id
  * @desc    Delete a post

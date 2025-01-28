@@ -1,18 +1,37 @@
-/* Follow Button */
-.follow-button {
-    @apply px-4 py-2 rounded-lg font-medium text-solana-dark bg-solana-primary hover:bg-solana-secondary transition-all duration-300;
+.follow-btn {
+    background: none;
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
     cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* Following State */
-.follow-button.is-following {
-    @apply bg-solana-secondary text-solana-dark hover:bg-solana-primary;
+.follow-btn:hover {
+    background: #00ffcc;
+    color: #121212;
 }
 
-/* Disabled State */
-.follow-button:disabled {
-    @apply bg-solana-light text-solana-text-light cursor-not-allowed;
+.follow-btn.following {
+    border: 2px solid #ffcc00;
+    color: #ffcc00;
 }
+
+.follow-btn.following:hover {
+    background: #ffcc00;
+    color: #121212;
+}
+
+.follow-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /* 
 Styling Updates (FollowButton.css)
 Hover and Transition Effects:

@@ -1,6 +1,6 @@
 /* Messages Page Container */
 .messages-container {
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  background: #121212; /* Match background with Landing & Home */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -14,41 +14,44 @@
 .messages-header {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #00ffcc; /* Teal color */
+  color: #00ffcc;
   text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
   padding: 1rem;
-  margin-bottom: 20px; /* Reduce margin to bring closer to message list */
+  margin-bottom: 20px;
   text-align: center;
+  background: linear-gradient(to right, #9945FF, #14F195, #00FFBD); /* Gradient for consistency */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Message List */
 .message-list {
   width: 100%;
   max-width: 600px;
-  background: #1f4068;
+  background: #1f1f1f; /* Match other components */
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 255, 204, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
   padding: 1.5rem;
-  
 }
+
 /* Individual Message Item */
 .message-item {
-  background: #16213e;
-  padding: .85rem;
+  background: #121212;
+  padding: 1rem;
   border-bottom: 1px solid #00ffcc;
-  transition: all 0.3s ease-in-out;
   border-radius: 8px;
   margin-bottom: 0.8rem;
   cursor: pointer;
-  overflow-y: auto;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Hover effect without blurring */
 .message-item:hover {
-  background: #1a1a2e;
-  color: #fff; /* Keep text white */
-  transform: translateZ(0); /* Prevent subpixel blurring */
+  background: #000000;
+  color: #fff;
+  transform: scale(1.02); /* Slight scaling for hover effect */
 }
+
+
 
 /* Read and Unread Messages */
 .message-item.read {
@@ -69,7 +72,185 @@
 .message-item p {
   margin-top: 0.5rem;
   font-size: 1rem;
+  color: #ffffff; /* Subtle text color */
 }
+
+.modal-overlay .modal-content {
+  background: #1f1f1f;
+}
+
+
+.modal-overlay .modal-content input  {
+  background: #121212;
+}
+.modal-overlay .modal-content textarea {
+  background: #121212;
+}
+
+.modal-overlay .modal-content button {
+  background: #0da688; /* Teal background */
+  color: #fff; /* Default text color */
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay .modal-content button:hover {
+  background: #00ffcc !important; /* Teal hover background */
+  color: #121212 !important; /* Dark text for contrast */
+}
+
+
+
+
+
+.messages-success {
+  background: #121212;
+  color: #00ffcc;
+  border: 2px solid rgba(0, 255, 204, 0.5);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.pagination button {
+  background: #0da688;
+  border: none;
+  color: #121212;
+  font-weight: bold;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination button:hover {
+  background: #00ffcc;
+  color: #000;
+}
+
+.pagination button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* New Message Button */
+.new-message-btn {
+  position: fixed;
+  bottom: 6rem;
+  right: 4rem;
+  background: #0da688;
+  color: #121212;
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border-radius: 100%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+
+.close-btn {
+  background: #121212;
+}
+
+.new-message-btn:hover {
+  background: #00ffcc;
+
+}
+
+/* Empty Messages */
+.messages-empty {
+  font-size: 1.3rem;
+  color: #ccc;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+/* Loader */
+.messages-loader {
+  margin-top: 2rem;
+}
+
+/* Suggested Users */
+.suggested-users {
+  position: absolute;
+  background: #1a1a1a;
+  border: 1px solid #00ffcc;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 10px;
+  margin-top: 5px;
+  z-index: 1000;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.suggested-users li {
+  padding: 12px 15px;
+  cursor: pointer;
+  color: #ddd;
+  font-weight: 500;
+  border-bottom: 1px solid #333;
+}
+
+.suggested-users li:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.suggested-users li:last-child {
+  border-bottom: none;
+}
+
+/* Message User Button */
+.message-user-btn {
+  background: none;
+  border: 2px solid #00ffcc;
+  color: #00ffcc;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.message-user-btn:hover {
+  background: #00ffcc;
+  color: #121212;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .messages-container {
+    padding: 2rem;
+  }
+
+  .message-item {
+    padding: 0.8rem;
+  }
+
+  .pagination button {
+    padding: 0.6rem 1.2rem;
+  }
+}
+
+
 
 /* Error and Success Messages */
 .messages-error,
@@ -87,159 +268,5 @@
 
 .messages-success {
   background: rgba(0, 255, 0, 0.2);
-  color: #00ffcc;
-}
-
-/* Pagination */
-.pagination {
-  display: flex;
-  gap: 0.8rem;
-  margin-top: 2rem;
-}
-
-.pagination button {
-  background: #00ffcc;
-  border: none;
-  color: #1a1a2e;
-  font-weight: bold;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.pagination button:hover {
-  background: #ffcc00;
-}
-
-.pagination button:disabled {
-  background: #555;
-  cursor: not-allowed;
-}
-
-/* New Message Button */
-.new-message-btn {
-  position: fixed;
-  bottom: 6rem;
-  right: 4rem;
-  background: #00ffcc;
-  color: #1a1a2e;
-  font-size: 2rem;
-  font-weight: bold;
-  padding: 1rem 2rem;
-  border-radius: 100%;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
-}
-
-.new-message-btn:hover {
-  background: linear-gradient(to right, #ffcc00, #00ffcc);
-}
-
-
-/* Empty Messages */
-.messages-empty {
-  font-size: 1.3rem;
   color: #ffffff;
-  text-align: center;
-  margin-top: 1.5rem;
-}
-
-/* Loader */
-.messages-loader {
-  margin-top: 2rem;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
-}
-
-.pagination-btn {
-  background-color: #00ffcc;
-  color: #1a1a2e;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  margin: 0 0.5rem;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.pagination-btn:hover {
-  background-color: #ffcc00;
-}
-
-.pagination-btn:disabled {
-  background-color: #555;
-  cursor: not-allowed;
-}
-
-.pagination-info {
-  font-size: 1.2rem;
-  color: #fff;
-}
-
-
-.suggested-users {
-  position: absolute;
-  background: #1a1a1a;  /* Dark mode background */
-  border: 1px solid #444;
-  width: 100%;
-  max-height: 150px;
-  overflow-y: auto;
-  list-style: none;
-  padding: 10px;
-  margin-top: 5px;
-  z-index: 1000;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow effect */
-}
-
-.suggested-users li {
-  padding: 12px 15px;
-  cursor: pointer;
-  color: #ddd;
-  font-weight: 500;
-  border-bottom: 1px solid #333;  /* Slight divider for separation */
-}
-
-.suggested-users li:hover {
-  background-color: #333;
-  color: #fff;
-}
-
-.suggested-users li:last-child {
-  border-bottom: none;
-}
-
-
-
-/* .overflow-y-auto {
-  overflow-y: auto;
-} */
-
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .messages-container {
-    padding: 1.5rem;
-  }
-
-  .message-item {
-    padding: 0.8rem;
-  }
-
-  .modal-content {
-    padding: 1.5rem;
-  }
-
-  .pagination button {
-    padding: 0.6rem 1.2rem;
-  }
 }

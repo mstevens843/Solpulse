@@ -64,13 +64,8 @@ const NavBar = () => {
             {/* Left Side Navigation */}
             <ul className="navbar-left">
                 <li className="navbar-item" key="home">
-                    <NavLink to="/" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Go to Home">
+                    <NavLink to="/home" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Go to Home">
                         Home
-                    </NavLink>
-                </li>
-                <li className="navbar-item" key="explore">
-                    <NavLink to="/explore" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Explore content">
-                        Explore
                     </NavLink>
                 </li>
                 <li className="navbar-item" key="trending-crypto">

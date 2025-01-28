@@ -12,15 +12,23 @@
 import { React, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import FollowButton from "@/components/FollowButton";
+import MessageButton from "./MessageButton";
 import FollowersFollowing from "./FollowersFollowing";
-import "@/css/components/UserCard.css"; 
+import { useNavigate } from "react-router-dom";
+import CryptoTip from "@/components/CryptoTip"; 
+import { FaEnvelope } from "react-icons/fa";
+
+import "@/css/components/UserCard.css";
 
 function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
     const [followersCount, setFollowersCount] = useState(user.followersCount || 0);
     const [followingCount, setFollowingCount] = useState(user.followingCount || 0);
     const [showModal, setShowModal] = useState(false);
+    const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+    const [showTipModal, setShowTipModal] = useState(false);
     const [viewingType, setViewingType] = useState(""); // 'followers' or 'following'
-    
+    const navigate = useNavigate();
+
     // Use user.profilePicture directly instead of local state to prevent desync issues
     const displayedProfilePicture = user?.profilePicture || "/default-avatar.png";
 
@@ -46,51 +54,113 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
         }
     };
 
+    const toggleMessageModal = () => {
+        setIsMessageModalOpen((prev) => !prev); // Toggle message modal
+    };
+
+    const toggleTipModal = () => {
+        setShowTipModal((prev) => !prev); // Toggle tip modal
+    };
+
     return (
         <div className={isInModal ? "user-card-modal" : "user-card"}>
-            <img 
-                src={`${user?.profilePicture ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${user.profilePicture}` : "/default-avatar.png"}?timestamp=${new Date().getTime()}`} 
-                alt={`${user.username}'s profile picture`} 
-                className={isInModal ? "user-avatar-modal" : "user-avatar"} 
+            <img
+                src={`${user?.profilePicture ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${user.profilePicture}` : "/default-avatar.png"}?timestamp=${new Date().getTime()}`}
+                alt={`${user.username}'s profile picture`}
+                className={isInModal ? "user-avatar-modal" : "user-avatar"}
             />
             {user.id === currentUser?.id && (
                 <>
-                    <button 
-                        className="edit-profile-btn" 
+                    <button
+                        className="edit-profile-btn"
                         onClick={() => document.getElementById("profile-pic-input").click()}
                     >
                         Edit Profile Picture
                     </button>
 
-                    <input 
-                        id="profile-pic-input" 
-                        type="file" 
-                        style={{ display: 'none' }} 
-                        onChange={handleProfilePictureChange} 
+                    <input
+                        id="profile-pic-input"
+                        type="file"
+                        style={{ display: 'none' }}
+                        onChange={handleProfilePictureChange}
                     />
                 </>
             )}
 
-            <div className="user-info">
-                <h4 className="user-username">{user.username}</h4>
-                <p onClick={() => openModal("followers")} className="follow-link">
-                    Followers: {followersCount}
-                </p>
-                <p onClick={() => openModal("following")} className="follow-link">
-                    Following: {followingCount}
-                </p>
-                <FollowButton userId={user.id} updateCounts={updateCounts} />
-            </div>
+                <div className="user-info">
+                    <h4 className="user-username">{user.username}</h4>
 
-            {showModal && (
-                <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-btn" onClick={() => setShowModal(false)}>X</button>
-                        <h3>{viewingType === "followers" ? "Followers" : "Following"}</h3>
-                        <FollowersFollowing userId={user.id} type={viewingType} />
-                    </div>
+                    <p onClick={() => openModal("followers")} className="follow-link">
+                        Followers: {followersCount}
+                    </p>
+                    <p onClick={() => openModal("following")} className="follow-link">
+                        Following: {followingCount}
+                    </p>
+
+                    {/* Follow & Message Buttons */}
+                    <FollowButton userId={user.id} updateCounts={updateCounts} />
+                    <MessageButton recipientUsername={user.username} onOpenMessageModal={toggleMessageModal} />
+
+                    {/* CryptoTip Button - Only show if user has a wallet address */}
+                    {user.walletAddress && (
+                        <button
+                            className="crypto-tip-btn"
+                            onClick={toggleTipModal} // Use toggle function
+                            aria-label="Tip User"
+                        >
+                            💰 Tip
+                        </button>
+                    )}
                 </div>
-            )}
+
+                {/* Followers/Following Modal */}
+                {showModal && (
+                    <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                            <button className="close-btn" onClick={() => setShowModal(false)}>X</button>
+                            <h3>{viewingType === "followers" ? "Followers" : "Following"}</h3>
+                            <FollowersFollowing userId={user.id} type={viewingType} />
+                        </div>
+                    </div>
+                )}
+                {/* CryptoTip Modal */}
+                {showTipModal && (
+                    <div className="modal-overlay" onClick={toggleTipModal}>
+                        <div className="modal-content crypto-tip-modal" onClick={(e) => e.stopPropagation()}>
+                            <button className="close-btn" onClick={toggleTipModal}>X</button>
+                            <CryptoTip
+                                recipientId={user.id}
+                                recipientWallet={user.walletAddress}
+                                onTipSuccess={(message) => {
+                                    alert(message); // Show success message
+                                    toggleTipModal(); // ✅ Close modal on success
+                                }}
+                            />
+                        </div>
+                    </div>
+                )}
+    
+                
+
+               {/* Message Modal */}
+                {isMessageModalOpen && (
+                    <div className="modal-overlay" onClick={toggleMessageModal}>
+                        <div className="modal-content message-modal" onClick={(e) => e.stopPropagation()}>
+                            <button className="close-btn" onClick={toggleMessageModal}>X</button>
+                            <h3>Send Message to {user.username}</h3>
+                            <form className="message-form" onSubmit={(e) => e.preventDefault()}>
+                                <textarea
+                                    placeholder="Write your message here..."
+                                    className="message-input"
+                                    rows="4"
+                                ></textarea>
+                                <button type="submit" className="send-message-btn">
+                                    Send
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                )}
         </div>
     );
 }
@@ -102,14 +172,15 @@ UserCard.propTypes = {
         profilePicture: PropTypes.string,
         followersCount: PropTypes.number,
         followingCount: PropTypes.number,
+        walletAddress: PropTypes.string, // ✅ Make sure wallet address is included
+
     }).isRequired,
-    currentUser: PropTypes.object.isRequired,  
-    onProfilePictureChange: PropTypes.func.isRequired, 
+    currentUser: PropTypes.object.isRequired,
+    onProfilePictureChange: PropTypes.func.isRequired,
     isInModal: PropTypes.bool
 };
 
 export default UserCard;
-
 
 
 

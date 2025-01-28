@@ -157,38 +157,6 @@ function Profile() {
     };
 
 
-    const handleTip = async ({ toUserId, recipientWallet, amount, message }) => {
-        try {
-            const response = await api.post("/tips", {
-                toUserId,
-                amount,
-                message,
-            });
-    
-            toast.success(`Tip of ${amount} SOL sent successfully to ${recipientWallet}!`, {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "dark",
-            });
-    
-            setShowTipModal(false);
-        } catch (error) {
-            console.error("Error sending tip:", error);
-            toast.error("Failed to send tip. Please try again later.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "dark",
-            });
-        }
-    };
 
     const addCommentToPost = (postId, newComment) => {
         setPosts((prevPosts) =>
@@ -199,6 +167,8 @@ function Profile() {
             )
         );
     };
+
+    
 
     return (
         <div className="profile-container">
@@ -221,18 +191,18 @@ function Profile() {
                         currentUser={currentUser}  
                         onProfilePictureChange={handleProfilePictureUpdate} 
                     />
-                        {user.walletAddress && (
+                        {/* {user.walletAddress && (
                             <button
                                 className="crypto-tip-btn"
                                 onClick={() => setShowTipModal(true)}
                                 aria-label="Tip User"
                             >
                                 💰
-                            </button>
+                            </button> */}
                         )}
                     </div>
     
-                    {showTipModal && (
+                    {/* {showTipModal && (
                         <div className="tip-modal-overlay" onClick={() => setShowTipModal(false)}>
                             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                                 <h3>Send Crypto Tip</h3>
@@ -245,7 +215,7 @@ function Profile() {
                             </div>
                         </div>
                     )}
-    
+     */}
                     {showUserCardModal && (
                         <UserCardModal user={user} onClose={() => setShowUserCardModal(false)} />
                     )}
@@ -283,7 +253,6 @@ function Profile() {
                                     <div key={post.id} className="post-container">
                                         {post.isRetweet && (
                                             <p className="retweet-indicator">
-                                                Retweeted from <strong>{post.originalUser}</strong>
                                             </p>
                                         )}
                                         <Post

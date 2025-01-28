@@ -10,11 +10,11 @@ import { AuthProvider } from "@/context/AuthContext"; // Auth Context
 import socket from "./socket"; // WebSocket instance
 
 import NavBar from "@/components/Navbar";
-import Home from "./pages/Home";
-import Feed from "@/pages/Feed"
+import LandingPage from "./pages/LandingPage";
+import Home from "@/pages/Home"
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
-import Explore from "./pages/Explore";
+import Explore from "./components/Explore";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
 import PostCreation from "./pages/PostCreation";
@@ -23,7 +23,7 @@ import SearchResults from "./pages/SearchResults";
 import Settings from "./pages/Settings";
 import Signup from "./pages/Signup";
 import TrendingCrypto from "./pages/TrendingCrypto";
-import Login from "./pages/Login";
+import Login from "./components/Login";
 import NotFound from "./pages/NotFound";
 import Trade from "@/pages/Trade";
 
@@ -79,8 +79,8 @@ function AppContent() {
             {!hideNavbarOnPaths.includes(location.pathname) && <NavBar />}
             <main>
                 <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/feed" element={<Feed />} />
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/home" element={<Home />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/profile/:id" element={<Profile />} />  {/* Correct path */}
                     <Route path="/explore" element={<Explore />} />

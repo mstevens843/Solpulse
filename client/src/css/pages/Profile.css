@@ -1,332 +1,243 @@
-/* Profile Container */
+/* Profile Page Container */
 .profile-container {
-    background: linear-gradient(to bottom, #1a1a2e, #16213e);
-    min-height: 100vh;
-    width: 100%;
-    padding: 5.5rem 5rem;
-    color: #fff;
-    text-align: center;
-    box-sizing: border-box;
-}
-
-.user-card {
-    margin-bottom: 25px;
-}
-
-/* Bio Display */
-.bio-display {
-    background: #1f4068;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-    margin-bottom: 2rem;
-}
-
-.bio-display p {
-    font-size: 1.3rem;
-    color: #ffffff;
-}
-
-.bio-display button {
-    background: linear-gradient(to right, #00ffcc, #ffcc00);
-    color: #1a1a2e;
-    font-weight: bold;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1.2rem;
-}
-
-
-/* User Card Container */
-.user-card-container {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    max-width: 500px;
-    margin-bottom: 25px;
-}
-
-
-.bio-display button:hover {
-    background-color: #ffcc00;
-}
-
-/* Edit Bio Overlay */
-.edit-bio-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-/* Edit Bio Content */
-.edit-bio-content {
-    background: #1f4068;
-    padding: 3rem;
-    border-radius: 12px;
-    box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
-    max-width: 600px;
-    width: 90%;
-    text-align: center;
-}
-
-.edit-bio-content h3 {
-    font-size: 2rem;
-    color: #00ffcc;
-    margin-bottom: 1.5rem;
-    color: white;
-}
-
-bio-display p {
-    color: white;
-}
-
-.edit-bio-content textarea {
-    width: 100%;
-    padding: 1.5rem;
-    border: 2px solid #00ffcc;
-    border-radius: 8px;
-    background-color: #16213e;
-    color: #ffffff;
-    font-size: 1.4rem;
-}
-
-.edit-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-}
-
-.edit-actions button {
-    background: linear-gradient(to right, #00ffcc, #ffcc00);
-    color: #1a1a2e;
-    font-size: 1.4rem;
-    font-weight: bold;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-}
-
-.edit-actions button:hover {
-    background-color: #ffcc00;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .edit-bio-content {
-        padding: 2rem;
-    }
-
-    .edit-bio-content h3 {
-        font-size: 1.8rem;
-    }
-
-    .edit-actions button {
-        font-size: 1.2rem;
-    }
-}
-
-
-/* Posts Container */
-.posts-container {
-    background: #1f4068;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-    margin-bottom: rem;
-}
-
-/* Posts List */
-.posts-list {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-}
-
-/* Posts Heading */
-.posts-container h3 {
-    font-size: 2rem;
-    color: #00ffcc;
-    margin-bottom: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #121212; /* Matches Landing Page background */
+    color: #fff;
+    padding: 2rem;
+    gap: 2rem; /* Adds spacing between sections */
+  }
+  
+  /* Loader */
+  .profile-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  /* Error Container */
+  .error-container {
     text-align: center;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .posts-container {
-        padding: 1.5rem;
-        max-width: 100%;
-    }
-
-    .posts-container h3 {
-        font-size: 1.5rem;
-    }
-}
-
-
-/* Crypto Tip Button */
-.crypto-tip-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: linear-gradient(to right, #00ffcc, #ffcc00);
-    color: #1a1a2e;
-    font-weight: bold;
-    font-size: 1.5rem;
-    padding: 0.8rem 1.2rem;
+    background: #1f1f1f;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+  }
+  
+  .error-container p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .error-container button {
+    background-color: #0da688;
+    color: #121212;
+    padding: 1rem 2rem;
+    border-radius: 5px;
     border: none;
-    border-radius: 50%;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease;
+  }
+  
+  .error-container button:hover {
+    background-color: #00ddaa;
+  }
+  
+  /* User Card Container */
+  .user-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1f1f1f;
+    padding: 2rem;
+    margin-top: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+  }
+  
+  /* Crypto Tip Button */
+  .crypto-tip-btn {
+    background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+    color: #121212;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: .6rem 1rem;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
-}
-
-.crypto-tip-btn:hover {
-    background-color: #ffcc00;
-}
-
-
-
-/* Close Button */
-.close-btn {
-    background: #ffcc00;
-    color: #1a1a2e;
+  }
+  
+  .crypto-tip-btn:hover {
+    background-color: #00ddaa;
+  }
+  
+  /* Modal Overlay */
+  .tip-modal-overlay,
+  .edit-bio-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  /* Modal Content */
+  .modal-content,
+  .edit-bio-content {
+    background: #1f1f1f;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+  }
+  
+  .modal-content h3,
+  .edit-bio-content h3 {
+    font-size: 1.8rem;
+    color: #00ffcc;
+    margin-bottom: 1rem;
+  }
+  
+  .edit-bio-content textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #00ffcc;
+    border-radius: 8px;
+    background-color: #121212;
+    color: #ffffff;
+    font-size: 1.2rem;
+    resize: none;
+    margin-bottom: 1rem;
+  }
+  
+  .edit-actions button {
+    background: linear-gradient(to right, #00ffcc, #ffcc00);
+    color: #121212;
+    font-size: 1rem;
     font-weight: bold;
     padding: 1rem 2rem;
     border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1.2rem;
     border: none;
-    margin-top: 1.5rem;
-}
-
-.close-btn:hover {
-    background-color: #00ffcc;
-}
-
-.success-message {
-    background: #00ffcc;
-    color: #1a1a2e;
-    padding: 1rem;
-    border-radius: 8px;
-    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .edit-actions button:hover {
+    background-color: #00ddaa;
+  }
+  
+  /* Bio Display */
+  .bio-display {
+    background: #1f1f1f;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
     text-align: center;
-    margin-bottom: 1rem;
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
-    transition: opacity 0.3s ease-in-out;
-}
-
-
-/* Modal Overlay */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-/* Modal Content */
-.modal-content {
-    background: #1f4068;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
-    max-width: 500px;
-    width: 90%;
-    text-align: center;
-}
-
-.modal-content h3 {
-    font-size: 2rem;
+    max-width: 800px;
+  }
+  
+  .bio-display p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .bio-display button {
+    background-color: #0da688;
+    color: #121212;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .bio-display button:hover {
+    background-color: #00ddaa;
+  }
+  
+  /* Posts Container */
+  .posts-container {
+    background: #1f1f1f;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  .posts-container h3 {
+    font-size: 1.8rem;
     color: #00ffcc;
     margin-bottom: 1.5rem;
-}
-
-
-/* User Card Modal */
-.user-card-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000; /* Make sure this modal sits on top of others */
-}
-
-
-
-/* Modal Content */
-.user-card-modal-content {
-    background: #1f4068;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
-    max-width: 500px;
-    width: 90%;
     text-align: center;
-}
-
-
-.followers-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+  }
+  
+  .posts-list {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.tip-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1001; /* Make sure it's on top of other modals */
-}
-
-
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .modal-content {
-        padding: 2rem;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .post-container {
+    background: #121212;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+  }
+  
+  .post-container h4 {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+  }
+  
+  .post-container p {
+    font-size: 1rem;
+    color: #cccccc;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .profile-container {
+      padding: 1.5rem;
     }
-
-    .modal-content h3 {
-        font-size: 1.8rem;
+  
+    .user-card-container,
+    .bio-display,
+    .posts-container {
+      max-width: 95%;
     }
-
-    .close-btn {
-        font-size: 1.2rem;
+  
+    .posts-container h3 {
+      font-size: 1.5rem;
     }
-}
+  }
+  
+  @media (max-width: 768px) {
+    .crypto-tip-btn {
+      font-size: 1rem;
+    }
+  
+    .modal-content h3,
+    .edit-bio-content h3 {
+      font-size: 1.5rem;
+    }
+  }
+  

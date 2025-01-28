@@ -146,6 +146,11 @@ const markAllAsRead = async () => {
         <div className="notification-dropdown">
           <div className="notification-header">
             <h4>Notifications</h4>
+            <div className="notification-dropdown-footer">
+            <a href="/notifications" className="view-all-link">
+              View all notifications
+            </a>
+          </div>
             <button
               onClick={markAllAsRead}
               className="mark-all-read"
@@ -181,11 +186,6 @@ const markAllAsRead = async () => {
           ) : (
             <p className="no-notifications">No notifications</p>
           )}
-          <div className="notification-dropdown-footer">
-            <a href="/notifications" className="view-all-link">
-              View all notifications
-            </a>
-          </div>
         </div>
       )}
     </div>

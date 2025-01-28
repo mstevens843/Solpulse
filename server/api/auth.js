@@ -5,6 +5,8 @@ const { check, validationResult } = require('express-validator');
 const { User } = require('../models/Index');
 const validateToken = require('../utils/validateToken');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize'); // import sequelize operators
+
 
 // Helper function to generate JWT token
 const generateToken = (user) => {
@@ -55,7 +57,7 @@ router.post(
 router.post(
     '/login',
     [
-        check('email', 'Please include a valid email').isEmail(),
+        check('identifier', 'Please include a valid email or username').notEmpty(),
         check('password', 'Password is required').notEmpty(),
     ],
     async (req, res, next) => {
@@ -64,16 +66,24 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { email, password } = req.body;
+        const { identifier, password } = req.body;
 
         try {
-            const user = await User.scope('withPassword').findOne({ where: { email } });
+            let user = await User.scope('withPassword').findOne({
+                where: {
+                    [Op.or]: [
+                        { email: identifier },
+                        { username: identifier }
+                    ]
+                }
+            });
+
             if (!user || !(await bcrypt.compare(password, user.password))) {
                 return res.status(400).json({ error: 'Invalid credentials' });
             }
 
             const token = generateToken(user);
-            res.status(200).json({ token });
+            res.status(200).json({ token, user });
         } catch (error) {
             next(error);
         }

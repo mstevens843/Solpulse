@@ -71,39 +71,147 @@
   text-align: center;
 } */ */  */ */ */ */ */ */
 
+/* Feed Container */
 .community-feed-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
+  width: 50%;  /* Set width to 50% of the viewport */
+  margin: 2rem auto;  /* Center the container horizontally */
+  padding: 1rem 2rem;
   background: #1f1f1f;
-  border-radius: 10px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+  font-family: 'Inter', sans-serif;
 }
 
+
+/* Feed Title */
 .community-feed-title {
+  width: 100%;  /* Set width to 50% of the viewport */
+
   text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
   color: #00ffcc;
+  text-align: ;
+  /* border-bottom: 2px solid #00ffcc; */
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
+/* Pagination Controls */
 .pagination-controls {
   display: flex;
   justify-content: space-between;
-  margin-top: 1rem;
+  align-items: center;
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  color: #00ffcc;
 }
 
+/* Pagination Buttons */
 .pagination-button {
   padding: 0.75rem 1.5rem;
-  background-color: #00ffcc;
+  background: linear-gradient(to right, #0da688, #00ddaa);
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
+  color: #121212;
+  font-weight: bold;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
 }
 
+.pagination-button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* Feed List */
 .community-feed-list {
   list-style: none;
   padding: 0;
+  border: 1px solid #2e2e2e;
+  border-radius: 10px;
 }
 
+/* Individual Post */
 .community-feed-post {
-  padding: 1rem;
-  border-bottom: 1px solid #2e2e2e;
+  padding: 0rem;
+  border: 1px solid #2e2e2e;
+  background: #282828;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.community-feed-post:hover {
+  background: #333;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+/* Post Content */
+.post-content {
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Author Details */
+.post-author {
+  font-weight: bold;
+  color: #00ffcc;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-author img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #00ffcc;
+}
+
+.post-date {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-left: 0.5rem;
+}
+
+/* Action Buttons */
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.post-actions button {
+  background: transparent;
+  color: #00ffcc;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.post-actions button:hover {
+  color: #ffcc00;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .community-feed-container {
+      max-width: 100%;
+      padding: 1rem;
+  }
+
+  .post-author img {
+      width: 40px;
+      height: 40px;
+  }
+
+  .post-content {
+      font-size: 0.9rem;
+  }
 }

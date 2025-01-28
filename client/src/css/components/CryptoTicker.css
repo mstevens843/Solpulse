@@ -15,10 +15,13 @@
 
 /* Ticker Heading */
 .crypto-ticker-container h3 {
+    margin-bottom: 1rem;
     font-size: 1.5rem;
     font-weight: bold;
-    color: #00ffcc;
-}
+    background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;}
 
 /* Search Bar */
 .crypto-search-input {

@@ -140,6 +140,16 @@ function CryptoTicker() {
         };
     }, [fetchPrices]);
 
+    const formatMarketCap = (marketCap) => {
+        if (marketCap >= 1_000_000_000) {
+            return `${(marketCap / 1_000_000_000).toFixed(2)}B`;
+        } else if (marketCap >= 1_000_000) {
+            return `${(marketCap / 1_000_000).toFixed(2)}M`;
+        } else {
+            return `$${Number(marketCap).toLocaleString()}`;
+        }
+    };
+
     return (
         <div className="crypto-ticker-container">
             <h3>Explore Solana Ecosystem</h3>
@@ -186,9 +196,9 @@ function CryptoTicker() {
                                     <span className="crypto-price">${coin.current_price.toFixed(2)}</span>
                                 </div>
                                 <div className="crypto-price-right">
-                                    <span className="crypto-marketcap">
-                                    MCap: ${Number(coin.market_cap).toLocaleString()}
-                                    </span>
+                                <span className="crypto-marketcap">
+                                    MCap: {formatMarketCap(coin.market_cap)}
+                                </span>
                                     <span
                                         className={`crypto-change ${
                                             coin.price_change_percentage_24h > 0

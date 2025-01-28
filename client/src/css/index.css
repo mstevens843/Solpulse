@@ -2,32 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Map CSS Variables to Tailwind Utilities */
+/* Solana Theme Variables */
 :root {
   --solana-primary: #6c43ff;
   --solana-secondary: #14f195;
   --solana-light: #f3f4f6;
   --solana-dark: #1c1c1e;
   --solana-text-light: #a1a1aa;
-  --solana-text-dark: #1c1c1e;
+  --solana-text-dark: #f3f4f6;
   --solana-error: #ff4d4d;
-  --solana-gradient: linear-gradient(135deg, #9945ff, #14f195);
+  --solana-gradient: linear-gradient(135deg, #9945ff, #14f195, #00FFBD);
 }
 
 /* Base Styles */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply bg-solana-dark text-solana-text-dark font-sans leading-relaxed;
+  @apply bg-solana-dark text-solana-light font-sans leading-relaxed;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 a {
@@ -43,11 +41,18 @@ h1, h2, h3 {
   @apply mb-4 font-bold;
 }
 
+h1 {
+  font-size: 2.5rem;
+  background: var(--solana-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 p {
   @apply mb-3 leading-relaxed;
 }
 
-/* Utilities */
+/* Utility Classes */
 @layer utilities {
   .bg-solana-dark {
     background-color: var(--solana-dark);
@@ -79,19 +84,18 @@ p {
   .border-solana-dark {
     border-color: var(--solana-dark);
   }
-  .text-solana-light {
-    color: var(--solana-text-light);
-  }
   .text-solana-gradient {
-    color: linear-gradient(to right, var(--solana-primary), var(--solana-secondary));
+    background: var(--solana-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 
-/* Custom Components */
+/* Components */
 @layer components {
   /* Buttons */
   .button-primary {
-    @apply bg-gradient-to-r from-[var(--solana-primary)] to-[var(--solana-secondary)] text-solana-dark font-bold py-2 px-4 rounded-md hover:bg-solana-secondary transition-all duration-300;
+    @apply bg-gradient-to-r from-[var(--solana-primary)] to-[var(--solana-secondary)] text-solana-dark font-bold py-3 px-6 rounded-lg hover:bg-solana-secondary transition-all duration-300 shadow-lg;
   }
 
   .button-primary:active {
@@ -102,32 +106,49 @@ p {
     @apply bg-solana-light text-solana-text-light cursor-not-allowed;
   }
 
-  /* Button Secondary */
+  /* Secondary Button */
   .button-secondary {
-    @apply bg-solana-secondary text-solana-dark font-medium py-2 px-4 rounded-md hover:bg-solana-primary transition-all duration-300;
+    @apply bg-solana-secondary text-solana-dark font-medium py-3 px-6 rounded-lg hover:bg-solana-primary transition-all duration-300;
   }
 
-  /* Cards */
-  .card {
-    @apply bg-solana-light p-4 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105;
+  /* Input Fields */
+  .input-field {
+    @apply w-full p-3 border border-solana-primary bg-solana-dark text-solana-light rounded-md focus:outline-none focus:ring-2 focus:ring-solana-primary transition-all;
   }
 
-  /* Success Banner */
-  .success-banner {
-    @apply bg-solana-secondary text-solana-dark text-center font-medium p-4 rounded-lg;
+  .input-field:focus {
+    @apply border-2 border-solana-secondary;
   }
 
-  /* Form Elements */
-  .form-input {
-    @apply w-full p-2 border border-solana-primary bg-solana-light text-solana-dark rounded-md focus:outline-none focus:ring-2 focus:ring-solana-primary transition-all;
-  }
-
+  /* Form Components */
   .form-label {
-    @apply block text-solana-text-light font-semibold mb-2;
+    @apply block text-solana-light font-semibold mb-2;
   }
 
   .form-error {
-    @apply text-solana-error font-medium;
+    @apply text-solana-error font-medium text-center mt-2;
+  }
+
+  /* Card Components */
+  .card {
+    @apply bg-solana-dark p-6 rounded-lg shadow-lg border border-solana-secondary transition-all transform hover:scale-105;
+  }
+
+  /* Header Section */
+  .header-section {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .header-title {
+    font-size: 3rem;
+    font-weight: bold;
+    @apply text-solana-gradient;
+  }
+
+  /* Containers */
+  .container {
+    @apply max-w-6xl mx-auto px-6 sm:px-10 mt-6 animate-fade-in;
   }
 
   /* Animations */
@@ -144,23 +165,169 @@ p {
     animation: fadeIn 0.5s ease-in-out;
   }
 
-  /* Containers */
-  .container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 animate-fade-in;
-  }
-
   /* Error Banner */
   .error-banner {
-    @apply bg-solana-error text-solana-text-dark text-center font-medium p-4 rounded-lg;
+    @apply bg-solana-error text-solana-dark text-center font-medium p-4 rounded-lg;
   }
 
   /* Loading Spinner */
   .loading-spinner {
-    @apply flex justify-center items-center my-6;
+    @apply flex justify-center items-center my-6 text-solana-primary;
   }
 
-  /* Custom Classes for Reusability */
-  .centered {
-    @apply flex justify-center items-center;
+  /* Navbar */
+  .navbar {
+    @apply fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 shadow-md;
+    height: 4rem;
+    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+    border-bottom: 2px solid #00ffcc;
+  }
+
+  .navbar-item {
+    @apply font-medium text-lg transition-all duration-300 text-solana-primary;
+  }
+
+  .navbar-item:hover {
+    @apply text-solana-secondary;
+  }
+
+  /* Feed Container */
+  .feed-container {
+    @apply flex flex-col items-center justify-center min-h-screen bg-solana-dark p-8;
+  }
+
+  .feed-card {
+    @apply bg-solana-light p-6 rounded-lg shadow-md max-w-2xl w-full;
+  }
+
+  /* Post Styling */
+  .post {
+    @apply bg-solana-dark p-4 rounded-lg shadow-md border border-solana-primary;
+  }
+
+  .post-header {
+    @apply flex justify-between items-center mb-2;
+  }
+
+  .post-content {
+    @apply text-solana-light leading-relaxed;
+  }
+
+  /* Footer */
+  .footer {
+    @apply text-center text-solana-text-light py-4;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .container {
+    padding: 3rem 1.5rem;
+  }
+
+  .header-title {
+    font-size: 2.5rem;
+  }
+
+  .navbar-item {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .feed-card {
+    width: 100%;
+  }
+
+  .navbar {
+    padding: 1rem 1.5rem;
+  }
+
+  .navbar-item {
+    font-size: 1rem;
+  }
+
+  .button-primary,
+  .button-secondary {
+    padding: 0.8rem 1.5rem;
+  }
+}
+
+
+/* General Page Container */
+.page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--solana-dark);
+  color: white;
+  padding: 2rem;
+}
+
+/* General Page Content Layout */
+.page-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  width: 100%;
+  gap: 4rem;
+  text-align: center;
+}
+
+/* Gradient Text for Headers */
+.text-gradient {
+  background: var(--solana-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 4rem;
+  padding: 1rem 2rem;
+  background: var(--solana-dark);
+  border-bottom: .5px solid rgba(0, 255, 204, 0.5);
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar-item {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--solana-secondary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.navbar-item:hover {
+  color: var(--solana-primary);
+}
+
+.navbar-item.active {
+  background: var(--solana-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .page-content {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .navbar {
+    flex-direction: column;
   }
 }

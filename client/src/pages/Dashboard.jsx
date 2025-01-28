@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { api } from "@/api/apiConfig";
 import CryptoWalletIntegration from "@/components/CryptoWalletIntegration";
 import CryptoTransactions from "@/components/CryptoTransactions";
-import Feed from "@/pages/Feed";
+import Feed from "@/components/Feed";
 import MessagePreview from "@/components/MessagePreview";
 import "@/css/pages/Dashboard.css";
 

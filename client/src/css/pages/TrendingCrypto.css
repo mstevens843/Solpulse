@@ -110,7 +110,7 @@
   background: #1f4068;
   padding: 1rem;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
+  /* box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3); */
   width: calc(35% - 1rem);
   max-width: 350px;
   text-align: center;

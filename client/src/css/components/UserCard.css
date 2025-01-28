@@ -1,94 +1,147 @@
 /* User Card Container */
 .user-card {
-    background: #1f4068;
-    padding: 4rem;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+      justify-content: space-between; /* Ensures both sides are evenly spaced */
+    background: #1f1f1f;
+    padding: .7rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    max-width: 600px;
+    width: 100%;
+    margin: 1rem auto;
+    color: #fff;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    width: 100%;
-    text-align: center;
-}
-
-/* Hover Effect */
-.user-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(0, 255, 204, 0.5);
-}
-
-/* Avatar */
-.user-avatar {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    border: 4px solid #00ffcc;
-    object-fit: cover;
-    margin-bottom: 1rem;
-}
-
-/* User Info */
-.user-info {
+  }
+  
+  /* Hover Effect */
+  .user-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+  }
+  
+  /* Left Side (Profile Picture + Edit Button) */
+  .user-left {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
+    margin-right: 10rem;
+    margin-bottom: 5rem;
+  }
 
-.user-username {
-    font-size: 1.8rem;
-    font-weight: bold;
+    /* Right Side (User Info) */
+    .user-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 5rem;
+        margin-left: 3rem;
+    
+      }
+      
+  
+  /* Avatar */
+  .user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+    margin-right: rem;
+  }
+  
+  /* Edit Profile Button */
+  .edit-profile-btn {
+    background: none;
+    border: 2px solid #00ffcc;
     color: #00ffcc;
-    margin-bottom: 1rem;
-}
-
-/* Follow Button */
-.follow-button {
-    background: linear-gradient(to right, #00ffcc, #ffcc00);
-    color: #1a1a2e;
-    font-size: 1.4rem;
-    font-weight: bold;
-    padding: 1rem 2rem;
+    padding: 0.5rem .5rem;
     border-radius: 8px;
+    font-size: 0.9rem;
     cursor: pointer;
-    border: none;
     transition: all 0.3s ease;
-    width: 100%;
-}
+    margin-top: 0.5rem;
+   
+  }
+  
+  .edit-profile-btn:hover {
+    background: #00ffcc;
+    color: #1f1f1f;
+  }
+  
 
-.follow-button:hover {
-    background: linear-gradient(to right, #ffcc00, #00ffcc);
-}
+  /* Username */
+  .user-username {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-left: 5.5rem;
+  }
+  
+  /* Stats Row */
+  .user-stats {
+    display: flex;
+    gap: 1.2rem;
+    font-size: 1.1rem;
+    margin-bottom: .5rem;
+  }
+  
+  .user-stats p {
+    cursor: pointer;
+    transition: color 0.3s ease;
+    margin-left: 22
+  }
+  
+  .user-stats p:hover {
+    color: #00ffcc;
+  }
+  
+  /* Follow Button */
+  .follow-btn {
+    background: none;
+    border: 2px solid #00ffcc;
+    border-radius: 8px;
+    color: #00ffcc;
+    font-size: .8rem;
+    margin-top: 3rem;
+    margin-left: 8rem;
+    font-weight: bold;
+    padding: 0.4rem .6rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .follow-btn:hover {
+    background: #00ffcc;
+    color: #1f1f1f;
+  }
+  
 
-
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .user-card {
-        max-width: 100%;
-        padding: 1.5rem;
-    }
-
-    .user-avatar {
-        width: 60px;
-        height: 60px;
-    }
-
-    .user-username {
-        font-size: 1.5rem;
-    }
-
-    .follow-button {
-        font-size: 1.2rem;
-        padding: 0.8rem 1.5rem;
-    }
-}
-
-
-
-
-.close-btn {
+ .message-btn {
+    background: none;
+    border: 2px solid #00ffcc;
+    border-radius: 8px;
+    color: #00ffcc;
+    font-size: .8rem;
+    margin-top: .5rem;
+    margin-left: 7.3rem;
+    font-weight: bold;
+    padding: 0.4rem .6rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .message-user-btn:hover {
+    background: #00ffcc;
+    color: #1f1f1f;
+  }
+  /* Close Button */
+  .close-btn {
     position: absolute;
     top: 10px;
     right: 15px;
@@ -96,52 +149,109 @@
     border: none;
     font-size: 20px;
     cursor: pointer;
+    color: #00ffcc;
+    transition: color 0.3s ease;
+  }
+  
+  .close-btn:hover {
+    color: #ffcc00;
+  }
+
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
-.follow-link {
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+}
+
+.message-modal {
+    text-align: center;
+}
+
+.message-input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: none;
+}
+
+.send-message-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
     cursor: pointer;
-    color: #fff; /* White text */
-    text-decoration: none; /* Remove underline */
-    font-weight: bold; /* Make it stand out slightly */
-    transition: color 0.3s ease-in-out;
+    margin-top: 10px;
 }
 
-.follow-link:hover {
-    color: #ddd; /* Light gray on hover for better UX */
-    text-decoration: none;
+.send-message-btn:hover {
+    background-color: #0056b3;
 }
 
-
-
-
-
-/* Key Features:
-Card Design:
-
-A clean, compact card with a Solana-inspired background.
-Subtle hover scaling effect for interactivity.
-Avatar Styling:
-
-Circular avatar with a border-2 for highlighting user identity.
-Adjusted size and spacing for better alignment.
-Typography:
-
-Clear, readable username styled with text-lg and font-semibold.
-Follow Button Integration:
-
-Embedded FollowButton styled to blend seamlessly with the card.
-Button uses hover and transition effects for smooth interaction. */
-
-/* CSS (UserCard.css)
-Responsive Design:
-
-Adjusted layout for smaller screens with a media query.
-Hover Effects:
-
-Added a hover shadow effect to make the card more interactive.
-Avatar and Button Styling:
-
-Added borders to the avatar and refined button hover states.
-Consistent Padding and Alignment:
-
-Ensured proper spacing between avatar, user info, and follow button. */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .user-card {
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem;
+    }
+  
+    .user-left {
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+  
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+    }
+  
+    .user-username {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+  
+    .user-stats {
+      gap: 1rem;
+      font-size: 1rem;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .follow-btn,
+    .message-user-btn {
+      width: 100%;
+      max-width: none;
+    }
+  }
+  

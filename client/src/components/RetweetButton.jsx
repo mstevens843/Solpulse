@@ -50,13 +50,13 @@ function RetweetButton({ postId, initialRetweets = 0, currentUser, onRetweet }) 
                 onClick={handleRetweet}
                 disabled={loading || hasRetweeted}
                 className="retweet-button"
-                aria-label={`Retweet post. Current retweets: ${retweetCount}`}
+                aria-label={`Repost post. Current reposts: ${retweetCount}`}
             >
-                {loading ? "Retweeting..." : `Retweet (${retweetCount})`}
+                {loading ? "Reposting..." : `Repost (${retweetCount})`}
             </button>
         </div>
     );
-}
+};
 
 RetweetButton.propTypes = {
     postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

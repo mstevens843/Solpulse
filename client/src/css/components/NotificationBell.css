@@ -51,15 +51,55 @@
 
 .notification-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   font-size: 1.2rem;
   border-bottom: 1px solid #00ffcc;
   margin-bottom: 10px;
-  padding-bottom: 1px;
+  padding-bottom: 10px;
   color: #00ffcc;
 }
 
+.notification-header-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+
+.notification-actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* View All Link */
+.view-all-link {
+  color: #00ffcc;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+  font-size: 1rem;
+}
+
+.view-all-link:hover {
+  color: #ffcc00;
+}
+
+/* Mark All as Read Button */
+.mark-all-read {
+  background: none;
+  border: none;
+  color: #ffcc00;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.mark-all-read:hover {
+  color: #00ffcc;
+}
 
 
 
@@ -192,3 +232,5 @@
   cursor: pointer;
   transition: color 0.3s ease;
 }
+
+
