@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import UserCard from '../../components/UserCard';
-import FollowButton from '../../components/FollowButton';
+import UserCard from '../../components/Profile_components/UserCard';
+import FollowButton from '../../components/Profile_components/FollowButton';
 
 // Mock the FollowButton component
 jest.mock('../../components/FollowButton', () => jest.fn(() => <button>Mock Follow Button</button>));

@@ -12,13 +12,10 @@ import socket from "./socket"; // WebSocket instance
 import NavBar from "@/components/Navbar";
 import LandingPage from "./pages/LandingPage";
 import Home from "@/pages/Home"
-import Dashboard from "./pages/Dashboard";
+import Post from "@/components/Post_components/Post";
 import Profile from "./pages/Profile";
 import Explore from "./components/Explore";
-import Messages from "./pages/Messages";
-import Notifications from "./pages/Notifications";
 import PostCreation from "./pages/PostCreation";
-import PostDetail from "./pages/PostDetail";
 import SearchResults from "./pages/SearchResults";
 import Settings from "./pages/Settings";
 import Signup from "./pages/Signup";
@@ -26,6 +23,7 @@ import TrendingCrypto from "./pages/TrendingCrypto";
 import Login from "./components/Login";
 import NotFound from "./pages/NotFound";
 import Trade from "@/pages/Trade";
+import ActivityPage from "./pages/Activity";
 
 
 
@@ -81,13 +79,11 @@ function AppContent() {
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/home" element={<Home />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/profile/:id" element={<Profile />} />  {/* Correct path */}
                     <Route path="/explore" element={<Explore />} />
-                    <Route path="/messages" element={<Messages />} />
-                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/activity" element={<ActivityPage />} />
                     <Route path="/post/create" element={<PostCreation />} />
-                    <Route path="/post/:id" element={<PostDetail />} />
+                    <Route path="/post/:id" element={<Post />} />
                     <Route path="/search" element={<SearchResults />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/trending-crypto" element={<TrendingCrypto />} />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import axios from 'axios';
-import CryptoWallet from '../../components/CryptoWallet';
+import CryptoWallet from '../../components/Crypto_components/CryptoWallet';
 import { act } from 'react';  // Ensure you import from 'react' for act
 import MockAdapter from 'axios-mock-adapter';
 

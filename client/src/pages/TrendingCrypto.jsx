@@ -26,7 +26,7 @@ import {
 } from "chart.js";
 import { api } from "@/api/apiConfig";
 import debounce from "lodash.debounce"; // Import lodash for debounce
-import CryptoTrade from "@/components/CryptoTrade"; 
+import CryptoTrade from "@/components/Crypto_components/CryptoTrade"; 
 import Loader from "@/components/Loader";
 import "@/css/pages/TrendingCrypto.css";
 

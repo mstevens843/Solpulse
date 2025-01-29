@@ -53,6 +53,19 @@ router.get('/', authMiddleware, async (req, res) => {
     }
 });
 
+
+router.get('/transactions/:address', authMiddleware, async (req, res) => {
+    const { address } = req.params;
+  
+    try {
+      const transactions = await getWalletTransactions(address);
+      res.json({ transactions });
+    } catch (err) {
+      console.error("❌ Error fetching transactions:", err.message);
+      res.status(500).json({ error: "Failed to fetch transactions." });
+    }
+  });
+
 /**
  * Get the balance of a specific wallet along with dummy transactions
  */
@@ -127,6 +140,8 @@ router.get('/linked', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch linked wallet' });
     }
 });
+
+
 
 
 

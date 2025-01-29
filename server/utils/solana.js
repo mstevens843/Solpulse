@@ -21,10 +21,11 @@
 // Your app wouldn’t be able to display wallet balances or interact with Solana-based functionality.
 
 const solanaWeb3 = require('@solana/web3.js');
+require("dotenv").config(); // Ensure environment variables are loaded
 
 // Create a reusable connection to the Solana cluster
 const connection = new solanaWeb3.Connection(
-  solanaWeb3.clusterApiUrl(process.env.SOLANA_CLUSTER || 'mainnet-beta'),
+  process.env.SOLANA_RPC_ENDPOINT || solanaWeb3.clusterApiUrl("mainnet-beta"),
   'confirmed'
 );
 
@@ -62,8 +63,9 @@ const getWalletBalance = async (walletAddress) => {
 };
 
 module.exports = {
+  connection, // Export the connection for use elsewhere
   getWalletBalance,
-  lamportsToSol, // Exported for potential reuse
+  lamportsToSol,
 };
 
 

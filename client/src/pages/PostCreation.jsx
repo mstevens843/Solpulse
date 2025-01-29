@@ -9,7 +9,7 @@
 
 import React, { useState } from "react";
 import { api } from "@/api/apiConfig";
-import MediaUpload from "@/components/MediaUpload";
+import MediaUpload from "@/components/Post_components/MediaUpload";
 import "@/css/pages/PostCreation.css"; // Updated alias for Vite compatibility
 
 function PostCreation() {

@@ -11,8 +11,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SearchBar from "@/components/SearchBar";
-import UserCard from "@/components/UserCard";
-import Post from "@/components/Post";
+import UserCard from "@/components/Profile_components/UserCard";
+import Post from "@/components/Post_components/Post";
 import Loader from "@/components/Loader";
 import { api } from "@/api/apiConfig"; // Using centralized API instance
 import "@/css/pages/SearchResults.css";

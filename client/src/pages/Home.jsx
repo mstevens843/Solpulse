@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
-import Feed from "@/components/Feed";
+import Feed from "@/components/Post_components/Feed";
 import Explore from "@/components/Explore";
-import CryptoTicker from "@/components/CryptoTicker";
+import CryptoTicker from "@/components/Crypto_components/CryptoTicker";
 import { AuthContext } from "@/context/AuthContext";
 import "@/css/pages/Home.css";
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import Post from '../../components/Post';
+import Post from '../../components/Post_components/Post';
 
 jest.mock('../../components/LikeButton', () => jest.fn(({ postId }) => <button>Like {postId}</button>));
 jest.mock('../../components/RetweetButton', () => jest.fn(({ postId }) => <button>Retweet {postId}</button>));

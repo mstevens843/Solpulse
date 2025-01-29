@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import FollowersFollowing from '../../components/FollowersFollowing';
+import FollowersFollowing from '../../components/Profile_components/FollowersFollowing';
 
 jest.mock('axios');
 jest.mock('../../components/UserCard', () => jest.fn(({ user }) => (

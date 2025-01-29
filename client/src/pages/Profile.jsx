@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { useParams } from "react-router-dom";
-import UserCard from "@/components/UserCard";
-import Post from "@/components/Post";
-import CryptoTip from "@/components/CryptoTip";
+import UserCard from "@/components/Profile_components/UserCard";
+import Post from "@/components/Post_components/Post";
+import CryptoTip from "@/components/Crypto_components/CryptoTip";
 import { ToastContainer, toast } from "react-toastify";
 // import UserCardModal from "@/components/UserCardModal"; // Import the modal component
 import 'react-toastify/dist/ReactToastify.css';
@@ -199,7 +199,7 @@ function Profile() {
                             >
                                 💰
                             </button> */}
-                        )}
+                        {/* )} */}
                     </div>
     
                     {/* {showTipModal && (

@@ -8,7 +8,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { api } from "@/api/apiConfig";
 import SearchBar from "@/components/SearchBar";
-import "@/css/pages/Explore.css";
+import "@/css/components/Explore.css";
 
 function Explore() {
     const [trendingPosts, setTrendingPosts] = useState([]);

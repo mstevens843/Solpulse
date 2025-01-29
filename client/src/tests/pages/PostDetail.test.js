@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import PostDetail from '../../pages/PostDetail';
+import PostDetail from '../../Archive/PostDetail';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 // Mock axios

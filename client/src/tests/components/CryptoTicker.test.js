@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import axios from 'axios';
-import CryptoTicker from '../../components/CryptoTicker';
+import CryptoTicker from '../../components/Crypto_components/CryptoTicker';
 
 // Define the ecosystem coins to match the actual component
 const solanaEcosystemCoins = [

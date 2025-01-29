@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import RetweetButton from '../../components/RetweetButton';
+import RetweetButton from '../../components/Post_components/RetweetButton';
 import axios from 'axios';
 
 // Mock axios

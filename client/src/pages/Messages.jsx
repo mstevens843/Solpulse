@@ -11,8 +11,8 @@
 import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig"; // Use centralized API config
 import Loader from "@/components/Loader";
-import "@/css/pages/Messages.css"; // Updated alias for Vite compatibility
-import MessageModal from "../components/MessageModal";
+import "@/css/pages/Notification_components/Messages.css"; // Updated alias for Vite compatibility
+import MessageModal from "../components/Notification_components/MessageModal";
 
 function Messages() {
   const [messages, setMessages] = useState([]);

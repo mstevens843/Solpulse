@@ -1,0 +1,140 @@
+/* Messages Inbox Container */
+.messages-inbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #121212;
+    min-height: 100vh;
+    padding: 2rem;
+    color: #fff;
+  }
+  
+  /* Message List */
+  .message-list {
+    width: 100%;
+    max-width: 600px;
+    background: #1f1f1f;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+    padding: 1.5rem;
+  }
+  
+  /* Individual Message Item */
+  .message-item {
+    background: #121212;
+    padding: 1rem;
+    border-bottom: 1px solid #00ffcc;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .message-item:hover {
+    background: #000000;
+    color: #fff;
+    transform: scale(1.02);
+  }
+  
+  /* Read and Unread Messages */
+  .message-item.read {
+    opacity: 0.7;
+  }
+  
+  .message-item.unread {
+    font-weight: bold;
+  }
+  
+  /* Sender */
+  .message-item strong {
+    color: #00ffcc;
+    font-size: 1.2rem;
+  }
+  
+  /* Message Content */
+  .message-item p {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: #ffffff;
+  }
+  
+  /* New Message Button */
+  .new-message-btn {
+    position: fixed;
+    bottom: 6rem;
+    right: 4rem;
+    background: #0da688;
+    color: #121212;
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 1rem 2rem;
+    border-radius: 100%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+  }
+  
+  .new-message-btn:hover {
+    background: #00ffcc;
+  }
+  
+  /* Message Modal */
+  .message-modal-overlay .modal-content {
+    background: #1f1f1f;
+  }
+  
+  .message-modal-overlay .modal-content input {
+    background: #121212;
+  }
+  
+  .message-modal-overlay .modal-content textarea {
+    background: #121212;
+  }
+  
+  .message-modal-overlay .modal-content button {
+    background: #0da688;
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .message-modal-overlay .modal-content button:hover {
+    background: #00ffcc !important;
+    color: #121212 !important;
+  }
+  
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+  
+  .pagination button {
+    background: #0da688;
+    border: none;
+    color: #121212;
+    font-weight: bold;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .pagination button:hover {
+    background: #00ffcc;
+    color: #000;
+  }
+  
+  .pagination button:disabled {
+    background: #555;
+    cursor: not-allowed;
+  }
+  

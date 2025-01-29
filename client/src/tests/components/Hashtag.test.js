@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import Hashtag from '../../components/Hashtag';
+import Hashtag from '../../components/Post_components/Hashtag';
 
 describe('Hashtag Component', () => {
     const renderWithRouter = (component) => {

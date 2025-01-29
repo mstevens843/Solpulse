@@ -66,9 +66,9 @@
   .crypto-tip-btn {
     background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
     color: #121212;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
-    padding: .6rem 1rem;
+    padding: .6rem .6rem;
     border-radius: 50%;
     border: none;
     cursor: pointer;

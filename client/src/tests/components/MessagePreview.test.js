@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
-import MessagePreview from '../../components/MessagePreview';
+import MessagePreview from '../../components/Notification_components/MessagePreview';
 import axios from 'axios';
 
 jest.mock('axios');

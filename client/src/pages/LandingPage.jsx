@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import CryptoTicker from "@/components/CryptoTicker";
+import CryptoTicker from "@/components/Crypto_components/CryptoTicker";
 import { api } from "@/api/apiConfig";
 import { AuthContext } from "@/context/AuthContext";
 import "@/css/pages/LandingPage.css";

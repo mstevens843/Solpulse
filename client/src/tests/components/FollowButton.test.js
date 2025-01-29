@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import FollowButton from '../../components/FollowButton';
+import FollowButton from '../../components/Profile_components/FollowButton';
 
 // Mock axios for API calls
 jest.mock('axios');

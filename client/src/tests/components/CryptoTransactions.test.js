@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CryptoTransaction from '../../components/CryptoTransactions';
+import CryptoTransaction from '../../components/Crypto_components/CryptoTransactions';
 
 describe('CryptoTransaction Component', () => {
     const mockTransaction = {

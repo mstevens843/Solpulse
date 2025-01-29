@@ -1,0 +1,197 @@
+/* Wallet Container */
+.crypto-wallet-container {
+    background: #121212; /* Dark background to match theme */
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+    max-width: 600px;
+    width: 100%;
+    margin: 2rem auto;
+    text-align: center;
+    border: 1px solid rgba(0, 255, 204, 0.2);
+}
+
+/* Section Headers */
+.crypto-wallet-heading {
+    /* text-transform: uppercase; */
+}
+
+/* Wallet Balance */
+.crypto-wallet-balance {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    background: rgba(0, 255, 204, 0.2);
+    padding: 0.75rem;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+/* Wallets List */
+.wallets-list {
+    text-align: left;
+    background: rgba(0, 255, 204, 0.05);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 255, 204, 0.3);
+    margin-bottom: 1rem;
+}
+
+.wallets-list h3 {
+    color: #00ffcc;
+    font-size: 1.4rem;
+    margin-bottom: 0rem;
+}
+
+.wallets-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.wallet-item {
+    font-size: .9rem;
+    color: #fff;
+    border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+    padding: 0.75rem 0;
+}
+
+.wallet-item:last-child {
+    border-bottom: none;
+}
+
+/* Wallet Controls */
+.crypto-wallet-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.crypto-wallet-filter,
+.crypto-wallet-sort {
+    padding: 0.75rem;
+    border: 1px solid #00ffcc;
+    background: #1a1a2e;
+    color: #00ffcc;
+    font-size: 1rem;
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.crypto-wallet-filter:hover,
+.crypto-wallet-sort:hover {
+    background: #00ffcc;
+    color: #121212;
+}
+
+/* Refresh Button */
+.crypto-wallet-refresh {
+    background: #0da688;
+    border: none;
+    color: #121212;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.crypto-wallet-refresh:hover {
+    background: #00ffcc;
+}
+
+/* Transactions List */
+.crypto-wallet-transactions {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.wallet-transaction-item {
+    background: rgba(0, 255, 204, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+.wallet-transaction-item:hover {
+    transform: scale(1.05);
+}
+
+/* Loader */
+.loader {
+    color: #00ffcc;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .crypto-wallet-container {
+        padding: 1.5rem;
+        max-width: 90%;
+    }
+
+    .crypto-wallet-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .crypto-wallet-refresh {
+        width: 100%;
+    }
+}
+
+
+
+
+/* Key Features:
+Wallet Container
+
+Clean, dark-themed container with spacing and shadows for visual structure.
+Headers
+
+Styled headers using Solana's primary and secondary colors to highlight sections.
+Wallet Balance
+
+Large, readable font with emphasis on the user's current SOL balance.
+Messages
+
+Error and success messages styled distinctly for clarity.
+Transaction List
+
+Transactions appear as interactive cards with hover scaling for engagement.
+Form for Sending Crypto
+
+Input fields and buttons styled for accessibility with focus effects and transitions.
+Tip Section
+
+Dedicated space styled to encourage tipping users.
+Responsiveness
+
+Ensured all elements adapt seamlessly to smaller screens. */
+
+/* Key Updates
+1. Wallet Controls
+Added styles for the filter and sort dropdowns (crypto-wallet-filter, crypto-wallet-sort).
+Styled the refresh button (crypto-wallet-refresh) with hover and transition effects.
+2. Transactions List
+Enhanced the transaction item hover effect:
+Scaling and shadow on hover for better interactivity.
+3. Loader
+Introduced a new .loader class for a spinner or loading text.
+Ensures the loading state visually aligns with the Solana theme.
+4. Wallet Messages
+Retained error (wallet-message-error) and success (wallet-message-success) messages for better user feedback. */

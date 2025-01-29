@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import FeedFilter from '../../components/FeedFilter';
+import FeedFilter from '../../components/Post_components/FeedFilter';
 
 describe('FeedFilter Component', () => {
     it('renders the filter dropdown and label', () => {

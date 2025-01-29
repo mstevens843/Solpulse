@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { WalletProvider, useWallet } from '@solana/wallet-adapter-react';
-import CryptoWalletIntegration from '../../components/CryptoWalletIntegration';
+import CryptoWalletIntegration from '../../components/Crypto_components/CryptoWalletIntegration';
 import { Connection, PublicKey, SystemProgram } from '@solana/web3.js';
 
 // Mock dependencies

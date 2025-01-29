@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import CryptoTip from '../../components/CryptoTip';
+import CryptoTip from '../../components/Crypto_components/CryptoTip';
 
 describe('CryptoTip Component', () => {
     const mockOnTip = jest.fn();

@@ -15,7 +15,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
-import NotificationBell from "@/components/NotificationBell";
+import NotificationBell from "@/components/Notification_components/NotificationBell";
 import { AuthContext } from "@/context/AuthContext";
 import { api } from "@/api/apiConfig";
 import "@/css/components/NavBar.css";
@@ -78,11 +78,11 @@ const NavBar = () => {
                         Trade
                     </NavLink>
                 </li>
-                <li className="navbar-item" key="dashboard">
+                {/* <li className="navbar-item" key="dashboard">
                     <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Go to Dashboard">
-                        Dashboard
-                    </NavLink>
-                </li>
+                         Dashboard
+                    </NavLink> */}
+                {/* </li> */}
                 {isAuthenticated && (
                     <li className="navbar-item" key="create-post">
                         <NavLink to="/post/create" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Create Post">
@@ -96,9 +96,9 @@ const NavBar = () => {
             <ul className="navbar-right">
                 {isAuthenticated ? (
                     <>
-                        <li className="navbar-item" key="messages">
-                            <NavLink to="/messages" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="View messages">
-                                Messages
+                        <li className="navbar-item" key="activity">
+                            <NavLink to="/activity" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="View activity">
+                                Activity
                             </NavLink>
                         </li>
                         <div className="notification-bell-container" key="notifications">

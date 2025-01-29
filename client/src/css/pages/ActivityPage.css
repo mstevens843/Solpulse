@@ -1,0 +1,60 @@
+/* Activity Page Container */
+.activity-page {
+    background: #121212; /* Match background with Landing & Home */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6rem;
+    font-family: Arial, sans-serif;
+    color: #fff;
+  }
+  
+  /* Page Title */
+  .activity-page h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #00ffcc;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    padding: 1rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+
+  
+  /* Activity Tabs */
+  .activity-tabs {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  
+  .activity-tabs button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.2rem;
+    background: #1f1f1f;
+    border: none;
+    border-radius: 8px;
+    color: #00ffcc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .activity-tabs button:hover {
+    background: #0f3460;
+  }
+  
+  .activity-tabs button.active {
+    background: #00ffcc;
+    color: #1a1a2e;
+    font-weight: bold;
+  }
+  
+  /* Content Container */
+  .activity-content {
+    width: 100%;
+    max-width: 700px;
+  }
+  

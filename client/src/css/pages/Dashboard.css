@@ -1,9 +1,9 @@
-/* Dashboard Container */
+/* Dashboard Main Container */
 .dashboard-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  background: #121212; /* Match Landing Page */
   min-height: 100vh;
   padding: 5rem;
   color: #fff;
@@ -12,43 +12,30 @@
   margin: 0 auto;
 }
 
-/* Ensure spacing to avoid overlapping */
-.dashboard-section {
-  margin-bottom: 4rem; /* Increased margin to separate sections */
+/* Centered Layout Similar to Landing Page */
+.dashboard-content {
+  display: flex;
+  flex-direction: row; /* Keep items side by side */
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+  gap: 4rem; /* Space between ticker and dashboard sections */
 }
 
-
-/* Dashboard Header */
+/* Dashboard Header (Matches Landing Page) */
 .dashboard-header {
-  margin-top:15px;
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   font-weight: bold;
-  color: #00ffcc;
-  margin-bottom: 1rem;
+  background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-align: center;
+  margin-bottom: 2rem;
 }
 
-/* Error and Loading Messages */
-.dashboard-error, .dashboard-loading {
-  color: #ff4d4d;
-  background: rgba(255, 0, 0, 0.2);
-  padding: 1rem;
-  border-radius: 8px;
-  text-align: center;
-  max-width: 500px;
-}
-
-/* Section Title */
-.dashboard-section-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #00ffcc;
-  margin-bottom: 0rem;
-  padding: 1rem;
-  text-align: center;
-}
-
-/* Scorecard Sections */
+/* Scorecards Section */
 .dashboard-scorecards {
   display: flex;
   flex-wrap: wrap;
@@ -56,13 +43,12 @@
   justify-content: center;
   width: 100%;
   max-width: 1500px;
-  margin-top: 0rem;
   margin-bottom: 2rem;
 }
 
-/* Scorecard Layout */
+/* Individual Scorecard */
 .scorecard {
-  background: #1f4068;
+  background: #1f1f1f;
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);
@@ -78,6 +64,7 @@
   background: #0f3460;
 }
 
+/* Scorecard Title */
 .scorecard h3 {
   font-size: 1.8rem;
   font-weight: bold;
@@ -85,25 +72,26 @@
   margin-bottom: 1rem;
 }
 
+/* Scorecard Value */
 .scorecard p {
   font-size: 1.5rem;
   color: #ffcc00;
 }
 
-/* Transactions Section */
+/* Dashboard Transactions (Styled Like Ticker Section) */
 .dashboard-transactions {
-  background: #1f4068;
+  background: #1f1f1f;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
   width: 100%;
   max-width: 1300px;
   text-align: center;
-  margin-top: 5rem; /* Added space to prevent overlap */
+  margin-top: 3rem;
   margin-bottom: 4rem;
 }
 
-/* Feed and Messages Side-by-Side */
+/* Feed and Messages (Matches Landing Page Layout) */
 .dashboard-main {
   display: flex;
   flex-wrap: wrap;
@@ -114,33 +102,35 @@
   align-items: flex-start;
 }
 
-/* Feed Section */
-.dashboard-feed, .dashboard-messages {
-  background: #1f4068;
+/* Feed & Messages Side by Side */
+.dashboard-feed,
+.dashboard-messages {
+  background: #1f1f1f;
   padding: 1.5rem;
   border-radius: 12px;
-  margin-top: 50px;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
   max-height: 450px;
   overflow-y: auto;
   width: calc(50% - 1rem);
-  transition: max-height 0.3s ease; /* Smooth expansion */
+  transition: max-height 0.3s ease;
 }
 
-/* Ensure feed/messages expand when content is added */
-.dashboard-feed.expanded, .dashboard-messages.expanded {
+/* Expand When Content is Added */
+.dashboard-feed.expanded,
+.dashboard-messages.expanded {
   max-height: 650px;
 }
 
-/* Feed and Messages Headers */
-.dashboard-feed h2, .dashboard-messages h2 {
+/* Feed Headers */
+.dashboard-feed h2,
+.dashboard-messages h2 {
   font-size: 1.8rem;
   font-weight: bold;
   color: #00ffcc;
   margin-bottom: 1rem;
 }
 
-/* Feed Posts */
+/* Individual Feed Post */
 .feed-post {
   background: #16213e;
   padding: 1rem;
@@ -161,28 +151,44 @@
   color: #fff;
 }
 
-/* Action buttons */
-.feed-post .actions {
-  display: flex;
-  justify-content: flex-end;
+/* Ticker Styling (Copied from Landing Page) */
+.crypto-ticker-container {
+  width: 100%;
+  max-width: 600px;
+  max-height: 400px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: #1f1f1f;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+
+.crypto-ticker-container h2 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
   color: #00ffcc;
-  font-size: 0.9rem;
-  gap: 1rem;
 }
 
-/* Make scorecards clickable */
-.clickable {
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+/* Crypto Ticker Content */
+.crypto-ticker-container .ticker-content {
+  display: flex;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
-.clickable:hover {
-  background: #00ffcc;
-  color: #1a1a2e;
+.crypto-ticker-container .ticker-content::-webkit-scrollbar {
+  display: none;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .dashboard-content {
+    flex-direction: column; /* Stack elements for smaller screens */
+    gap: 2rem;
+  }
+
   .dashboard-scorecards {
     flex-direction: column;
     align-items: center;
@@ -197,7 +203,8 @@
     flex-direction: column;
   }
 
-  .dashboard-feed, .dashboard-messages {
+  .dashboard-feed,
+  .dashboard-messages {
     width: 100%;
   }
 }

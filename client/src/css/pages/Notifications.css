@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  background: #121212; /* Match Landing Page */
   min-height: 100vh;
   padding: 5rem;
   color: #fff;
@@ -30,7 +30,8 @@
 
 
 .notifications-page-item:hover {
-  background: #0f3460;
+  background: #00ffcc;
+
 }
 
 /* Read and Unread Notifications */
@@ -105,7 +106,7 @@ margin-bottom: 2rem;
 .notifications-tab {
 padding: 0.8rem 1.5rem;
 font-size: 1.2rem;
-background: #1f4068;
+background: #1f1f1f;
 border: none;
 border-radius: 8px;
 color: #00ffcc;
@@ -155,7 +156,7 @@ margin-top: 0.5rem;
 }
 
 .notifications-page-item {
-  background: #1f4068;
+  background: #1f1f1f;
   padding: 1.2rem;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3);

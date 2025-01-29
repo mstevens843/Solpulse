@@ -157,35 +157,4 @@
   }
 }
 
-button.delete-account-btn {
-  display: flex; /* Use flexbox for alignment */
-  align-items: center; /* Vertically align icon and text */
-  justify-content: center; /* Center the entire content */
-  gap: 0.5rem; /* Add space between icon and text */
-  background: #1f1f1f;
-  padding: .8rem;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
-  max-width: 800px;
-  width: 100%;
-  text-align: center;
-  margin-top: 1.2rem;
-  font-size: 1.2rem;
-  color: #ff4d4d; /* Red text for delete action */
-  border: none; /* Remove default button borders */
-  cursor: pointer; /* Add pointer cursor */
-  transition: all 0.3s ease; /* Add smooth hover effect */
-}
 
-button.delete-account-btn:hover {
-  background: #ff4d4d; /* Change background on hover */
-  color: #fff; /* Change text color on hover */
-  box-shadow: 0 0 20px rgba(255, 77, 77, 0.5); /* Enhance shadow on hover */
-}
-
-/* Icon Styling */
-button.delete-account-btn .icon {
-  font-size: 1.5rem; /* Adjust icon size */
-  display: flex; /* Ensure proper alignment */
-  align-items: center;
-}

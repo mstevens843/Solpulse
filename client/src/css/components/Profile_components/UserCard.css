@@ -1,0 +1,124 @@
+/* User Card: Flexbox layout */
+.user-card {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Aligns items from left to right */
+    background: #1f1f1f;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    max-width: 600px;
+    width: 100%;
+    margin: 1rem auto;
+    color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Left Section: Profile Picture & Edit Button */
+.user-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+}
+
+/* Profile Picture */
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+}
+
+/* Edit Profile Button */
+.edit-profile-btn {
+    background: none;
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.edit-profile-btn:hover {
+    background: #00ffcc;
+    color: #1f1f1f;
+}
+
+/* Right Section: User Info */
+.user-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Username */
+.user-username {
+    font-size: 1.6rem;
+    font-weight: bold;
+    background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Follow & Followers Stats */
+.follow-link {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.follow-link:hover {
+    color: #00ffcc;
+}
+
+/* Button Group: Aligns CryptoTip, Follow, and Message Buttons */
+.button-group {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjust spacing between buttons */
+    margin-top: 0.5rem;
+}
+
+/* CryptoTip Button */
+.crypto-tip-btn {
+    background: none;
+    border: 2px solid #ffcc00;
+    color: #ffcc00;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.crypto-tip-btn:hover {
+    background: #ffcc00;
+    color: #121212;
+}
+
+/* Follow & Message Buttons */
+.follow-btn, .message-btn {
+    background: none;
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.follow-btn:hover, .message-btn:hover {
+    background: #00ffcc;
+    color: #1f1f1f;
+}

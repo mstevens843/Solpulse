@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent, cleanup, within } from '@testing-library/react';
 import axios from 'axios';
-import TrendingCrypto from '../../components/TrendingCrypto';
+import TrendingCrypto from '../../components/Crypto_components/TrendingCrypto';
 
 jest.mock('axios');
 jest.mock('../../components/CryptoTicker', () => jest.fn(() => <div>Mock CryptoTicker</div>));

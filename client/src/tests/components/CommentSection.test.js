@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import axios from 'axios';
 import { io } from 'socket.io-client';
-import CommentSection from '../../components/CommentSection';
+import CommentSection from '../../components/Post_components/CommentSection';
 
 // Mocking axios
 jest.mock('axios');

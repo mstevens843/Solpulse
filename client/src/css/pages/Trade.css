@@ -3,7 +3,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    /* background: linear-gradient(to bottom, #1a1a2e, #16213e); */
+    background: #121212; /* Match Landing Page */
     min-height: 100vh;
     padding: 5rem 2rem;
     color: #fff;
@@ -40,7 +41,7 @@
     padding: 1.2rem;
     border: 1px solid #00ffcc;
     border-radius: 8px;
-    background-color: #1f4068;
+    background: #1f1f1f;
     color: #ffffff;
     font-size: 1.2rem;
 }
@@ -130,7 +131,7 @@
     padding: 1rem;
     border: 1px solid #00ffcc;
     border-radius: 8px;
-    background-color: #1f4068;
+    background: #1f1f1f;
     color: #ffffff;
     font-size: 1.2rem;
 }
@@ -318,13 +319,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #1f4068;
+    /* background: #1f4068; */
+    background: #1f1f1f;
     border-radius: 12px;
     padding: 2rem;
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
     max-width: 600px;
     width: 100%;
     margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
 .swap-box {
@@ -434,21 +437,21 @@
 }
 
 /* Swap Button */
+/* Swap Button */
 .swap-button {
-    background: #00ffcc;
-    color: #1a1a2e;
+    background: #0da688;
     border: none;
-    padding: 1.2rem 2rem;
-    border-radius: 8px;
+    color: #121212;
+    font-size: 1.2rem;
     font-weight: bold;
+    padding: 1rem 2rem;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 1.4rem;
-    margin-top: 1rem;
-}
+  }
 
 .swap-button:hover {
-    background: #ffcc00;
+    background: #00ffcc;
 }
 
 
@@ -592,4 +595,19 @@
 
 .swap-box input::placeholder {
     color: #555;
+}
+
+
+/* crypto wallet styles */
+.swap-section .crypto-wallet-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* background: linear-gradient(to bottom, #1a1a2e, #16213e); */
+    background: #121212; /* Match Landing Page */
+    min-height: 100vh;
+    padding: 5rem 2rem;
+    color: #fff;
+    text-align: center;
 }
