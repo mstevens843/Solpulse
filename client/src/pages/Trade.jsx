@@ -24,7 +24,90 @@ function Trade() {
     const [loadingQuote, setLoadingQuote] = useState(false);
     const [swapTransaction, setSwapTransaction] = useState(null);
     const [isSwapping, setIsSwapping] = useState(false);
+    const [tokenMap, setTokenMap] = useState({});
 
+
+    // Fetch token names from the Jupiter API
+     // Fetch token names from the Jupiter API
+
+    //  const fetchTokenInformation = async (mintAddress) => {
+    //     try {
+    //         const response = await fetch(`https://api.jup.ag/tokens/v1/token/${mintAddress}`);
+    //         if (!response.ok) throw new Error("Token not found");
+            
+    //         const tokenInfo = await response.json();
+    
+    //         // Store the new token in the tokenMap to avoid fetching again
+    //         setTokenMap(prevMap => ({
+    //             ...prevMap,
+    //             [mintAddress]: { name: tokenInfo.name, symbol: tokenInfo.symbol }
+    //         }));
+    
+    //         return { name: tokenInfo.name, symbol: tokenInfo.symbol };
+    //     } catch (error) {
+    //         console.error(`❌ Failed to fetch token info for ${mintAddress}:`, error);
+    //         return { name: "Unknown Token", symbol: mintAddress.slice(0, 6) };
+    //     }
+    // };
+
+    const fetchTradableTokens = async () => {
+        try {
+            const response = await fetch("https://api.jup.ag/tokens/v1/mints/tradable", {
+                headers: { "Accept": "application/json" }
+            });
+            const tradableMints = await response.json(); // List of tradable token addresses
+    
+            if (!tradableMints || tradableMints.length === 0) {
+                console.warn("⚠️ No tradable tokens found!");
+                return;
+            }
+    
+            // Fetch detailed token info for tradable tokens
+            const tokenInfoResponse = await fetch("https://token.jup.ag/all");
+            const tokenInfo = await tokenInfoResponse.json();
+    
+            // Create a lookup table for tradable tokens
+            const tokenLookup = {};
+            tokenInfo.forEach(token => {
+                if (tradableMints.includes(token.address)) {
+                    tokenLookup[token.address] = { name: token.name, symbol: token.symbol };
+                }
+            });
+    
+            setTokenMap(tokenLookup);
+        } catch (error) {
+            console.error("❌ Failed to fetch tradable tokens:", error);
+        }
+    }
+
+            // Fetch tradable tokens on mount
+        useEffect(() => {
+            fetchTradableTokens();
+        }, []);
+
+     
+    //  const fetchTokenNames = async () => {
+    //     try {
+    //         const response = await fetch("https://token.jup.ag/strict");
+    //         const tokens = await response.json();
+    
+    //         // Map token addresses to token names and symbols
+    //         const tokenLookup = tokens.reduce((acc, token) => {
+    //             acc[token.address] = { name: token.name, symbol: token.symbol };
+    //             return acc;
+    //         }, {});
+    
+    //         setTokenMap(tokenLookup);
+    //     } catch (error) {
+    //         console.error("❌ Failed to fetch token names:", error);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     fetchTokenNames();
+    // }, []);
+
+    // Fetch wallet tokens from Solana
     useEffect(() => {
         if (wallet.connected && wallet.publicKey) {
             fetchWalletTokens();
@@ -38,24 +121,32 @@ function Trade() {
                 new PublicKey(wallet.publicKey),
                 { programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA") }
             );
-
-
+    
             const tokens = tokenAccounts.value.map((account) => {
                 const info = account.account.data.parsed.info;
+                const mintAddress = info.mint;
+    
+                // 🔹 Use tokenMap to get the name & symbol
+                const tokenData = tokenMap[mintAddress] || {
+                    name: "Unknown Token",
+                    symbol: mintAddress.slice(0, 6),
+                };
+    
                 return {
-                    mint: info.mint,
+                    mint: mintAddress,
                     amount: info.tokenAmount.uiAmount,
-                    symbol: info.mint.slice(0, 6), // Placeholder symbol
+                    name: tokenData.name,
+                    symbol: tokenData.symbol,
                 };
             });
-
+    
             setWalletTokens(tokens);
         } catch (error) {
-            console.error("Failed to fetch wallet tokens:", error);
+            console.error("❌ Failed to fetch wallet tokens:", error);
         }
     };
-
-
+    
+    
     // 🔹 Fetch swap quote from Jupiter API
     useEffect(() => {
         if (selectedCoin && buyingCoin && sellAmount) {
@@ -64,52 +155,100 @@ function Trade() {
     }, [selectedCoin, buyingCoin, sellAmount]);
 
     const fetchSwapQuote = async () => {
-        if (!wallet.publicKey) return;
-
+        if (!wallet.publicKey || !selectedCoin || !buyingCoin || !sellAmount) return;
+    
         setLoadingQuote(true);
         try {
             const response = await fetch(
-                `https://quote-api.jup.ag/v6/quote?inputMint=${selectedCoin.mint}&outputMint=${buyingCoin.mint}&amount=${sellAmount * 1e9}&slippageBps=50`
+                `https://quote-api.jup.ag/v6/quote?inputMint=${selectedCoin.mint}&outputMint=${buyingCoin.mint}&amount=${sellAmount * 1e9}&slippageBps=50&swapMode=ExactIn`
             );
-
+    
             const data = await response.json();
             console.log("🔹 Swap Quote:", data);
+    
             setQuote(data);
-            setBuyAmount((data.outAmount / 1e9).toFixed(6));
+            setBuyAmount((data.outAmount / 1e9).toFixed(6));  // Convert lamports to SOL
+    
         } catch (error) {
             console.error("🚨 Failed to fetch swap quote:", error);
         } finally {
             setLoadingQuote(false);
         }
     };
-
-    // 🔹 Execute swap transaction with Jupiter API
+    
+    // 2️⃣ Fetch Swap Instructions from Jupiter
+    const fetchSwapInstructions = async () => {
+        if (!wallet.publicKey || !quote) return;
+    
+        try {
+            const instructionResponse = await fetch("https://quote-api.jup.ag/v6/swap-instructions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userPublicKey: wallet.publicKey.toBase58(),
+                    wrapAndUnwrapSol: true,
+                    useSharedAccounts: true,
+                    prioritizationFeeLamports: 0,
+                    asLegacyTransaction: false,
+                    useTokenLedger: false,
+                    dynamicComputeUnitLimit: true,
+                    skipUserAccountsRpcCalls: true,
+                    dynamicSlippage: true,
+                    quoteResponse: quote,
+                }),
+            });
+    
+            const instructions = await instructionResponse.json();
+            console.log("🔹 Swap Instructions:", instructions);
+            return instructions;
+    
+        } catch (error) {
+            console.error("🚨 Failed to fetch swap instructions:", error);
+        }
+    };
+    
+    // 3️⃣ Execute Swap Transaction
     const executeSwap = async () => {
         if (!wallet.publicKey || !quote) return;
         setIsSwapping(true);
-
+    
         try {
+            const swapInstructions = await fetchSwapInstructions();
+            if (!swapInstructions) throw new Error("Swap instructions not available!");
+    
+            // 🔹 Send the swap request to Jupiter
             const swapResponse = await fetch("https://quote-api.jup.ag/v6/swap", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     userPublicKey: wallet.publicKey.toBase58(),
+                    wrapAndUnwrapSol: true,
+                    useSharedAccounts: true,
+                    prioritizationFeeLamports: 0,
+                    asLegacyTransaction: false,
+                    useTokenLedger: false,
+                    dynamicComputeUnitLimit: true,
+                    skipUserAccountsRpcCalls: true,
+                    dynamicSlippage: true,
                     quoteResponse: quote,
                 }),
             });
-
-            const { swapTransaction } = await swapResponse.json();
+    
+            const { swapTransaction, lastValidBlockHeight } = await swapResponse.json();
             setSwapTransaction(swapTransaction);
-
+    
             // 🔥 Decode transaction and sign with wallet
             const connection = new Connection(SOLANA_RPC_URL);
             const transaction = Transaction.from(Buffer.from(swapTransaction, "base64"));
             const signedTransaction = await wallet.signTransaction(transaction);
-
+    
             // 🔥 Send the signed transaction
             const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-            await connection.confirmTransaction(signature, "processed");
-
+            await connection.confirmTransaction(
+                { signature, lastValidBlockHeight },
+                "processed"
+            );
+    
             console.log("✅ Swap Successful:", `https://explorer.solana.com/tx/${signature}?cluster=mainnet-beta`);
             alert(`Swap Successful! Check Explorer: https://explorer.solana.com/tx/${signature}?cluster=mainnet-beta`);
         } catch (error) {
@@ -119,8 +258,6 @@ function Trade() {
         }
     };
 
-    
-    
     
     const handleSwap = async () => {
         if (!wallet.connected) {
@@ -139,7 +276,6 @@ function Trade() {
         setLoading(true);
         try {
             // Call Jupiter Swap API (or direct Solana transaction)
-            // TODO: Integrate real swap logic using Jupiter API
             console.log("Swapping", sellAmount, selectedCoin.symbol, "for", buyingCoin.symbol);
 
             toast.success(`Successfully swapped ${sellAmount} ${selectedCoin.symbol} for ${buyingCoin.symbol}!`);
@@ -151,8 +287,6 @@ function Trade() {
         }
     };
 
-
-    // Add this effect to handle clicks outside the dropdowns
     useEffect(() => {
         const handleOutsideClick = (event) => {
             if (!event.target.closest(".coin-input-wrapper")) {
@@ -165,16 +299,6 @@ function Trade() {
         return () => document.removeEventListener("click", handleOutsideClick);
     }, []);
 
-    const handleCoinSelect = (coin, type) => {
-        if (type === "sell") {
-            setSelectedCoin(coin);
-            setSellDropdownVisible(false);
-        } else {
-            setBuyingCoin(coin);
-            setBuyDropdownVisible(false);
-        }
-    };
-
     return (
         <div className="trade-crypto-container">
             <h2>Swap with SolPulse</h2>
@@ -185,7 +309,7 @@ function Trade() {
                     <label>You're Selling</label>
                     <div className="coin-input-wrapper" onClick={() => setSellDropdownVisible(!sellDropdownVisible)}>
                         <button className="coin-select-button">
-                            {selectedCoin ? selectedCoin.symbol : "Select Coin"} ▼
+                            {selectedCoin ? selectedCoin.name : "Select Coin"} ▼
                         </button>
                         <input type="text" placeholder="0.00" value={sellAmount} onChange={(e) => setSellAmount(e.target.value)} />
                     </div>
@@ -193,7 +317,7 @@ function Trade() {
                         <ul className="coin-dropdown">
                             {walletTokens.map((token) => (
                                 <li key={token.mint} onClick={() => handleCoinSelect(token, "sell")}>
-                                    {token.symbol} - {token.amount}
+                                    {token.name} ({token.symbol}) - {token.amount}
                                 </li>
                             ))}
                         </ul>
@@ -204,7 +328,7 @@ function Trade() {
                     <label>You're Buying</label>
                     <div className="coin-input-wrapper" onClick={() => setBuyDropdownVisible(!buyDropdownVisible)}>
                         <button className="coin-select-button">
-                            {buyingCoin ? buyingCoin.symbol : "Select Coin"} ▼
+                            {buyingCoin ? buyingCoin.name : "Select Coin"} ▼
                         </button>
                         <input type="text" placeholder="0.00" value={buyAmount} readOnly />
                     </div>
@@ -216,8 +340,6 @@ function Trade() {
                     {isSwapping ? "Swapping..." : "Swap"}
                 </button>
             </div>
-
-            {wallet.connected && <CryptoWallet walletConnected={wallet.connected} />}
         </div>
     );
 }

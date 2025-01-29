@@ -7,7 +7,6 @@ import { Connection, clusterApiUrl } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import "@/css/components/Crypto_components/CryptoWallet.css"; // Updated alias for CSS import
 
-    const wallet = useWallet();
     const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/dhWoE-s3HVNfalBWpWnzRIWfyJIqTamF");
     const lamportsToSol = (lamports) => lamports / 1e9;
 
