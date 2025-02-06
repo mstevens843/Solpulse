@@ -20,7 +20,7 @@ const formatPost = (post) => ({
     id: post.id,
     userId: post.userId,
     author: post.isRetweet && post.originalPost ? post.originalPost.user.username : post.user.username, // Show original author for retweets
-    profilePicture: post.isRetweet && post.originalPost ? post.originalPost.user.profilePicture : post.user.profilePicture || "/default-avatar.png", // Show original profile for retweets
+    profilePicture: post.isRetweet && post.originalPost ? post.originalPost.user.profilePicture : post.user.profilePicture || "http://localhost:5001/uploads/default-avatar.png", // Show original profile for retweets
     content: post.content,
     mediaUrl: post.mediaUrl,
     cryptoTag: post.cryptoTag,

@@ -33,8 +33,8 @@ const formatPost = (post, currentUserId = null) => ({
     : post.author || post.user?.username || "Unknown",
   
   profilePicture: post.isRetweet
-    ? post.originalProfilePicture || post.originalPost?.user?.profilePicture || "/default-avatar.png"
-    : post.profilePicture || post.user?.profilePicture || "/default-avatar.png",
+    ? post.originalProfilePicture || post.originalPost?.user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png"
+    : post.profilePicture || post.user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png",
   
   content: post.content || '',
   mediaUrl: post.mediaUrl || null,

@@ -34,13 +34,15 @@ function SearchBar({ query, setQuery, filters = [] }) {
             }
             try {
                 const response = await api.get(`/search?query=${encodeURIComponent(queryTerm)}&filter=${selectedFilter}`);
-                setSearchSuggestions(response.data.results || []);
+                const validResults = response.data.results.filter(item => item.username || item.content);
+                setSearchSuggestions(validResults); // ✅ Ensures only valid results appear
             } catch (error) {
                 console.error("Error fetching search suggestions:", error);
             }
         }, 300),
         [selectedFilter]
     );
+    
 
     useEffect(() => {
         fetchSuggestions(query);
@@ -52,15 +54,20 @@ function SearchBar({ query, setQuery, filters = [] }) {
             setErrorMessage("Please enter a search term.");
             return;
         }
+        setSearchSuggestions([]); // ✅ Clears suggestions
         navigate(`/search?query=${encodeURIComponent(query)}&filter=${selectedFilter}`);
-        setSearchSuggestions([]);
     };
 
     const handleSuggestionClick = (suggestion) => {
-        setQuery(suggestion.username || suggestion.content);
-        navigate(`/search?query=${encodeURIComponent(suggestion.username || suggestion.content)}&filter=${selectedFilter}`);
-        setSearchSuggestions([]);
+        const selectedQuery = suggestion.username || suggestion.content;
+        setQuery(selectedQuery);
+        setSearchSuggestions([]); // ✅ Clears suggestions immediately
+        navigate(`/search?query=${encodeURIComponent(selectedQuery)}&filter=${selectedFilter}`);
+    
+        // ✅ Ensure the input loses focus, forcing the dropdown to close
+        document.activeElement.blur();
     };
+    
 
     const handleReset = () => {
         setQuery("");
@@ -101,7 +108,7 @@ function SearchBar({ query, setQuery, filters = [] }) {
 
             {errorMessage && <p className="search-error">{errorMessage}</p>}
 
-            {searchSuggestions.length > 0 && (
+            {searchSuggestions.length > 0 && query.trim() && (
                 <ul className="autocomplete-suggestions">
                     {searchSuggestions.map((suggestion, index) => (
                         <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
@@ -110,6 +117,7 @@ function SearchBar({ query, setQuery, filters = [] }) {
                     ))}
                 </ul>
             )}
+
         </div>
     );
 }

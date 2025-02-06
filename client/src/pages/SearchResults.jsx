@@ -16,13 +16,16 @@ import Post from "@/components/Post_components/Post";
 import Loader from "@/components/Loader";
 import { api } from "@/api/apiConfig"; // Using centralized API instance
 import "@/css/pages/SearchResults.css";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";  // Ensure correct import path
+
 
 function SearchResults() {
   const location = useLocation();
   const navigate = useNavigate();
   const query = new URLSearchParams(location.search).get("query") || "";
   const filter = new URLSearchParams(location.search).get("filter") || "all";
-
+  const { user: currentUser } = useContext(AuthContext);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -102,10 +105,10 @@ function SearchResults() {
    * Fetch search results only when the page number is updated.
    */
   useEffect(() => {
-    if (page > 1) {
-      fetchSearchResults(page);
+    if (query.trim()) {
+        fetchSearchResults(1);
     }
-  }, [page, fetchSearchResults]);
+}, [query, filter, fetchSearchResults]);
 
   return (
     <div className="search-results-container">
@@ -133,17 +136,16 @@ function SearchResults() {
       )}
 
       <div className="results-list">
-        {results.map((result) => (
-          <div key={result.id} className="result-item">
-            {result.type === "user" ? (
-              <UserCard user={result} />
-            ) : (
-              <Post post={result} />
-            )}
-          </div>
-        ))}
+          {results.map((result) => (
+              <div key={result.id} className="result-item">
+                  {result.type === "user" ? (
+                      <UserCard user={result} />
+                  ) : (
+                      <Post post={result} currentUser={currentUser} setPosts={setResults} />
+                  )}
+              </div>
+          ))}
       </div>
-
       {hasMore && (
         <div className="load-more">
           <button onClick={loadMore} disabled={loading}>

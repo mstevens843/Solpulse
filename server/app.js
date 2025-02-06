@@ -43,6 +43,7 @@ app.options("*", cors());  // Handle all OPTIONS requests
 app.use("/api", apiRoutes);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static('uploads'));
 
 
 app.get("/", (req, res) => {

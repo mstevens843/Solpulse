@@ -29,7 +29,7 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
     const navigate = useNavigate();
 
     // Use user.profilePicture directly instead of local state to prevent desync issues
-    const displayedProfilePicture = user?.profilePicture || "/default-avatar.png";
+    const displayedProfilePicture = user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png";
 
     // Sync followers/following count when user prop updates
     useEffect(() => {
@@ -66,7 +66,7 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
             <div className="user-left">
 
                 <img
-                    src={`${user?.profilePicture ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${user.profilePicture}` : "/default-avatar.png"}?timestamp=${new Date().getTime()}`}
+                    src={`${user?.profilePicture ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${user.profilePicture}` : "http://localhost:5001/uploads/default-avatar.png"}?timestamp=${new Date().getTime()}`}
                     alt={`${user.username}'s profile picture`}
                     className={isInModal ? "user-avatar-modal" : "user-avatar"}
                 />

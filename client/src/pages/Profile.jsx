@@ -48,7 +48,7 @@ function Profile() {
                     followingCount: followingCount ?? 0,  // Ensure default value if undefined
                 });
                 console.log("Setting profile picture:", user.profilePicture);
-                setProfilePicture(user.profilePicture || "/default-avatar.png");  // Ensure the latest profile picture
+                setProfilePicture(user.profilePicture || "http://localhost:5001/uploads/default-avatar.png");  // Ensure the latest profile picture
                 
                 setBio(user.bio || "");  // Default empty string if null
                 setFollowersCount(followersCount ?? 0);

@@ -18,12 +18,12 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
     const [author, setAuthor] = useState(post.author || "");
-    const [profilePicture, setProfilePicture] = useState(post.profilePicture || "/default-avatar.png");
+    const [profilePicture, setProfilePicture] = useState(post.profilePicture || "http://localhost:5001/uploads/default-avatar.png");
     // Determine the correct author and profile picture
     const isRetweet = post.isRetweet;
     const retweeterName = isRetweet ? currentUser.username : null;
     const postAuthor = isRetweet && post.originalAuthor ? post.originalAuthor : post.author;
-    const postProfilePicture = isRetweet && post.originalProfilePicture ? post.originalProfilePicture : post.profilePicture || "/default-avatar.png";
+    const postProfilePicture = isRetweet && post.originalProfilePicture ? post.originalProfilePicture : post.profilePicture || "http://localhost:5001/uploads/default-avatar.png";
 
 
 
@@ -33,7 +33,7 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
                 try {
                     const response = await api.get(`/users/${post.userId}`);
                     setAuthor(response.data.username);
-                    setProfilePicture(response.data.user.profilePicture || "/default-avatar.png");
+                    setProfilePicture(response.data.user.profilePicture || "http://localhost:5001/uploads/default-avatar.png");
                 } catch (error) {
                     console.error("Error fetching user:", error);
                 }

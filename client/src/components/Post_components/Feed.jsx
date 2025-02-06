@@ -98,12 +98,13 @@ function Feed({ currentUser }) {
 
 
             <ul className="community-feed-list">
-                {posts.map((post) => (
-                    <li key={post.id} className="community-feed-post">
+                {posts.map((post, index) => (
+                    <li key={`${post.id}-${index}`} className="community-feed-post">
                         <Post post={post} currentUser={currentUser} setPosts={setPosts} />
                     </li>
                 ))}
             </ul>
+
 
             {loading && (
                 <p className="community-feed-loading" role="status" aria-live="polite">
