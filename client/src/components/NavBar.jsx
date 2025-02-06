@@ -128,7 +128,7 @@ const NavBar = () => {
                 ) : (
                     <>
                         <li className="navbar-item" key="login">
-                            <NavLink to="/login" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Login">
+                            <NavLink to="/" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Login">
                                 Login
                             </NavLink>
                         </li>

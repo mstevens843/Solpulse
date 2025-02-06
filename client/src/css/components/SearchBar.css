@@ -28,8 +28,8 @@
 
 
 .search-input:focus {
-    border-color: #ffcc00;
-    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+    border-color: #00ffcc;
+    box-shadow: 0 0 10px #00ffcc;
 }
 
 /* Search Button Positioned Below */
@@ -76,11 +76,11 @@
     height: 100%;
 }
 
-.search-button:hover, 
-.reset-button:hover, 
-.search-filter:hover {
-    background-color: #ffcc00;
-    box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+button.search-button:hover, 
+button.reset-button:hover, 
+select.search-filter:hover {
+    background-color: #0da688;
+    box-shadow: 0 0 15px #00ffcc;
 }
 
 /* Responsive Design */

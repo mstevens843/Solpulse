@@ -11,9 +11,11 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import PropTypes from "prop-types";
 import Post from "@/components/Post_components/Post";
 import FeedFilter from "@/components/Post_components/FeedFilter";
+import PostComposer from "@/components/Post_components/PostComposer";
 import { api } from "@/api/apiConfig";
 import { AuthContext } from "@/context/AuthContext";
 import "@/css/components/Post_components/Feed.css";
+
 
 function Feed({ currentUser }) {
     const [posts, setPosts] = useState([]);
@@ -73,6 +75,7 @@ function Feed({ currentUser }) {
 
     return (
         <div className="community-feed-container">
+
             <h3 className="community-feed-title">Community Feed</h3>
 
             <FeedFilter onFilterChange={(selectedFilter) => {
@@ -87,6 +90,12 @@ function Feed({ currentUser }) {
                     <p>{error}</p>
                 </div>
             )}
+            
+            <PostComposer onPostCreated={(newPost) => {
+                setPosts((prevPosts) => [newPost, ...prevPosts]);
+                window.scrollTo({ top: 0, behavior: "smooth" }); // Smooth scroll to top
+            }} />
+
 
             <ul className="community-feed-list">
                 {posts.map((post) => (

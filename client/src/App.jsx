@@ -24,6 +24,7 @@ import Login from "./components/Login";
 import NotFound from "./pages/NotFound";
 import Trade from "@/pages/Trade";
 import ActivityPage from "./pages/Activity";
+import JupiterSwap from "@/pages/JupiterSwap"; 
 
 
 
@@ -90,6 +91,7 @@ function AppContent() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/trade" element={<Trade />} />
+                    <Route path="/swap" element={<JupiterSwap />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>

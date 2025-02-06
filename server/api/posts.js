@@ -21,11 +21,21 @@ const upload = multer({ storage });
 /**
  * Utility function to format post responses
  */
-const formatPost = (post) => ({
+const formatPost = (post, currentUserId = null) => ({
   id: post.id || null,
   userId: post.userId || null,
-  author: post.isRetweet && post.originalPost ? post.originalPost.user?.username : post.user?.username || 'Unknown',
-  profilePicture: post.isRetweet && post.originalPost ? post.originalPost.user?.profilePicture : post.user?.profilePicture || '/default-avatar.png',
+  
+  // Display "You reposted" if the user reposted the post
+  author: post.isRetweet
+    ? post.userId === currentUserId
+      ? "You reposted"
+      : post.originalAuthor || post.originalPost?.user?.username || "Unknown"
+    : post.author || post.user?.username || "Unknown",
+  
+  profilePicture: post.isRetweet
+    ? post.originalProfilePicture || post.originalPost?.user?.profilePicture || "/default-avatar.png"
+    : post.profilePicture || post.user?.profilePicture || "/default-avatar.png",
+  
   content: post.content || '',
   mediaUrl: post.mediaUrl || null,
   cryptoTag: post.cryptoTag || null,
@@ -33,27 +43,24 @@ const formatPost = (post) => ({
   retweets: post.retweets || 0,
   isRetweet: post.isRetweet || false,
   originalPostId: post.originalPostId || null,
-  originalAuthor: post.isRetweet && post.originalPost ? post.originalPost.user?.username : null,
-  originalProfilePicture: post.isRetweet && post.originalPost ? post.originalPost.user?.profilePicture : null,
-  retweetedAt: post.retweetedAt || null,
+  originalAuthor: post.originalAuthor || post.originalPost?.user?.username || null,
+  originalProfilePicture: post.originalProfilePicture || post.originalPost?.user?.profilePicture || null,
+  retweetedAt: post.retweetedAt || post.createdAt || new Date(),  // Ensure retweetedAt is always populated
   createdAt: post.createdAt || new Date(),
   updatedAt: post.updatedAt || new Date(),
 });
 
-
 router.get('/:id/profile-feed', async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Ensure id is treated as an integer
     const userId = parseInt(id, 10);
     if (isNaN(userId)) {
       return res.status(400).json({ message: "Invalid user ID format." });
     }
 
-    // Fetch user's original posts
+    // Fetch user's original posts (excluding retweets)
     const userPosts = await Post.findAll({
-      where: { userId },
+      where: { userId, isRetweet: false },
       include: [
         {
           model: User,
@@ -65,36 +72,28 @@ router.get('/:id/profile-feed', async (req, res) => {
     });
 
     // Fetch user's retweets and include original post details
-    const retweets = await Retweet.findAll({
-      where: { userId },
+    const retweets = await Post.findAll({
+      where: { userId, isRetweet: true },
       include: [
         {
           model: Post,
-          as: 'post',
+          as: 'originalPost',
           include: [{ model: User, as: 'user', attributes: ['username', 'profilePicture'] }],
-        },
+        }
       ],
       order: [['createdAt', 'DESC']],  // Order by newest first
     });
 
-    // Format posts and retweets to a unified format
-    const formattedRetweets = retweets.map((retweet) => ({
-      ...retweet.post.toJSON(),
-      isRetweet: true,
-      createdAt: retweet.retweetedAt || retweet.createdAt,  // Use retweet date
-      retweetedAt: retweet.createdAt,
-      originalUser: retweet.post.user.username,
-    }));
+    // Format retweets correctly
+    const formattedRetweets = retweets.map((retweet) => formatPost(retweet, userId));
 
-    // Merge and sort all posts/retweets by descending order
-    const combinedPosts = [
-      ...userPosts.map(post => ({
-        ...post.toJSON(),
-        isRetweet: false,
-        createdAt: post.createdAt,
-      })),
-      ...formattedRetweets
-    ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // Format original posts correctly
+    const formattedPosts = userPosts.map((post) => formatPost(post, userId));
+
+    // Merge and sort all posts/retweets by descending order (latest first)
+    const combinedPosts = [...formattedPosts, ...formattedRetweets].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
 
     res.status(200).json({ posts: combinedPosts });
   } catch (error) {
@@ -102,6 +101,7 @@ router.get('/:id/profile-feed', async (req, res) => {
     res.status(500).json({ message: "Failed to fetch posts and retweets." });
   }
 });
+
 
 /**
  * @route   GET /api/posts
@@ -379,8 +379,21 @@ router.post('/:id/retweet', authMiddleware, async (req, res) => {
 
     // Check if the post exists
     const originalPost = await Post.findByPk(id, {
-      include: [{ model: User, as: "user", attributes: ["username", "profilePicture"] }]
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["username", "profilePicture"]
+        },
+        {
+          model: Post,
+          as: "originalPost",
+          include: [{ model: User, as: "user", attributes: ["username", "profilePicture"] }]
+        }
+      ]
     });
+    
+    
 
     if (!originalPost) {
       return res.status(404).json({ message: "Post not found." });
@@ -395,17 +408,27 @@ router.post('/:id/retweet', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: "You have already retweeted this post." });
     }
 
-    // Create a new post entry for the retweet
+    const originalAuthor = originalPost.user ? originalPost.user.username : (
+      originalPost.originalPost ? originalPost.originalPost.user.username : "Unknown"
+    );
+    const originalProfilePicture = originalPost.user ? originalPost.user.profilePicture : (
+      originalPost.originalPost ? originalPost.originalPost.user.profilePicture : "/default-avatar.png"
+    );
+    
     const retweetedPost = await Post.create({
       userId,
-      author: originalPost.user.username, // Preserve original author's name
-      profilePicture: originalPost.user.profilePicture, // Preserve profile picture
       content: originalPost.content,
       mediaUrl: originalPost.mediaUrl,
       cryptoTag: originalPost.cryptoTag,
       isRetweet: true,
-      originalPostId: originalPost.id, // Store reference to original post
+      originalPostId: originalPost.id,
+      originalAuthor, // ✅ Ensures the original author's name is stored
+      originalProfilePicture, // ✅ Stores the correct profile picture
     });
+
+// Increment retweet count on the original post
+originalPost.retweets += 1;
+await originalPost.save();
 
     // Increment retweet count on the original post
     originalPost.retweets += 1;

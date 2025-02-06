@@ -610,3 +610,87 @@
     text-align: center;
 }
 
+
+
+
+
+/* Dropdown Container */
+.dropdown-container {
+    position: absolute;
+    width: 100%;
+    max-height: 250px;
+    background: #1e1e1e;
+    border: 1px solid #00ffcc;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+/* Search Bar */
+.token-search {
+    width: 100%;
+    padding: 8px;
+    background: #121212;
+    color: white;
+    border: 1px solid #00ffcc;
+    outline: none;
+}
+
+/* Token List */
+.coin-dropdown {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.coin-dropdown li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.coin-dropdown li:hover {
+    background: #00ffcc;
+    color: black;
+}
+
+
+.converted-price {
+    font-size: 0.85rem;
+    color: #8e8e93;
+    margin-top: 4px;
+}
+
+.swap-box {
+    margin-bottom: 20px;
+}
+
+.expected-output {
+    margin: 10px 0;
+    font-weight: bold;
+    color: #4caf50; /* Optional: Green for success */
+}
+
+img.coin-logo {
+    width: 40px;  /* Reduced size */
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* .swap-button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.swap-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.swap-button:hover:not(:disabled) {
+    background-color: #388e3c;
+} */

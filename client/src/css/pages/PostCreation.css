@@ -113,31 +113,11 @@ input[type="file"]::-webkit-file-upload-button:hover {
   background: #00ddaa;
 }
 
-/* Media Upload Section */
-.media-upload {
-  width: 100%;
-  border: 2px solid #00ffcc;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
-  border-radius: 10px;
-  padding: 1.5rem;
-  text-align: center;
-  background: #121212;
-  color: #ffffff;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.media-upload:hover {
-  background-color: #121212;
-  border-color: #ffcc00;
-}
 
 /* Crypto Tag Input */
 .crypto-tag-input {
   width: 100%;
-  padding: 1rem;
-  border: 1px solid #00ffcc;
+  padding: .6rem;
   border-radius: 8px;
   background-color: #121212;
   color: #ffffff;

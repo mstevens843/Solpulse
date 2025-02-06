@@ -4,7 +4,7 @@ import "@/css/components/Post_components/PostButtons.css"; // Updated alias for 
 import { api } from "@/api/apiConfig"; // Centralized API instance
 import { toast } from "react-toastify";
 
-function RetweetButton({ postId, initialRetweets = 0, currentUser, onRetweet }) {
+function RetweetButton({ postId, initialRetweets = 0, currentUser, onRetweet, createdAt }) {
     const [retweetCount, setRetweetCount] = useState(initialRetweets);
     const [hasRetweeted, setHasRetweeted] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -24,16 +24,25 @@ function RetweetButton({ postId, initialRetweets = 0, currentUser, onRetweet }) 
             setHasRetweeted(true);
 
             // Notify parent component to update the posts feed
-            if (onRetweet) {
-                onRetweet({
-                    id: postId,
-                    userId: currentUser.id,
-                    createdAt: post.createdAt,  // Keep original post creation time
-                    retweetedAt: new Date().toISOString(),
-                    originalUser: currentUser.username,
+            onRetweet((prevPosts) => [
+                {
+                    id: response.data.retweetData.id,
+                    userId: response.data.retweetData.userId,
+                    author: response.data.retweetData.originalAuthor,
+                    profilePicture: response.data.retweetData.originalProfilePicture,
+                    content: response.data.retweetData.content,
+                    mediaUrl: response.data.retweetData.mediaUrl,
+                    cryptoTag: response.data.retweetData.cryptoTag,
+                    likes: response.data.retweetData.likes,
+                    retweets: response.data.retweetData.retweets,
                     isRetweet: true,
-                });
-            }
+                    originalPostId: postId,
+                    originalAuthor: response.data.retweetData.originalAuthor,
+                    originalProfilePicture: response.data.retweetData.originalProfilePicture,
+                    createdAt: response.data.retweetData.createdAt,
+                },
+                ...prevPosts,
+            ]);
 
             toast.success("Post retweeted successfully!");
         } catch (err) {

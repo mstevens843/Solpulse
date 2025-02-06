@@ -1,51 +1,53 @@
-/* Container Styles */
-.media-upload {
-    @apply flex flex-col gap-4 items-start bg-solana-light p-4 rounded-lg shadow-md;
+.feed-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-/* Label Styles */
-.media-upload-label {
-    @apply text-solana-text-dark font-semibold text-sm cursor-pointer mb-2;
+.icon-button {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    display: inline-flex; /* Ensures compact size */
+    align-items: center;
+    justify-content: center;
+    width: 40px; /* Adjust for compactness */
+    height: 40px; /* Adjust for compactness */
 }
 
-.media-upload-content-label,
-.media-upload-crypto-label {
-    @apply text-solana-text-dark font-medium mb-1;
+.icon-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Input Styles */
-.media-upload-input,
-.media-upload-crypto-input {
-    @apply w-full text-solana-text-dark border border-solana-primary rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-solana-secondary transition-all;
-}
-
-/* Textarea Styles */
-.media-upload-textarea {
-    @apply w-full text-solana-text-dark border border-solana-primary rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-solana-secondary transition-all;
-}
-
-/* Error Message */
-.media-upload-error {
-    @apply text-solana-error text-xs mt-2;
-}
-
-/* File Information */
-.selected-file {
-    @apply text-sm font-medium text-solana-dark mt-2;
-}
-
-/* Button Styles */
 .upload-button {
-    @apply bg-solana-primary text-solana-dark font-semibold py-2 px-4 rounded-lg transition-transform duration-300;
+    background-color: #007bff;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .upload-button:hover {
-    @apply bg-solana-secondary transform scale-105;
+    background-color: #0056b3;
 }
 
-.upload-button:disabled {
-    @apply bg-solana-light text-solana-text-light cursor-not-allowed;
+.error-message {
+    color: #ff4d4d;
+    font-size: 12px;
+    margin-top: 4px;
 }
+
 
 /* Key Features:
 Clean Container Design

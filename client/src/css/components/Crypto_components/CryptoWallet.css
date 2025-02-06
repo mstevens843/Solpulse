@@ -110,9 +110,11 @@
     list-style: none;
     padding: 0;
     margin-top: 1rem;
+    max-height: 300px; /* Set a smaller height */
+    overflow-y: auto;  /* Enable vertical scrolling */
 }
 
-.wallet-transaction-item {
+.crypto-transaction-item {
     background: rgba(0, 255, 204, 0.1);
     padding: 1rem;
     border-radius: 8px;
@@ -125,7 +127,7 @@
     transition: transform 0.2s ease-in-out;
 }
 
-.wallet-transaction-item:hover {
+.crypto-transaction-item:hover {
     transform: scale(1.05);
 }
 
@@ -136,6 +138,15 @@
     font-weight: bold;
     margin-top: 1rem;
 }
+
+/* Optionally, target specific elements */
+.crypto-wallet-transactions .crypto-transaction-type,
+.crypto-wallet-transactions .crypto-transaction-amount,
+.crypto-wallet-transactions .crypto-transaction-date {
+    font-size: 1.2rem; /* Adjust further if needed */
+    color: #ffffff; /* Optional: Make it slightly dimmer */
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

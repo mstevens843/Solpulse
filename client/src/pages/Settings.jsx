@@ -7,11 +7,13 @@
 // NOTIFICATION BELL: keeps users informed of unread messages or alerts.
 
 
+
+
 import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
 import "@/css/pages/Settings.css";
-import { FaEnvelope, FaLock, FaUser, FaWallet, FaBell, FaKey, FaPaintBrush, FaTrash, FaFileDownload } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaUser, FaWallet, FaBell, FaPaintBrush, FaTrash } from "react-icons/fa";
 
 function Settings() {
   const [email, setEmail] = useState("");
@@ -20,33 +22,28 @@ function Settings() {
   const [walletAddress, setWalletAddress] = useState("");
   const [notifications, setNotifications] = useState("enabled");
   const [theme, setTheme] = useState("dark");
-  const [fontSize, setFontSize] = useState(16);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showPasswordField, setShowPasswordField] = useState(false);
 
   useEffect(() => {
     document.title = "Settings | Solrise";
-  
-    // Load stored settings from localStorage
+
     const storedSettings = JSON.parse(localStorage.getItem("userSettings"));
-  
     if (storedSettings) {
       setEmail(storedSettings.email || "");
       setWalletAddress(storedSettings.walletAddress || "");
     } else {
-      fetchSettings(); // Fallback if no data found in localStorage
+      fetchSettings();
     }
   }, []);
-  
-     
-  
 
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const response = await api.get(`/users/settings`);
+      const response = await api.get(`/users/me`);
       const { email, privacy, walletAddress, notifications, theme } = response.data;
       setEmail(email || "");
       setPrivacy(privacy || "public");
@@ -66,19 +63,10 @@ function Settings() {
     setErrorMessage("");
     setSuccessMessage("");
     setLoading(true);
-  
+
     try {
       await api.put(`/users/settings`, { email, walletAddress, privacy, notifications, theme });
-  
-      // Update localStorage with new settings
-      localStorage.setItem(
-        "userSettings",
-        JSON.stringify({
-          email: email,
-          walletAddress: walletAddress,
-        })
-      );
-  
+      localStorage.setItem("userSettings", JSON.stringify({ email, walletAddress }));
       setSuccessMessage("Settings updated successfully!");
     } catch (error) {
       setErrorMessage("Failed to update settings. Please try again.");
@@ -88,9 +76,16 @@ function Settings() {
   };
 
   const handleDeleteAccount = () => {
-    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      console.log("Account deleted.");
-    }
+    setShowConfirmationModal(true);
+  };
+
+  const confirmDeleteAccount = () => {
+    console.log("Account deleted.");
+    setShowConfirmationModal(false);
+  };
+
+  const cancelDeleteAccount = () => {
+    setShowConfirmationModal(false);
   };
 
   return (
@@ -104,26 +99,28 @@ function Settings() {
             <div className="form-group">
               <label htmlFor="email">Email:</label>
               <FaEnvelope className="input-icon" />
-              <input
-                type="email"
-                id="email"
-                value={email}
-                placeholder="Enter your email"
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <input type="email" id="email" value={email} placeholder="Enter your email" onChange={(e) => setEmail(e.target.value)} required />
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Password:</label>
+              <label>Password:</label>
               <FaLock className="input-icon" />
-              <input
-                type="password"
-                id="password"
-                value={password}
-                placeholder="Enter a new password (optional)"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              {!showPasswordField ? (
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordField(true)}
+                  className="change-password-btn"
+                >
+                  Change Password
+                </button>
+              ) : (
+                <input
+                  type="password"
+                  value={password}
+                  placeholder="Enter new password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              )}
             </div>
 
             <div className="form-group">
@@ -156,13 +153,7 @@ function Settings() {
             <div className="form-group">
               <label htmlFor="walletAddress">Wallet Address:</label>
               <FaWallet className="input-icon" />
-              <input
-                type="text"
-                id="walletAddress"
-                value={walletAddress}
-                placeholder="Enter your wallet address (optional)"
-                onChange={(e) => setWalletAddress(e.target.value)}
-              />
+              <input type="text" id="walletAddress" value={walletAddress} placeholder="Enter your wallet address (optional)" onChange={(e) => setWalletAddress(e.target.value)} />
             </div>
 
             {errorMessage && <p className="notification notification-error">{errorMessage}</p>}
@@ -178,6 +169,14 @@ function Settings() {
               <FaTrash /> Delete Account
             </button>
           </div>
+
+          {showConfirmationModal && (
+            <div className="confirmation-modal">
+              <p>Are you sure you want to delete your account? This action is irreversible.</p>
+              <button onClick={confirmDeleteAccount} className="confirm-btn">Yes, Delete</button>
+              <button onClick={cancelDeleteAccount} className="cancel-btn">Cancel</button>
+            </div>
+          )}
         </>
       )}
     </div>
@@ -185,8 +184,6 @@ function Settings() {
 }
 
 export default Settings;
-
-
 
 
 

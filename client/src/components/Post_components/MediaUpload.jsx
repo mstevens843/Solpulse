@@ -11,69 +11,46 @@
 // This component simplifies media handling and can be reused wherever media uploads are needed. 
 
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
-import { api } from "@/api/apiConfig"; // Centralized API instance
-import "@/css/components/Post_components/MediaUpload.css"; // Updated alias for CSS import
+import { api } from "@/api/apiConfig";
+import "@/css/components/Post_components/MediaUpload.css";
 
-function MediaUpload({
-    onMediaUpload,
-    maxFileSize = 5 * 1024 * 1024, // Default 5MB max file size
-    allowedTypes = ["image/jpeg", "image/png", "video/mp4"], // Default allowed types
-}) {
+function MediaUpload({ onMediaUpload }) {
     const [media, setMedia] = useState(null);
-    const [content, setContent] = useState(""); // Optional content for the post
-    const [cryptoTag, setCryptoTag] = useState(""); // Optional crypto tag
     const [error, setError] = useState("");
     const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef(null);
+
+    const handleButtonClick = () => {
+        fileInputRef.current.click();
+    };
 
     const handleMediaChange = (e) => {
         const file = e.target.files[0];
-        if (!file) return;
-
-        if (!allowedTypes.includes(file.type)) {
-            setError("Unsupported file type. Allowed types are JPEG, PNG, or MP4.");
-            return;
+        if (file) {
+            setMedia(file);
+            setError("");
         }
-
-        if (file.size > maxFileSize) {
-            setError(`File size exceeds the limit of ${(maxFileSize / (1024 * 1024)).toFixed(2)}MB.`);
-            return;
-        }
-
-        setMedia(file);
-        setError("");
     };
 
     const handleUpload = async () => {
-        if (!media) {
-            setError("Please select a file to upload.");
-            return;
-        }
+        if (!media) return;
 
         try {
             setUploading(true);
-            setError("");
-
             const formData = new FormData();
             formData.append("media", media);
-            formData.append("content", content);
-            formData.append("cryptoTag", cryptoTag);
 
-            // Use the centralized `api` instance for the API call
             const response = await api.post(`/api/posts`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
             onMediaUpload(response.data.post);
             setMedia(null);
-            setContent("");
-            setCryptoTag("");
         } catch (err) {
-            console.error("Error uploading file:", err);
-            setError(
-                err.response?.data?.message || "Failed to upload the file. Please try again."
-            );
+            console.error("Upload failed:", err);
+            setError("Upload failed. Try again.");
         } finally {
             setUploading(false);
         }
@@ -81,68 +58,41 @@ function MediaUpload({
 
     return (
         <div className="media-upload">
-            <label htmlFor="file-upload" className="media-upload-label">
-                Upload a file:
-            </label>
+            <button
+                type="button"
+                onClick={handleButtonClick}
+                className="icon-button"
+                aria-label="Upload Media"
+            >
+                📷
+            </button>
+
             <input
                 type="file"
-                id="file-upload"
+                ref={fileInputRef}
                 onChange={handleMediaChange}
-                aria-label="Upload media file"
-                className="media-upload-input"
+                style={{ display: "none" }}
+                accept="image/jpeg, image/png, video/mp4"
             />
 
-            {/* <div>
-                <label htmlFor="content" className="media-upload-content-label">
-                    Post Content (optional):
-                </label>
-                <textarea
-                    id="content"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="Add a caption or description..."
-                    rows="2"
-                    className="media-upload-textarea"
-                />
-            </div> */}
-
-            {/* <div>
-                <label htmlFor="cryptoTag" className="media-upload-crypto-label">
-                    Crypto Tag (optional):
-                </label>
-                <input
-                    type="text"
-                    id="cryptoTag"
-                    value={cryptoTag}
-                    onChange={(e) => setCryptoTag(e.target.value)}
-                    placeholder="Tag a crypto asset (e.g., SOL, BTC)"
-                    className="media-upload-crypto-input"
-                />
-            </div> */}
-
-            {error && <p className="media-upload-error" role="alert">{error}</p>}
-
             {media && (
-                <div>
-                    <p className="selected-file">Selected file: {media.name}</p>
-                    <button
-                        onClick={handleUpload}
-                        disabled={uploading}
-                        className="upload-button"
-                        aria-label="Upload selected file"
-                    >
-                        {uploading ? "Uploading..." : "Upload"}
-                    </button>
-                </div>
+                <button
+                    onClick={handleUpload}
+                    disabled={uploading}
+                    className="upload-button"
+                    aria-label="Confirm Upload"
+                >
+                    {uploading ? "..." : "⬆️"} {/* Upload Icon */}
+                </button>
             )}
+
+            {error && <p className="error-message">{error}</p>}
         </div>
     );
 }
 
 MediaUpload.propTypes = {
     onMediaUpload: PropTypes.func.isRequired,
-    maxFileSize: PropTypes.number,
-    allowedTypes: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default MediaUpload;

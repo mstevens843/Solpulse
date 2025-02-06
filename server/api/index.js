@@ -15,6 +15,7 @@ const trendingCryptoRoutes = require('./trendingCrypto'); // Added trendingCrypt
 const searchRoutes = require('./search'); // Added search route
 const testRoutes = require('./test'); // Import the test route
 const testWebSocketRouter = require("./test-websocket");
+const jupiterRoutes = require('./jupiter'); 
 
 
 const router = express.Router();
@@ -37,11 +38,13 @@ router.use('/users', userRoutes); // User profile and account management
 router.use('/transactions', transactionRoutes); // Transactions and history
 router.use('/trade', tradeRoutes); // Trading-related routes
 router.use("/socket", testWebSocketRouter);
+router.use('/jupiter', jupiterRoutes); 
 
 
 
 // Log when the /trade route is registered
 console.log('/trade route successfully registered');
+console.log('/jupiter route successfully registered');
 
 router.use('/messages', messageRoutes); // Added messages functionality
 router.use('/notifications', notificationRoutes); // Added notifications functionality

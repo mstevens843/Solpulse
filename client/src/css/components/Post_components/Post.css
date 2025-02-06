@@ -1,15 +1,15 @@
 /* Post Container Fix */
 .individual-post-container {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column; /* Stack elements: Repost indicator on top, content below */
+  align-items: stretch; /* Ensure it takes full width */
   padding: 0rem;
   border-bottom: 1px solid #2e2e2e;
   background: #1f1f1f;
   transition: all 0.3s ease;
   cursor: pointer;
-  flex-direction: row;  /* Ensure horizontal layout */
+  width: 100%; /* Ensure full width */
 }
-
 .individual-post-container:hover {
   background: #2a2a2a;
 }
@@ -19,12 +19,10 @@
 .post-profile-picture {
   width: 48px;
   height: 48px;
-  /* border: 2px solid #00ffcc;
-  box-shadow: 0 0 5px rgba(0, 255, 204, 0.5); */
   border-radius: 50%;
   margin-right: 1rem;
-  margin-left:1rem;
-  margin-top: .4rem
+  margin-left: 1rem;
+  margin-top: 0.4rem;
 }
 
 /* Post Content */
@@ -33,18 +31,38 @@
 }
 
 /* Align author details correctly */
+/* Ensure the post header stays in a row */
 .individual-post-header {
   display: flex;
-  flex-direction: row; 
-  align-items: flex-start; 
+  align-items: center; /* Ensures vertical alignment */
+  justify-content: flex-start; /* Aligns text left */
+  position: relative; /* Allows absolute positioning of Delete */
   width: 100%;
-  justify-content: space-between;
 }
 
-.individual-post-author {
+/* Ensures Delete Button Stays in Top Right */
+.delete-post-button {
+  position: absolute;
+  top: 9rem; /* Adjusted for padding */
+  right: 8px; /* Ensures it stays at the top right */
+  background: transparent;
+  color: #ff4d4d;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: color 0.3s ease;
+}
+
+
+.delete-post-button:hover {
+  color: #ffcc00;
+}
+
+.individual-post-author, p.repost-indicator {
   font-size: 1rem;
   font-weight: bold;
-  color: #00ffcc;
+  color: #ffffff;
   margin-top: .2rem;
 }
 
@@ -54,12 +72,15 @@
 }
 
 /* Post Content Section */
-.individual-post-content {
-  font-size: 1.2rem;
-  color: #ffffff;
-  margin-top: 0.5rem;
-  line-height: 1.5;
-  text-align: left; /* Ensure left alignment */
+.post-content-wrapper {
+  display: flex;
+  flex-direction: row; /* Keeps profile pic + content in a row */
+  align-items: flex-start;
+  width: 100%; /* Ensures full width */
+}
+.individual-post-content-wrapper {
+  flex-grow: 1; /* Ensures content expands */
+  width: 100%; /* Forces content to take up full space */
 }
 
 .individual-post-crypto-tag {
@@ -116,14 +137,15 @@
   align-items: flex-start;
 }
 
+/* Adjusted Repost Indicator Styling */
 .repost-indicator {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #00ffcc;
-  text-align: left;
-  margin-bottom: 0.5rem;
+  font-size: 0.8rem; /* Slightly smaller text */
+  font-weight: 600; /* Medium weight */
+  color: #c8c3c3; /* Subtle color */
+  margin-bottom: 4px; /* Spacing before content */
+  margin-top: 4px; /* Spacing before content */
+  padding-left: 58px; /* Aligns with profile picture */
 }
-
 
 
 /* Responsive Design */
@@ -146,5 +168,12 @@
   .individual-post-actions {
     gap: 0.5rem;
     font-size: 0.8rem;
+    color: #ffffff;
   }
 }
+
+button.comment-text, button.like-button, button.retweet-button {
+  color: #ffffff;
+}
+
+

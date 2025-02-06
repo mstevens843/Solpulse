@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'Users', // Ensure correct table reference
+          model: 'Users',
           key: 'id',
         },
       },
@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           len: {
-            args: [1, 280], // Enforce character limit for better UX
+            args: [1, 280],
             msg: 'Content must be between 1 and 280 characters.',
           },
         },
@@ -68,26 +68,34 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-          model: "Posts",
-          key: "id",
+          model: 'Posts',
+          key: 'id',
         },
-        onDelete: "SET NULL",
+        onDelete: 'SET NULL',
+      },
+      originalAuthor: {
+        type: DataTypes.STRING, // ✅ Stores original author's username
+        allowNull: true,
+      },
+      originalProfilePicture: {
+        type: DataTypes.STRING, // ✅ Stores original author's profile picture
+        allowNull: true,
       },
       deletedAt: {
-        type: DataTypes.DATE, // Enable soft deletes
+        type: DataTypes.DATE,
         allowNull: true,
       },
     },
     {
-      tableName: 'Posts', // Explicitly match the table name in DB
+      tableName: 'Posts',
       timestamps: true,
-      paranoid: true, // Enable soft deletes
+      paranoid: true,
       indexes: [
         {
-          fields: ['userId'], // Index for performance on user-based queries
+          fields: ['userId'],
         },
         {
-          fields: ['cryptoTag'], // Index for tag-based searches
+          fields: ['cryptoTag'],
         },
       ],
     }

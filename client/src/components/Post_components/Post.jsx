@@ -19,6 +19,11 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
     const [isModalOpen, setModalOpen] = useState(false);
     const [author, setAuthor] = useState(post.author || "");
     const [profilePicture, setProfilePicture] = useState(post.profilePicture || "/default-avatar.png");
+    // Determine the correct author and profile picture
+    const isRetweet = post.isRetweet;
+    const retweeterName = isRetweet ? currentUser.username : null;
+    const postAuthor = isRetweet && post.originalAuthor ? post.originalAuthor : post.author;
+    const postProfilePicture = isRetweet && post.originalProfilePicture ? post.originalProfilePicture : post.profilePicture || "/default-avatar.png";
 
 
 
@@ -136,87 +141,90 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
     
     return (
         <div className={`individual-post-container ${post.fading ? "fading" : ""}`}>
-        <ToastContainer />
-        
-        {post.isRetweet && (
-            <p className="repost-indicator">
-                Reposted
-            </p>
-        )}
+            <ToastContainer />
     
-        <img
-            src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${profilePicture}?timestamp=${new Date().getTime()}`}
-            alt={`${post.author}'s profile`}
-            className="post-profile-picture"
-        />
-        <div className="individual-post-content-wrapper">
-            <div className="individual-post-header">
-                <div className="post-author-details">
-                    <Link to={`/profile/${post.userId}`} className="post-author-link">
-                        <h4 className="individual-post-author">{post.author}</h4>
-                    </Link>
-                    <p className="individual-post-date">{formatDate(post.createdAt)}</p>
-                </div>
-                {currentUser?.id === post.userId && (
-                    <button
-                        className="delete-post-button"
-                        onClick={handleDeletePost}
-                        disabled={isDeleting}
-                    >
-                        {isDeleting ? "Deleting..." : "Delete"}
-                    </button>
-                )}
-            </div>
-    
-            {/* Post Content Section */}
-            <div className="individual-post-content">
-                <p>{post.content || "No content available."}</p>
-                
-                {/* CryptoTag Section */}
-                {post.cryptoTag && (
-                    <p className="individual-post-crypto-tag">
-                        <span role="img" aria-label="crypto-tag">🏷️</span> {post.cryptoTag}
-                    </p>
-                )}
-            </div>
-    
-            {/* Media Content */}
-            {post.mediaUrl && (
-                <div className="individual-post-media">
-                    {post.mediaUrl.endsWith(".mp4") ? (
-                        <video controls className="post-video">
-                            <source src={post.mediaUrl} type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                    ) : (
-                        <img src={post.mediaUrl} alt="Post media" className="post-image" />
-                    )}
+            {isRetweet && (
+                <div className="repost-indicator">
+                    {post.userId === currentUser.id ? "You reposted" : `${post.author || "Unknown"} reposted`}
                 </div>
             )}
     
-            <div className="individual-post-actions">
-                <LikeButton postId={post.id} currentUser={currentUser} initialLikes={post.likes || 0} />
-                <RetweetButton 
-                    postId={post.id} 
-                    currentUser={currentUser} 
-                    initialRetweets={post.retweets || 0} 
-                    onRetweet={(retweetData) => setPosts((prevPosts) => [retweetData, ...prevPosts])}
-                />          
-                <CommentSection postId={post.id} onNewComment={onNewComment} />
-            </div>
+            {/* Everything below stays in a row */}
+            <div className="post-content-wrapper">
+                <img
+                    src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${postProfilePicture}?timestamp=${new Date().getTime()}`}
+                    alt={`${postAuthor}'s profile`}
+                    className="post-profile-picture"
+                />
+                <div className="individual-post-content-wrapper">
+                    <div className="individual-post-header">
+                        <div className="post-author-details">
+                            <Link to={`/profile/${post.isRetweet ? post.originalPostId : post.userId}`} className="post-author-link">
+                                <h4 className="individual-post-author">{postAuthor}</h4>
+                            </Link>
+                            <p className="individual-post-date">{formatDate(post.createdAt)}</p>
+                        </div>
+                        {currentUser?.id === post.userId && (
+                            <button
+                                className="delete-post-button"
+                                onClick={handleDeletePost}
+                                disabled={isDeleting}
+                            >
+                                {isDeleting ? "Deleting..." : "Delete"}
+                            </button>
+                        )}
+                    </div>
     
-            <div className="view-comments-link">
-                <a href="#" onClick={(e) => { e.preventDefault(); setModalOpen(true); }} className="view-comments-link">
-                    View All Comments ({commentCount})
-                </a>
-            </div>
+                    {/* Post Content Section */}
+                    <div className="individual-post-content">
+                        <p>{post.content || "No content available."}</p>
     
-           {/* 🔥 Show modal when open */}
-           {isModalOpen && <PostModal post={post} onClose={() => setModalOpen(false)} />}
+                        {/* CryptoTag Section */}
+                        {post.cryptoTag && (
+                            <p className="individual-post-crypto-tag">
+                                <span role="img" aria-label="crypto-tag">🏷️</span> {post.cryptoTag}
+                            </p>
+                        )}
+                    </div>
+    
+                    {/* Media Content */}
+                    {post.mediaUrl && (
+                        <div className="individual-post-media">
+                            {post.mediaUrl.endsWith(".mp4") ? (
+                                <video controls className="post-video">
+                                    <source src={post.mediaUrl} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            ) : (
+                                <img src={post.mediaUrl} alt="Post media" className="post-image" />
+                            )}
+                        </div>
+                    )}
+    
+                    <div className="individual-post-actions">
+                        <LikeButton postId={post.id} currentUser={currentUser} initialLikes={post.likes || 0} />
+                        <RetweetButton 
+                            postId={post.id} 
+                            currentUser={currentUser} 
+                            initialRetweets={post.retweets || 0} 
+                            createdAt={post.createdAt}
+                            onRetweet={(retweetData) => setPosts((prevPosts) => [retweetData, ...prevPosts])}
+                        />
+                        <CommentSection postId={post.id} onNewComment={onNewComment} />
+                    </div>
+    
+                    <div className="view-comments-link">
+                        <a href="#" onClick={(e) => { e.preventDefault(); setModalOpen(true); }} className="view-comments-link">
+                            View All Comments ({commentCount})
+                        </a>
+                    </div>
+    
+                    {isModalOpen && <PostModal post={post} onClose={() => setModalOpen(false)} />}
+                </div>
+            </div>
         </div>
-    </div>
-    
     );
+    
 }
 
 Post.propTypes = {

@@ -106,10 +106,6 @@
     gap: 1rem;
 }
 
-.search-bar-container .search-button:hover, 
-.search-bar-container .reset-button:hover {
-    background-color: #00ddaa;
-}
 
 .search-bar-container .search-button {
     display: block; /* Ensure the button takes full width of its parent */
@@ -145,7 +141,7 @@
     text-align: center;
 }
 
-/* Ensure input retains its original size */
+/* Ensure input retains s original size */
 .search-bar-container .search-input {
     width: 100%;
     margin-bottom: 10px;
