@@ -5,17 +5,14 @@
   justify-content: center;
   align-items: center;
   background: #121212;
-  min-height: 100vh; /* Ensures full viewport height */
+  min-height: 100vh;
   width: 100%;
-  height: 100vh; /* Use full viewport height */
-  padding: 2rem; /* Reduced padding for a tighter layout */
+  padding: 2rem;
   color: #fff;
   text-align: center;
-  overflow-y: auto; /* Enables scrolling if content overflows */
-  box-sizing: border-box; /* Prevents padding from breaking layout */
+  overflow-y: auto; /* ✅ Prevents content from overflowing */
+  box-sizing: border-box;
   margin-top: 2rem;
-  transform: scale(1.05);
-
 }
 
 svg.input-icon {
@@ -50,18 +47,17 @@ svg.input-icon {
 .settings-form {
   background: #1f1f1f;
   padding: 2rem;
-  height: 75vh; /* Ensures full viewport height */
+  height: auto; /* ✅ Allow height to adjust dynamically */
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
   max-width: 600px;
-  width: 90%; /* Adjust width to fit smaller screens */
-  min-height: 60%; /* Dynamically adjust height */
-  /* flex-grow: 1; Allow form to grow */
-  flex-shrink: 1; /* Shrink as needed */
+  width: 90%;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content vertically */
+  align-items: center; /* ✅ Ensures inputs stay inside */
   text-align: center;
+  overflow: hidden; /* ✅ Prevents content from overflowing */
+  position: relative; /* ✅ Keeps child elements positioned properly */
 }
 
 /* Form Group */
@@ -69,7 +65,7 @@ div.form-group {
   margin-bottom: 1rem;
   text-align: left;
   width: 100%;
-  height: 50%;
+  height: auto; /* ✅ Fix: Allow dynamic height */
 }
 
 /* Labels */
@@ -92,6 +88,7 @@ div.form-group {
   color: #fff;
   font-size: 1rem;
   transition: all 0.3s ease;
+  box-sizing: border-box; /* ✅ Prevents breaking the layout */
 }
 
 .form-group input::placeholder {
@@ -154,6 +151,8 @@ div.form-group {
   justify-content: center;
   margin-top: 1rem;
   gap: 0.5rem;
+  
+  
 }
 
 .delete-account-btn:hover {

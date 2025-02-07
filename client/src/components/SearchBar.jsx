@@ -23,6 +23,7 @@ function SearchBar({ query, setQuery, filters = [] }) {
     const [errorMessage, setErrorMessage] = useState("");
     const [searchSuggestions, setSearchSuggestions] = useState([]);
     const [selectedFilter, setSelectedFilter] = useState(filters[0] || "all");
+    const [isTyping, setIsTyping] = useState(false); // ✅ Track if user is typing
     const navigate = useNavigate();
 
     // Debounced API call for search suggestions
@@ -35,18 +36,19 @@ function SearchBar({ query, setQuery, filters = [] }) {
             try {
                 const response = await api.get(`/search?query=${encodeURIComponent(queryTerm)}&filter=${selectedFilter}`);
                 const validResults = response.data.results.filter(item => item.username || item.content);
-                setSearchSuggestions(validResults); // ✅ Ensures only valid results appear
+                setSearchSuggestions(validResults);
             } catch (error) {
                 console.error("Error fetching search suggestions:", error);
             }
         }, 300),
         [selectedFilter]
     );
-    
 
     useEffect(() => {
-        fetchSuggestions(query);
-    }, [query, selectedFilter, fetchSuggestions]);
+        if (isTyping) {
+            fetchSuggestions(query);
+        }
+    }, [query, selectedFilter, isTyping, fetchSuggestions]);
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -54,6 +56,7 @@ function SearchBar({ query, setQuery, filters = [] }) {
             setErrorMessage("Please enter a search term.");
             return;
         }
+        setIsTyping(false); // ✅ Stops suggestions from showing
         setSearchSuggestions([]); // ✅ Clears suggestions
         navigate(`/search?query=${encodeURIComponent(query)}&filter=${selectedFilter}`);
     };
@@ -62,17 +65,15 @@ function SearchBar({ query, setQuery, filters = [] }) {
         const selectedQuery = suggestion.username || suggestion.content;
         setQuery(selectedQuery);
         setSearchSuggestions([]); // ✅ Clears suggestions immediately
+        setIsTyping(false); // ✅ Stops showing suggestions
         navigate(`/search?query=${encodeURIComponent(selectedQuery)}&filter=${selectedFilter}`);
-    
-        // ✅ Ensure the input loses focus, forcing the dropdown to close
-        document.activeElement.blur();
     };
-    
 
     const handleReset = () => {
         setQuery("");
         setSearchSuggestions([]);
         setErrorMessage("");
+        setIsTyping(false);
     };
 
     return (
@@ -83,7 +84,10 @@ function SearchBar({ query, setQuery, filters = [] }) {
                         type="text"
                         placeholder="Search for posts, users, or topics..."
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={(e) => {
+                            setQuery(e.target.value);
+                            setIsTyping(true); // ✅ Only show suggestions when typing
+                        }}
                         className="search-input"
                     />
                     <button type="submit" className="search-button">Search</button>
@@ -108,7 +112,7 @@ function SearchBar({ query, setQuery, filters = [] }) {
 
             {errorMessage && <p className="search-error">{errorMessage}</p>}
 
-            {searchSuggestions.length > 0 && query.trim() && (
+            {isTyping && searchSuggestions.length > 0 && query.trim() && (
                 <ul className="autocomplete-suggestions">
                     {searchSuggestions.map((suggestion, index) => (
                         <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
@@ -117,13 +121,12 @@ function SearchBar({ query, setQuery, filters = [] }) {
                     ))}
                 </ul>
             )}
-
         </div>
     );
 }
 
-
 export default SearchBar;
+
 
 
 

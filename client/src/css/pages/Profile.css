@@ -175,7 +175,7 @@
   /* Posts Container */
   .posts-container {
     background: #1f1f1f;
-    padding: 2rem;
+    padding: 0rem;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
     width: 100%;

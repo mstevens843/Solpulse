@@ -9,6 +9,7 @@
   transition: all 0.3s ease;
   cursor: pointer;
   width: 100%; /* Ensure full width */
+  
 }
 .individual-post-container:hover {
   background: #2a2a2a;

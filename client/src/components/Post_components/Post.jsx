@@ -170,7 +170,7 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
                                 onClick={handleDeletePost}
                                 disabled={isDeleting}
                             >
-                                {isDeleting ? "Deleting..." : "Delete"}
+                                {isDeleting ? "Processing..." : isRetweet ? "Remove Repost" : "Delete"}
                             </button>
                         )}
                     </div>

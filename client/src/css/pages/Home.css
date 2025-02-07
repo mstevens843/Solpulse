@@ -210,3 +210,44 @@
     font-size: 0.75rem; /* Smaller text size */
     font-weight: bold;
 }
+
+ /* Posts Container */
+ .posts-container {
+    background: #1f1f1f;
+    padding: 0rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  .posts-container h3 {
+    font-size: 1.8rem;
+    color: #00ffcc;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .post-container {
+    background: #121212;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+  }
+  
+  .post-container h4 {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+  }
+  
+  .post-container p {
+    font-size: 1rem;
+    color: #cccccc;
+  }

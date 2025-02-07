@@ -1,4 +1,4 @@
-/* /* .community-feed-container {
+ /* .community-feed-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,7 +14,7 @@
 }
 
 /* Individual Post */
-/* .community-feed-post {
+ .community-feed-post {
   background: #2a2a2a;
   border-radius: 8px;
   padding: 1rem;
@@ -24,7 +24,7 @@
 }
 
 /* Fade-out and slide-up effect for deleted post */
-/* .community-feed-post.fading {
+ .community-feed-post.fading {
   opacity: 0;
   transform: translateY(-20px);
   height: 0;
@@ -35,7 +35,7 @@
 }
 
 /* Load more button */
-/* .load-more {
+ .load-more {
   background: #00ffcc;
   color: #1a1a1a;
   font-size: 1rem;
@@ -69,7 +69,7 @@
   color: #ff4c4c;
   font-weight: bold;
   text-align: center;
-} */ */  */ */ */ */ */ */
+} 
 
 /* Feed Container */
 .community-feed-container {
@@ -164,6 +164,14 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+
+div.individual-post-container {
+  background: #121212;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
 }
 
 .post-author img {

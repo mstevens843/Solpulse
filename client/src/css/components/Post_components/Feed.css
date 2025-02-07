@@ -126,13 +126,12 @@
   cursor: not-allowed;
 }
 
-/* Feed List */
 .community-feed-list {
   list-style: none;
   padding: 0;
-  border: 1px solid #2e2e2e;
-  border-radius: 10px;
+  
 }
+
 
 /* Individual Post */
 .community-feed-post {
@@ -156,6 +155,15 @@
   line-height: 1.6;
 }
 
+.post-container {
+  background: #121212;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: .5rem;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+
 /* Author Details */
 .post-author {
   font-weight: bold;
@@ -173,8 +181,8 @@
   border: 2px solid #00ffcc;
 }
 
-.post-date {
-  font-size: 0.9rem;
+p.individual-post-date {
+  font-size:12px;
   color: #aaa;
   margin-left: 0.5rem;
 }

@@ -31,6 +31,12 @@ function SearchResults() {
   const [errorMessage, setErrorMessage] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState([]); // ✅ Ensure suggestions reset
+  
+  
+  useEffect(() => {
+    setSearchSuggestions([]); // ✅ Clears suggestions on page load
+  }, []);
 
   /**
    * Fetch search results based on the current query and page.
@@ -116,7 +122,7 @@ function SearchResults() {
       <SearchBar
         query={query}
         setQuery={(q) => navigate(`/search?query=${encodeURIComponent(q)}&filter=${filter}`)}
-        onSearch={handleSearch}
+        onSearch={() => setSearchSuggestions([])} // ✅ Clears suggestions on search
         filters={["all", "posts", "users"]}
       />
 

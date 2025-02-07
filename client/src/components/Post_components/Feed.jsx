@@ -100,7 +100,9 @@ function Feed({ currentUser }) {
             <ul className="community-feed-list">
                 {posts.map((post, index) => (
                     <li key={`${post.id}-${index}`} className="community-feed-post">
-                        <Post post={post} currentUser={currentUser} setPosts={setPosts} />
+                        <div className="post-container">
+                            <Post post={post} currentUser={currentUser} setPosts={setPosts} />
+                        </div>
                     </li>
                 ))}
             </ul>
