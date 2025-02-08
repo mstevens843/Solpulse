@@ -110,7 +110,7 @@
   .modal-content h3,
   .edit-bio-content h3 {
     font-size: 1.8rem;
-    color: #00ffcc;
+    color: #ffffff;
     margin-bottom: 1rem;
   }
   
@@ -127,19 +127,20 @@
   }
   
   .edit-actions button {
-    background: linear-gradient(to right, #00ffcc, #ffcc00);
+    background: #0da688;
     color: #121212;
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: bold;
-    padding: 1rem 2rem;
+    padding: .7rem 1.3rem;
     border-radius: 8px;
+    margin: .5rem;
     border: none;
     cursor: pointer;
     transition: background 0.3s ease;
   }
   
   .edit-actions button:hover {
-    background-color: #00ddaa;
+    background-color: #00ffcc;
   }
   
   /* Bio Display */

@@ -4,9 +4,9 @@
 
 .message-btn {
     background: none;
-    border: 2px solid #00ffcc;
+    border: 1px solid #00ffcc;
     color: #00ffcc;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0rem;
     border-radius: 8px;
     font-size: 1rem;
     cursor: pointer;

@@ -4,7 +4,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import "@/css/components/Crypto_components/CryptoTip.css";
 
-const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess }) => {
+const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess, connectedWallet, isWalletConnected }) => {
     const wallet = useWallet();
     const [tipAmount, setTipAmount] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -56,8 +56,16 @@ const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess }) => {
     };
 
     return (
-        <div className="crypto-tip-container">
+            <div className="crypto-tip-container">
             <h3 className="crypto-tip-heading">Send a Tip</h3>
+
+            {/* ✅ Wallet Connection Message */}
+            {isWalletConnected ? (
+                <p className="wallet-connected-message">✅ Connected to: {connectedWallet}</p>
+            ) : (
+                <p className="wallet-disconnected-message">⚠️ Please connect your wallet in the navbar.</p>
+            )}
+
             <form onSubmit={handleSendTip} className="crypto-tip-form">
                 <input
                     type="number"
@@ -76,7 +84,7 @@ const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess }) => {
                     maxLength="255"
                     className="crypto-tip-message-input"
                 />
-                <button type="submit" className="crypto-tip-submit-button" disabled={!tipAmount || isLoading}>
+                <button type="submit" className="crypto-tip-submit-button" disabled={!tipAmount || isLoading || !isWalletConnected}>
                     {isLoading ? "Sending..." : "Send Tip"}
                 </button>
             </form>
@@ -88,6 +96,8 @@ const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess }) => {
 CryptoTip.propTypes = {
     recipientId: PropTypes.number.isRequired,
     recipientWallet: PropTypes.string.isRequired,
+    connectedWallet: PropTypes.string, // ✅ Show connected wallet
+    isWalletConnected: PropTypes.bool, // ✅ Ensure wallet connection is passed
     onTipSuccess: PropTypes.func.isRequired,
 };
 

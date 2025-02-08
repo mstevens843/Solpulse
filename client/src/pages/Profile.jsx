@@ -27,6 +27,9 @@ function Profile() {
     const [showUserCardModal, setShowUserCardModal] = useState(false); // Add state to toggle modal
     const [profilePicture, setProfilePicture] = useState(""); // New state for profile picture
     const [successMessage, setSuccessMessage] = useState("");
+    const isInModal = false; // Default value if it's not already defined
+
+
 
 
     const fetchProfile = useCallback(async () => {
@@ -188,6 +191,7 @@ function Profile() {
                     <div className="user-card-container">
                     <UserCard 
                         user={{ ...user, profilePicture }}  // Ensure updated picture is passed
+                        isInModal={isInModal} 
                         currentUser={currentUser}  
                         onProfilePictureChange={handleProfilePictureUpdate} 
                     />

@@ -32,6 +32,11 @@
     object-fit: cover;
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
 }
+.modal-content .crypto-tip-modal {
+    background-color: #121212;
+
+}
+
 
 /* Edit Profile Button */
 .edit-profile-btn {
@@ -121,4 +126,94 @@
 .follow-btn:hover, .message-btn:hover {
     background: #00ffcc;
     color: #1f1f1f;
+}
+
+
+/* General Modal Styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Base Modal Style */
+.modal-content {
+  background: rgba(31, 31, 31, 0.95);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  border: 2px solid #00FFBD;
+}
+
+/* Specific Modal Styling */
+.follow-modal {
+  border-color: #9945FF; /* Purple border */
+}
+
+.crypto-tip-modal {
+  border-color: #14F195; /* Green border */
+}
+
+.message-modal {
+  border-color: #00FFBD; /* Cyan border */
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Form Styling */
+.message-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message-input,
+.crypto-tip-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #00ffcc;
+  border-radius: 5px;
+  background: #121212;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Button */
+.send-message-btn {
+  background-color: #0da688;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: .5rem 1rem; 
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  border: none;
+}
+
+.send-message-btn:hover {
+  background-color: #00ddaa;
+  color: #000;
 }

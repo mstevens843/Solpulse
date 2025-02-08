@@ -23,7 +23,7 @@ const Signup = () => {
     walletAddress: "",
   });
 
-  const [error, setError] = useState({});
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -38,40 +38,44 @@ const Signup = () => {
 
   // Validate inputs
   const validateInputs = () => {
-    const errors = {};
+    const newErrors = {};
+
+    // Username validation: at least 3 characters
+    if (username.trim().length < 3) {
+      newErrors.username = "Username must be at least 3 characters long.";
+    }
 
     // Email validation: Must be a common provider (Gmail, Yahoo, etc.)
     const emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|outlook|hotmail|protonmail)\.com$/i;
     if (!emailPattern.test(email)) {
-      errors.email = "Email must be a valid provider (Gmail, Yahoo, etc.).";
+      newErrors.email = "Email must be from Gmail, Yahoo, Outlook, or ProtonMail.";
     }
 
-    // Password validation: At least one capital letter and one special character
-    const passwordPattern = /^(?=.*[A-Z])(?=.*[\W]).{6,}$/;
+    // Password validation: At least 8 characters, 1 uppercase letter, and 1 special character
+    const passwordPattern = /^(?=.*[A-Z])(?=.*[\W]).{8,}$/;
     if (!passwordPattern.test(password)) {
-      errors.password = "Password must have at least 1 uppercase letter and 1 special character.";
+      newErrors.password = "Password must have at least 8 characters, 1 uppercase letter, and 1 special character.";
     }
 
     if (password !== confirmPassword) {
-      errors.confirmPassword = "Passwords do not match.";
+      newErrors.confirmPassword = "Passwords do not match.";
     }
 
+    // Wallet Address validation: Check if it's a valid Solana address
     if (!walletAddress.trim()) {
-      errors.walletAddress = "Wallet address is required.";
+      newErrors.walletAddress = "Wallet address is required.";
+    } else if (!/^[A-HJ-NP-Za-km-z1-9]{32,44}$/i.test(walletAddress)) {
+      newErrors.walletAddress = "Invalid Solana wallet address.";
     }
 
-    if (!/^[A-HJ-NP-Za-km-z1-9]{32,44}$/i.test(walletAddress)) {
-      errors.walletAddress = "Invalid wallet address format.";
-    }
-
-    setError(errors);
-    return Object.keys(errors).length === 0;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError({});
+    setErrors({});
     
     if (!validateInputs()) return;
   
@@ -86,59 +90,52 @@ const Signup = () => {
       });
   
       if (response.data.token) {
-        localStorage.setItem(
-          "userSettings",
-          JSON.stringify({
-            email: email,
-            walletAddress: walletAddress,
-          })
-        );
-  
+        localStorage.setItem("userSettings", JSON.stringify({ email, walletAddress }));
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
-  
+
         toast.success("Signup successful! Redirecting to login page...", {
           position: "top-center",
           autoClose: 1500,
-          onClose: () => navigate("/login"),
+          onClose: () => navigate("/"),
         });
       } else {
-        setError({ form: "Signup failed. Please try again." });
+        setErrors({ form: "Signup failed. Please try again." });
       }
     } catch (err) {
       console.error("Signup Error:", err.response?.data);
-  
+
       if (err.response?.data?.errors) {
         // Handle Sequelize validation errors
         const formattedErrors = {};
         err.response.data.errors.forEach((error) => {
           formattedErrors[error.path] = error.message;
         });
-        setError(formattedErrors);
-  
+        setErrors(formattedErrors);
+
         // Show error notification
         toast.error("Signup failed. Please check your inputs.", {
           position: "top-center",
           autoClose: 3000,
         });
       } else {
-        setError({ form: err.response?.data?.message || "Signup failed. Please try again." });
+        setErrors({ form: err.response?.data?.message || "Signup failed. Please try again." });
       }
     } finally {
       setLoading(false);
     }
   };
-  
-  
 
   return (
     <div className="signup-container">
       <div className="signup-header">
-      
-      <h2>Signup</h2>
+        <h2>Signup</h2>
       </div>
-      {error.form && <p id="form-error" className="error-message" role="alert">{error.form}</p>}
+
+      {errors.form && <p id="form-error" className="error-message" role="alert">{errors.form}</p>}
+
       <form onSubmit={handleSubmit} className="signup-form">
+        {/* Username Field */}
         <div>
           <label htmlFor="username">Username</label>
           <input
@@ -146,12 +143,14 @@ const Signup = () => {
             name="username"
             value={username}
             onChange={handleChange}
-            className={error.username ? "input-error" : ""}
+            className={errors.username ? "input-error" : ""}
             required
+            autoComplete="off"  // 🔥 Prevents autofill
           />
-          {error.username && <p className="field-error">{error.username}</p>}
+          {errors.username && <p className="field-error">{errors.username}</p>}
         </div>
 
+        {/* Email Field */}
         <div>
           <label htmlFor="email">Email</label>
           <input
@@ -159,12 +158,14 @@ const Signup = () => {
             name="email"
             value={email}
             onChange={handleChange}
-            className={error.email ? "input-error" : ""}
+            className={errors.email ? "input-error" : ""}
             required
+            autoComplete="off"  // 🔥 Prevents autofill
           />
-          {error.email && <p className="field-error">{error.email}</p>}
+          {errors.email && <p className="field-error">{errors.email}</p>}
         </div>
 
+        {/* Password Field */}
         <div className="password-container">
           <label htmlFor="password">Password</label>
           <input
@@ -172,15 +173,17 @@ const Signup = () => {
             name="password"
             value={password}
             onChange={handleChange}
-            className={error.password ? "input-error" : ""}
+            className={errors.password ? "input-error" : ""}
             required
-          />
+            autoComplete="off"
+            />
           <span onClick={() => setShowPassword(!showPassword)} className="toggle-password">
             {showPassword ? "🙈" : "👁️"}
           </span>
-          {error.password && <p className="field-error">{error.password}</p>}
+          {errors.password && <p className="field-error">{errors.password}</p>}
         </div>
 
+        {/* Confirm Password Field */}
         <div className="password-container">
           <label htmlFor="confirmPassword">Confirm Password</label>
           <input
@@ -188,15 +191,17 @@ const Signup = () => {
             name="confirmPassword"
             value={confirmPassword}
             onChange={handleChange}
-            className={error.confirmPassword ? "input-error" : ""}
+            className={errors.confirmPassword ? "input-error" : ""}
             required
-          />
+            autoComplete="new-password"  // 🔥 Ensures Chrome doesn't autofill
+            />
           <span onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="toggle-password">
             {showConfirmPassword ? "🙈" : "👁️"}
           </span>
-          {error.confirmPassword && <p className="field-error">{error.confirmPassword}</p>}
+          {errors.confirmPassword && <p className="field-error">{errors.confirmPassword}</p>}
         </div>
 
+        {/* Wallet Address Field */}
         <div>
           <label htmlFor="walletAddress">Wallet Address</label>
           <input
@@ -204,30 +209,32 @@ const Signup = () => {
             name="walletAddress"
             value={walletAddress}
             onChange={handleChange}
-            className={error.walletAddress ? "input-error" : ""}
+            className={errors.walletAddress ? "input-error" : ""}
             required
+            autoComplete="off"  // 🔥 Prevents autofill
           />
-          {error.walletAddress && <p className="field-error">{error.walletAddress}</p>}
+          {errors.walletAddress && <p className="field-error">{errors.walletAddress}</p>}
         </div>
 
+        {/* Submit Button */}
         <button type="submit" disabled={loading}>
           {loading ? <Loader /> : "Sign Up"}
         </button>
       </form>
+
       <div className="account-already">
-      <p>
-        Already have an account?{" "}
-        <a href="/login" className="signup-link">
-          Login
-        </a>
-      </p>
+        <p>
+          Already have an account?{" "}
+          <a href="/login" className="signup-link">
+            Login
+          </a>
+        </p>
       </div>
     </div>
   );
 };
 
 export default Signup;
-
 
 
 

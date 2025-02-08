@@ -16,6 +16,7 @@ import MessageButton from "@/components/Notification_components/MessageButton";
 import FollowersFollowing from "@/components/Profile_components/FollowersFollowing";
 import { useNavigate } from "react-router-dom";
 import CryptoTip from "@/components/Crypto_components/CryptoTip"; 
+import { useWallet } from "@solana/wallet-adapter-react";
 import { FaEnvelope } from "react-icons/fa";
 import "@/css/components/Profile_components/UserCard.css";
 
@@ -25,8 +26,10 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
     const [showModal, setShowModal] = useState(false);
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
     const [showTipModal, setShowTipModal] = useState(false);
+    const wallet = useWallet(); // ✅ Define wallet
     const [viewingType, setViewingType] = useState(""); // 'followers' or 'following'
     const navigate = useNavigate();
+
 
     // Use user.profilePicture directly instead of local state to prevent desync issues
     const displayedProfilePicture = user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png";
@@ -126,13 +129,14 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
                 {/* Followers/Following Modal */}
                 {showModal && (
                     <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-content follow-modal" onClick={(e) => e.stopPropagation()}>
                             <button className="close-btn" onClick={() => setShowModal(false)}>X</button>
                             <h3>{viewingType === "followers" ? "Followers" : "Following"}</h3>
                             <FollowersFollowing userId={user.id} type={viewingType} />
                         </div>
                     </div>
                 )}
+
                 {/* CryptoTip Modal */}
                 {showTipModal && (
                     <div className="modal-overlay" onClick={toggleTipModal}>
@@ -141,32 +145,27 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
                             <CryptoTip
                                 recipientId={user.id}
                                 recipientWallet={user.walletAddress}
+                                connectedWallet={wallet.publicKey?.toString()} // ✅ Pass connected wallet
+                                isWalletConnected={wallet.connected} // ✅ Pass connection status
                                 onTipSuccess={(message) => {
-                                    alert(message); // Show success message
+                                    alert(message);
                                     toggleTipModal(); // ✅ Close modal on success
                                 }}
                             />
                         </div>
                     </div>
                 )}
-    
-                
 
-               {/* Message Modal */}
+                {/* Message Modal */}
                 {isMessageModalOpen && (
                     <div className="modal-overlay" onClick={toggleMessageModal}>
                         <div className="modal-content message-modal" onClick={(e) => e.stopPropagation()}>
                             <button className="close-btn" onClick={toggleMessageModal}>X</button>
-                            <h3>Send Message to {user.username}</h3>
+                            <h3 className="message-header">Send a Message to <span>{user.username}</span></h3>
                             <form className="message-form" onSubmit={(e) => e.preventDefault()}>
-                                <textarea
-                                    placeholder="Write your message here..."
-                                    className="message-input"
-                                    rows="4"
-                                ></textarea>
-                                <button type="submit" className="send-message-btn">
-                                    Send
-                                </button>
+                                <textarea placeholder="Write your message..." className="message-input" rows="4"></textarea>
+                                {/* <input type="text" className="crypto-tip-input" placeholder="Crypto Tip (optional)" /> */}
+                                <button type="submit" className="send-message-btn">Send</button>
                             </form>
                         </div>
                     </div>

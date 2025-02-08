@@ -63,11 +63,13 @@ const NavBar = () => {
         <nav className="navbar" aria-label="Main Navigation">
             {/* Left Side Navigation */}
             <ul className="navbar-left">
-                <li className="navbar-item" key="home">
-                    <NavLink to="/home" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Go to Home">
-                        Home
-                    </NavLink>
-                </li>
+                {isAuthenticated && (
+                    <li className="navbar-item" key="home">
+                        <NavLink to="/home" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Go to Home">
+                            Home
+                        </NavLink>
+                    </li>
+                )}
                 <li className="navbar-item" key="trending-crypto">
                     <NavLink to="/trending-crypto" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Trending Crypto">
                         Trending Crypto
@@ -78,18 +80,13 @@ const NavBar = () => {
                         Trade
                     </NavLink>
                 </li>
-                {/* <li className="navbar-item" key="dashboard">
-                    <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Go to Dashboard">
-                         Dashboard
-                    </NavLink> */}
-                {/* </li> */}
-                {isAuthenticated && (
+                {/* {isAuthenticated && (
                     <li className="navbar-item" key="create-post">
                         <NavLink to="/post/create" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Create Post">
                             Create Post
                         </NavLink>
                     </li>
-                )}
+                )} */}
             </ul>
 
             {/* Right Side Navigation */}

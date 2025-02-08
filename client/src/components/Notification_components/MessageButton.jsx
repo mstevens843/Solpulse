@@ -77,13 +77,13 @@ const MessageButton = ({ recipientUsername }) => {
                             rows="4"
                         />
 
-                        <input
+                        {/* <input
                             type="number"
                             placeholder="Crypto Tip (optional)"
                             className="crypto-tip-input"
                             value={cryptoTip}
                             onChange={(e) => setCryptoTip(e.target.value)}
-                        />
+                        /> */}
 
                         <button
                             className="send-message-btn"
