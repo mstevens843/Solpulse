@@ -92,27 +92,3 @@ describe('FollowersFollowing Component', () => {
         expect(screen.getByText(/loading followers and following data/i)).toBeInTheDocument();
     });
 });
-
-
-
-
-
-
-
-// Features Covered in Tests
-// Basic Rendering:
-
-// Confirms headers and initial layout render correctly.
-// API Call Success:
-
-// Simulates successful API calls to fetch followers and following data.
-// Verifies that UserCard components are rendered based on the API data.
-// Error Handling:
-
-// Simulates API failures and ensures error messages are displayed.
-// Empty States:
-
-// Verifies appropriate messages are displayed when no followers or following data exists.
-// Loading State:
-
-// Ensures a loading message is displayed while data is being fetched.

@@ -94,21 +94,3 @@ describe('MessagePreview Component', () => {
         expect(axios.get).toHaveBeenCalledTimes(1); // Ensure no additional calls are made
     });
 });
-
-
-// Key Features of the Test File
-// Basic Rendering:
-
-// Ensures the title, loading state, and empty state are correctly displayed.
-// Data Fetching:
-
-// Mocks an API call to fetch messages and verifies that messages are rendered correctly.
-// Error Handling:
-
-// Simulates a failed API call and checks that the error message is displayed.
-// Empty State:
-
-// Verifies that a message is shown when there are no recent messages.
-// Unsubscription:
-
-// Ensures API calls are cleaned up when the component unmounts.

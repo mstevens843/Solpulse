@@ -38,15 +38,3 @@
 .wallet-submit-button:disabled {
     @apply bg-solana-light text-solana-text-light cursor-not-allowed;
 }
-
-
-/* In CryptoWalletIntegration.css
-Styling for Balance and Messages:
-
-Styled wallet balance, error, and success messages for better readability.
-Improved Form Inputs:
-
-Styled inputs and disabled states for clarity and accessibility.
-Submit Button:
-
-Added hover and disabled states for visual feedback. */

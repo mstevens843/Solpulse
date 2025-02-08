@@ -91,12 +91,3 @@ describe('General Error Handling', () => {
     expect(response.body.error).toBe('Server error');
   });
 });
-
-
-// Key Test Cases:
-// Valid Registration: Ensures the /register route works with valid input.
-// Invalid Email: Ensures the system correctly responds to invalid email input with a 400 and appropriate error message.
-// Short Password: Ensures the system responds to a password that is too short with a 400 and appropriate error message.
-// Rate Limiting: Tests that rate-limiting kicks in after 100 requests, returning a 429 status with the rate-limit exceeded message.
-// 404 Handling: Ensures that a request to a non-existent route returns a 404 status with the Resource not found message.
-// General Error Handling: Simulates a server error (missing field) and checks for a 500 response with the server error message.

@@ -87,28 +87,3 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
-
-
-
-
-// Key Updates:
-// Dynamic Environment: The environment is now dynamically set using process.env.NODE_ENV || 'development'.
-// Logging: Added logging: console.log to Sequelize config to help with debugging SQL queries.
-// Associations: The script now checks for associations between models and applies them, which is useful if models have relationships (e.g., belongsTo, hasMany).
-
-// Key Enhancements:
-// Conditional Logging:
-
-// SQL logging is now restricted to development mode for better performance in production.
-// Error Handling:
-
-// Catch and handle any errors that occur during database connection initialization.
-// Support for .ts Files:
-
-// Dynamically loads model files with .ts extensions for future compatibility with TypeScript.
-// Graceful Startup:
-
-// If the database connection fails, the process exits with an error message to avoid launching the app in an inconsistent state.
-// Informational Messages:
-
-// Prints a success message on connecting to the database.

@@ -123,23 +123,3 @@ describe('Home Component', () => {
         });
     });
 });
-
-
-
-
-// Features Covered in Tests
-// Basic Rendering:
-
-// Ensures the static elements like headers and CTAs are rendered.
-// User Data Fetching:
-
-// Simulates successful fetch and ensures the user-specific welcome message is displayed.
-// Error Handling:
-
-// Tests error scenarios, including failed user fetch, and verifies appropriate error messages are displayed.
-// Child Components:
-
-// Verifies that key child components (NotificationBell, CryptoTicker, Feed, FeedFiltering) are rendered properly.
-// Unauthenticated State:
-
-// Ensures the appropriate welcome message is displayed for unauthenticated users.

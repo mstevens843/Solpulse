@@ -93,26 +93,3 @@ describe('Follower Model Tests', () => {
         expect(followers[0].follower.username).toBe('CryptoisLife1');
     });
 });
-
-
-
-
-// Explanation of Tests
-// Model Tests
-
-// Validates that relationships between users can be created and are unique.
-// Ensures cascading deletes when a user is deleted.
-// API Tests
-
-// Tests the POST /followers endpoint to follow a user.
-// Tests the GET /users/:id/followers endpoint to fetch a user's followers.
-// Tests the DELETE /followers/:followerId/:followingId endpoint to unfollow a user.
-// Validates error handling for duplicate relationships and non-existent entries.
-// Setup and Cleanup
-
-// Resets the database before tests.
-// Creates test users to simulate follower relationships.
-// Cleans up resources after tests.
-// Authentication
-
-// Simulates login using JWT tokens to access protected routes.

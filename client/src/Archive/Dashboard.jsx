@@ -135,12 +135,7 @@ function Dashboard() {
             </div>
           </section>
   
-          {/* Transactions Section
-          <section className="dashboard-transactions">
-            <h2>Your Crypto Wallet</h2>
-            <CryptoWalletIntegration />
-            {renderTransactionBox()}
-          </section> */}
+      
   
          {/* Feed and Messages */}
          <div className="dashboard-main">
@@ -164,85 +159,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-
-
-
-
-
-
-
-// MessagePreview Component: This component would be useful on pages where users can see direct messages, such as the Dashboard 
-// or Messages pages.
-
-// Post Component: The Post component should be integrated into pages where posts are displayed, like the Home, Dashboard, and 
-// Profile pages. It’s responsible for rendering individual posts with likes, retweets, and crypto tips.
-
-// Components in Use:
-// MessagePreview: This allows the user to see recent messages without having to navigate to a different page.
-// FollowButton: Users can follow/unfollow others directly from the dashboard.
-// NotificationBell: Keeps users updated with their unread notifications.
-// CryptoTransaction: Displays recent transactions, keeping the user informed about their wallet activity.
-// The Dashboard.js serves as the central hub for user interaction, providing key information such as posts, wallet, 
-// transactions, messages, and notifications in a single place.
-
-
-// IMPROVEMENTS MADE: 
-// LOADING STATE: 'isLoading' manages loading state for the entire dashboard. 
-// Error State: Displays user-friendly error messages if data fetching fails 
-// DASHBOARD SUMMARY: added a summary section with key metrics. 
-// SKELETON LOADING/SPINNERS: placeholders for sections while data is being fetched. 
-// COLLAPSIBLE SECTIONS: Refactor each section into collapsible cards (optional future improvement)
-
-
-// Improvements: 
-// Improved Error Handling: Generic error message for better user feedback.
-// Optional Chaining (?.): Prevents errors if wallet data is unavailable during load.
-// FollowButton Import: Added missing FollowButton import.
-
-// Changes in Dashboard.js:
-// Performance Optimization:
-
-// Used useCallback for fetchUserData to avoid unnecessary re-creation of the function on re-renders.
-// Combined user and transaction fetches into a single Promise.all to make parallel API calls and reduce load time.
-// Error Handling:
-
-// Added clear error logging in case the API fetch fails.
-// Code Simplification:
-
-// Removed redundant state updates by centralizing logic in fetchUserData.
-
-// Key Updates
-// Component (Dashboard.js)
-// Error Handling:
-
-// Styled error messages for better visibility and UX.
-// Responsive Design:
-
-// Adjusted sections like dashboard-summary and dashboard-header to handle smaller screens gracefully.
-// Global CSS Integration:
-
-// Used existing global utility classes to ensure consistency with other components.
-// Code Cleanup:
-
-// Removed inline styles and replaced them with CSS classes.
-
-// High-Level Improvements Made:
-// Error and Loading States:
-
-// Clearer error messages are displayed in case of API failures.
-// Introduced loading states that are displayed dynamically during the API request.
-// Performance Optimizations:
-
-// Used Promise.all to fetch user data and transactions in parallel, reducing the time spent waiting for responses.
-// User Experience (UX):
-
-// More engaging UI elements like the FollowButton and MessagePreview are added to provide a complete user experience.
-// Conditional rendering ensures that the data is properly displayed or loading messages are shown.
-// Code Simplification:
-
-// Made use of useCallback for optimized function usage, especially for the fetchUserData function that doesn't get recreated on every render.
-// Simplified logic for fetching and displaying user data and transactions.
-// Styling Improvements:
-
-// Updated styles to provide clear visual feedback, e.g., hover states and better spacing for responsiveness.
-// Enhanced mobile responsiveness to ensure the dashboard looks good on smaller screens.

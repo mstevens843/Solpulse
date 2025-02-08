@@ -100,13 +100,13 @@
   border-radius: 5px;
   background: #121212;
   color: #fff;
-  outline: none;  /* Removes the blue outline */
-  box-shadow: none;  /* Prevents additional focus effects */
+  outline: none;
+  box-shadow: none;
 }
 
 .auth-section input:focus {
-  border-color: #00ddaa;  /* Change border color on focus */
-  box-shadow: 0 0 5px rgba(0, 221, 170, 0.5);  /* Optional glow effect */
+  border-color: #00ddaa; 
+  box-shadow: 0 0 5px rgba(0, 221, 170, 0.5); 
   outline: none;
 }
 

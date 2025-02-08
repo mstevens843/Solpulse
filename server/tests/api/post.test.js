@@ -157,24 +157,3 @@ describe('Posts API', () => {
     });
   });
 });
-
-
-// Key Features:
-// Setup and Cleanup:
-
-// Resets the database before all tests.
-// Creates a test user and post.
-// Authentication:
-
-// Ensures protected routes return 401 without valid tokens.
-// CRUD Operations:
-
-// Validates creating, reading, updating, and deleting posts.
-// Tests pagination and searching posts.
-// Error Handling:
-
-// Verifies 404 errors for non-existent posts.
-// Handles unauthorized access for protected routes.
-// Extra Features:
-
-// Tests liking and retweeting functionality.

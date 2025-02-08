@@ -10,13 +10,13 @@
 
 .home-content {
   display: flex;
-  flex-direction: row;  /* Ensure elements are side by side */
+  flex-direction: row; 
   align-items: center;
-  justify-content: space-between; /* Add spacing between sections */
+  justify-content: space-between; 
   max-width: 1200px;
   width: 100%;
   text-align: center;
-  gap: 4rem; /* Space between the ticker and login form */
+  gap: 4rem;
 }
 
 /* Crypto Info Section */
@@ -127,10 +127,10 @@ font-size: 3rem;
 .remember-me-container {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Align to the left */
+  justify-content: flex-start; 
   color: #ffffff;
-  width: 40%; /* Ensure it takes full width */
-  margin-top: 0.5rem; /* Adjust positioning */
+  width: 40%;
+  margin-top: 0.5rem;
 }
 
 /* Remember Me Label */
@@ -138,7 +138,7 @@ font-size: 3rem;
   font-size: .95rem;;
   font-weight: normal;
   margin-bottom: 16px;
-  white-space: nowrap;  /* Prevent wrapping */
+  white-space: nowrap;
 
 
 }
@@ -147,14 +147,14 @@ font-size: 3rem;
 .remember-me-checkbox {
   .remember-me-checkbox {
     width: 0.7rem;
-    height: 0.7rem; /* Fixing typo: 'height: .7srem' to 'height: 0.7rem' */
+    height: 0.7rem;
     cursor: pointer;
   
     /* Align to bottom of the screen */
     position: fixed;
     bottom: 0;
-    left: 50%; /* Optional: centers horizontally */
-    transform: translateX(-50%); /* Optional: centers horizontally */
+    left: 50%;
+    transform: translateX(-50%); 
   }
 }
 
@@ -166,7 +166,7 @@ input[type="checkbox"]:focus {
 /* Responsive Design */
 @media (max-width: 1024px) {
   .home-content {
-      flex-direction: column;  /* Stack vertically for smaller screens */
+      flex-direction: column;
       gap: 2rem;
   }
 }

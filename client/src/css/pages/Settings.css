@@ -1,4 +1,3 @@
-/* Settings Page Container */
 .settings-container {
   display: flex;
   flex-direction: column;
@@ -10,7 +9,7 @@
   padding: 2rem;
   color: #fff;
   text-align: center;
-  overflow-y: auto; /* ✅ Prevents content from overflowing */
+  overflow-y: auto;
   box-sizing: border-box;
   margin-top: 2rem;
 }
@@ -25,11 +24,11 @@ svg.input-icon {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem; /* Adjust spacing for consistent layout */
+  gap: 1.5rem;
   max-width: 1200px;
   width: 100%;
   text-align: center;
-  flex-grow: 1; /* Allow content to fill available space */
+  flex-grow: 1;
   transform: scale(1.05);
 }
 
@@ -47,17 +46,17 @@ svg.input-icon {
 .settings-form {
   background: #1f1f1f;
   padding: 2rem;
-  height: auto; /* ✅ Allow height to adjust dynamically */
+  height: auto; 
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
   max-width: 600px;
   width: 90%;
   display: flex;
   flex-direction: column;
-  align-items: center; /* ✅ Ensures inputs stay inside */
+  align-items: center; 
   text-align: center;
-  overflow: hidden; /* ✅ Prevents content from overflowing */
-  position: relative; /* ✅ Keeps child elements positioned properly */
+  overflow: hidden; 
+  position: relative; 
 }
 
 /* Form Group */
@@ -65,7 +64,7 @@ div.form-group {
   margin-bottom: 1rem;
   text-align: left;
   width: 100%;
-  height: auto; /* ✅ Fix: Allow dynamic height */
+  height: auto; 
 }
 
 /* Labels */
@@ -88,7 +87,7 @@ div.form-group {
   color: #fff;
   font-size: 1rem;
   transition: all 0.3s ease;
-  box-sizing: border-box; /* ✅ Prevents breaking the layout */
+  box-sizing: border-box;
 }
 
 .form-group input::placeholder {
@@ -167,7 +166,7 @@ div.form-group {
   .settings-form {
     max-width: 500px;
     padding: 1.5rem;
-    min-height: 50%; /* Adjust height for smaller screens */
+    min-height: 50%; 
   }
 
   .wallet-container {
@@ -178,7 +177,7 @@ div.form-group {
 @media (max-width: 768px) {
   .settings-container {
     padding: 1rem;
-    height: auto; /* Allow auto height for smaller devices */
+    height: auto; 
   }
 
   .settings-header {
@@ -200,7 +199,6 @@ div.form-group {
 
 
 /* Confirmation Modal Styling //////////////////////////////////////////// */
-/* Confirmation Modal */
 .confirmation-modal {
   position: fixed;
   top: 50%;

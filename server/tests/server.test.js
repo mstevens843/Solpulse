@@ -65,18 +65,3 @@ describe('Server Initialization', () => {
     expect(closeSocketSpy).toHaveBeenCalled();
   });
 });
-
-
-// Breakdown of Tests:
-// Server Initialization Test:
-
-// Verifies that the server is properly created and listens on the specified port.
-// Database Authentication Test:
-
-// Ensures that the server attempts to authenticate with the database on startup.
-// Database Connection Failure Test:
-
-// Simulates a failure in database connection and checks that the process exits with an error code.
-// Graceful Shutdown Test:
-
-// Simulates a graceful shutdown (SIGTERM) and checks that both the HTTP and WebSocket servers are closed properly.

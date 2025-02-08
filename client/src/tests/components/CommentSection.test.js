@@ -29,7 +29,7 @@ describe('CommentSection Component', () => {
   let socketMock;
 
   beforeEach(() => {
-    socketMock = io(); // This calls the mocked io() function
+    socketMock = io(); 
   });
 
   afterEach(() => {
@@ -105,25 +105,3 @@ describe('CommentSection Component', () => {
     expect(socketMock.disconnect).toHaveBeenCalled();
   });
 });
-
-
-
-
-
-
-// Explanation:
-// Mocks:
-
-// axios.post is mocked to simulate API behavior for adding a comment.
-// socket.io-client is mocked to simulate WebSocket behavior.
-// Test Cases:
-
-// Rendering: Verifies that initial comments are displayed correctly.
-// Adding Comments: Simulates user interaction to add a comment and checks API call and UI update.
-// WebSocket Handling: Tests how WebSocket events update the comment list.
-// Error Handling: Simulates a failed API call and verifies error messages.
-// Cleanup: Ensures WebSocket listeners are cleaned up on component unmount.
-// Utility:
-
-// jest.clearAllMocks() ensures no interference between tests.
-// act ensures WebSocket updates trigger re-renders properly.

@@ -40,7 +40,7 @@
 
 .token-item {
     display: flex;
-    align-items: center;  /* Align image and text */
+    align-items: center;  
     padding: 8px 12px;
     border-radius: 8px;
     transition: background 0.2s ease-in-out;
@@ -52,10 +52,10 @@
 }
 
 .token-logo {
-    width: 32px; /* Reduce image size */
+    width: 32px; 
     height: 32px;
     border-radius: 50%;
-    margin-right: 12px; /* Add space between icon and text */
+    margin-right: 12px; 
     object-fit: contain;
 }
 
@@ -77,7 +77,7 @@
 }
 
 .token-amount {
-    margin-left: auto; /* Push amount to right */
+    margin-left: auto; 
     font-size: 0.9rem;
     font-weight: bold;
     color: #00FFBD;

@@ -45,36 +45,3 @@
 .message-item strong {
     @apply font-bold text-solana-secondary;
 }
-
-
-/* Key Features:
-Light Container Theme
-
-message-preview uses a light background with shadowing for a sleek design.
-Stylized List Items
-
-message-item highlights individual messages with rounded corners and hover effects.
-Readable Fonts
-
-Message text and sender names are styled for clarity, with senders in bold secondary color.
-Dynamic Hover Animation
-
-Hovering over messages scales them slightly and changes the background color.
-Error and Loading Feedback
-
-Errors are prominently styled with the Solana error color, and loading indicators are subtle but clear. */
-
-/* CSS (MessagePreview.css)
-Container and Header:
-
-Styled the main container (bg-solana-light, shadow-md) and header (text-solana-primary).
-Loading and Error Messages:
-
-Used distinct styles (text-solana-secondary, text-solana-error) for better clarity.
-Message List and Items:
-
-Added hover effects (transform scale-105, bg-solana-primary) for interactivity.
-Ensured responsive font sizes and spacing.
-Empty State Styling:
-
-Styled the "No recent messages" message with a soft italic design. */

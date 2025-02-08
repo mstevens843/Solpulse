@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
 import MessageModal from "@/components/Notification_components/MessageModal";
-import "@/css/components/Notification_components/MessagesInbox.css"; // Ensure styles are modular
+import "@/css/components/Notification_components/MessagesInbox.css";
 
 
 function MessagesInbox() {
@@ -86,7 +86,7 @@ function MessagesInbox() {
   const selectRecipient = (username) => {
     setRecipient(username);
     setSuggestedUsers([]);
-    setSuggestedRecipients([]); // Clear recent recipients when selection is made
+    setSuggestedRecipients([]);
   };
 
   const handleSendMessage = async (e) => {

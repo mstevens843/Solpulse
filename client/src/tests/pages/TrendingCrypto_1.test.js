@@ -18,17 +18,3 @@ describe('TrendingCryptoPage', () => {
         expect(screen.getByText(/mock trendingcrypto component/i)).toBeInTheDocument();
     });
 });
-
-
-
-
-
-
-// Key Features Tested
-// Initial Loading: Ensures that the loading state is displayed when the page is first rendered.
-// Successful Fetch: Confirms that trending coins are fetched and displayed correctly.
-// Error Handling: Verifies that an error message is shown when the API call fails.
-// Search Functionality: Tests that the search bar filters coins by name or symbol.
-// Manual Refresh: Confirms that clicking the refresh button updates the displayed prices.
-// Empty Search Results: Ensures a message is shown when no coins match the search query.
-// Interactive Trading: Verifies that the "Trade" button appears for each coin.

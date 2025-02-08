@@ -1,6 +1,6 @@
 /* Activity Page Container */
 .activity-page {
-    background: #121212; /* Match background with Landing & Home */
+    background: #121212; 
     min-height: 100vh;
     display: flex;
     flex-direction: column;

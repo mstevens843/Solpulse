@@ -1,17 +1,7 @@
-// The Messages page enables users to manage their direct messages effectively. It features: 
-// Message List: Displays list of existing direct messages fetch from the API, using MESSAGEPREVIEW component for each message
-// Loading State: Shows a loading indicator while fetching messages. 
-// Error Handling: Displays error messages for issues like failed message retrieval or sending. 
-// Message Form: Allows users to compose and send new messages, specifying the recipent, message content, and an optional crypto tip. 
-// Dynamic Updates: Refreshes message list immediately after a new message is sent, ensuring real-time interaction. 
-
-// This page integrates messaging functionality with optional crypto tipping, offering a seamless communication experience. 
-
-
 import React, { useState, useEffect } from "react";
-import { api } from "@/api/apiConfig"; // Use centralized API config
+import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
-import "@/css/pages/Notification_components/Messages.css"; // Updated alias for Vite compatibility
+import "@/css/pages/Notification_components/Messages.css"; 
 import MessageModal from "../components/Notification_components/MessageModal";
 
 function Messages() {
@@ -95,7 +85,7 @@ function Messages() {
   const selectRecipient = (username) => {
     setRecipient(username);
     setSuggestedUsers([]);
-    setSuggestedRecipients([]); // Clear recent recipients when selection is made
+    setSuggestedRecipients([]); 
   };
 
   const handleSendMessage = async (e) => {
@@ -300,113 +290,3 @@ function Messages() {
 }
 
 export default Messages;
-
-
-
-
-
-
-
-// Components Added:
-// MessagePreview Component:
-// This component is used to render a preview of each direct message inside the message-list.
-// It allows a clean and modular way to show message details like the sender, message content, and time sent.
-// Explanation:
-// Messages Fetching: The useEffect hook fetches messages from the /api/messages endpoint when the component mounts, ensuring the 
-// latest messages are displayed.
-// Message Sending: The form allows users to send messages, optionally adding a crypto tip (in Solana or any other currency) to 
-// the recipient. The form data is sent via a POST request to the backend.
-// Real-time Updates: After a message is successfully sent, the message list updates by appending the new message without 
-// needing a full-page refresh.
-// MessagePreview Component: This component is used to format and display each message. You might want to add additional 
-// styling or data, such as showing if a message has been read.
-
-
-// MessagePreview Component: Added to show a preview of each direct message in the message list.
-
-// Key Components:
-// handleSendMessage: Handles form submission to send a new message along with an optional crypto tip. It's integrated into the 
-// form in the Messages component.
-// Error Handling: Errors are caught and displayed when sending a message fails, and loading states are handled during fetching.
-// Message List: The list of messages is fetched when the component loads using useEffect. Each message is rendered using the 
-// MessagePreview component.
-
-
-// IMPROVEMENTS MADE: 
-// PAGE TITLE: Helps users identify which page they are on. 
-// ERROR BANNER: A user-friendly error message displayed prominently
-// AUTO-REFRESH: Keeps the message list updated in real-time. 
-// LOADER COMPONENT: Adds better loading indicator instead of plain text. 
-// VALIDATION: Ensures recipent and message fields are properly validated. 
-// ENHANCED FORM ACCESSIBILITY: Labels are tied to inputs for better screen reader support
-
-// Key Updates:
-// Auto-refresh Safety:
-
-// Avoids redundant errors by properly managing the interval cleanup.
-// Success Feedback:
-
-// Displays a success message when a new message is sent.
-// Input Validation:
-
-// Trims input for recipient and message to avoid empty spaces.
-// Optional Crypto Tip:
-
-// Properly handles the optional cryptoTip field, converting it to null if invalid.
-// Error Handling:
-
-// Improved clarity of error messages.
-
-// Messages.js:
-// Added WebSocket for real-time message updates.
-// Used optimistic UI updates for new messages.
-// Enhanced error and success message display.
-
-// Changes to Messages.js
-// Error and Success Display:
-
-// Enhanced user feedback with consistent success and error handling.
-// Optimistic UI Updates:
-
-// Messages are added optimistically to the state when sending, improving responsiveness.
-// Polling Interval Improvement:
-
-// Used a more efficient mechanism with clear intervals to avoid resource leaks.
-// Real-Time Updates:
-
-// Added WebSocket support for real-time message updates.
-
-// Key Updates
-// Component (Messages.js)
-// Real-Time Updates:
-
-// Implemented WebSocket for real-time message updates.
-// Validation:
-
-// Added validations for recipient and message fields.
-// Error Handling:
-
-// Enhanced error handling with styled error messages.
-// Optimistic UI:
-
-// Updated the UI immediately when sending a message.
-// Accessibility:
-
-// Added aria-label for better screen reader support.
-
-// Changes Made:
-// Dynamic API URL:
-
-// Replaced hardcoded URLs with process.env.REACT_APP_API_URL for consistency across the app.
-// Separate Loading States:
-
-// Added distinct loading states for fetching messages and sending messages (isLoadingMessages and isSendingMessage).
-// Pagination Enhancements:
-
-// Added "Previous" and "Next" buttons for better navigation through pages.
-// Error Handling:
-
-// Improved error messages for fetching and sending messages.
-// UI/UX Improvements:
-
-// Clearer separation of concerns for messages, pagination, and the form.

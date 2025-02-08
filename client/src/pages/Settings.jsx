@@ -1,14 +1,3 @@
-// Settings page allows users to manage their account preferences and update critical information.
-// Includes: 
-// ACCOUNT DETAILS: Users can update their email, password, and privacy preferences. 
-// PRIVACY SETTINGS: Options to set the account to public or private
-// CRYPTO WALLET MANAGEMENT: Users can view their wallet details and update their wallet address using the CRYPTOWALLET component
-// FORM SUBMISSION: Handles saving updated settings through an API request, providing feedback on success or failure. 
-// NOTIFICATION BELL: keeps users informed of unread messages or alerts.
-
-
-
-
 import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
@@ -184,49 +173,3 @@ function Settings() {
 }
 
 export default Settings;
-
-
-
-
-
-
-
-// components added:
-// CryptoWallet display: allowing users to view or modify their wallet address, and a notification bell, to keep users aware of notifications.
-// Notification bell: to keep users aware of their notifications. 
-
-
-// IMPROVEMENTS MADE: 
-// ADDED A LOADING STATE: introduced loading state to provide feedback when form is being submitted. 
-// ADDING ERROR AND SUCCESS STATES: adding 'errorMessage' and 'successMessage' states to display feedback after an API call. 
-// ERROR HANDLING IN API CALL: Enhanced error handling by setting an error message when API request fails
-// RESET MESSAGES DURING SUBMISSION: Reset errorMessage and successMessage at the start of the form submission. 
-// UPDATED STATE MANAGEMENT: Updated the API call to manage multiple states (loading, errorMessage, successMessage) more clearly. 
-// FUNCTIONAL SEPARATION: Improved clarity of form submission process by separating state updates (setLoading, setErrorMessage, etc) and the API logic. 
-
-
-// Changes Made
-// 1. Error Handling:
-// Centralized error and success message handling for consistency.
-// Added validation for email format, password length, and wallet address before submitting to the server.
-// 2. User Experience:
-// Disabled the submit button during loading to prevent duplicate submissions.
-// Added placeholders and validation feedback for form inputs.
-// Improved feedback for invalid settings with clear messages.
-// 3. Code Cleanup:
-// Grouped related logic for better readability.
-// Added comments to clarify the purpose of each section.
-
-// 2. Settings
-// Summary of Changes:
-
-// Added functionality to pre-populate the settings form with user data fetched from the backend.
-// Enhanced validation logic for email, password, and wallet address fields with clear error messages for invalid inputs.
-// Implemented a Loader component for visual feedback during data fetching and submission.
-// Styled success and error messages for better readability.
-// Improved UX by disabling the submit button while settings are being saved.
-
-// Loader and Notifications:
-// Ensured the Loader, NotificationBell, and error/success notifications are integrated properly.
-// Environment Variable for API URL:
-// Updated all API endpoints to use process.env.REACT_APP_API_URL for configurability.

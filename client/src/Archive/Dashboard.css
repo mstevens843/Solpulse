@@ -15,13 +15,13 @@
 /* Centered Layout Similar to Landing Page */
 .dashboard-content {
   display: flex;
-  flex-direction: row; /* Keep items side by side */
+  flex-direction: row; 
   align-items: center;
   justify-content: space-between;
   max-width: 1200px;
   width: 100%;
   text-align: center;
-  gap: 4rem; /* Space between ticker and dashboard sections */
+  gap: 4rem;
 }
 
 /* Dashboard Header (Matches Landing Page) */
@@ -185,7 +185,7 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .dashboard-content {
-    flex-direction: column; /* Stack elements for smaller screens */
+    flex-direction: column;
     gap: 2rem;
   }
 

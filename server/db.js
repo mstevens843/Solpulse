@@ -1,15 +1,3 @@
-// What Happens Without This File?
-// No Database Connection:
-
-// Without this configuration, your application won’t have access to the database.
-// Sequelize needs this file to understand how to connect to your database and manage models.
-// Reusability:
-
-// This centralized sequelize instance avoids repetitive database connection logic in other parts of the app.
-// Scalability:
-
-// Adding features like pooling, SSL, or logging configurations ensures your app performs efficiently and securely.
-// If your app runs fine with the current setup, the suggested improvements are optional but add robustness and flexibility.
 
 require('dotenv').config(); // Load environment variables
 const { Sequelize } = require('sequelize');
@@ -49,15 +37,3 @@ sequelize.authenticate()
   });
 
 module.exports = sequelize;
-
-
-
-
-// Error Handling:
-// Add error handling to catch connection issues during initialization or usage.
-// Logging:
-// Sequelize logs all SQL queries by default. If you want to minimize noise in production or testing environments, disable logging:
-// SSL Support (Optional):
-// If you're using a hosted PostgreSQL database (e.g., AWS RDS, Heroku, Supabase), you may need to enable SSL. Add ssl configuration:
-// Pooling (Optional):
-// Adding connection pooling for optimized database management (especially in production):

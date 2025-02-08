@@ -140,23 +140,3 @@ describe('Signup Page', () => {
         });
     });
 });
-
-
-
-
-// Test Cases Breakdown
-// Form Rendering:
-
-// Ensures all fields, labels, and the signup button are displayed.
-// Validation Errors:
-
-// Checks for errors when fields are empty or invalid, including mismatched passwords.
-// Successful Signup:
-
-// Simulates a successful API response and verifies success message.
-// Server Errors:
-
-// Tests error handling when the server responds with an error (e.g., email already in use).
-// Loading Spinner:
-
-// Ensures the loader appears during signup and aria-busy is correctly set.

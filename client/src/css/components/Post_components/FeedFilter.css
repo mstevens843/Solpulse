@@ -55,16 +55,3 @@
         width: 100%;
     }
 }
-
-
-/* Styling (FeedFilter.css)
-Filter Layout:
-
-Styled the filter container (feed-filter-container) with flex alignment and spacing.
-Added a responsive design to ensure dropdowns adapt well on smaller screens.
-Interactive Dropdown:
-
-Styled the dropdown with focus and hover effects for better interactivity.
-Responsive Design:
-
-Ensured the container and dropdown are stacked vertically on smaller screens. */

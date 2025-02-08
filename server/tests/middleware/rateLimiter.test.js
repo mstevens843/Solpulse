@@ -58,11 +58,3 @@ describe('Rate Limiter Middleware', () => {
     expect(excessResponse.status).toBe(429);
   });
 });
-
-
-
-
-// Explanation of the Tests:
-// Test 1 (Allow requests): Makes 3 requests within 5 seconds and ensures all requests are successful (200).
-// Test 2 (Exceed rate limit): Makes 4 requests, where the 4th request should be blocked with a 429 status code (rate limit exceeded).
-// Test 3 (Window Reset): After reaching the rate limit, it waits for 5 seconds (the window period) and ensures the limit is reset, allowing a 4th request.

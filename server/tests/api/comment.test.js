@@ -100,26 +100,3 @@ describe('Comments API Routes', () => {
     });
   });
 });
-
-
-
-// Key Features:
-// Setup and Cleanup:
-
-// beforeAll sets up a user, post, and token for authenticated testing.
-// afterAll closes the database connection.
-// Mocking WebSocket Events:
-
-// Mocks the handleCommentEvent function to prevent WebSocket broadcasting during tests.
-// Tested Endpoints:
-
-// /comments: Tests for successful comment creation and validation errors.
-// /comments/:id/react: Tests for adding reactions to comments.
-// /comments/:id: Tests for editing comments.
-// /comments/:id: Tests for deleting comments.
-// Authentication:
-
-// Uses a valid JWT token to test protected routes.
-// Validation and Error Handling:
-
-// Ensures proper validation and error responses for invalid inputs or unauthorized actions.

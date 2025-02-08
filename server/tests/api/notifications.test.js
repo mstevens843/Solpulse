@@ -152,28 +152,3 @@ describe('Notifications API', () => {
     });
   });
 });
-
-
-
-// Explanation:
-// Setup and Cleanup:
-
-// beforeAll sets up the database, creates a test user, generates a JWT token, and seeds initial notifications.
-// afterAll closes the database connection after tests.
-// Test Cases:
-
-// GET /api/notifications:
-// Validates pagination and unread count functionality.
-// Tests for authentication failures.
-// PUT /api/notifications/:id/read:
-// Validates marking a specific notification as read.
-// Tests for non-existent notifications.
-// Ensures that users cannot mark notifications they don't own.
-// POST /api/notifications/mark-all-read:
-// Ensures all unread notifications are marked as read for the authenticated user.
-// Authentication:
-
-// Ensures proper handling of JWT tokens for all protected routes.
-// Error Handling:
-
-// Tests for 401 (unauthorized), 403 (forbidden), and 404 (not found) cases.

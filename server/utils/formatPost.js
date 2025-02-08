@@ -1,21 +1,3 @@
-// utils/formatPost.js
-
-/**
- * Formats a post object to include only the necessary details for the frontend.
- * This function ensures consistency in how posts are structured across the application.
- *
- * Why this file was created:
- * - Reusability: Centralizes the logic for formatting posts, preventing duplication.
- * - Consistency: Ensures all posts have the same structure, whether they are original posts or retweets.
- * - Readability: Simplifies the controller logic by moving formatting responsibilities to a separate utility.
- 
- * Formats a post object to include only the necessary details for the frontend.
- * Ensures uniform structure across the app for original posts and retweets.
- *
-/**
- * @param {Object} post - The raw post object from the database.
- * @returns {Object} - The formatted post object.
- */
 const formatPost = (post) => ({
     id: post.id,
     userId: post.userId,

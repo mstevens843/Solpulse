@@ -107,24 +107,3 @@ describe('Comment Model Tests', () => {
         expect(comment.updatedAt).toBeDefined();
     });
 });
-
-
-
-// Key Features Covered
-// Model Tests
-
-// Validates proper creation of comments.
-// Ensures constraints like notEmpty are enforced.
-// Tests cascading deletes when the user or post is removed.
-// API Tests
-
-// Tests creating, retrieving, and deleting comments via API endpoints.
-// Validates authentication for protected routes.
-// Handles edge cases, like non-existent comments.
-// Setup and Teardown
-
-// Ensures a clean database state using beforeAll and afterAll.
-// Uses a test user and post for consistent testing.
-// Authorization
-
-// Simulates authenticated requests using a JWT token.

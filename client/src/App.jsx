@@ -100,28 +100,3 @@ function AppContent() {
 }
 
 export default App;
-
-
-
-
-
-
-
-// The NavBar component should be added to your App.js or similar layout component, ensuring it's visible across every page.
-
-// Changes:
-// Consistent API Environment Handling: Ensure any page or component using API calls leverages process.env.REACT_APP_API_URL in their respective files 
-// (already updated in prior edits).
-// Added Missing Routes: Integrated missing pages as per the file structure provided (e.g., Explore, Messages, Notifications).
-// Semantic Enhancements:
-// Wrapped the routes in a <main> tag to indicate the main content of the app.
-// Added a container <div> with the class app-container for styling and layout flexibility.
-
-// Changes Made
-// Added NotFound Route:
-
-// Route component={NotFound} acts as a fallback for invalid URLs.
-// It ensures users see a 404 page if they visit an undefined route.
-// Imported NotFound:
-
-// Imported the NotFound page from ./pages/NotFound

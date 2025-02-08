@@ -146,31 +146,3 @@ describe('Post Model', () => {
         expect(postParanoid.deletedAt).not.toBeNull();
     });
 });
-
-
-
-// Key Tests in post.test.js
-// Valid Post Creation:
-
-// Ensures posts with valid data, including optional fields, are created successfully.
-// Content Length Validation:
-
-// Validates content length is between 1 and 280 characters.
-// Media URL Validation:
-
-// Ensures mediaUrl is a valid URL if provided.
-// Crypto Tag Validation:
-
-// Ensures cryptoTag is valid or is automatically assigned based on content.
-// Optional Fields:
-
-// Verifies posts can be created without optional fields like cryptoTag or mediaUrl.
-// Cascade Delete for Comments:
-
-// Ensures comments are deleted when a post is deleted (via onDelete: 'CASCADE').
-// Foreign Key Constraints:
-
-// Verifies that invalid userId references are rejected.
-// Soft Deletion:
-
-// Confirms that posts are soft-deleted when deleted, with deletedAt set. 

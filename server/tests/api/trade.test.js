@@ -166,20 +166,3 @@ describe('Crypto Trade API', () => {
         
     });
 });
-
-
-
-
-// Key Aspects:
-// Setup and Cleanup:
-
-// Resets the database using sequelize.sync({ force: true }) before each test and closes the database connection after all tests.
-// Successful Trade Test:
-
-// Tests for successful execution of both buy and sell trades.
-// Input Validation:
-
-// Tests for missing or invalid cryptoType, amount, and tradeType.
-// Coinbase API Error Handling:
-
-// Simulates errors from the Coinbase API by testing the error handling in case of failures.

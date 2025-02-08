@@ -89,25 +89,3 @@ describe('LikeButton Component', () => {
         expect(errorMessage).toBeInTheDocument();
     });
 });
-
-
-
-
-
-
-// Key Test Cases
-// Initial Render:
-
-// Ensures the button displays the correct initial likes.
-// Increment Likes on Success:
-
-// Simulates a successful like action and ensures the likes count is updated correctly.
-// Revert Likes on Failure:
-
-// Simulates a failed like action and ensures the likes count is reverted.
-// Button Disabled While Liking:
-
-// Verifies the button is disabled during the like request and re-enabled after completion.
-// Error Message Display:
-
-// Ensures an error message is shown when the like request fails.

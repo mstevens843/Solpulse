@@ -148,21 +148,3 @@ describe('Tips API', () => {
     });
   });
 });
-
-
-// Key Features:
-// Setup and Cleanup:
-
-// Syncs the database before all tests and closes it afterward.
-// Endpoint Tests:
-
-// Tests for sending, receiving, and fetching tips with pagination.
-// Validation Tests:
-
-// Ensures the request body validation rules are enforced.
-// Authorization Tests:
-
-// Verifies that only authenticated users can access the endpoints.
-// Pagination:
-
-// Tests both received and sent tips pagination behavior.

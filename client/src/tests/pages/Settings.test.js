@@ -153,30 +153,3 @@ describe('Settings Page', () => {
         });
     });
 });
-
-
-
-
-
-// Test Cases Breakdown
-// Loader Display:
-
-// Ensures the loader appears while fetching settings.
-// Settings Fetch Success:
-
-// Verifies settings are displayed when fetched successfully.
-// API Error Handling:
-
-// Ensures error messages appear when the API fails during fetching or updating.
-// Form Validation:
-
-// Tests email format, password length, and wallet address validations.
-// Settings Update:
-
-// Simulates a successful update and verifies the success message.
-// Validation Errors:
-
-// Displays appropriate error messages for invalid inputs (e.g., email, password, wallet address).
-// Additional Sections:
-
-// Confirms that other sections like "Your Crypto Wallet" are rendered correctly.

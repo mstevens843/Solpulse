@@ -78,12 +78,4 @@ describe('Error Handler Middleware', () => {
   });
 });
 
-
-
-
-// Key Tests:
-// Unhandled Exceptions (500 Errors): Simulates an error in a route and verifies that it is handled correctly by your error handler, returning a 500 status and the error message.
-// 404 Errors: Simulates a 404 error for non-existent routes and verifies that the handler returns the correct error message and status.
-// Production vs Non-Production Environments: Checks if the stack trace is hidden in production (NODE_ENV=production) and visible in other environments like development.
-// General Error Handling: Ensures that an unknown error is caught and structured properly by the error handler.
-
+ 

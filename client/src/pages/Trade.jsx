@@ -42,7 +42,7 @@ function Trade() {
     const memoizedWalletTokens = useMemo(() => walletTokens, [walletTokens]);
 
     const cleanMintAddress = (address) => {
-        return address.replace(/pump$/i, ""); // 🔥 Removes "pump" suffix (case insensitive)
+        return address.replace(/pump$/i, ""); //  Removes "pump" suffix (case insensitive)
     };
 
     useEffect(() => {
@@ -77,21 +77,6 @@ function Trade() {
     
         return (quote.inAmount / 10 ** inputDecimals).toFixed(inputDecimals);
     }, [quote, selectedCoin]); // Added selectedCoin to dependency array
-
-    // const updateTokenMap = useCallback((tokenLookup) => {
-    //     setTokenMap(tokenLookup);
-    //     localStorage.setItem("tradableTokens", JSON.stringify(tokenLookup)); // ✅ Cache tokens
-    // }, []);
-
-    // const filteredTokens = useMemo(() => {
-    //     if (!searchTerm) return walletTokens; // If no search term, show all tokens
-    //     return walletTokens.filter((token) =>
-    //         token.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //         token.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //         token.mint.toLowerCase().includes(searchTerm.toLowerCase()) // Allow mint search
-    //     );
-    // }, [searchTerm, walletTokens]);
-
 
     
     
@@ -151,22 +136,8 @@ function Trade() {
             }
         }
     }
-
-    // ✅ Add `handleKeyDown` right after `handleCoinSelect`
-    // const handleKeyDown = (event, type) => {
-    //     if (event.key === "ArrowDown") {
-    //         setHighlightedIndex((prev) => Math.min(prev + 1, walletTokens.length - 1));
-    //     } else if (event.key === "ArrowUp") {
-    //         setHighlightedIndex((prev) => Math.max(prev - 1, 0));
-    //     } else if (event.key === "Enter") {
-    //         if (walletTokens[highlightedIndex]) {
-    //             handleCoinSelect(walletTokens[highlightedIndex], type);
-    //         }
-    //     }
-    // };
     
-    
-    // 🔹 Fetch swap quote from Jupiter API
+    //  Fetch swap quote from Jupiter API
     useEffect(() => {
         if (selectedCoin && buyingCoin && sellAmount) {
             fetchSwapQuote();
@@ -237,7 +208,7 @@ function Trade() {
 
 
     
-    // 2️⃣ Fetch Swap Instructions from Jupiter
+    // 2️ Fetch Swap Instructions from Jupiter
     const fetchSwapInstructions = async () => {
         if (!wallet.publicKey || !quote) {
             console.warn("⚠️ Missing required parameters for swap instructions.");
@@ -247,7 +218,7 @@ function Trade() {
         try {
             console.log("🛠 Fetching swap instructions...");
     
-            // ✅ Ensure numeric fields are correctly formatted as strings
+            // Ensure numeric fields are correctly formatted as strings
             const quoteResponse = {
                 inputMint: quote.inputMint,
                 inAmount: String(quote.inAmount),  // Convert to string
@@ -263,7 +234,7 @@ function Trade() {
                 timeTaken: quote.timeTaken || 0, // Provide a default value
             };
     
-            // ✅ Only include destinationTokenAccount if it's defined
+            // Only include destinationTokenAccount if it's defined
             const bodyPayload = {
                 userPublicKey: wallet.publicKey.toBase58(),
                 wrapAndUnwrapSol: true,
@@ -277,7 +248,7 @@ function Trade() {
                 quoteResponse, // ✅ Properly formatted quoteResponse object
             };
     
-            // ✅ Only add destinationTokenAccount if it's not null or undefined
+            // Only add destinationTokenAccount if it's not null or undefined
             if (quote.destinationTokenAccount) {
                 bodyPayload.destinationTokenAccount = quote.destinationTokenAccount;
             }
@@ -313,8 +284,8 @@ function Trade() {
 
 
 
-    // 3️⃣ Execute Swap Transaction
-// 3️⃣ Execute Swap Transaction
+
+// 3️ Execute Swap Transaction
 const executeSwap = async () => {
     if (!wallet.publicKey || !quote) {
         alert("⚠️ Invalid swap details. Please check your selections.");
@@ -328,7 +299,7 @@ const executeSwap = async () => {
         const swapInstructions = await fetchSwapInstructions();
         if (!swapInstructions) throw new Error("Swap instructions not available!");
 
-        // ✅ Construct swap request payload
+        // Construct swap request payload
         const bodyPayload = {
             userPublicKey: wallet.publicKey.toBase58(),
             wrapAndUnwrapSol: true,
@@ -357,7 +328,7 @@ const executeSwap = async () => {
 
         console.log("🔹 Request Payload for Swap:", JSON.stringify(bodyPayload, null, 2));
 
-        // 🔹 Send the swap request to Jupiter
+        //  Send the swap request to Jupiter
         const swapResponse = await fetch("https://api.jup.ag/swap/v1/swap", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -372,7 +343,7 @@ const executeSwap = async () => {
         const { swapTransaction, lastValidBlockHeight } = await swapResponse.json();
         setSwapTransaction(swapTransaction);
 
-        // ✅ Handle Versioned Transactions
+        //  Handle Versioned Transactions
         const connection = new Connection(SOLANA_RPC_URL);
         const transactionBuffer = Buffer.from(swapTransaction, "base64");
 
@@ -418,30 +389,7 @@ const executeSwap = async () => {
     }
 };
 
-    
-    
-    
-    
-
-
-    // useEffect(() => {
-    //     const handleOutsideClick = (event) => {
-    //         if (
-    //             !event.target.closest(".coin-input-wrapper") &&
-    //             !event.target.closest(".dropdown-container")
-    //         ) {
-    //             // setSellDropdownVisible(false);
-    //             // setBuyDropdownVisible(false);
-    //         }
-    //     };
-    
-    //     document.addEventListener("click", handleOutsideClick);
-    //     return () => document.removeEventListener("click", handleOutsideClick);
-    // }, []);
-
-
-
-
+ 
     return (
         <>
             {/* Token Selection Modal */}
@@ -463,7 +411,7 @@ const executeSwap = async () => {
 
     <div className="swap-section">
         
-        {/* 🔹 Sell Token Section */}
+        {/* Sell Token Section */}
         <div className="swap-box">
             <label>You're Selling</label>
 
@@ -506,7 +454,7 @@ const executeSwap = async () => {
                 />
             </div>
 
-            {/* 💰 Display Dollar Value */}
+            {/* Display Dollar Value */}
             {selectedCoin && (sellAmount || computedSellAmount) && (
                 <p className="converted-price">
                     ${(
@@ -516,7 +464,7 @@ const executeSwap = async () => {
             )}
         </div>
 
-            {/* 🔹 Buy Token Section */}
+            {/* Buy Token Section */}
             <div className="swap-box">
                 <label>You're Buying</label>
 
@@ -555,7 +503,7 @@ const executeSwap = async () => {
                     />
                 </div>
 
-                {/* 💰 Display Dollar Value */}
+                {/*  Display Dollar Value */}
                 {buyingCoin && computedBuyAmount && (
                     <p className="converted-price">
                         ${(
@@ -565,7 +513,7 @@ const executeSwap = async () => {
                 )}
             </div>
 
-                {/* 🔄 Expected Output */}
+                {/*  Expected Output */}
                 <div className="expected-output">
                     {loadingQuote ? (
                         <p>Loading quote...</p>
@@ -586,7 +534,7 @@ const executeSwap = async () => {
                 </button>
             </div>
 
-            {/* 🦊 Wallet Connection */}
+            {/*  Wallet Connection */}
             <CryptoWallet walletConnected={walletConnected} />
         </div>
 

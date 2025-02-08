@@ -25,15 +25,3 @@ const rateLimiter = ({ limit = 100, windowMs = 15 * 60 * 1000, message, headers 
 };
 
 module.exports = rateLimiter;
-
-  
-
-
-
-
-
-// Memory Cleanup: We should clear outdated timestamps after the window expires to prevent memory bloat over time.
-// Custom Error Message: Allow customization of the error message, such as providing details on the time to wait until the next allowed request.
-// Flexible Time Window: The windowMs parameter is already flexible, but we could enhance it to include more granular control, such as 
-// adjusting the rate limit based on user roles or request types.
-// Add logging: You might want to log rate limit breaches for better monitoring.

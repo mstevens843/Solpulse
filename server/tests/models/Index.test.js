@@ -43,10 +43,3 @@ describe('Sequelize Models Initialization', () => {
 afterAll(async () => {
     await sequelize.close(); // Close the connection after tests
 });
-
-
-// What This Test Does
-// Database Connection: Checks if the Sequelize instance connects to the database without errors.
-// Model Loading: Ensures all expected models are properly initialized and available in the db object.
-// Associations: Confirms that the associate function exists for models that define relationships.
-// Basic Query: Verifies that at least one model (User in this case) can execute a simple query without errors.

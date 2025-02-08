@@ -1,8 +1,7 @@
-/* Post Container Fix */
 .individual-post-container {
   display: flex;
-  flex-direction: column; /* Stack elements: Repost indicator on top, content below */
-  align-items: stretch; /* Ensure it takes full width */
+  flex-direction: column;
+  align-items: stretch; 
   padding: 0rem;
   border-bottom: 1px solid #2e2e2e;
   background: #1f1f1f;
@@ -31,21 +30,20 @@
   flex-grow: 1;
 }
 
-/* Align author details correctly */
-/* Ensure the post header stays in a row */
+
 .individual-post-header {
   display: flex;
-  align-items: center; /* Ensures vertical alignment */
-  justify-content: flex-start; /* Aligns text left */
-  position: relative; /* Allows absolute positioning of Delete */
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
   width: 100%;
 }
 
 /* Ensures Delete Button Stays in Top Right */
 .delete-post-button {
   position: absolute;
-  top: 9rem; /* Adjusted for padding */
-  right: 8px; /* Ensures it stays at the top right */
+  top: 9rem;
+  right: 8px; 
   background: transparent;
   color: #ff4d4d;
   font-size: 0.9rem;
@@ -75,13 +73,13 @@
 /* Post Content Section */
 .post-content-wrapper {
   display: flex;
-  flex-direction: row; /* Keeps profile pic + content in a row */
+  flex-direction: row; 
   align-items: flex-start;
-  width: 100%; /* Ensures full width */
+  width: 100%; 
 }
 .individual-post-content-wrapper {
-  flex-grow: 1; /* Ensures content expands */
-  width: 100%; /* Forces content to take up full space */
+  flex-grow: 1; 
+  width: 100%; 
 }
 
 .individual-post-crypto-tag {
@@ -140,12 +138,12 @@
 
 /* Adjusted Repost Indicator Styling */
 .repost-indicator {
-  font-size: 0.8rem; /* Slightly smaller text */
-  font-weight: 600; /* Medium weight */
-  color: #c8c3c3; /* Subtle color */
-  margin-bottom: 4px; /* Spacing before content */
-  margin-top: 4px; /* Spacing before content */
-  padding-left: 58px; /* Aligns with profile picture */
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c8c3c3;
+  margin-bottom: 4px;
+  margin-top: 4px;
+  padding-left: 58px;
 }
 
 

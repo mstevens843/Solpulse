@@ -80,21 +80,3 @@ describe('RetweetButton Component', () => {
         );
     });
 });
-
-
-// Features Covered in Tests
-// Rendering:
-
-// Ensures the button is rendered properly with the correct label.
-// Successful Retweet:
-
-// Simulates a successful API call and ensures the success message is displayed.
-// Error Handling:
-
-// Simulates a failed API call and checks if the error message is displayed.
-// Loading State:
-
-// Verifies that the button is disabled while the API call is in progress.
-// Message Reset:
-
-// Ensures the status message is cleared when a new retweet attempt is made.

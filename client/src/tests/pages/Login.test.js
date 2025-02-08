@@ -94,23 +94,3 @@ describe('Login Component', () => {
     expect(await screen.findByText(/unable to log in\. please try again later\./i)).toBeInTheDocument();
   });
 });
-
-
-
-
-// Features Covered in Tests
-// Form Rendering:
-
-// Ensures that all input fields and buttons are correctly rendered.
-// Validation:
-
-// Tests for invalid email formats and passwords shorter than 6 characters.
-// Error Handling:
-
-// Tests server-side errors such as invalid credentials.
-// Success Flow:
-
-// Verifies successful login and navigation to the /dashboard.
-// Loading State:
-
-// Ensures the spinner is displayed during form submission.

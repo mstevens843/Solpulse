@@ -26,7 +26,7 @@
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    flex-wrap: nowrap; /* Ensure items stay in one line */
+    flex-wrap: nowrap; 
 }
 
 /* Navbar Items */
@@ -37,7 +37,7 @@
     text-decoration: none;
     position: relative;
     transition: all 0.3s ease-in-out;
-    white-space: nowrap; /* Prevents text from breaking */
+    white-space: nowrap; 
 }
 
 .navbar-item a:hover {
@@ -110,7 +110,7 @@ button.logout-button {
     padding: 0.5rem 1.2rem;
     border-radius: 8px;
     background: #0da688;
-    color: #1a1a2e;       /* Dark text for contrast */
+    color: #1a1a2e;
     font-weight: bold;
     border: none;
     cursor: pointer;
@@ -122,7 +122,7 @@ button.logout-button {
 button.logout-button:hover {
     background: #00ffcc;
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.8); 
-    transform: translateY(-2px); /* Adds a slight lift on hover */
+    transform: translateY(-2px); 
 }
 
 /* === RESPONSIVE FIXES (Make Navbar Shrink But Stay in Place) === */
@@ -133,11 +133,11 @@ button.logout-button:hover {
 
     .navbar-left, 
     .navbar-right {
-        gap: 1rem; /* Reduce spacing */
+        gap: 1rem;
     }
 
     .navbar-item a {
-        font-size: 1rem; /* Scale down text */
+        font-size: 1rem; 
     }
 
     .navbar-wallet-button {

@@ -129,29 +129,3 @@ describe('SearchBar Component', () => {
         expect(mockOnSearch).toHaveBeenCalledWith({ term: 'React', filter: 'posts' });
     });
 });
-
-
-
-// Features Covered in Tests
-// Rendering:
-
-// Ensures all elements like input, buttons, and optional filters render properly.
-// Error Handling:
-
-// Tests error message display for empty search submissions.
-// Search Functionality:
-
-// Verifies that onSearch is called with the correct parameters.
-// Search History:
-
-// Confirms that search queries are stored in and retrieved from localStorage.
-// Ensures history items trigger searches on click.
-// Suggestions:
-
-// Validates the filtering of suggestions based on the input.
-// Reset Functionality:
-
-// Tests that clicking reset clears input and suggestions.
-// Filters:
-
-// Ensures filters are rendered and used in search queries.

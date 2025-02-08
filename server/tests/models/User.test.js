@@ -164,25 +164,3 @@ describe('User Model', () => {
         ).rejects.toThrow(/Validation error: Validation len on bio failed/);
     });
 });
-
-
-
-
-// Key Tests Included:
-// Basic Creation:
-
-// Ensure a user can be created with valid inputs.
-// Validation Errors:
-
-// Unique constraints for username and email.
-// Format validation for walletAddress.
-// Password Hashing:
-
-// Verify that passwords are hashed before saving.
-// Associations:
-
-// Validate hasMany relationship with Post.
-// Test cascading delete for associated Post records.
-// Custom Fields:
-
-// Validate bio length constraints.

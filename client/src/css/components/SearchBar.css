@@ -150,6 +150,6 @@ select.search-filter:hover {
 }
 
 .search-input::placeholder {
-    font-size: 1.1rem; /* Smaller placeholder text */
+    font-size: 1.1rem;
     color: #ffffff;
 }

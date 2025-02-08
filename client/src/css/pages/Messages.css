@@ -1,6 +1,6 @@
 /* Messages Page Container */
 .messages-container {
-  background: #121212; /* Match background with Landing & Home */
+  background: #121212;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -10,25 +10,11 @@
   color: #fff;
 }
 
-/* Header */
-/* .messages-header {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #00ffcc;
-  text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
-  padding: 1rem;
-  margin-bottom: 20px;
-  text-align: center;
-  /* background: linear-gradient(to right, #9945FF, #14F195, #00FFBD); Gradient for consistency */
-  /* -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; */
-/*  */
-
 /* Message List */
 .message-list {
   width: 100%;
   max-width: 600px;
-  background: #1f1f1f; /* Match other components */
+  background: #1f1f1f;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
   padding: 1.5rem;
@@ -48,7 +34,7 @@
 .message-item:hover {
   background: #000000;
   color: #fff;
-  transform: scale(1.02); /* Slight scaling for hover effect */
+  transform: scale(1.02);
 }
 
 
@@ -72,7 +58,7 @@
 .message-item p {
   margin-top: 0.5rem;
   font-size: 1rem;
-  color: #ffffff; /* Subtle text color */
+  color: #ffffff; 
 }
 
 .modal-overlay .modal-content {
@@ -88,8 +74,8 @@
 }
 
 .modal-overlay .modal-content button {
-  background: #0da688; /* Teal background */
-  color: #fff; /* Default text color */
+  background: #0da688;
+  color: #fff;
   border: none;
   padding: 0.8rem 1.5rem;
   border-radius: 8px;
@@ -99,8 +85,8 @@
 }
 
 .modal-overlay .modal-content button:hover {
-  background: #00ffcc !important; /* Teal hover background */
-  color: #121212 !important; /* Dark text for contrast */
+  background: #00ffcc !important;
+  color: #121212 !important;
 }
 
 

@@ -128,25 +128,3 @@ describe('Explore Component', () => {
         });
     });
 });
-
-
-
-
-// Features Covered in Tests
-// Initial Render:
-
-// Verifies the page renders with the Explore header and SearchBar component.
-// Trending Posts Fetch:
-
-// Confirms that trending posts are fetched and displayed on page load.
-// Handles API call success and failure cases.
-// Search Functionality:
-
-// Simulates typing and searching, verifies search results are fetched and displayed.
-// Handles search errors gracefully.
-// Loading States:
-
-// Ensures loading states are displayed appropriately during data fetches.
-// Empty State:
-
-// Checks that a message is displayed when no posts are found.

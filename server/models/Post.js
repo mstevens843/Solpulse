@@ -179,37 +179,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return Post;
 };
-
-
-// Indexes:
-// Add indexes for frequently queried columns like userId and cryptoTag to optimize query performance.
-
-
-// Media Type Validation:
-// Add a mediaType column to store the type of media (e.g., image, video, audio) and validate mediaUrl accordingly.
-
-// Hashtags and Mentions:
-// Extract hashtags and mentions from content to facilitate features like tag-based searches or user mentions.
-// Use Sequelize hooks (beforeCreate, beforeUpdate) to process hashtags and mentions automatically
-
-// Soft Deletes:
-
-// Add a deletedAt field with Sequelize's paranoid option to enable soft deletion of posts.
-
-// Character Limit for Content:
-
-// Enforce a character limit on content for better UX (e.g., 280 characters like Twitter).
-// CryptoTag Validation:
-
-// Add a list of valid cryptoTag options and validate against it.
-// Hooks:
-
-// Use Sequelize hooks to validate or process fields. For example:
-// Process URLs for mediaUrl.
-// Automatically populate cryptoTag if a post contains certain keywords.
-
-// Benefits of the Updates:
-// Scalability: Indexing and soft deletes improve performance and data management.
-// Validation: Prevents invalid data (e.g., invalid media URLs or crypto tags).
-// Automation: Hooks reduce manual effort for common tasks like populating cryptoTag.
-// Better UX: Limits content length and adds meaningful error messages.

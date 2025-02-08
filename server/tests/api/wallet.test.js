@@ -129,19 +129,3 @@ describe('Wallet API', () => {
         expect(res.body.error).toBe('Invalid wallet address');
     });
 });
-
-
-
-
-// Explanation:
-// Mocking:
-// We mock the authMiddleware and getWalletBalance function to simulate an authenticated request and return a mocked balance of 10.0 for the wallet.
-// Test for Adding a Wallet:
-// This test checks if the user can successfully add a new wallet. It ensures that a wallet is created only if it does not already exist.
-// Test for Fetching Wallets:
-// It checks that the authenticated user can fetch all of their wallets.
-// It also verifies that an appropriate message is returned if no wallets are found.
-// Test for Fetching Wallet Balance:
-// This test checks that the wallet balance and transactions can be retrieved successfully, and the mocked balance of 10.0 is returned.
-// Test for Invalid Wallet Address:
-// Verifies that the correct error message is returned when an invalid wallet address is provided.

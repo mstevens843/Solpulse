@@ -46,20 +46,3 @@
     @apply text-center font-semibold mt-4 text-solana-text-light;
 }
 
-/* 
-Changes and Enhancements:
-New Styling for Tip Message Input:
-
-Added a .crypto-tip-message-input class to style the optional message textarea. Includes a fixed height for consistent UI and resize-none to prevent resizing issues.
-Improved Disabled Button State:
-
-Enhanced the .crypto-tip-submit-button:disabled style for clear visual feedback.
-Consistent Layout and Spacing:
-
-Used gap utilities in .crypto-tip-form and .crypto-tip-preset-container for better spacing between elements.
-Hover Effects:
-
-Added smooth transitions to .crypto-tip-preset-button and .crypto-tip-submit-button for a responsive feel.
-Alignment with Solana Theme:
-
-Ensured the colors and hover effects maintain a cohesive Solana-themed look across the component. */

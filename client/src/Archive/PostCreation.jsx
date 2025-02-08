@@ -1,12 +1,3 @@
-// This page allows users to create new posts, share content, and upload media. 
-// It's designed to facilitate interaction and content generation on the platform. 
-// Includes: 
-// TEXT CONTENT: A text area for users to write their post content. 
-// MEDIA UPLOAD: Integration with the MEDIAUPLOAD component to attach images or videos. 
-// FORM SUBMISSION: Handles post creation via API request, supporting text, media, and tags. On success, the form clears and confirms the post creation. 
-// ERROR HANDLING: Provides error feedback for issues during the post submission process. 
-
-
 import React, { useState } from "react";
 import { api } from "@/api/apiConfig";
 import MediaUpload from "@/components/Post_components/MediaUpload";

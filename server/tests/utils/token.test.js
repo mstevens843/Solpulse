@@ -92,17 +92,3 @@ describe('Token Utility Functions', () => {
     });
 });
 
-
-// Explanation of Tests:
-// generateToken Tests:
-// Checks if the function generates a token when the JWT_SECRET is set.
-// Ensures it throws an error if JWT_SECRET is undefined.
-// verifyToken Tests:
-// Tests valid token verification.
-// Simulates errors for expired tokens, invalid tokens, and unknown errors.
-// decodeToken Tests:
-// Verifies that the function can decode a valid token.
-// Handles errors by returning null when the token cannot be decoded.
-// Next Steps:
-// Place the token.test.js file under your __tests__ folder or equivalent.
-// Run jest to make sure the tests pass and that the token utility is working as expected.

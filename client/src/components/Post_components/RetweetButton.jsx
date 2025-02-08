@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import "@/css/components/Post_components/PostButtons.css"; // Updated alias for CSS import
-import { api } from "@/api/apiConfig"; // Centralized API instance
+import "@/css/components/Post_components/PostButtons.css"; 
+import { api } from "@/api/apiConfig"; 
 import { toast } from "react-toastify";
 
 function RetweetButton({ postId, initialRetweets = 0, currentUser, onRetweet, createdAt }) {
@@ -78,58 +78,3 @@ RetweetButton.propTypes = {
 };
 
 export default RetweetButton;
-
-
-
-
-
-
-
-
-
-
-
-// PAGES WHERE COMPONENT IS LIKELY IMPLEMENTED: 
-// HOMEPAGE
-// EXPLORE PAGE
-// PROFILE PAGE
-// DASHBOARD PAGE
-
-// Improvements made: 
-// Loading State Management: prevents multiple submissions. Provides feedback during post creation process. 
-// Error Display: shows user friedly error message if API call fails. 
-// Feedback on success: replaces 'alert' with in-app success message. 
-// Added aria-label to button for better screen reader support. 
-
-// RetweetButton.js
-// Single State for Feedback:
-
-// Combined errorMessage and successMessage into a single statusMessage state to simplify logic.
-// Conditional Styling:
-
-// Added conditional styles for success and error messages for better user experience.
-// Optimization:
-
-// Reduced state updates during API calls by batching updates.
-
-// RetweetButton Component
-// Status Message:
-
-// Moved the message (statusMessage) into styled <p> elements (retweet-error or retweet-success) based on the success or failure of the operation.
-// Improved Accessibility:
-
-// Added aria-busy for screen readers to indicate loading state.
-
-// Environment Variable for API URL:
-
-// Changed the endpoint to use process.env.REACT_APP_API_URL for consistency across all API calls.
-// javascript
-// Copy code
-// const API_URL = process.env.REACT_APP_API_URL;
-// Styling and Accessibility:
-
-// Added aria-busy to the button to indicate a loading state to assistive technologies.
-// Retained aria-label for clear accessibility.
-// Error Handling:
-
-// Status messages dynamically change the class to indicate success (retweet-success) or failure (retweet-error).

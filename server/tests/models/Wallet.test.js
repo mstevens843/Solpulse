@@ -134,20 +134,3 @@ describe('Transaction Model', () => {
     expect(deletedTransaction.deletedAt).not.toBeNull(); // Should be soft-deleted
   });
 });
-
-
-
-// Key Features in the Test:
-// Model Validation:
-
-// Tests wallet address format and uniqueness.
-// Validates non-negative balance.
-// Associations:
-
-// Tests relationships between Wallet and User.
-// Verifies cascading delete of wallets when the user is deleted.
-// Tests wallet-to-transaction associations.
-// Database Setup & Teardown:
-
-// Synchronizes the database before tests.
-// Closes the database connection after tests.

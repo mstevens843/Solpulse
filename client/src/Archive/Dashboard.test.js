@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import axios from 'axios';
-import Dashboard from '../../Archive/Dashboard';
+import Dashboard from './Dashboard';
 
 jest.mock('axios');
 jest.mock('../../components/CryptoWalletIntegration', () => jest.fn(() => <div>Mock CryptoWalletIntegration</div>));

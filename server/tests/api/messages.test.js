@@ -130,25 +130,3 @@ describe('Messages API Routes', () => {
     });
   });
 });
-
-
-// Key Features:
-// Setup and Cleanup:
-
-// beforeAll creates test users and sets up the database.
-// afterAll cleans up and closes the database connection.
-// Tested Endpoints:
-
-// /recent: Fetches the 5 most recent messages.
-// /: Fetches paginated messages.
-// /:id/read: Marks a message as read.
-// /: Sends a new message.
-// Authentication:
-
-// Uses JWT for protected routes.
-// Validation and Error Handling:
-
-// Tests for required fields, invalid IDs, and unauthorized access.
-// WebSocket Mocking:
-
-// If your WebSocket utilities affect this route, you can mock them similarly to other tests.

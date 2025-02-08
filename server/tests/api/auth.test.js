@@ -166,11 +166,3 @@ describe("Auth API Routes", () => {
     });
   });
 });
-
-
-
-// Key Points:
-// Replace /api/auth/register and /api/auth/login with the correct routes if different in your setup.
-// The beforeAll hook resets the database and creates necessary test data.
-// Test cases include successful operations, validation errors, and edge cases like duplicate users or invalid credentials.
-// The tests use bcrypt for hashing passwords to align with your registration logic.

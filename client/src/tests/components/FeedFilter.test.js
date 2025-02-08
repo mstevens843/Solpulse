@@ -45,16 +45,3 @@ describe('FeedFilter Component', () => {
         expect(selectElement).toHaveValue('media');
     });
 });
-
-
-// Key Test Cases
-// Render Elements:
-
-// Ensures the dropdown and label are rendered correctly.
-// Confirms that the default selected value is 'posts'.
-// Callback Functionality:
-
-// Verifies that the onFilterChange function is called with the correct value when the filter is changed.
-// State Updates:
-
-// Tests that the selectedFilter state updates correctly when a new filter is selected.

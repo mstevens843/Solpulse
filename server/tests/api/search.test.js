@@ -129,28 +129,3 @@ describe('Search API', () => {
     });
   });
 });
-
-
-
-
-
-
-// Key Features:
-// Setup and Cleanup:
-
-// Syncs the database before all tests.
-// Creates test users and posts.
-// Authentication:
-
-// Tests behavior with and without valid tokens.
-// Functionality:
-
-// Tests searching for users, posts, and combined results.
-// Validates pagination and total counts.
-// Error Handling:
-
-// Tests handling empty results, rate limits, and internal server errors.
-// Rate Limiting:
-
-// Ensures that excessive requests are throttled with appropriate status codes.
-// This test file ensures comprehensive coverage for your search API route.

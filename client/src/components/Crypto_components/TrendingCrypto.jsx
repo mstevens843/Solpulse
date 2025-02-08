@@ -181,7 +181,3 @@ function TrendingCrypto() {
 }
 
 export default TrendingCrypto;
-
-
-
-

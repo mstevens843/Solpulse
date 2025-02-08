@@ -73,17 +73,3 @@ describe('checkOwnership Middleware', () => {
     expect(response.body.error).toBe('Post not found');
   });
 });
-
-
-
-// Explanation:
-// Setup:
-// We create two users (user and otherUser) and a post for the user.
-// The sequelize.sync({ force: true }) ensures that the database is reset before each test run.
-// Tests:
-// Test 1: Ensures that the owner of the post can successfully edit their post.
-// Test 2: Ensures that a non-owner cannot access or modify the post.
-// Test 3: Tests that a 404 response is returned if the post does not exist.
-// Requirements:
-// Ensure that your app (server.js) is properly set up to run the tests.
-// This assumes that you're using JWT tokens for authentication. If you're using another method, adjust the authentication part of the tests accordingly.

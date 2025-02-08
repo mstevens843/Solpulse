@@ -110,8 +110,8 @@
     list-style: none;
     padding: 0;
     margin-top: 1rem;
-    max-height: 300px; /* Set a smaller height */
-    overflow-y: auto;  /* Enable vertical scrolling */
+    max-height: 300px;
+    overflow-y: auto; 
 }
 
 .crypto-transaction-item {
@@ -139,12 +139,11 @@
     margin-top: 1rem;
 }
 
-/* Optionally, target specific elements */
 .crypto-wallet-transactions .crypto-transaction-type,
 .crypto-wallet-transactions .crypto-transaction-amount,
 .crypto-wallet-transactions .crypto-transaction-date {
-    font-size: 1.2rem; /* Adjust further if needed */
-    color: #ffffff; /* Optional: Make it slightly dimmer */
+    font-size: 1.2rem; 
+    color: #ffffff; 
 }
 
 
@@ -164,45 +163,3 @@
         width: 100%;
     }
 }
-
-
-
-
-/* Key Features:
-Wallet Container
-
-Clean, dark-themed container with spacing and shadows for visual structure.
-Headers
-
-Styled headers using Solana's primary and secondary colors to highlight sections.
-Wallet Balance
-
-Large, readable font with emphasis on the user's current SOL balance.
-Messages
-
-Error and success messages styled distinctly for clarity.
-Transaction List
-
-Transactions appear as interactive cards with hover scaling for engagement.
-Form for Sending Crypto
-
-Input fields and buttons styled for accessibility with focus effects and transitions.
-Tip Section
-
-Dedicated space styled to encourage tipping users.
-Responsiveness
-
-Ensured all elements adapt seamlessly to smaller screens. */
-
-/* Key Updates
-1. Wallet Controls
-Added styles for the filter and sort dropdowns (crypto-wallet-filter, crypto-wallet-sort).
-Styled the refresh button (crypto-wallet-refresh) with hover and transition effects.
-2. Transactions List
-Enhanced the transaction item hover effect:
-Scaling and shadow on hover for better interactivity.
-3. Loader
-Introduced a new .loader class for a spinner or loading text.
-Ensures the loading state visually aligns with the Solana theme.
-4. Wallet Messages
-Retained error (wallet-message-error) and success (wallet-message-success) messages for better user feedback. */

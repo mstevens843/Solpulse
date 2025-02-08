@@ -119,27 +119,3 @@ describe('Profile Page', () => {
         await waitFor(() => expect(screen.getByText(/no posts available/i)).toBeInTheDocument());
     });
 });
-
-
-
-
-
-
-
-// Test Cases
-// Rendering:
-
-// Ensures the loader is displayed while data is fetched.
-// Verifies user info, posts, and related components are rendered.
-// Error Handling:
-
-// Simulates API failure for profile fetch and checks for error messages and retry functionality.
-// Bio Editing:
-
-// Tests the edit bio flow, including input changes, API submission, and UI updates.
-// Posts Display:
-
-// Verifies posts are displayed correctly and handles scenarios with no posts.
-// Component Rendering:
-
-// Confirms CryptoTip and CryptoWalletIntegration components are displayed in the profile.

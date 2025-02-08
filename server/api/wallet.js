@@ -146,28 +146,3 @@ router.get('/linked', authMiddleware, async (req, res) => {
 
 
 module.exports = router;
-
-
-
-
-
-// Updates 
-// Enhanced /balance/:address to include transactions for better data consistency.
-
-// Key Updates and Enhancements:
-// Validation for Wallet Address:
-
-// Added a validation check to ensure that the wallet address is not empty and is a valid string.
-// Error Messages:
-
-// Improved error messages for better user feedback.
-// Status Codes:
-
-// Used 201 for successful wallet creation.
-// Used 404 when no wallets are found for the user.
-// Standardized Logging:
-
-// Updated log messages for better debugging.
-// Dummy Transactions:
-
-// Converted transaction dates to ISO strings for consistent formatting.

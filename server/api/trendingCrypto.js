@@ -185,22 +185,3 @@ router.get("/global", async (req, res) => {
 
 
 module.exports = router;
-
-
-
-
-// Key Updates:
-// Enhanced Error Handling:
-
-// Added checks for response.data to avoid potential issues if CoinGecko returns an empty dataset.
-// Included error messages based on CoinGecko's error response (error.response.data.error).
-// Structured Comments:
-
-// Documented the route functionality for better clarity.
-// Consistency in Status Codes:
-
-// Used 404 for cases where no coins are found.
-// Propagated status codes from the CoinGecko API if applicable.
-// Improved Debugging:
-
-// Logged only the error message for clarity while keeping internal logs less verbose.

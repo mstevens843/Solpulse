@@ -24,14 +24,3 @@
     @apply absolute left-0 bottom-full bg-solana-dark text-solana-text-dark p-2 rounded-md text-xs shadow-md whitespace-nowrap;
 }
 
-/* Key CSS Updates
-Tooltip for Date:
-
-Added a ::after pseudo-element for hover tooltips on transaction dates.
-Displays the full ISO date when hovering over the date.
-Hover Effects:
-
-Added hover scaling (hover:scale-105) and shadow effects (hover:shadow-lg) to make transaction items visually interactive.
-Improved Readability:
-
-Applied distinct text colors (solana-primary for type, solana-secondary for amount, and solana-text-light for dates). */

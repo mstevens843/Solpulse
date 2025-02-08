@@ -8,7 +8,7 @@
 
 /* Coin List */
 .crypto-price-list {
-  @apply list-none p-0 space-y-2; /* Reduce space between items */
+  @apply list-none p-0 space-y-2; 
   max-height: 500px;
   overflow-y: auto;
 }
@@ -61,22 +61,22 @@
 
 /* Mini Chart */
 .crypto-mini-chart {
-  width: 50px; /* Chart size */
+  width: 50px; 
   height: 20px;
-  margin-left: auto; /* Align chart to the right */
+  margin-left: auto; 
 }
 
 /* Adjust Trending Coins container */
 .trending-list-container.trending-coins {
-  height: auto; /* Keep height flexible */
-  max-height: 35vh; /* Limit the height */
-  overflow-y: auto; /* Allow scrolling if needed */
+  height: auto;
+  max-height: 35vh;
+  overflow-y: auto;
 }
 
 /* Reduce Trending Coins Image Size */
 .trending-coins .coin-item img {
-  width: 40px; /* Smaller width */
-  height: 40px; /* Smaller height */
+  width: 40px; 
+  height: 40px; 
   border-radius: 50%;
 }
 
@@ -84,10 +84,10 @@
 .trending-coins .coin-item {
   display: flex;
   align-items: center;
-  gap: 0.8rem; /* Adjust spacing */
-  padding: 0.5rem 0.8rem; /* Reduce padding */
-  margin-bottom: 0.5rem; /* Reduce margin */
-  font-size: 0.9rem; /* Reduce font size */
+  gap: 0.8rem; 
+  padding: 0.5rem 0.8rem; 
+  margin-bottom: 0.5rem; 
+  font-size: 0.9rem; 
 }
 
 /* Ensure responsiveness for smaller screens */

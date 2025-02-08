@@ -137,14 +137,3 @@ describe('Transaction Model', () => {
     expect(deletedTransaction.deletedAt).not.toBeNull(); // Should be soft-deleted
   });  
 });
-
-
-
-
-// Key Tests:
-// Create Transaction Successfully: Ensures transactions are created with valid inputs.
-// Wallet Address Validation: Checks that wallet addresses adhere to the expected format.
-// Amount Validation: Ensures the amount is positive and greater than zero.
-// Enum Validations: Confirms type and status accept only predefined values.
-// Unique Reference ID: Verifies that referenceId must be unique.
-// Cascade Delete: Tests that transactions are deleted when the associated user is removed.

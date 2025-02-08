@@ -80,17 +80,3 @@ describe('Validation Error Handler', () => {
   });
 });
 
-
-
-
-
-// Explanation of the Tests:
-// Validation Failure:
-
-// We test the /register endpoint with invalid data (email and password).
-// We check if the validation error response includes the expected status (error), message (Validation failed), and detailed error fields.
-// Valid Data:
-
-// We send valid data to the /register endpoint.
-// We check if the success response is returned with a 200 status code and the correct success message.
-

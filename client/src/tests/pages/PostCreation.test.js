@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import PostCreation from '../../pages/PostCreation';
+import PostCreation from '../../Archive/PostCreation';
 
 // Mock axios
 jest.mock('axios');
@@ -105,20 +105,3 @@ describe('PostCreation Page', () => {
         });
     });
 });
-
-
-
-
-
-
-
-// Test Cases
-// Rendering:
-// Checks if all essential elements (textarea, submit button, media upload input) are rendered correctly.
-// Validation:
-// Ensures the form displays errors for empty content and content exceeding 280 characters.
-// Validates file type and size for media uploads.
-// Form Submission:
-// Tests successful form submission and verifies axios.post is called with the correct arguments.
-// Error Handling:
-// Simulates a failed API call and verifies an appropriate error message is displayed.

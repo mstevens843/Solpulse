@@ -103,24 +103,3 @@ describe('authMiddleware', () => {
     jwt.verify.mockRestore(); // Restore original implementation
   });
 });
-
-
-
-
-// Step 3: Explanation of Tests
-// Test with a valid token:
-
-// We generate a valid JWT token and send it with a GET request to the /protected endpoint.
-// We expect a successful response with a 200 status and the message Access granted.
-// Test with an expired token:
-
-// We generate a token that expires immediately and send it with the request.
-// We expect a 401 status with the message Token has expired.
-// Test with an invalid token:
-
-// We use a string that's not a valid JWT token (invalidToken).
-// We expect a 401 status with the message Token is invalid.
-// Test when no token is provided:
-
-// We send the request without a token in the x-auth-token header.
-// We expect a 401 status with the message No token provided, authorization denied.

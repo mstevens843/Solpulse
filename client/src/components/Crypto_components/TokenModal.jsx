@@ -40,7 +40,7 @@ const TokenModal = ({ isOpen, onClose, tokens, handleCoinSelect, type }) => {
         if (tokenData) {
             const newToken = {
                 mint: tokenData.address || searchTerm,
-                name: tokenData.name || tokenData.symbol || `Token (${formatMintAddress(searchTerm)})`,  // ✅ FIX: Proper fallback order
+                name: tokenData.name || tokenData.symbol || `Token (${formatMintAddress(searchTerm)})`,  // FIX: Proper fallback order
                 symbol: tokenData.symbol || searchTerm.slice(0, 6),
                 logoURI: tokenData.logoURI || null,
                 amount: 0, // No balance since it's a search

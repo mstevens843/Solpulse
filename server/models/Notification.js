@@ -65,31 +65,3 @@ module.exports = (sequelize, DataTypes) => {
 
     return Notification;
 };
-
-
-
-// Foreign Key for Actor:
-// Instead of storing the actor as a STRING, use a foreign key (actorId) referencing the User model. 
-// This ensures referential integrity and makes it easier to fetch the actor's details if needed.
-
-// Indexing:
-
-// Add an index on userId and isRead to optimize queries like fetching unread notifications for a specific user.
-
-// Optional Linking to Related Entities:
-
-// For notifications tied to specific entities (e.g., posts, comments, transactions), add an optional entityId and entityType to generalize the association:
-
-// Default message Generation:
-
-// Use Sequelize hooks (beforeCreate) to automatically populate the message field based on the type of notification, actor, and action.
-
-// Soft Deletes:
-
-// Add a deletedAt field with Sequelize's paranoid option to allow soft deletion of notifications.
-
-// Benefits of These Changes
-// Data Integrity: Using actorId instead of actor ensures a direct relationship with the User model.
-// Scalability: Adding entityId and entityType supports notifications tied to different models.
-// Efficiency: Indexing improves query performance.
-// Soft Deletes: Allows recovering deleted notifications if needed.

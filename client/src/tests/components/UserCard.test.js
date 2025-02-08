@@ -83,25 +83,3 @@ describe('UserCard Component', () => {
         expect(screen.getByText(mockUser.username)).toBeInTheDocument();
     });
 });
-
-
-
-
-// Features Covered in Tests
-// Rendering:
-
-// Ensures the UserCard renders properly with user data.
-// Verifies the FollowButton is rendered with the correct userId.
-// Fallbacks:
-
-// Checks the default avatar is used when the avatar is missing or fails to load.
-// Invalid Data:
-
-// Confirms the component does not render when invalid user data is provided.
-// Logs an error to the console for debugging purposes.
-// Lazy Loading:
-
-// Ensures the avatar image uses lazy loading.
-// Username Display:
-
-// Validates that the username is displayed correctly.

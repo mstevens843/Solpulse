@@ -117,17 +117,3 @@ describe('Notifications Page', () => {
         });
     });
 });
-
-
-
-// Test Cases
-// Rendering:
-// Verifies the header, loading state, and loaded notifications.
-// Filtering:
-// Ensures filtering works correctly when changing the notification type.
-// Mark All as Read:
-// Simulates marking all notifications as read and verifies the updated UI.
-// Pagination:
-// Checks that clicking pagination buttons fetches the correct page data.
-// Error Handling:
-// Ensures errors during data fetching display an appropriate message.

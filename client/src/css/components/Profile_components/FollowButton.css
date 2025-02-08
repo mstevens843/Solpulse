@@ -31,15 +31,3 @@
     opacity: 0.6;
     cursor: not-allowed;
 }
-
-/* 
-Styling Updates (FollowButton.css)
-Hover and Transition Effects:
-
-Smooth background color changes (hover:bg-solana-secondary) to match the Solana theme.
-Following State Styling:
-
-Styled the is-following class with distinct colors to differentiate between "Follow" and "Unfollow".
-Disabled State:
-
-Styled the button (cursor-not-allowed, dimmed colors) when it's disabled. */

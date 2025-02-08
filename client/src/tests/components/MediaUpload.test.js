@@ -95,27 +95,3 @@ describe('MediaUpload Component', () => {
         });
     });
 });
-
-
-
-
-
-// Key Features of the Test File
-// Basic Rendering:
-
-// Ensures that all elements like file input, text areas, and upload buttons are rendered correctly.
-// Error Handling:
-
-// Tests for unsupported file types and oversized files.
-// File Selection:
-
-// Verifies that valid file selections update the UI.
-// Successful Upload:
-
-// Mocks a successful API response and ensures onMediaUpload is called with the correct data.
-// Error on Upload Failure:
-
-// Simulates a failed upload and checks that the error message is displayed.
-// Button State:
-
-// Ensures the upload button is disabled during the upload process.

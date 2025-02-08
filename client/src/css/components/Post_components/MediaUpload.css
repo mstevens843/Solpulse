@@ -47,35 +47,3 @@
     font-size: 12px;
     margin-top: 4px;
 }
-
-
-/* Key Features:
-Clean Container Design
-
-media-upload provides a visually appealing and accessible layout with padding, rounded corners, and a shadow effect.
-Intuitive Label and Input
-
-The file input and label are styled for ease of use and accessibility.
-Error Display
-
-Errors are highlighted in solana-error color for immediate attention.
-Dynamic File Details
-
-Selected file details are displayed with appropriate spacing and formatting.
-Interactive Upload Button
-
-The button includes hover effects, scaling animation, and a clear disabled state. */
-/* 
-MediaUpload.css
-Container and Layout:
-
-Styled the upload container with Solana-themed utilities (bg-solana-light, rounded-lg, shadow-md).
-Inputs and Textarea:
-
-Added focus and hover effects (focus:ring-solana-secondary, transition-all).
-Error and File Info:
-
-Styled error messages (text-solana-error) and file details for a clean look.
-Buttons:
-
-Enhanced buttons with hover and disabled states (hover:bg-solana-secondary, cursor-not-allowed). */

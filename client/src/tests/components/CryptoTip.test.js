@@ -113,13 +113,3 @@ describe('CryptoTip Component', () => {
         expect(tipInput).toHaveValue(0.5); // Expecting number, not string
     });
 });
-
-
-
-
-// Test Scenarios Covered:
-// Component Render: Ensures the inputs and buttons render correctly.
-// User Input: Tests the ability to type a tip amount and optional message.
-// Error Handling: Validates errors for invalid amounts and API failures.
-// Success Flow: Verifies success behavior, including clearing inputs and showing messages.
-// Preset Button: Confirms preset buttons set predefined amounts.

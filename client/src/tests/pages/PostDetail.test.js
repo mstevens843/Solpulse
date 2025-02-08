@@ -70,23 +70,3 @@ describe('PostDetail Page', () => {
         expect(screen.getByText(mockPost.comments[0].content)).toBeInTheDocument();
     });
 });
-
-
-
-
-
-// Test Cases
-// Rendering:
-
-// Verifies that the loader is displayed initially while fetching data.
-// Ensures post details and comments are displayed after successful data retrieval.
-// Error Handling:
-
-// Simulates API failure and checks for error messages and retry functionality.
-// Interactions:
-
-// Tests the like button functionality, including toggling the like state and calling the API.
-// Adds a new comment, verifies the API call, and checks if the comment list updates.
-// LocalStorage:
-
-// Confirms that the post data and comments are loaded from localStorage if available.

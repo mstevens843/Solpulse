@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '@/css/pages/NotFound.css'; // Updated alias for Vite compatibility
+import '@/css/pages/NotFound.css';
 
 function NotFound() {
     return (

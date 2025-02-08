@@ -88,29 +88,3 @@ router.get(
 );
 
 module.exports = router;
-
-
-
-// Key Improvements
-// Pagination:
-
-// Added pagination support with page and limit query parameters for scalability.
-// Paginated both user and post search results independently.
-// Consistent Response Formatting:
-
-// Used a utility function formatSearchResults to ensure consistent formatting for users and posts.
-// Clearly differentiated between user and post results with a type field.
-// Combined Metadata:
-
-// Included metadata in the response (userCount, postCount, totalResults, currentPage, totalPages) for easier frontend integration.
-// Error Handling:
-
-// Improved error messages and logging for better debugging.
-
-// Rate-Limiting Middleware:
-
-// rateLimiter(100, 15 * 60 * 1000) restricts the number of requests to 100 per 15 minutes for each user/IP.
-// Integrated before the authMiddleware to ensure requests are limited regardless of authentication status.
-// Import the Rate-Limiter Middleware:
-
-// Ensure the rateLimiter middleware file is created under the middleware folder.

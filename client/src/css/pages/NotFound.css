@@ -1,19 +1,18 @@
 .not-found-container {
     text-align: center;
-    padding: 6rem 2rem; /* Add enough top padding to avoid nav overlap */
-    position: relative; /* Ensure proper positioning */
-    z-index: 1; /* Ensure it stays above background layers if needed */
+    padding: 6rem 2rem;
+    position: relative;
+    z-index: 1; 
 }
 
 .not-found-container h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: #fff; /* Ensure visibility on a dark background */
-}
+    color: #fff; 
 
 .not-found-container p {
     font-size: 1.25rem;
-    color: #a1a1aa; /* Adjust for better visibility */
+    color: #a1a1aa;
 }
 
 .home-link {

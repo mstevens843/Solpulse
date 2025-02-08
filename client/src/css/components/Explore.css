@@ -24,13 +24,13 @@
   margin-top: 0rem;
   width: 100%;
   max-width: 1000px;
-  height: 715px; /* Set fixed height */
-  overflow-y: auto; /* Enable vertical scrolling */
+  height: 715px; 
+  overflow-y: auto; 
   border-radius: 12px;
   background: #1c1c1e;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
   scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #00ffcc #121212; /* Custom scrollbar colors */
+  scrollbar-color: #00ffcc #121212; 
 }
 
 .trending-section::-webkit-scrollbar {
@@ -54,7 +54,7 @@
 .home-right {
   position: sticky;
   top: 2rem;
-  max-height: calc(100vh - 4rem); /* Adjust height to fit viewport */
+  max-height: calc(100vh - 4rem); 
   overflow-y: visible;
 }
 

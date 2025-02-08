@@ -104,23 +104,3 @@ describe('CryptoWallet Component', () => {
         expect(sortedDates[1].textContent).toContain('12/21/2024');
     });
 });
-
-
-
-
-
-// Explanation of the Tests
-// renders the loading state initially
-// Verifies that the loading state is displayed when the component renders.
-
-// fetches and displays wallets and transactions
-// Checks if the wallets and their respective transactions are fetched and displayed properly.
-
-// displays an error message if fetching wallets fails
-// Ensures the component handles API errors gracefully.
-
-// filters transactions by type
-// Tests if transactions are filtered correctly based on their type (e.g., "sent" or "received").
-
-// sorts transactions by date
-// Confirms that transactions are sorted correctly by date when the user changes the sort order.

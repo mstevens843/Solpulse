@@ -103,19 +103,3 @@ describe('WebSocket Utils', () => {
     });
   });
 });
-
-
-
-// Test Breakdown:
-// setSocket:
-
-// Ensures the WebSocket server is initialized correctly and prevents multiple initializations.
-// validateAndBroadcast:
-
-// Tests that the event is broadcast correctly if the server is initialized and validates the event name.
-// sendToClient:
-
-// Ensures that an event is sent to a client and handles errors when the client is not found or the server isn't initialized.
-// setupErrorHandling:
-
-// Ensures that errors are logged and handled correctly when the WebSocket emits errors.

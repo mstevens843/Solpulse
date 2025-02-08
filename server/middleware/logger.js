@@ -10,9 +10,3 @@ const logger = (req, res, next) => {
 };
 
 module.exports = logger;
-
-
-// Benefits of the Enhanced Logger:
-// Timestamp: Provides a clear record of when requests were made.
-// IP Address: Logs the client's IP, useful for tracking or security.
-// Scalability: Easily extendable to include other details like headers or query parameters.

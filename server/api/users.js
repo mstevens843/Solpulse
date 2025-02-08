@@ -293,31 +293,3 @@ router.put('/profile/:id', authMiddleware, async (req, res) => {
 
 
 module.exports = router;
-
-
-
-
-// What's Added:
-// New Route:
-
-// GET /api/users/:id – Fetches a specific user's profile and their posts.
-// Error Handling:
-
-// If the user is not found, it returns a 404 error.
-// Consistent Formatting:
-
-// Uses a clean and consistent structure for fetching data.
-
-// Key Updates:
-// HTTP Method for Unfollow:
-
-// Changed POST /:id/unfollow to DELETE /:id/unfollow for semantic correctness.
-// Message Standardization:
-
-// Updated all responses to use "message" for error or success messages.
-// Error Messages:
-
-// Made error messages more generic to avoid leaking sensitive implementation details.
-// HTTP Status Codes:
-
-// Ensured proper status codes for each response (201 for successful creation, 400 for bad requests, 500 for server errors).

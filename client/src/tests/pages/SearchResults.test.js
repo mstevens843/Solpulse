@@ -121,31 +121,3 @@ describe('SearchResults Page', () => {
         expect(screen.getByText(/search results for ""/i)).toBeInTheDocument();
     });
 });
-
-
-
-
-
-
-// Test Cases
-// Loading State:
-
-// Verifies the loader is displayed while results are being fetched.
-// Successful Fetch:
-
-// Renders search results for users and posts.
-// Error Handling:
-
-// Displays an error message and retry button when the API call fails.
-// No Results:
-
-// Displays a message when no results are found.
-// Pagination:
-
-// Tests "Load More" functionality for fetching additional pages.
-// Query Updates:
-
-// Updates results when a new search query is submitted.
-// Empty Query:
-
-// Ensures no API call is made for an empty query.

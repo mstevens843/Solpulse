@@ -68,17 +68,3 @@ describe('Utility functions', () => {
     });
   });
 });
-
-
-// Explanation of the Test File:
-// Mocking Solana Web3:
-
-// We're mocking the @solana/web3.js library to avoid making real API calls during testing. The Connection object’s getBalance method is mocked to return a predefined 
-// balance.
-// Testing getWalletBalance:
-
-// We test a successful call by mocking a balance of 1000000000 lamports, which is equivalent to 1 SOL.
-// We also test for invalid input (like a non-existent wallet address) and missing wallet addresses.
-// Testing lamportsToSol:
-
-// We test the conversion of lamports to SOL to ensure the conversion function is working as expected, including for edge cases like zero lamports.

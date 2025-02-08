@@ -47,12 +47,3 @@ describe('Logger Middleware', () => {
       logSpy.mockRestore();
     });
   });
-  
-
-
-// Key Features of the Test:
-// Mocking console.log: The test mocks console.log so that we can capture the output and verify that the logger is called with the expected parameters.
-// Check if logger logs the correct information: After making a request to the test route, we verify that console.log was called and contains relevant information 
-// (HTTP method, URL, IP).
-// Restoring the Original console.log: After the test runs, we restore the original console.log to avoid affecting other tests or console output in the 
-// rest of the application.

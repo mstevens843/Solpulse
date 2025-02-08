@@ -108,34 +108,3 @@ router.post(
 
 
 module.exports = router;
-
-
-
-
-
-// Key Updates:
-// GET /api/transactions:
-
-// Fetches all transactions for wallets associated with the authenticated user.
-// Combines transactions across all wallets owned by the user.
-// Existing Routes:
-
-// GET /api/transactions/wallet/:walletAddress: Fetches transactions for a specific wallet.
-// POST /api/transactions: Adds a new transaction
-
-// Key Improvements:
-// Input Validation:
-
-// Used express-validator to validate walletId, amount, and type fields for the POST /api/transactions route.
-// Enhanced Error Handling:
-
-// Differentiates between 403 Forbidden for unauthorized access and 404 Not Found for missing wallets.
-// Improved User Experience:
-
-// Responds with detailed success or error messages, ensuring clarity for both API consumers and developers.
-// Status Codes:
-
-// Returns appropriate HTTP status codes (201 Created for successful POST, 400 Bad Request for validation errors).
-// Ownership Validation:
-
-// Ensures users can only create transactions for wallets they own.

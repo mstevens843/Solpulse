@@ -1,31 +1,10 @@
-// Page Description: This page highlights top cryptocurrencies in the Solana Ecosystem, showing their prices and market changes.
-// It aims to keep users updated with trending in real-time. 
-// Features:
-// - TRENDING COINS LIST: Displays a list of trending Solana coins, including their name, symbol, price, and an option to trade.
-// - REAL-TIME TICKER: Integrates the CRYPTOTICKER component to show live cryptocurrency updates.
-// - TRADING INTERFACE: Allows users to select a coin and access the trading interface via the CRYPTOTRADE component. 
-// - ERROR HANDLING: Displays error messages if the trending coins data fails to load. 
-// - DYNAMIC UPDATES: Fetches data from the backend API and updates the page dynamically. 
-// - Fetches data from external API (CoinGecko)
-
-
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Line } from "react-chartjs-2";
 import { Doughnut } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement,
-} from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement,} from "chart.js";
 import { api } from "@/api/apiConfig";
-import debounce from "lodash.debounce"; // Import lodash for debounce
+import debounce from "lodash.debounce"; 
 import CryptoTrade from "@/components/Crypto_components/CryptoTrade"; 
 import Loader from "@/components/Loader";
 import "@/css/pages/TrendingCrypto.css";
@@ -442,92 +421,3 @@ function TrendingCrypto() {
 }
 
 export default TrendingCrypto;
-
-
-
-
-
-
-
-// For the TrendingCrypto.js page, you could integrate a CryptoTransaction component to show if a user 
-// decides to buy/sell any trending crypto directly from the page.
-
-// Explanation of Components Added:
-// NotificationBell: Adds a notification system to display user alerts or messages. It has been added to both 
-// the Settings and Signup pages to notify users of important actions like signup success or error messages.
-
-// TrendingCryptoTicker: Displays a real-time ticker of Solana ecosystem coins. This fits better than CryptoTransaction 
-// as it provides users with live updates about trending cryptos.
-
-
-// Action: Update the useEffect to fetch data from your own backend API (/api/trendingCrypto) instead of making a direct 
-// request to CoinGecko.
-
-
-
-// Components Added
-// CryptoTicker - provides real time updates on crypto prices to keep users informed about market movements. 
-// CryptoTrade - Facilitates trading for a selected coin, offering users an interactive way to execute trades. 
-// Trending Coins List (custom implementation) - provides organized and user-friendly way to display trending Solana coins. 
-// Error Handling - Improves user experience by informing users of issues (ex: failed data fetching)
-// Dynamic Trading Interface - Allows users to select a coin for trading and displas the relevant trading interface dynamically. 
-
-
-
-// IMPROVEMENTS MADE: 
-// ADDED LOADING STATE: Introduced 'loading' to indicate when data is being fetched. 
-// ENHANCED ERROR HANDLING: displayed error messages dynamically if API call fails. 
-// IMPROVED DATA VALIDATION: checked for scenarios where no coins are available and displayed an appropriate message. 
-// PRCECISE PRICE FORMATTING: Used toFixed(2) to display crypto prices in standard format. 
-// CLEARER USER FEEDBACK: Included conditional rendering to ensure only relavant information is displayed at each state (loading, error, success). 
-// AVOID UNNECESSARY RENDERING: Wrapped sections with conditional checks to ensure sections render only when appropriate. 
-
-// Changes Made
-// 1. Error Handling:
-// Enhanced error handling to provide specific feedback for different failure scenarios.
-// Added a retry button for user convenience when fetching data fails.
-// 2. API Optimization:
-// Cached the fetched coins data in localStorage to avoid redundant API calls when revisiting the page.
-// Debounced the API request to avoid excessive calls if the component re-renders rapidly.
-// 3. User Experience:
-// Improved the loading state with a Loader component for consistency.
-// Added a fallback image and tooltip for coins without valid images.
-// 4. Code Cleanup:
-// Grouped related logic for better readability.
-// Added comments to clarify API call logic, caching, and conditional rendering.
-
-// Summary of Changes
-
-
-// Added a search bar to filter displayed coins based on name or symbol.
-// Implemented a Refresh Prices button for manual coin price updates.
-// Improved price formatting using toLocaleString for better readability.
-// Added error handling and loader states to enhance user experience.
-// Cached coins in localStorage for performance and reduced API calls.
-// Dynamically updated coin list based on user input and refresh actions.
-
-// Updates for TrendingCrypto:
-// Error Handling Enhancements:
-
-// Ensure more descriptive error messages are displayed for different types of failures.
-// Add a retry mechanism for fetching prices if an error occurs.
-// Feedback for Search Query:
-
-// Show a spinner or loading indicator while filtering the list locally when searchQuery changes.
-// Update fetchTrendingCoins to Use Memoized Functions:
-
-// Optimize fetchTrendingCoins to avoid unnecessary re-creation of the function.
-
-// Summary of Updates
-// Dynamic API URL:
-
-// Updated the API endpoint to use process.env.REACT_APP_API_URL.
-// Optimized Search:
-
-// Utilized useMemo for filtering coins based on the search query.
-// Error Handling:
-
-// Added aria-live="polite" to dynamically update error and search results.
-// Refresh Button Accessibility:
-
-// Added aria-busy to indicate the loading state of the refresh button.

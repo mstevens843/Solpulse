@@ -129,27 +129,3 @@ describe('Notification Model', () => {
         ).rejects.toThrow(/violates foreign key constraint/);
     });
 });
-
-
-// Key Tests in notification.test.js
-// Valid Notification Creation:
-
-// Ensures that notifications with valid data can be created, including auto-generated messages for specific types.
-// Custom Message Support:
-
-// Verifies that custom messages can override the default auto-generated messages.
-// ENUM Validation:
-
-// Confirms that the type field accepts only valid ENUM values.
-// Transaction Message Auto-Generation:
-
-// Ensures that a transaction notification generates a message with the amount included.
-// Associations:
-
-// Tests the userId and actorId relationships to ensure the correct associations between users and notifications.
-// Read Status Update:
-
-// Validates that isRead can be toggled and the updatedAt field reflects the change.
-// Foreign Key Constraints:
-
-// Ensures that invalid userId or actorId references fail as expected.

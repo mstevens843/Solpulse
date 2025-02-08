@@ -136,23 +136,3 @@ router.get('/sent', authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
-
-
-// Key Improvements:
-// Validation:
-
-// Added express-validator to validate input fields when sending a tip (toUserId, amount, and message).
-// Pagination:
-
-// Implemented pagination for received and sent tips endpoints using page and limit query parameters.
-// Consistent Formatting:
-
-// Introduced formatTips utility function to structure API responses consistently.
-// Included fromUser and toUser details (e.g., id, username) for better context in the responses.
-// Error Handling:
-
-// Improved error messages and response status codes.
-// Added validation error messages for user input issues.
-// Additional Metadata:
-
-// Response for paginated endpoints includes metadata like totalReceived, totalSent, currentPage, and totalPages.

@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   /* background: linear-gradient(to bottom, #1a1a2e, #16213e); */
-  background: #121212; /* Match Landing Page */
+  background: #121212;
   min-height: 100vh;
   padding: 5rem;
   color: #fff;
@@ -70,8 +70,8 @@
 }
 
 .selected-coin-info {
-  position: absolute; /* Make it float over content */
-  top: 100px; /* Adjust as needed */
+  position: absolute;
+  top: 100px;
   left: 50%;
   transform: translateX(-50%);
   background: #1f1f1f;
@@ -80,12 +80,12 @@
   text-align: center;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
   max-width: 400px;
-  z-index: 20; /* Ensure it appears above other content */
-  display: none; /* Hide by default */
+  z-index: 20; 
+  display: none;
 }
 
 .selected-coin-info.show {
-  display: block; /* Show when a coin is selected */
+  display: block;
 }
 
 .selected-coin-info img {
@@ -104,7 +104,7 @@
   gap: 2rem;
   justify-content: center;
   width: 100%;
-  margin-top: 3rem; /* Ensure space between charts and lists */
+  margin-top: 3rem;
 }
 
 .trending-list-container {
@@ -116,7 +116,7 @@
   max-width: 350px;
   text-align: center;
   height: 35%;
-  overflow-y: auto; /* Add scrolling if needed */
+  overflow-y: auto;
 }
 
 .trending-list-container h3 {
@@ -142,11 +142,11 @@ ul {
   justify-content: space-between;
   align-items: center;
   background: #16213e;
-  padding: 0.5rem 0.8rem; /* Reduce padding */
-  margin-bottom: 0.5rem;  /* Reduce margin */
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.5rem;
   border-radius: 8px;
   transition: all 0.3s ease;
-  font-size: 0.9rem; /* Decrease font size for better compactness */
+  font-size: 0.9rem;
 }
 
 .gainers-list li:hover,
@@ -161,8 +161,8 @@ ul {
 /* Coin Image */
 /* Coin Image - Reduce size */
 .crypto-coin-image {
-  width: 20px; /* Reduce width */
-  height: 20px; /* Reduce height */
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
 }
 
@@ -231,15 +231,15 @@ button.refresh-button:hover {
 
 /* Adjust Trending Coins container specifically */
 .trending-coins {
-  max-height: 50vh; /* Set a reasonable max height */
-  overflow-y: auto; /* Enable scrolling if needed */
+  max-height: 50vh;
+  overflow-y: auto;
   padding: 1rem;
 }
 
 /* Reduce image size specifically for trending coins */
 .trending-coins .coin-item img {
-  width: 50px; /* Adjusted smaller size */
-  height: 50px; /* Adjusted smaller size */
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
 }
 
@@ -247,16 +247,16 @@ button.refresh-button:hover {
 .trending-coins .coin-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Reduce spacing */
-  padding: 0.4rem 0.6rem; /* Adjust padding */
-  margin-bottom: 0.5rem; /* Reduce margin */
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.5rem;
   font-size: 0.9rem;
 }
 
 /* Adjust coin name and price to fit better */
 .trending-coins .coin-details .coin-name {
   font-size: 1rem;
-  white-space: nowrap; /* Prevent text from wrapping */
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -360,14 +360,14 @@ button.refresh-button:hover {
   }
 
   .chart-container {
-    max-width: 100%;  /* Full width for smaller screens */
+    max-width: 100%; 
   }
 }
 
 
 .chart-container {
   flex: 1 1 48%;
-  max-width: 48%;  /* Ensure charts take up equal width */
+  max-width: 48%;  
   height: 50vh;
   background: #1f1f1f;
   padding: 1.5rem;
@@ -385,7 +385,7 @@ button.refresh-button:hover {
   gap: 2rem;
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto 3rem;  /* Added margin-bottom to prevent overlap with lists */
+  margin: 0 auto 3rem;  
   align-items: flex-start;
 }
 
@@ -393,7 +393,7 @@ button.refresh-button:hover {
   font-size: 2rem;
   font-weight: bold;
   color: #00ffcc;
-  margin-bottom: 1rem;  /* Reduce margin to bring the chart closer */
+  margin-bottom: 1rem; 
   text-align: center;
 }
 

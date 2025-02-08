@@ -84,23 +84,3 @@ describe('NavBar Component', () => {
         expect(dashboardLink).toHaveClass('active-link');
     });
 });
-
-
-
-
-// Key Features of the Test File
-// Navigation Rendering:
-
-// Ensures all navigation links (Home, Dashboard, Login/Logout) are rendered correctly.
-// Conditional Rendering:
-
-// Verifies the Login link appears when the user is unauthenticated and Logout appears when authenticated.
-// Active Link Highlight:
-
-// Checks the active-link class is applied correctly to the active route.
-// Wallet Button:
-
-// Ensures the WalletMultiButton renders properly in the navigation bar.
-// Link Navigation:
-
-// Simulates link clicks and validates class updates for active routes.

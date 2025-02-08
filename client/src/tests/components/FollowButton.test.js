@@ -113,26 +113,3 @@ describe('FollowButton Component', () => {
         );
     });
 });
-
-
-
-// Key Test Cases
-// Initial Rendering:
-
-// Ensures the correct button (Follow or Unfollow) is rendered based on the API response.
-// Toggle Follow State:
-
-// Tests the functionality of the button when toggling the follow state.
-// Verifies the correct API call (/follow or /unfollow).
-// Error Handling:
-
-// Ensures proper error messages are displayed when the API calls fail.
-// Loader Visibility:
-
-// Verifies that the loader appears during API calls and disappears afterward.
-// Button State:
-
-// Confirms the button is disabled during API calls.
-// API Failure on Initial Load:
-
-// Tests the component's behavior when fetching the follow status fails.

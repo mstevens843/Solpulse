@@ -5,7 +5,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,7 +14,7 @@
 
 /* Modal content container */
 .post-modal-content {
-    background: #121212; /* Dark mode */
+    background: #121212; 
     width: 90%;
     max-width: 600px;
     max-height: 90vh;

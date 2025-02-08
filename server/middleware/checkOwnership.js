@@ -1,6 +1,3 @@
-// This middleware function checks if the post exists and if the user owns the post. If the user is not the owner, 
-// it responds with the 403 error. 
-// Use this middleware in the followowing files. (post.js)
 const { Post, Comment } = require('../models/Index'); // Import both models
 
 const checkOwnership = async (req, res, next) => {
@@ -39,9 +36,3 @@ const checkOwnership = async (req, res, next) => {
 };
 
 module.exports = checkOwnership;
-
-
-
-// Error Logging: Add more context to the error logs for easier debugging.
-// Attach Post Data: Pass the fetched post data along with the request, so it can be reused in the next middleware or route handler, reducing redundant queries.
-// More Informative Messages: Provide detailed error messages, e.g., specifying why the authorization failed.

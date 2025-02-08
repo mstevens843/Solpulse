@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { api } from "@/api/apiConfig"; // Centralized API config
-import Loader from "@/components/Loader"; // Reuse loader if needed
-import "@/css/components/Notification_components/MessageButton.css"; // Style for message button/modal
+import { api } from "@/api/apiConfig";
+import Loader from "@/components/Loader";
+import "@/css/components/Notification_components/MessageButton.css";
 import { FaEnvelope } from "react-icons/fa";
 
 const MessageButton = ({ recipientUsername }) => {
-    const [isMessageModalOpen, setIsMessageModalOpen] = useState(false); // Modal visibility
-    const [messageContent, setMessageContent] = useState(""); // Message content
-    const [cryptoTip, setCryptoTip] = useState(""); // Optional crypto tip
+    const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+    const [messageContent, setMessageContent] = useState(""); 
+    const [cryptoTip, setCryptoTip] = useState(""); 
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");

@@ -96,24 +96,3 @@ describe('NotificationBell Component', () => {
         });
     });
 });
-
-
-
-
-
-// Features Covered in Tests
-// Initial Rendering:
-
-// Ensures the bell icon and unread count are displayed properly.
-// Dropdown Functionality:
-
-// Verifies that clicking the bell toggles the dropdown open/close.
-// Mark All as Read:
-
-// Simulates marking all notifications as read and checks the unread count is updated correctly.
-// No Notifications:
-
-// Tests that a "No notifications" message is shown when there are no notifications.
-// Error Handling:
-
-// Ensures that API errors are handled gracefully, showing no notifications if fetching fails.

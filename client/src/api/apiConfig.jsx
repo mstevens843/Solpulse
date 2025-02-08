@@ -41,19 +41,6 @@ api.interceptors.request.use(
 );
 
 
-// Intercept responses for token expiration or other errors
-// api.interceptors.response.use(
-//     (response) => response, // Pass successful responses as-is
-//     (error) => {
-//         if (error.response?.status === 401) {
-//             console.warn("Unauthorized. Redirecting to login.");
-//             localStorage.removeItem("token"); // Remove token if unauthorized
-//             window.location.href = "/login"; // Redirect to login page
-//         }
-//         return Promise.reject(error);
-//     }
-// );
-
 // Utility function for dynamic headers
 export const getHeaders = (contentType = "application/json", useBearer = true) => {
     const token = localStorage.getItem("token");

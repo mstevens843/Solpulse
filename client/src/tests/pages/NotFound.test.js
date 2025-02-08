@@ -27,13 +27,3 @@ describe('NotFound Page', () => {
         expect(homeLink).toHaveAttribute('href', '/');
     });
 });
-
-
-
-
-// Key Features Tested
-// Rendering:
-// Verifies the page title and message appear correctly.
-// Confirms the link to navigate back home is present and functional.
-// Accessibility:
-// Ensures proper role and aria attributes for screen readers.

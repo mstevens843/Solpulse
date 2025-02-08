@@ -4,7 +4,7 @@ import CryptoTransaction from "./CryptoTransactions";
 import Loader from "../Loader";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
-import "@/css/components/Crypto_components/CryptoWallet.css"; // Updated alias for CSS import
+import "@/css/components/Crypto_components/CryptoWallet.css";
 
 // Set up Solana RPC connection (Alchemy or Default RPC)
 const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/dhWoE-s3HVNfalBWpWnzRIWfyJIqTamF");

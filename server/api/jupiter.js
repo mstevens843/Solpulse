@@ -1,21 +1,3 @@
-// ✅ Why Use the Backend Instead of Fetching Directly in React?
-// Avoid CORS Issues Automatically
-
-// If your backend makes the request server-side, CORS is not an issue because servers aren’t bound by CORS restrictions like browsers are.
-// The frontend can request data from your own backend instead of calling the Jupiter API directly.
-// Reduce Load & Optimize Requests
-
-// Your backend can cache token data to reduce repeated API calls.
-// This is especially useful if Jupiter API has rate limits or large responses.
-// Security & API Key Management
-
-// If you ever need an API key in the future, the backend can store it in environment variables (.env file).
-// Safer than exposing API keys in the frontend.
-// Better Error Handling & Logging
-
-// The backend can retry failed requests and log them properly.
-// Can implement fallbacks (e.g., use cached data if the API fails).
-
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
@@ -83,32 +65,5 @@ router.get('/token/:mintAddress', async (req, res) => {
         res.status(500).json({ error: "Failed to fetch token info" });
     }
 });
-
-
-
-
-
-// router.get('/jupiter/search', async (req, res) => {
-//     try {
-//         const { query } = req.query;
-//         if (!query) return res.status(400).json({ error: "Missing query parameter" });
-
-//         console.log(`🔍 Searching for tokens: ${query}`);
-//         const response = await axios.get(`https://api.jup.ag/tokens/v1/all`);
-
-//         // Filter tokens based on query (symbol or name)
-//         const tokens = response.data.filter(token =>
-//             token.symbol.toLowerCase().includes(query.toLowerCase()) ||
-//             (token.name && token.name.toLowerCase().includes(query.toLowerCase()))
-//         );
-
-//         if (tokens.length === 0) return res.status(404).json({ msg: "No tokens found" });
-
-//         res.json(tokens);
-//     } catch (error) {
-//         console.error("❌ Error fetching tokens:", error);
-//         res.status(500).json({ error: "Failed to fetch tokens" });
-//     }
-// });
 
 module.exports = router;

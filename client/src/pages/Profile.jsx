@@ -4,7 +4,6 @@ import UserCard from "@/components/Profile_components/UserCard";
 import Post from "@/components/Post_components/Post";
 import CryptoTip from "@/components/Crypto_components/CryptoTip";
 import { ToastContainer, toast } from "react-toastify";
-// import UserCardModal from "@/components/UserCardModal"; // Import the modal component
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from "@/components/Loader";
 import { AuthContext } from "@/context/AuthContext";
@@ -24,8 +23,8 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [showTipModal, setShowTipModal] = useState(false);
-    const [showUserCardModal, setShowUserCardModal] = useState(false); // Add state to toggle modal
-    const [profilePicture, setProfilePicture] = useState(""); // New state for profile picture
+    const [showUserCardModal, setShowUserCardModal] = useState(false); 
+    const [profilePicture, setProfilePicture] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const isInModal = false; // Default value if it's not already defined
 

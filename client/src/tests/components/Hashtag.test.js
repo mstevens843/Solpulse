@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import Hashtag from '../../components/Post_components/Hashtag';
+import Hashtag from '../../Archive/Hashtag';
 
 describe('Hashtag Component', () => {
     const renderWithRouter = (component) => {
@@ -62,16 +62,3 @@ describe('Hashtag Component', () => {
         );
     });
 });
-
-
-// Key Test Cases
-// Valid Hashtag Rendering:
-
-// Ensures that the component renders the correct link when provided with a valid tag.
-// Invalid or Too Long Tag:
-
-// Verifies that the component does not render anything for invalid or excessively long tags.
-// Ensures an appropriate error message is logged to the console.
-// Special Character Encoding:
-
-// Checks that special characters in the tag are properly encoded for the URL.

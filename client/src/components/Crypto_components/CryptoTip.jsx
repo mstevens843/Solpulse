@@ -96,77 +96,9 @@ const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess, connectedWallet
 CryptoTip.propTypes = {
     recipientId: PropTypes.number.isRequired,
     recipientWallet: PropTypes.string.isRequired,
-    connectedWallet: PropTypes.string, // ✅ Show connected wallet
-    isWalletConnected: PropTypes.bool, // ✅ Ensure wallet connection is passed
+    connectedWallet: PropTypes.string, // Show connected wallet
+    isWalletConnected: PropTypes.bool, // Ensure wallet connection is passed
     onTipSuccess: PropTypes.func.isRequired,
 };
 
 export default CryptoTip;
-
-
-
-
-
-
-// 5. CryptoTip
-// Reason:
-
-// Minimal state updates, but interactions can still trigger unnecessary re-renders.
-// Updates Needed:
-
-// Use React.memo to ensure it re-renders only when props (onTip) change.
-// Validate inputs early to avoid unnecessary onTip calls.
-
-// Enhancements and Features
-// Functional Improvements
-// Validation for Tip Amount:
-
-// Ensure the tip amount is a valid number and prevent invalid submissions (e.g., non-numeric inputs or negative values).
-// Add user-friendly error feedback for invalid inputs.
-// Feedback After Submission:
-
-// Provide confirmation (e.g., "Tip sent!") after a successful tip submission.
-// Loading State:
-
-// Add a loading state when the tip is being processed.
-
-// New Features
-// Preset Tip Amounts:
-
-// Add buttons for preset tip amounts (e.g., 0.1 SOL, 0.5 SOL, 1 SOL) to allow quick selection.
-// Success/Error Messages:
-
-// Display a success message on a successful tip submission or an error message on failure.
-
-// Key Updates:
-// recipientId Prop:
-
-// Added recipientId as a required prop to ensure the backend knows the recipient of the tip.
-// Optional Message:
-
-// Introduced a textarea field to allow users to include an optional message when sending a tip (aligned with the backend).
-// onTip Callback:
-
-// The onTip callback now expects an object containing toUserId, amount, and an optional message.
-// UI Improvements:
-
-// Added a character limit (255) for the optional message to ensure it aligns with backend constraints.
-
-
-// Summary of Changes:
-// Validation Improvement:
-// Added check for valid, positive numeric values in the tip amount.
-// Enhanced Accessibility:
-// Included aria-label attributes for better screen reader support.
-// Feedback Enhancements:
-// Differentiated success and error messages visually with class names.
-// Optimization:
-// Avoided redundant state updates by ensuring tipAmount changes only when necessary.
-
-// Key Features:
-// Dynamic Feedback:
-// Success messages include emojis (🎉) and green styling, while errors are styled with warnings.
-// Accessibility:
-// Added aria-label attributes and id properties for form elements to improve accessibility.
-// Consistent Validation:
-// Ensures that only valid positive numbers can be submitted.

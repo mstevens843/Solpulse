@@ -135,18 +135,3 @@ describe('CryptoTicker Component', () => {
         });
     });
 });
-
-
-
-
-
-// Test Scenarios Covered:
-// Loading State: Ensures the spinner appears when prices are being fetched.
-// Fetching and Displaying Prices: Verifies that prices are displayed after a successful API call.
-// Error Handling: Tests the error message and retry functionality when fetching fails.
-// Search Functionality: Tests filtering of cryptocurrencies based on user input.
-// Trend Icons: Verifies the display of trend icons (⬆️ for up, ⬇️ for down, ⏺️ for unchanged).
-// Refresh Button: Ensures the prices are refreshed when the button is clicked.
-// Dependencies:
-// The axios mock ensures API behavior is simulated without making real calls.
-// waitFor ensures the test waits for asynchronous state changes.

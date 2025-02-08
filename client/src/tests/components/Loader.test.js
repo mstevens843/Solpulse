@@ -36,20 +36,3 @@ describe('Loader Component', () => {
         expect(loaderElement).toHaveClass('loader');
     });
 });
-
-
-
-
-// Key Test Cases
-// Accessibility Attributes:
-
-// Verifies that the loader has the correct ARIA attributes for accessibility, such as role="status" and aria-live="polite".
-// Loader Element Render:
-
-// Ensures the loader spinner is rendered properly.
-// Loading Text Render:
-
-// Verifies that the "Loading..." text is present in the DOM.
-// CSS Class Validation:
-
-// Checks that the component has the correct CSS classes applied for styling.

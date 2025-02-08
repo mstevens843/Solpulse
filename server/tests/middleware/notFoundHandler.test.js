@@ -48,14 +48,3 @@ describe('notFoundHandler Middleware', () => {
     warnSpy.mockRestore();
   });
 });
-
-
-
-
-
-
-// Explanation of the Tests:
-// API Test: Simulates a request to a non-existent API route (/api/non-existent-route) and checks that the response status is 404
-//  and that the body contains the expected error message ('Resource not found').
-// Web Page Test: Simulates a request to a non-existent page (/non-existent-page) and checks that the response contains the appropriate 404 
-// page content. Adjust this check to match the content of your NotFound.js page.

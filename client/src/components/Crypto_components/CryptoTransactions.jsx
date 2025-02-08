@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "@/css/components/Crypto_components/CryptoTransaction.css"; // Updated alias for CSS import
-
+import "@/css/components/Crypto_components/CryptoTransaction.css";
 const CryptoTransaction = React.memo(({ transaction }) => {
     const getTransactionLabel = (type) => {
         switch (type?.toLowerCase()) {
@@ -70,63 +69,3 @@ CryptoTransaction.defaultProps = {
 };
 
 export default CryptoTransaction;
-
-
-
-
-
-
-
-
-
-// Performance Optimization: Key Improvements 🚀
-// Memoization:
-
-// Added React.memo to CryptoTransaction to prevent unnecessary re-renders when transaction data remains the same.
-// Dependency Management:
-
-// Ensured debounce from lodash does not create a new function instance unnecessarily in CryptoWallet.
-// Reduced Redundant Re-renders:
-
-// Cached expensive computations and data filters using useMemo where appropriate.
-// Minimized Repeated Requests:
-
-// Improved intervals for API calls in CryptoTicker and added checks to prevent overlapping fetch requests.
-// Enhanced Cleanup:
-
-// Ensured all timers/intervals and subscriptions are cleaned up properly when components unmount.
-
-// New Features Added
-// getTransactionLabel Function:
-
-// Dynamically maps raw transaction types to user-friendly labels (e.g., "Buy" or "Sell").
-// Ensures extensibility for future transaction types.
-// Tooltips for Dates:
-
-// Adds a tooltip with the full ISO date to provide additional context for precise timestamps.
-// Amount Formatting:
-
-// Ensures transaction amounts are formatted with commas and always show two decimal places for clarity.
-
-// Enhancements Breakdown:
-// Styling Classes:
-
-// Added transaction-buy and transaction-sell class modifiers for conditional styling.
-// Invalid Data Handling:
-
-// Used fallbacks for amount and date to prevent rendering issues with incomplete or incorrect data.
-// Accessibility:
-
-// Added aria-label attributes to transaction details.
-// Used semantic <time> tag for the transaction date.
-// Dynamic Fallbacks:
-
-// Gracefully handled missing or invalid dates with a fallback value (Invalid Date).
-
-// Key Updates:
-// Dynamic Class Name Fallback:
-// Added || 'unknown' to handle undefined or invalid transaction.type.
-// Fallback Values:
-// Ensured fallback for transaction.amount and transaction.date to avoid runtime errors.
-// Enhanced ARIA Labels:
-// Improved label clarity for each attribute, focusing on accessibility without redundancy.

@@ -1,18 +1,3 @@
- /* .community-feed-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background: #1a1a1a;
-}
-
-.community-feed-list {
-  list-style: none;
-  padding: 0;
-  width: 100%;
-  max-width: 700px;
-}
-
 /* Individual Post */
  .community-feed-post {
   background: #2a2a2a;
@@ -50,31 +35,10 @@
   background: #00cca3;
 }
 
-/* Empty state */
-/* .community-feed-empty {
-  font-size: 1.2rem;
-  color: #aaa;
-  text-align: center;
-}
-
-/* Loading state */
-/* .community-feed-loading {
-  font-size: 1.2rem;
-  color: #00ffcc;
-  text-align: center;
-}
-
-/* Error message */
-/* .community-feed-error {
-  color: #ff4c4c;
-  font-weight: bold;
-  text-align: center;
-} 
-
 /* Feed Container */
 .community-feed-container {
-  width: 50%;  /* Set width to 50% of the viewport */
-  margin: 2rem auto;  /* Center the container horizontally */
+  width: 50%;
+  margin: 2rem auto;
   padding: 1rem 2rem;
   background: #1f1f1f;
   border-radius: 15px;
@@ -85,14 +49,14 @@
 
 /* Feed Title */
 .community-feed-title {
-  width: 100%;  /* Set width to 50% of the viewport */
+  width: 100%;
 
   text-align: center;
   font-size: 2.2rem;
   font-weight: bold;
   background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;  text-align: ;
+  -webkit-text-fill-color: transparent;
   /* border-bottom: 2px solid #00ffcc; */
   padding-bottom: 0.5rem;
   margin-bottom: 0.4rem;

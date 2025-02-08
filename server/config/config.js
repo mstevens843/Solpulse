@@ -1,16 +1,4 @@
-// What This File Does:
-// Environment-Specific Configuration:
 
-// Provides database settings for development, test, and production environments.
-// Ensures that you use environment-specific databases without hardcoding credentials.
-
-// Uses dotenv:
-
-// Reads sensitive credentials (username, password, database name, host) from environment variables.
-// Avoids hardcoding sensitive information into the codebase.
-// Flexible Setup:
-
-// Enables different logging and configuration behaviors for test and production.
 
 require('dotenv').config(); // Load environment variables
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "@/css/components/Notification_components/MessageModal.css"; // Ensure you create corresponding styles
+import "@/css/components/Notification_components/MessageModal.css"; 
 
 const MessageModal = ({ message, onClose, onReply }) => {
   const [newMessage, setNewMessage] = useState("");

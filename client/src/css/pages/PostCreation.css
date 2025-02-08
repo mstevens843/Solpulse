@@ -4,10 +4,10 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #121212; /* Match background color with Landing & Home */
+  background: #121212;
   color: #fff;
   width: 100%;
-  padding: 2rem; /* Consistent padding */
+  padding: 2rem;
 }
 
 /* Post Creation Container */
@@ -100,7 +100,7 @@ input[type="file"]:focus {
 }
 
 input[type="file"]::-webkit-file-upload-button {
-  background: #0da688; /* Teal color for button */
+  background: #0da688; 
   color: #ffffff;
   border: none;
   padding: 0.5rem 1rem;

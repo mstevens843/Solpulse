@@ -18,8 +18,6 @@
   @apply text-solana-text-light font-medium text-center mt-4;
 }
 
-/* User List */
-/* Adjust the grid layout to allow more cards */
 .user-list {
   @apply grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 mt-6;
 }
@@ -28,24 +26,3 @@
 .empty-message {
   @apply text-center text-solana-text-light italic mt-6;
 }
-
-
-
-  /* Followers/Following Page
-  User Cards:
-  Styled with hover animations for interactivity.
-  Empty States:
-  Enhanced with subtle icons and lighter text colors.
-  Responsive Layout:
-  Adjusts the grid layout to show more users on larger screens. */
-  /* CSS (FollowersFollowing.css)
-  Interactive and Polished Design:
-  
-  Styled the user list and individual user cards for a sleek appearance.
-  Integrated hover and transition effects for interactivity.
-  Error and Loading States:
-  
-  Styled error and loading messages for clear visibility.
-  Responsive Grid:
-  
-  Used a responsive grid layout for the user list, adapting to various screen sizes. */

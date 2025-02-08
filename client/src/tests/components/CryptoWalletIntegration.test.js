@@ -164,17 +164,3 @@ describe('CryptoWalletIntegration', () => {
         });
     });
 });
-
-
-
-// Key Test Cases Covered
-// Renders Wallet Integration:
-// Verifies that balance, recipient, and amount fields render correctly.
-// Invalid Recipient Address:
-// Checks if an error message is shown for invalid wallet addresses.
-// Insufficient Balance:
-// Confirms error handling for insufficient balance scenarios.
-// Successful Transaction:
-// Tests the happy path where a transaction completes successfully and shows success messages.
-// Failed Transaction:
-// Ensures that transaction failures show appropriate error messages.

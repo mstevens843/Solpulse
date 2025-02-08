@@ -104,24 +104,3 @@ describe('Feed Component', () => {
     });
     
 });
-
-
-
-
-
-// Key Test Cases
-// Loading State:
-
-// Ensures the "Loading posts..." message appears initially.
-// Successful Fetch:
-
-// Verifies that posts are displayed after a successful API call.
-// Error Handling:
-
-// Ensures an error message is shown when the API call fails.
-// Empty State:
-
-// Confirms that a message is displayed when no posts are available.
-// Retry Functionality:
-
-// Tests the retry button and ensures posts are fetched after retrying.

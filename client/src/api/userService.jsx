@@ -1,10 +1,4 @@
 import { api } from "./apiConfig";
-
-/**
- * Fetches user data for the currently authenticated user.
- * @returns {Promise<Object>} - The user data object.
- * @throws {Error} - Throws error if the request fails.
- */
 export const fetchUserData = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
