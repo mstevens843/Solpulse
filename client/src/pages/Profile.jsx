@@ -261,6 +261,7 @@ function Profile() {
                                         <Post
                                             post={post}
                                             currentUser={currentUser}
+                                            setPosts={setPosts} // ✅ Pass setPosts here
                                             onCommentAdd={(newComment) => addCommentToPost(post.id, newComment)}
                                         />
                                     </div>

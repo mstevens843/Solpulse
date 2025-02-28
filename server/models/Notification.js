@@ -23,11 +23,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true, // Optional: Generated automatically if not provided
             },
             amount: {
-                type: DataTypes.FLOAT, // Used for transaction notifications (e.g., amount of SOL sent)
+                type: DataTypes.FLOAT, // ✅ Used for transaction notifications (e.g., amount of SOL sent)
                 allowNull: true,
             },
             entityId: {
-                type: DataTypes.INTEGER, // Optional: ID of the related entity
+                type: DataTypes.STRING, // ✅ Updated to STRING to store transaction signature (for tips)
                 allowNull: true,
             },
             entityType: {
@@ -56,8 +56,8 @@ module.exports = (sequelize, DataTypes) => {
                 like: 'Your post was liked.',
                 comment: 'Your post received a comment.',
                 follow: 'You have a new follower.',
-                retweet: 'Your post was retweeted.',
-                transaction: `You received ${notification.amount} SOL.`,
+                retweet: 'Your post was reposted.',
+                transaction: `You received ${notification.amount} SOL.`, // ✅ Correctly formats tip notifications
             };
             notification.message = typeMessages[notification.type] || 'You have a new notification.';
         }

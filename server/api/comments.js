@@ -177,6 +177,9 @@ router.get('/', authMiddleware, async (req, res) => {
 /**
  * Add a new comment to a post.
  */
+/**
+ * Add a new comment to a post.
+ */
 router.post(
     '/',
     [
@@ -198,25 +201,42 @@ router.post(
                 return res.status(404).json({ error: 'Post not found' });
             }
 
+            // Create the new comment
             const comment = await Comment.create({
                 userId: req.user.id,
                 postId,
                 content,
             });
 
+            // Fetch user details to ensure `author` and `avatarUrl` are correct
+            const user = await User.findByPk(req.user.id, {
+                attributes: ["username", "profilePicture"],
+            });
+
+            const formattedComment = {
+                ...comment.toJSON(),
+                author: user ? user.username : "Unknown",
+                avatarUrl: user ? user.profilePicture || "http://localhost:5001/uploads/default-avatar.png" : "http://localhost:5001/uploads/default-avatar.png",
+            };
+
             // Notify the post owner
             await Notification.create({
                 userId: post.userId,
                 actorId: req.user.id,
                 type: 'comment',
-                message: `${req.user.username} commented on your post.`,
+                message: `${user ? user.username : "Unknown"} commented on your post.`,
                 isRead: false,
             });
 
-            // Broadcast the new comment event
-            handleCommentEvent('new-comment', comment);
+            // ✅ Broadcast the new comment event to WebSocket
+            handleCommentEvent('new-comment', formattedComment);
 
-            res.status(201).json(comment);
+            // ✅ Send the correct response to the frontend
+            res.status(201).json({
+                message: "Comment added successfully!",
+                comment: formattedComment,
+            });
+
         } catch (error) {
             console.error('Error adding comment:', error);
             res.status(500).json({ error: 'Failed to add comment' });

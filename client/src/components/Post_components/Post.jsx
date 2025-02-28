@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { api } from "@/api/apiConfig";
@@ -9,31 +9,74 @@ import RetweetButton from "@/components/Post_components/RetweetButton";
 import CommentSection from "@/components/Post_components/CommentSection";
 import PostModal from "@/components/Post_components/PostModal";
 import socket from "@/socket";
+import { AuthContext } from "@/context/AuthContext"; // ✅ Import AuthContext
 import "@/css/components/Post_components/Post.css";
 
 function Post({ post, currentUser, onNewComment, setPosts }) {
     const [postComments, setPostComments] = useState(post.comments || []);
+    const { likedPosts, retweetedPosts } = useContext(AuthContext); // ✅ Get batch data from context
     const [commentCount, setCommentCount] = useState(0);
     const [isOverlayVisible, setOverlayVisible] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
     const [author, setAuthor] = useState(post.author || "");
-    const [profilePicture, setProfilePicture] = useState(post.profilePicture || "http://localhost:5001/uploads/default-avatar.png");
-    // Determine the correct author and profile picture
+    
+
+
+
+
+    // 🔹 Ensure likes & retweets sync between the original post and retweets
     const isRetweet = post.isRetweet;
-    const retweeterName = isRetweet ? currentUser.username : null;
+    const postIdToUse = isRetweet ? post.originalPostId : post.id;
+    const retweeterName = isRetweet ? post.retweeterName || post.user?.username : null;
     const postAuthor = isRetweet && post.originalAuthor ? post.originalAuthor : post.author;
-    const postProfilePicture = isRetweet && post.originalProfilePicture ? post.originalProfilePicture : post.profilePicture || "http://localhost:5001/uploads/default-avatar.png";
+    const postProfilePicture = isRetweet && post.originalProfilePicture
+    ? post.originalProfilePicture.startsWith("http")
+        ? post.originalProfilePicture
+        : `http://localhost:5001${post.originalProfilePicture.startsWith("/uploads") ? post.originalProfilePicture : `/uploads/${post.originalProfilePicture}`}`
+    : post.profilePicture
+        ? post.profilePicture.startsWith("http")
+            ? post.profilePicture
+            : `http://localhost:5001${post.profilePicture.startsWith("/uploads") ? post.profilePicture : `/uploads/${post.profilePicture}`}`
+        : "http://localhost:5001/uploads/default-avatar.png";
 
 
 
-    useEffect(() => {
-        if (post.userId && !author || !post.profilePicture ) {
+    // ✅ Fetch batch like/retweet statuses ONCE per user
+    // useEffect(() => {
+    //     if (!currentUser?.id) return;
+
+    //     const fetchLikesAndRetweets = async () => {
+    //         try {
+    //             const [likeResponse, retweetResponse] = await Promise.all([
+    //                 api.get("/posts/likes/batch"),
+    //                 api.get("/posts/retweets/batch")
+    //             ]);
+
+    //             setLikedPosts(new Set(likeResponse.data.likedPosts));
+    //             setRetweetedPosts(new Set(retweetResponse.data.retweetedPosts));
+    //         } catch (err) {
+    //             console.error("Error fetching batch data:", err);
+    //         }
+    //     };
+
+    //     fetchLikesAndRetweets();
+    // }, [currentUser]);
+
+
+
+     // 🔹 Ensure the correct author and profile picture are displayed
+     useEffect(() => {
+        if (post.userId && (!author || !post.profilePicture)) {
             const fetchUser = async () => {
                 try {
                     const response = await api.get(`/users/${post.userId}`);
                     setAuthor(response.data.username);
-                    setProfilePicture(response.data.user.profilePicture || "http://localhost:5001/uploads/default-avatar.png");
+                    setProfilePicture(
+                        response.data.user.profilePicture
+                            ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}/uploads/${response.data.user.profilePicture}`
+                            : "http://localhost:5001/uploads/default-avatar.png"
+                    );
                 } catch (error) {
                     console.error("Error fetching user:", error);
                 }
@@ -47,52 +90,108 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
     const formatDate = (date) =>
         date ? new Date(date).toLocaleString() : "Date not available";
 
-    // Handle WebSocket Events
-    useEffect(() => {
-        const fetchCommentCount = async () => {
-            try {
-                const response = await api.get(`/comments/count?postId=${post.id}`);
-                setCommentCount(response.data.count);
-            } catch (error) {
-                console.error("Failed to fetch comment count:", error);
-            }
-        };
+// ✅ Fetch comment count ONCE per post
+useEffect(() => {
+    const fetchCommentCount = async () => {
+        if (post.isRetweet && !post.originalPostId) {
+            console.error("Repost is missing originalPostId");
+            return;
+        }
 
-        fetchCommentCount();
-    }, [post.id]);
+        try {
+            const response = await api.get(`/comments/count?postId=${postIdToUse}`);
+            setCommentCount(response.data.count);
+        } catch (error) {
+            console.error("Failed to fetch comment count:", error);
+        }
+    };
 
+    fetchCommentCount();
+}, [postIdToUse]); // ✅ Simplified dependency
+
+
+
+    // Listen for new comments in websocket and update ui. 
     useEffect(() => {
         const handleNewComment = (comment) => {
-            if (comment.postId === post.id) {
+            if (comment.postId === postIdToUse) {
                 setPostComments((prev) => [comment, ...prev]);
                 setCommentCount((prev) => prev + 1);
                 onNewComment(comment);
             }
         };
 
-        socket.on("new-comment", handleNewComment);
+        socket.off("new-comment").on("new-comment", handleNewComment); // 🔹 Ensure only one listener exists
 
         return () => {
-            socket.off("new-comment", handleNewComment);
+            socket.off("new-comment", handleNewComment); // 🔹 Proper cleanup
         };
-    }, [post.id, onNewComment]);
+    }, [postIdToUse, onNewComment]);
+    
 
-    const handleToggleOverlay = () => {
-        setOverlayVisible((prev) => {
-            if (!prev) {
-                document.body.classList.add("overlay-open");
-            } else {
-                document.body.classList.remove("overlay-open");
+    const handleToggleOverlay = async () => {
+        if (!isOverlayVisible) {  
+            try {
+                const response = await api.get(`/comments?postId=${postIdToUse}`);
+                setPostComments(response.data.comments); // ✅ Fetch latest comments
+            } catch (error) {
+                console.error("Failed to fetch comments for modal:", error);
             }
-            return !prev;
-        });
+            document.body.classList.add("overlay-open");
+        } else {
+            document.body.classList.remove("overlay-open");
+        }
+        setOverlayVisible(!isOverlayVisible);
+    };
+    
+    const handleAddComment = async () => {
+        if (!newComment.trim()) return;
+    
+        setLoading(true);
+        setErrorMessage("");
+    
+        try {
+            const { data } = await api.post("/comments", { postId: postIdToUse, content: newComment.trim() }); // ✅ Fixed postId reference
+    
+            // ✅ Ensure comment list updates correctly
+            onNewComment(data);
+            setNewComment("");
+            setShowCommentOverlay(false);
+        } catch (error) {
+            console.error("Failed to add comment:", error);
+            setErrorMessage("Failed to add comment. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleAddComment = (newComment) => {
-        setPostComments((prev) => [newComment, ...prev]);
-        setCommentCount((prev) => prev + 1);
-    };
-
+        // ✅ Ensure likes update globally
+        const handleLikeToggle = (postId, updatedLikes) => {
+            setPosts((prevPosts) =>
+                prevPosts.map((p) =>
+                    p.id === postId || p.originalPostId === postId
+                        ? { ...p, likes: updatedLikes }
+                        : p
+                )
+            );
+        };
+    
+        // ✅ Ensure retweets update globally
+        const handleRetweetToggle = (postId, isReposting, updatedRetweets, newRetweetData) => {
+            setPosts((prevPosts) => {
+                let updatedPosts = prevPosts.map((p) =>
+                    p.id === postId || p.originalPostId === postId
+                        ? { ...p, retweets: updatedRetweets }
+                        : p
+                );
+    
+                if (isReposting && newRetweetData) {
+                    updatedPosts = [newRetweetData, ...updatedPosts]; // Add new repost to the feed
+                }
+    
+                return updatedPosts;
+            });
+        };
 
     const handleDeletePost = async () => {
         setIsDeleting(true);
@@ -144,24 +243,28 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
             <ToastContainer />
     
             {isRetweet && (
-                <div className="repost-indicator">
-                    {post.userId === currentUser.id ? "You reposted" : `${post.author || "Unknown"} reposted`}
-                </div>
-            )}
+            <div className="repost-indicator">
+                {post.userId === currentUser.id
+                    ? "You reposted"
+                    : `${retweeterName || "Unknown"} reposted`}
+            </div>
+        )}
+
+
     
-            {/* Everything below stays in a row */}
-            <div className="post-content-wrapper">
+<div className="post-content-wrapper">
                 <img
-                    src={`${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${postProfilePicture}?timestamp=${new Date().getTime()}`}
+                    src={`${postProfilePicture}?timestamp=${new Date().getTime()}`}
                     alt={`${postAuthor}'s profile`}
                     className="post-profile-picture"
                 />
                 <div className="individual-post-content-wrapper">
                     <div className="individual-post-header">
                         <div className="post-author-details">
-                            <Link to={`/profile/${post.isRetweet ? post.originalPostId : post.userId}`} className="post-author-link">
-                                <h4 className="individual-post-author">{postAuthor}</h4>
-                            </Link>
+                        <Link to={`/profile/${post.isRetweet ? post.originalUserId : post.userId}`} className="post-author-link">
+                            <h4 className="individual-post-author">{postAuthor}</h4>
+                        </Link>
+
                             <p className="individual-post-date">{formatDate(post.createdAt)}</p>
                         </div>
                         {currentUser?.id === post.userId && (
@@ -170,7 +273,7 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
                                 onClick={handleDeletePost}
                                 disabled={isDeleting}
                             >
-                                {isDeleting ? "Processing..." : isRetweet ? "Remove Repost" : "Delete"}
+                                {isDeleting ? "Processing..." : isRetweet ? "Undo Repost" : "Delete"}
                             </button>
                         )}
                     </div>
@@ -201,16 +304,25 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
                         </div>
                     )}
     
+                    {/* ✅ Updated Like & Retweet Buttons to sync with batch data */}
                     <div className="individual-post-actions">
-                        <LikeButton postId={post.id} currentUser={currentUser} initialLikes={post.likes || 0} />
-                        <RetweetButton 
-                            postId={post.id} 
-                            currentUser={currentUser} 
-                            initialRetweets={post.retweets || 0} 
-                            createdAt={post.createdAt}
-                            onRetweet={(retweetData) => setPosts((prevPosts) => [retweetData, ...prevPosts])}
+                        <LikeButton
+                            postId={postIdToUse}
+                            originalPostId={post.originalPostId}
+                            initialLikes={post.likes}
+                            currentUser={currentUser}
+                            onLikeToggle={handleLikeToggle}
+                            setPosts={setPosts}
                         />
-                        <CommentSection postId={post.id} onNewComment={onNewComment} />
+                        <RetweetButton
+                            postId={postIdToUse}
+                            originalPostId={post.originalPostId}
+                            initialRetweets={post.retweets}
+                            currentUser={currentUser}
+                            onRetweetToggle={handleRetweetToggle}
+                            setPosts={setPosts}
+                        />
+                        <CommentSection postId={postIdToUse} onNewComment={onNewComment} />
                     </div>
     
                     <div className="view-comments-link">
@@ -219,13 +331,21 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
                         </a>
                     </div>
     
-                    {isModalOpen && <PostModal post={post} onClose={() => setModalOpen(false)} />}
+                    {isModalOpen && (
+                        <PostModal 
+                            post={post} 
+                            onClose={() => setModalOpen(false)} 
+                            likedPosts={likedPosts} // ✅ Pass to modal
+                            retweetedPosts={retweetedPosts} // ✅ Pass to modal
+                        />
+                    )}
                 </div>
             </div>
         </div>
     );
     
-}
+    
+}   
 
 Post.propTypes = {
     post: PropTypes.shape({
@@ -251,7 +371,8 @@ Post.propTypes = {
     currentUser: PropTypes.shape({
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     }).isRequired,
-    onNewComment: PropTypes.func.isRequired,
+    onNewComment: PropTypes.func,
+    setPosts: PropTypes.func, // ✅ Ensures global state updates
 };
 
 export default Post;

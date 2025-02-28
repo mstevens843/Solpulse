@@ -73,12 +73,21 @@ module.exports = (sequelize, DataTypes) => {
         },
         onDelete: 'SET NULL',
       },
+      originalUserId: {  // ✅ Add this
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
+        onDelete: 'SET NULL',
+      },
       originalAuthor: {
-        type: DataTypes.STRING, // ✅ Stores original author's username
+        type: DataTypes.STRING, 
         allowNull: true,
       },
       originalProfilePicture: {
-        type: DataTypes.STRING, // ✅ Stores original author's profile picture
+        type: DataTypes.STRING, 
         allowNull: true,
       },
       deletedAt: {

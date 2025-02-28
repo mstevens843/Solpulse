@@ -17,26 +17,29 @@ const formatNotifications = async (notifications) => {
       });
 
       // Generate appropriate notification message based on type
-      let message;
-      switch (notification.type) {
-        case 'like':
-          message = `${actor.username} liked your post`;
-          break;
-        case 'comment':
-          message = `${actor.username} commented on your post`;
-          break;
-        case 'follow':
-          message = `${actor.username} started following you`;
-          break;
-        case 'message':
-          message = `${actor.username} sent you a message`;
-          break;
-        case 'transaction':
-          message = `${actor.username} sent you ${notification.amount} SOL`;
-          break;
-        default:
-          message = `You have a new notification`;
-      }
+let message;
+switch (notification.type) {
+  case 'like':
+    message = `${actor.username} liked your post`;
+    break;
+  case 'comment':
+    message = `${actor.username} commented on your post`;
+    break;
+  case 'follow':
+    message = `${actor.username} started following you`;
+    break;
+  case 'message':
+    message = `${actor.username} sent you a message`;
+    break;
+  case 'transaction':
+    message = `${actor.username} sent you ${notification.amount} SOL`;
+    break;
+  case 'retweet':  // ✅ Add retweet case
+    message = `${actor.username} reposted your post`;
+    break;
+  default:
+    message = `You have a new notification`;
+}
 
       return {
         id: notification.id,
@@ -218,6 +221,53 @@ router.post('/mark-all-read', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error('Error marking all notifications as read:', err);
     res.status(500).json({ error: 'Failed to mark all notifications as read' });
+  }
+});
+
+
+router.post('/', authMiddleware, async (req, res) => {
+  try {
+    const { type, actorId, userId, amount, entityId } = req.body;
+
+    if (!type || !actorId || !userId) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const newNotification = await Notification.create({
+      type,
+      actorId,
+      userId,
+      amount: type === 'transaction' ? amount : null, // Only store amount for tips
+      entityId: entityId || null, // Store transaction signature for tips
+    });
+
+    res.status(201).json(newNotification);
+  } catch (err) {
+    console.error('Error creating notification:', err);
+    res.status(500).json({ error: 'Failed to create notification' });
+  }
+});
+
+/**
+ * GET /api/notifications/tips
+ * Fetch only tip notifications
+ */
+router.get('/tips', authMiddleware, async (req, res) => {
+  try {
+    const tipNotifications = await Notification.findAll({
+      where: { userId: req.user.id, type: 'transaction' },
+      order: [['createdAt', 'DESC']],
+    });
+
+    if (!tipNotifications.length) {
+      return res.json({ tips: [] }); // Return empty array if no tips found
+    }
+
+    const formattedTips = await formatNotifications(tipNotifications);
+    res.json({ tips: formattedTips });
+  } catch (err) {
+    console.error('Error fetching tip notifications:', err);
+    res.status(500).json({ error: 'Failed to fetch tip notifications' });
   }
 });
 

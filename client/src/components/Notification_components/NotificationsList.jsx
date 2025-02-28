@@ -3,17 +3,16 @@ import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
 import "@/css/components/Notification_components/NotificationsList.css";
 
-
 const notificationMessages = {
   like: "liked your post",
-  retweet: "retweeted your post",
+  retweet: "reposted your post",
   comment: "commented on your post",
   follow: "started following you",
   message: "sent you a message",
-  transaction: "sent you a tip",
+  transaction: (amount) => `💰 sent you a tip of ${amount} SOL`,
 };
 
-const notificationTypes = ["likes", "retweets", "comments", "follows", "messages"];
+const notificationTypes = ["likes", "retweets", "comments", "follows", "messages", "tips", "notifications"];
 
 function NotificationsList() {
   const [notifications, setNotifications] = useState([]);
@@ -35,9 +34,10 @@ function NotificationsList() {
       case "likes":
         endpoint = "/posts/likes";
         break;
-      case "retweets":
-        endpoint = "/posts/retweets";
-        break;
+        case "retweets":
+          endpoint = "/posts/retweets";
+          break;
+        
       case "comments":
         endpoint = "/comments/detailed?page=1";
         break;
@@ -46,6 +46,9 @@ function NotificationsList() {
         break;
       case "messages":
         endpoint = "/messages/detailed?page=1&limit=10";
+        break;
+      case "tips":
+        endpoint = "/notifications/tips";
         break;
       default:
         endpoint = "/notifications";
@@ -64,14 +67,14 @@ function NotificationsList() {
               isRead: false,
             }))
           : type === "retweets"
-          ? response.data.retweets.map((item) => ({
-              id: item.postId,
-              actor: item.retweetedBy || `User unknown`,
-              message: `${item.retweetedBy} retweeted your post`,
-              content: item.content,
-              createdAt: item.createdAt,
-              isRead: false,
-            }))
+            ? response.data.retweets.map((item) => ({
+                id: item.postId,  // Use postId from API response
+                actor: item.retweetedBy || "Unknown",  // Use correct actor field
+                message: `${item.retweetedBy} reposted your post`,  // Ensure correct message
+                content: item.content || "No content", 
+                createdAt: item.createdAt,
+                isRead: false,  // No isRead field in retweets, default to false
+              }))
           : type === "comments"
           ? response.data.comments.map((item) => ({
               id: item.id,
@@ -98,6 +101,15 @@ function NotificationsList() {
               content: item.content,
               createdAt: item.createdAt,
               isRead: item.read || false,
+            }))
+          : type === "tips"
+          ? response.data.tips.map((item) => ({
+              id: item.id,
+              actor: item.actor|| `User unknown`,
+              message: notificationMessages.transaction(item.amount),
+              content: item.content,
+              createdAt: item.createdAt,
+              isRead: item.isRead || false,
             }))
           : response.data.notifications || []
       );
@@ -127,7 +139,7 @@ function NotificationsList() {
   const markAllAsRead = async () => {
     try {
       await api.put("/notifications/mark-all-read");
-      setNotifications([]);  // Clear the list after marking all as read
+      setNotifications([]); // Clear the list after marking all as read
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
       setError("Failed to mark all notifications as read.");
@@ -145,6 +157,7 @@ function NotificationsList() {
             className={`notifications-tab ${activeTab === type ? "active" : ""}`}
             onClick={() => {
               setActiveTab(type);
+              fetchNotifications(type);
             }}
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -165,20 +178,32 @@ function NotificationsList() {
             <li
               key={notification.id}
               id={`notification-${notification.id}`}
-              className={`notifications-page-item ${
-                notification.isRead ? "read" : "unread"
-              }`}
+              className={`notifications-card ${notification.isRead ? "read" : "unread"}`}
             >
-              <p>{notification.message}</p>
-              {notification.content && (
-                <p className="notifications-page-content">"{notification.content}"</p>
-              )}
-              <span className="notifications-page-time">
-                {new Date(notification.createdAt).toLocaleString()}
-              </span>
+              <div className="notification-icon">
+                {notification.type === "like" && "❤️"}
+                {notification.type === "retweet" && "🔁"}
+                {notification.type === "comment" && "💬"}
+                {notification.type === "follow" && "➕"}
+                {notification.type === "message" && "✉️"}
+                {notification.type === "transaction" && "💰"}
+              </div>
+
+              <div className="notification-content">
+                <p>
+                  <strong>{notification.actor}</strong> {notification.message}
+                </p>
+                {notification.content && (
+                  <p className="notification-extra-content">"{notification.content}"</p>
+                )}
+                <span className="notification-time">
+                  {new Date(notification.createdAt).toLocaleString()}
+                </span>
+              </div>
+
               {!notification.isRead && (
                 <button
-                  className="notifications-page-mark-read-btn"
+                  className="notification-mark-read-btn"
                   onClick={() => markNotificationAsRead(notification.id)}
                 >
                   Mark as Read
@@ -193,6 +218,5 @@ function NotificationsList() {
     </div>
   );
 }
-
 
 export default NotificationsList;

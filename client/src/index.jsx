@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './css/index.css';
-import './css/Global.css';
+// import './css/Global.css';
 import './index2.css';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { AuthProvider } from '@/context/AuthContext'; 

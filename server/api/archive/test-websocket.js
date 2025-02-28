@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { validateAndBroadcast } = require("../utils/websocket");
+const { validateAndBroadcast } = require("../../utils/websocket");
 
 // Change to /socket instead of /api
 router.post("/test-websocket-event", (req, res) => {

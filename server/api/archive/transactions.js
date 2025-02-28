@@ -1,7 +1,7 @@
 const express = require('express');
-const { Transaction, Wallet } = require('../models/Index'); // Import models
+const { Transaction, Wallet } = require('../../models/Index'); // Import models
 const { check, validationResult } = require('express-validator'); // For input validation
-const authMiddleware = require('../middleware/auth'); // JWT authentication middleware
+const authMiddleware = require('../../middleware/auth'); // JWT authentication middleware
 const router = express.Router();
 
 /**

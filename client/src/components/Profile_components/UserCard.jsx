@@ -1,9 +1,9 @@
 import { React, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import FollowButton from "@/components/Profile_components/FollowButton";
 import MessageButton from "@/components/Notification_components/MessageButton";
 import FollowersFollowing from "@/components/Profile_components/FollowersFollowing";
-import { useNavigate } from "react-router-dom";
 import CryptoTip from "@/components/Crypto_components/CryptoTip"; 
 import { useWallet } from "@solana/wallet-adapter-react";
 import { FaEnvelope } from "react-icons/fa";
@@ -33,12 +33,14 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
         setFollowersCount((prev) => Math.max(prev + change, 0)); // Prevent negative values
     };
 
-    const openModal = (type) => {
-        setViewingType(type);
-        setShowModal(true);
+    const openModal = (type, event) => {
+        event.stopPropagation(); // Prevent navigation when clicking modal elements
+        setViewingType(type); // First, update the modal type
+        setShowModal(true); // Then open the modal
     };
 
     const handleProfilePictureChange = (event) => {
+        event.stopPropagation(); // Prevent navigation when clicking modal elements
         const file = event.target.files[0];
         if (file) {
             onProfilePictureChange(file);
@@ -53,8 +55,18 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
         setShowTipModal((prev) => !prev); // Toggle tip modal
     };
 
+
+    const handleProfileClick = (event) => {
+        if (event.target.closest(".modal-content, .button-group, .edit-profile-btn, .crypto-tip-btn")) {
+            event.stopPropagation(); // Prevent navigation when clicking buttons or modals
+            return;
+        }
+        navigate(`/profile/${user.id}`);
+    };
+    
+
     return (
-        <div className={isInModal ? "user-card-modal" : "user-card"}>
+        <div className={isInModal ? "user-card-modal" : "user-card"} onClick={handleProfileClick}>
             <div className="user-left">
 
                 <img
@@ -64,10 +76,7 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
                 />
                 {user.id === currentUser?.id && (
                     <>
-                        <button
-                            className="edit-profile-btn"
-                            onClick={() => document.getElementById("profile-pic-input").click()}
-                        >
+                        <button className="edit-profile-btn" onClick={(e) => { e.stopPropagation(); document.getElementById("profile-pic-input").click(); }}>
                             Edit Profile Picture
                         </button>
 
@@ -75,6 +84,7 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
                             id="profile-pic-input"
                             type="file"
                             style={{ display: 'none' }}
+                            onClick={(e) => e.stopPropagation()} // Prevent navigation
                             onChange={handleProfilePictureChange}
                         />
                     </>
@@ -87,13 +97,12 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
             <div className="user-info">
             <h4 className="user-username">{user.username}</h4>
 
-            <p onClick={() => openModal("followers")} className="follow-link">
+            <p onClick={(e) => openModal("followers", e)} className="follow-link">
                 Followers: {followersCount}
             </p>
-            <p onClick={() => openModal("following")} className="follow-link">
+            <p onClick={(e) => openModal("following", e)} className="follow-link">
                 Following: {followingCount}
             </p>
-
             {/* Button Container */}
             <div className="button-group">
                 {/* CryptoTip Button */}
@@ -117,47 +126,45 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
 
                 {/* Followers/Following Modal */}
                 {showModal && (
-                    <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                        <div className="modal-content follow-modal" onClick={(e) => e.stopPropagation()}>
-                            <button className="close-btn" onClick={() => setShowModal(false)}>X</button>
-                            <h3>{viewingType === "followers" ? "Followers" : "Following"}</h3>
-                            <FollowersFollowing userId={user.id} type={viewingType} />
-                        </div>
+                <div className="modal-overlay" onClick={(e) => { e.stopPropagation(); setShowModal(false); }}>
+                    <div className="modal-content follow-modal" onClick={(e) => e.stopPropagation()}>
+                        <button className="close-btn" onClick={() => setShowModal(false)}>X</button>
+                        <h3>{viewingType === "followers" ? "Followers" : "Following"}</h3>
+                        <FollowersFollowing userId={user.id} type={viewingType} />
                     </div>
-                )}
+                </div>
+            )}
 
                 {/* CryptoTip Modal */}
                 {showTipModal && (
-                    <div className="modal-overlay" onClick={toggleTipModal}>
-                        <div className="modal-content crypto-tip-modal" onClick={(e) => e.stopPropagation()}>
-                            <button className="close-btn" onClick={toggleTipModal}>X</button>
-                            <CryptoTip
-                                recipientId={user.id}
-                                recipientWallet={user.walletAddress}
-                                connectedWallet={wallet.publicKey?.toString()} // ✅ Pass connected wallet
-                                isWalletConnected={wallet.connected} // ✅ Pass connection status
-                                onTipSuccess={(message) => {
-                                    alert(message);
-                                    toggleTipModal(); // ✅ Close modal on success
-                                }}
-                            />
-                        </div>
+                <div className="modal-overlay" onClick={(e) => { e.stopPropagation(); toggleTipModal(); }}>
+                    <div className="modal-content crypto-tip-modal" onClick={(e) => e.stopPropagation()}>
+                    <button className="close-btn" onClick={toggleTipModal}>X</button>
+                    <CryptoTip
+                            recipientId={user.id}
+                            recipientWallet={user.walletAddress}
+                            currentUser={currentUser}
+                            onTipSuccess={(message) => {
+                                alert(message);
+                                toggleTipModal();
+                            }}
+                        />
                     </div>
-                )}
+                </div>
+            )}
 
                 {/* Message Modal */}
                 {isMessageModalOpen && (
-                    <div className="modal-overlay" onClick={toggleMessageModal}>
-                        <div className="modal-content message-modal" onClick={(e) => e.stopPropagation()}>
-                            <button className="close-btn" onClick={toggleMessageModal}>X</button>
-                            <h3 className="message-header">Send a Message to <span>{user.username}</span></h3>
-                            <form className="message-form" onSubmit={(e) => e.preventDefault()}>
-                                <textarea placeholder="Write your message..." className="message-input" rows="4"></textarea>
-                                {/* <input type="text" className="crypto-tip-input" placeholder="Crypto Tip (optional)" /> */}
-                                <button type="submit" className="send-message-btn">Send</button>
-                            </form>
-                        </div>
+                <div className="modal-overlay" onClick={(e) => { e.stopPropagation(); toggleMessageModal(); }}>
+                    <div className="modal-content message-modal" onClick={(e) => e.stopPropagation()}>
+                    <button className="close-btn" onClick={toggleMessageModal}>X</button>
+                    <h3 className="message-header">Send a Message to <span>{user.username}</span></h3>
+                        <form className="message-form" onSubmit={(e) => e.preventDefault()}>
+                            <textarea placeholder="Write your message..." className="message-input" rows="4"></textarea>
+                            <button type="submit" className="send-message-btn">Send</button>
+                        </form>
                     </div>
+                </div>
                 )}
         </div>
     );

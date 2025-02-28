@@ -1,32 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import PropTypes from "prop-types";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { api } from "@/api/apiConfig";
 import { Connection, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "@/css/components/Crypto_components/CryptoTip.css";
 
-const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess, connectedWallet, isWalletConnected }) => {
+const CryptoTip = ({ recipientId, recipientWallet, currentUser, onTipSuccess, connectedWallet, toggleTipModal, isWalletConnected }) => {
     const wallet = useWallet();
     const [tipAmount, setTipAmount] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [message, setMessage] = useState("");
     const [tipMessage, setTipMessage] = useState("");
 
     const handleSendTip = async (e) => {
         e.preventDefault();
 
         if (!wallet.connected || !wallet.publicKey) {
-            setMessage("⚠️ Please connect your wallet first.");
+            toast.error("⚠️ Please connect your wallet first.", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "dark",
+            });
             return;
         }
 
         const amount = parseFloat(tipAmount);
         if (amount <= 0 || isNaN(amount)) {
-            setMessage("⚠️ Please enter a valid tip amount.");
+            toast.error("⚠️ Please enter a valid tip amount.", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "dark",
+            });
             return;
         }
 
         setIsLoading(true);
-        setMessage("");
 
         try {
             const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/dhWoE-s3HVNfalBWpWnzRIWfyJIqTamF");
@@ -36,30 +45,51 @@ const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess, connectedWallet
                 SystemProgram.transfer({
                     fromPubkey: wallet.publicKey,
                     toPubkey: recipientPublicKey,
-                    lamports: amount * 1e9, // Convert SOL to lamports
+                    lamports: amount * 1e9,
                 })
             );
 
             const signature = await wallet.sendTransaction(transaction, connection);
-            await connection.confirmTransaction(signature, "processed");
+            console.log("Transaction Signature:", signature);
 
-            onTipSuccess(`🎉 Successfully sent ${amount} SOL to ${recipientWallet}!`);
-            setMessage(`🎉 Successfully sent ${amount} SOL!`);
-            setTipAmount("");
-            setTipMessage("");
+            // ✅ Send notification to recipient
+            await api.post("/notifications", {
+                type: "transaction",
+                actorId: currentUser.id, // Sender ID
+                userId: recipientId, // Recipient ID
+                amount: amount,
+                entityId: signature, // Transaction signature as entity ID
+                message: `🎉 You received a tip of ${amount} SOL!`,
+            });
+
+            setTimeout(() => {
+                setIsLoading(false);
+                toast.success(`🎉 Successfully sent ${tipAmount} SOL to ${recipientWallet}!`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+                setTipAmount("");
+                setTipMessage("");
+                toggleTipModal(false);
+            }, 1000);
+
         } catch (error) {
             console.error("Error sending tip:", error);
-            setMessage("⚠️ Failed to send the tip. Please try again.");
-        } finally {
+            toast.error("⚠️ Failed to send the tip. Please try again.", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "dark",
+            });
             setIsLoading(false);
         }
     };
 
     return (
-            <div className="crypto-tip-container">
+        <div className="crypto-tip-container">
+            <ToastContainer />
             <h3 className="crypto-tip-heading">Send a Tip</h3>
 
-            {/* ✅ Wallet Connection Message */}
             {isWalletConnected ? (
                 <p className="wallet-connected-message">✅ Connected to: {connectedWallet}</p>
             ) : (
@@ -88,7 +118,6 @@ const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess, connectedWallet
                     {isLoading ? "Sending..." : "Send Tip"}
                 </button>
             </form>
-            {message && <p className={message.includes("🎉") ? "success-message" : "error-message"}>{message}</p>}
         </div>
     );
 };
@@ -96,9 +125,11 @@ const CryptoTip = ({ recipientId, recipientWallet, onTipSuccess, connectedWallet
 CryptoTip.propTypes = {
     recipientId: PropTypes.number.isRequired,
     recipientWallet: PropTypes.string.isRequired,
-    connectedWallet: PropTypes.string, // Show connected wallet
-    isWalletConnected: PropTypes.bool, // Ensure wallet connection is passed
+    connectedWallet: PropTypes.string,
+    isWalletConnected: PropTypes.bool,
     onTipSuccess: PropTypes.func.isRequired,
+    toggleTipModal: PropTypes.func.isRequired,
+    currentUser: PropTypes.object.isRequired,
 };
 
-export default CryptoTip;
+export default memo(CryptoTip);

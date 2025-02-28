@@ -126,7 +126,10 @@ function PostComposer({ onPostCreated }) {
             <input
               type="text"
               value={cryptoTag}
-              onChange={(e) => setCryptoTag(e.target.value)}
+              onChange={(e) => {
+                console.log("Crypto tag input:", e.target.value);
+                setCryptoTag(e.target.value);
+              }}
               placeholder="Add a crypto tag (e.g., SOL)"
               className="crypto-tag-input"
             />

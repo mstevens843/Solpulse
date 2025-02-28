@@ -3,23 +3,35 @@ import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig";
 import "@/css/components/Post_components/CommentSection.css";
 
-function CommentSection({ postId, onNewComment }) {
+function CommentSection({ postId, originalPostId, onNewComment, setPosts }) { // ✅ Pass setPosts for global updates
     const [newComment, setNewComment] = useState("");
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [showCommentOverlay, setShowCommentOverlay] = useState(false);
 
+    const actualPostId = originalPostId || postId; // ✅ Ensure comments go to the original post if retweeted
+
     const handleAddComment = async () => {
-        if (!newComment.trim()) return;
-
+        if (!newComment.trim() || loading) return; // ✅ Prevent duplicate requests
+    
         setLoading(true);
-        setErrorMessage("");
-
+    
         try {
-            const { data } = await api.post("/comments", { postId, content: newComment.trim() });
-            setNewComment(""); // Clear input field
-            onNewComment(data); // Notify parent to update count
+            const { data } = await api.post("/comments", { postId: actualPostId, content: newComment.trim() });
+
+            setErrorMessage(""); // ✅ Clear errors only after success
+            setNewComment(""); // ✅ Reset only on success
+            onNewComment(data);
             setShowCommentOverlay(false);
+
+            // ✅ Update comments count globally in posts
+            setPosts((prevPosts) =>
+                prevPosts.map((p) =>
+                    p.id === actualPostId || p.originalPostId === actualPostId
+                        ? { ...p, comments: (p.comments || 0) + 1 }
+                        : p
+                )
+            );
         } catch (error) {
             console.error("Failed to add comment:", error);
             setErrorMessage("Failed to add comment. Please try again.");
@@ -71,7 +83,7 @@ function CommentSection({ postId, onNewComment }) {
                         >
                             {loading ? "Adding..." : "Add Comment"}
                         </button>
-                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                        {errorMessage && <p className="error-message" aria-live="assertive">{errorMessage}</p>} {/* ✅ Accessibility improvement */}
                     </div>
                 </div>
             )}
@@ -81,7 +93,9 @@ function CommentSection({ postId, onNewComment }) {
 
 CommentSection.propTypes = {
     postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    onNewComment: PropTypes.func.isRequired, // Required callback
+    originalPostId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // ✅ Support for retweets
+    onNewComment: PropTypes.func, // ✅ Ensure function exists
+    setPosts: PropTypes.func, // ✅ Pass setPosts for global state update
 };
 
 export default CommentSection;

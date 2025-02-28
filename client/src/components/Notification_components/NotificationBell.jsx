@@ -5,10 +5,11 @@ import "@/css/components/Notification_components/NotificationBell.css";
 
 const notificationMessages = {
   like: "liked your post",
+  retweet: "reposted your post",
   comment: "commented on your post",
   follow: "started following you",
   message: "sent you a message",
-  transaction: "sent you a tip",
+  transaction: (amount) => `💰 sent you a tip of ${amount} SOL`,
 };
 
 function NotificationBell() {
@@ -61,31 +62,16 @@ function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen]);
 
-//   const markAllAsRead = async () => {
-//     try {
-//       await api.post("/notifications/mark-all-read");
-  
-//       // Remove all notifications from state immediately
-//       setNotifications([]);
-      
-//       // Set unread count to zero
-//       setUnreadCount(0);
-//     } catch (error) {
-//       console.error("Error marking all notifications as read:", error);
-//     }
-//   };
-
-const markAllAsRead = async () => {
+  const markAllAsRead = async () => {
     try {
       // Optimistically update UI first
       setNotifications([]);
       setUnreadCount(0);
-  
+
       const response = await api.put("/notifications/mark-all-read");
-      
+
       // Ensure the unread count from the server is accurate
       setUnreadCount(response.data.unreadCount);
-      
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
     }
@@ -95,7 +81,7 @@ const markAllAsRead = async () => {
   const markNotificationAsRead = async (id) => {
     try {
       document.getElementById(`notification-${id}`).classList.add("removed");
-  
+
       setTimeout(async () => {
         const response = await api.put(`/notifications/${id}/read`);
         setNotifications((prev) => prev.filter((notification) => notification.id !== id));
@@ -105,8 +91,6 @@ const markAllAsRead = async () => {
       console.error("Error marking notification as read:", error);
     }
   };
-  
-  
 
   return (
     <div className="notification-bell" ref={dropdownRef}>
@@ -127,10 +111,10 @@ const markAllAsRead = async () => {
           <div className="notification-header">
             <h4>Notifications</h4>
             <div className="notification-dropdown-footer">
-            <a href="/activity" className="view-all-link">
-              View all notifications
-            </a>
-          </div>
+              <a href="/activity" className="view-all-link">
+                View all notifications
+              </a>
+            </div>
             <button
               onClick={markAllAsRead}
               className="mark-all-read"
@@ -141,27 +125,30 @@ const markAllAsRead = async () => {
           </div>
           {notifications.length > 0 ? (
             <ul className="notification-list">
-              {notifications.map((notification) => (
-                <li
-                  key={notification.id}
-                  id={`notification-${notification.id}`}
-                  className={`notification-item ${notification.isRead ? "read" : "unread"}`}
+            {notifications.map((notification) => (
+              <li
+                key={notification.id}
+                id={`notification-${notification.id}`}
+                className={`notification-item ${notification.isRead ? "read" : "unread"}`}
+              >
+                <div className="notification-content">
+                  <p>
+                    <strong>{notification.actor}</strong>{" "}
+                    {notification.type === "transaction"
+                      ? notificationMessages.transaction(notification.amount)
+                      : notificationMessages[notification.type] || notification.message}
+                  </p>
+                  <span>{new Date(notification.createdAt).toLocaleString()}</span>
+                </div>
+                <button
+                  className="mark-as-read-btn"
+                  onClick={() => markNotificationAsRead(notification.id)}
                 >
-                  <div className="notification-content">
-                    <p>
-                      <strong>{notification.actor}</strong>{" "}
-                      {notificationMessages[notification.type] || notification.message}
-                    </p>
-                    <span>{new Date(notification.createdAt).toLocaleString()}</span>
-                  </div>
-                  <button 
-                    className="mark-as-read-btn"
-                    onClick={() => markNotificationAsRead(notification.id)}
-                  >
-                    Mark as Read
-                  </button>
-                </li>
-              ))}
+                  Mark as Read
+                </button>
+              </li>
+            ))}
+
             </ul>
           ) : (
             <p className="no-notifications">No notifications</p>

@@ -31,7 +31,7 @@ const FollowButton = ({ userId, updateCounts }) => {
         setLoading(true);
         try {
             if (isFollowing) {
-                await api.post(`/users/${userId}/unfollow`);
+                await api.delete(`/users/${userId}/unfollow`);
                 updateCounts(-1);
             } else {
                 await api.post(`/users/${userId}/follow`);

@@ -1,5 +1,5 @@
 const express = require('express');
-const { Post, Comment, User, Like, Retweet } = require('../models/Index');
+const { Post, Comment, User, Like, Retweet, Notification } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
 const { Op } = require('sequelize');
@@ -24,18 +24,19 @@ const upload = multer({ storage });
 const formatPost = (post, currentUserId = null) => ({
   id: post.id || null,
   userId: post.userId || null,
-  
-  // Display "You reposted" if the user reposted the post
+
+  originalUserId: post.isRetweet
+    ? post.originalUserId || post.originalPost?.userId || null
+    : post.userId || null,
+
   author: post.isRetweet
-    ? post.userId === currentUserId
-      ? "You reposted"
-      : post.originalAuthor || post.originalPost?.user?.username || "Unknown"
-    : post.author || post.user?.username || "Unknown",
-  
+    ? post.originalPost?.user?.username || post.originalAuthor || "Unknown"
+    : post.user?.username || post.author || "Unknown",
+
   profilePicture: post.isRetweet
-    ? post.originalProfilePicture || post.originalPost?.user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png"
-    : post.profilePicture || post.user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png",
-  
+    ? post.originalPost?.user?.profilePicture || post.originalProfilePicture || "http://localhost:5001/uploads/default-avatar.png"
+    : post.user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png",
+
   content: post.content || '',
   mediaUrl: post.mediaUrl || null,
   cryptoTag: post.cryptoTag || null,
@@ -43,12 +44,20 @@ const formatPost = (post, currentUserId = null) => ({
   retweets: post.retweets || 0,
   isRetweet: post.isRetweet || false,
   originalPostId: post.originalPostId || null,
-  originalAuthor: post.originalAuthor || post.originalPost?.user?.username || null,
-  originalProfilePicture: post.originalProfilePicture || post.originalPost?.user?.profilePicture || null,
-  retweetedAt: post.retweetedAt || post.createdAt || new Date(),  // Ensure retweetedAt is always populated
+
+  // ✅ Fix: Correctly determine `retweeterName` dynamically
+  retweeterName: post.isRetweet
+    ? post.user?.username || "Unknown"  // Use the `user` field to get the retweeter
+    : null,
+
+  originalAuthor: post.originalPost?.user?.username || post.originalAuthor || null,
+  originalProfilePicture: post.originalPost?.user?.profilePicture || post.originalProfilePicture || null,
+
+  retweetedAt: post.retweetedAt || post.createdAt || new Date(),
   createdAt: post.createdAt || new Date(),
   updatedAt: post.updatedAt || new Date(),
 });
+
 
 router.get('/:id/profile-feed', async (req, res) => {
   try {
@@ -68,10 +77,10 @@ router.get('/:id/profile-feed', async (req, res) => {
           attributes: ['username', 'profilePicture']
         }
       ],
-      order: [['createdAt', 'DESC']],  // Order by newest first
+      order: [['createdAt', 'DESC']],
     });
 
-    // Fetch user's retweets and include original post details
+    // Fetch user's retweets and include both the original post details and the retweeter
     const retweets = await Post.findAll({
       where: { userId, isRetweet: true },
       include: [
@@ -79,13 +88,21 @@ router.get('/:id/profile-feed', async (req, res) => {
           model: Post,
           as: 'originalPost',
           include: [{ model: User, as: 'user', attributes: ['username', 'profilePicture'] }],
+        },
+        {
+          model: User,  //  Fetch retweeter info
+          as: 'user',
+          attributes: ['username', 'profilePicture']
         }
       ],
-      order: [['createdAt', 'DESC']],  // Order by newest first
+      order: [['createdAt', 'DESC']],
     });
 
-    // Format retweets correctly
-    const formattedRetweets = retweets.map((retweet) => formatPost(retweet, userId));
+    //  Ensure retweeterName is included in the response
+    const formattedRetweets = retweets.map((retweet) => ({
+      ...formatPost(retweet, userId),
+      retweeterName: retweet.user?.username || "Unknown" //  Adds correct retweeter name
+    }));
 
     // Format original posts correctly
     const formattedPosts = userPosts.map((post) => formatPost(post, userId));
@@ -120,7 +137,14 @@ router.get('/', async (req, res) => {
       limit: parseInt(limit),
       offset,
       order: [['createdAt', 'DESC']],
-      include: [{ model: User, as: 'user', attributes: ['username', 'profilePicture'] }],
+      include: [
+        { model: User, as: 'user', attributes: ['id', 'username', 'profilePicture'] },
+        { 
+          model: Post, 
+          as: 'originalPost', 
+          include: [{ model: User, as: 'user', attributes: ['id', 'username', 'profilePicture'] }]
+        }
+      ],
     });
 
     const formattedPosts = posts.map(formatPost);
@@ -136,6 +160,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch posts.' });
   }
 });
+
 
 /**
  * @route   GET /api/posts/trending
@@ -229,6 +254,87 @@ router.get('/likes', authMiddleware, async (req, res) => {
 });
 
 
+// Optimized Client-Side Requests
+// Instead of calling /like-status and /retweet-status for every post, we now batch fetch all 
+// liked and retweeted posts at once.
+
+// Batch fetch all liked posts for a user
+router.get("/likes/batch", authMiddleware, async (req, res) => {
+  try {
+      const userId = req.user.id;
+      const likedPosts = await Like.findAll({ 
+          where: { userId }, 
+          attributes: ["postId"] 
+      });
+
+      res.json({ likedPosts: likedPosts.map((like) => like.postId) });
+  } catch (error) {
+      console.error("Error fetching batch like data:", error);
+      res.status(500).json({ error: "Failed to fetch batch like data." });
+  }
+});
+
+// Batch fetch all retweeted posts for a user
+router.get("/retweets/batch", authMiddleware, async (req, res) => {
+  try {
+      const userId = req.user.id;
+      const retweetedPosts = await Retweet.findAll({ 
+          where: { userId }, 
+          attributes: ["postId"] 
+      });
+
+      res.json({ retweetedPosts: retweetedPosts.map((retweet) => retweet.postId) });
+  } catch (error) {
+      console.error("Error fetching batch retweet data:", error);
+      res.status(500).json({ error: "Failed to fetch batch retweet data." });
+  }
+});
+
+
+
+/**
+ * @route   GET /api/posts/:id/like-status
+ * @desc    Check if the authenticated user has liked a specific post
+ * @access  Private
+ *  */
+router.get("/:id/like-status", authMiddleware, async (req, res) => {
+  try {
+      const { id } = req.params;
+      const userId = req.user.id;
+
+      const existingLike = await Like.findOne({
+          where: { postId: id, userId }
+      });
+
+      res.status(200).json({ liked: !!existingLike }); // Returns true if liked, false otherwise
+  } catch (error) {
+      console.error("Error checking like status:", error);
+      res.status(500).json({ error: "Failed to check like status." });
+  }
+});
+
+
+/**
+ * @route   GET /api/posts/:id/retweet-status
+ * @desc    Check if the authenticated user has retweeted a specific post
+ * @access  Private
+ */
+router.get("/:id/retweet-status", authMiddleware, async (req, res) => {
+  try {
+      const { id } = req.params;
+      const userId = req.user.id;
+
+      const existingRetweet = await Post.findOne({
+          where: { userId, isRetweet: true, originalPostId: id }
+      });
+
+      res.status(200).json({ retweeted: !!existingRetweet }); // Returns true if retweeted, false otherwise
+  } catch (error) {
+      console.error("Error checking retweet status:", error);
+      res.status(500).json({ error: "Failed to check retweet status." });
+  }
+});
+
 
 /**
  * @route   GET /api/posts/retweets
@@ -237,37 +343,29 @@ router.get('/likes', authMiddleware, async (req, res) => {
  */
 router.get('/retweets', authMiddleware, async (req, res) => {
   try {
-    // Step 1: Find posts created by the logged-in user (Brad)
-    const userPosts = await Post.findAll({
-      where: { userId: req.user.id },
-      attributes: ['id', 'content'],
-    });
+    const userId = req.user.id; 
 
-    if (!userPosts.length) {
-      return res.status(404).json({ message: 'No posts found for this user.' });
-    }
-
-    // Extract Brad's post IDs
-    const postIds = userPosts.map((post) => post.id);
-
-    // Step 2: Find who retweeted these posts
-    const retweets = await Retweet.findAll({
-      where: { postId: postIds },
+    //  Fetch retweets of the user's posts
+    const retweets = await Post.findAll({
+      where: { 
+        isRetweet: true,
+        originalUserId: userId //  Gets retweets of the user's posts
+      },
       include: [
         {
           model: User,
-          as: 'user',
-          attributes: ['username'],  // Get the user who retweeted the post
+          as: 'user', //  Retweeter info
+          attributes: ['username'],
         },
         {
           model: Post,
-          as: 'post',
+          as: 'originalPost', //  Original post details
           attributes: ['content', 'userId'],
           include: [
             {
               model: User,
               as: 'user',
-              attributes: ['username'],  // Get the original post owner
+              attributes: ['username'],  //  Original post owner
             }
           ],
         },
@@ -279,13 +377,13 @@ router.get('/retweets', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'No retweets found for your posts.' });
     }
 
-    // Step 3: Format the response to show who retweeted Brad's posts
+    //  Format response
     res.status(200).json({
       retweets: retweets.map((retweet) => ({
-        postId: retweet.postId,
-        postOwner: retweet.post.user.username,  // Show post owner's name (Brad)
-        content: retweet.post.content,  // Show post content
-        retweetedBy: retweet.user.username,  // Show user who retweeted the post
+        postId: retweet.originalPostId,
+        postOwner: retweet.originalPost?.user?.username || "Unknown", //  Original post owner
+        content: retweet.originalPost?.content || "No content", //  Original post content
+        retweetedBy: retweet.user?.username || "Unknown", //  Retweeter username
         createdAt: retweet.createdAt,
       })),
     });
@@ -294,6 +392,7 @@ router.get('/retweets', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch retweeted posts.' });
   }
 });
+
 
 
 /**
@@ -306,13 +405,21 @@ router.get('/:id', async (req, res) => {
     const post = await Post.findByPk(req.params.id, {
       include: [
         { model: Comment, as: 'comments' },
-        { model: User, as: 'user', attributes: ['username', 'profilePicture'] },
+        { model: User, as: 'user', attributes: ['id', 'username', 'profilePicture'] },
+        { 
+          model: Post, 
+          as: 'originalPost', 
+          include: [{ model: User, as: 'user', attributes: ['id', 'username', 'profilePicture'] }] 
+        }
       ],
     });
 
     if (!post) return res.status(404).json({ message: 'Post not found.' });
 
-    res.status(200).json({ post: formatPost(post), comments: post.comments || [] });
+    //  Fix: Correctly determine original user (even for retweets)
+    const formattedPost = formatPost(post);
+
+    res.status(200).json({ post: formattedPost, comments: formattedPost.comments || [] });
   } catch (error) {
     console.error('Error fetching post:', error);
     res.status(500).json({ message: 'An error occurred while fetching the post.' });
@@ -354,18 +461,41 @@ router.post('/', authMiddleware, upload.single('media'), async (req, res) => {
  */
 router.post('/:id/like', authMiddleware, async (req, res) => {
   try {
-    const post = await Post.findByPk(req.params.id);
-    if (!post) return res.status(404).json({ message: 'Post not found.' });
+      const { id } = req.params;
+      const userId = req.user.id;
 
-    post.likes += 1;
-    await post.save();
+      const post = await Post.findByPk(id);
+      if (!post) return res.status(404).json({ message: "Post not found." });
 
-    res.status(200).json({ likes: post.likes });
+      // Check if the user already liked this post
+      const existingLike = await Like.findOne({ where: { postId: id, userId } });
+
+      if (existingLike) {
+          await existingLike.destroy();
+          post.likes = Math.max(0, post.likes - 1);
+      } else {
+          await Like.create({ postId: id, userId });
+          post.likes += 1;
+      }
+
+      await post.save();
+
+      // Update all retweeted versions of the post
+      await Post.update(
+          { likes: post.likes },
+          { where: { originalPostId: id, isRetweet: true } }
+      );
+
+      res.status(200).json({ 
+          likes: post.likes, 
+          message: existingLike ? "Like removed" : "Post liked" 
+      });
   } catch (error) {
-    console.error('Error liking post:', error);
-    res.status(500).json({ message: 'An error occurred while liking the post.' });
+      console.error("Error liking/unliking post:", error);
+      res.status(500).json({ message: "An error occurred while liking/unliking the post." });
   }
 });
+
 
 /**
  * @route   POST /api/posts/:id/retweet
@@ -375,31 +505,19 @@ router.post('/:id/like', authMiddleware, async (req, res) => {
 router.post('/:id/retweet', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.id;  // ✅ Retweeter’s ID
+    const retweeterName = req.user.username;  // ✅ Retweeter’s username
 
-    // Check if the post exists
+    // Fetch the original post
     const originalPost = await Post.findByPk(id, {
-      include: [
-        {
-          model: User,
-          as: "user",
-          attributes: ["username", "profilePicture"]
-        },
-        {
-          model: Post,
-          as: "originalPost",
-          include: [{ model: User, as: "user", attributes: ["username", "profilePicture"] }]
-        }
-      ]
+      include: [{ model: User, as: "user", attributes: ["id", "username", "profilePicture"] }]
     });
-    
-    
 
     if (!originalPost) {
       return res.status(404).json({ message: "Post not found." });
     }
 
-    // Check if the user already retweeted the post
+    // Check if the user already retweeted this post
     const existingRetweet = await Post.findOne({
       where: { userId, isRetweet: true, originalPostId: id },
     });
@@ -408,42 +526,55 @@ router.post('/:id/retweet', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: "You have already retweeted this post." });
     }
 
-    const originalAuthor = originalPost.user ? originalPost.user.username : (
-      originalPost.originalPost ? originalPost.originalPost.user.username : "Unknown"
-    );
-    const originalProfilePicture = originalPost.user ? originalPost.user.profilePicture : (
-      originalPost.originalPost ? originalPost.originalPost.user.profilePicture : "/default-avatar.png"
-    );
-    
+    // 🔹 Create the retweet post
     const retweetedPost = await Post.create({
-      userId,
+      userId,  // This is the retweeter
       content: originalPost.content,
       mediaUrl: originalPost.mediaUrl,
       cryptoTag: originalPost.cryptoTag,
       isRetweet: true,
       originalPostId: originalPost.id,
-      originalAuthor, // ✅ Ensures the original author's name is stored
-      originalProfilePicture, // ✅ Stores the correct profile picture
+      originalUserId: originalPost.userId, 
+      originalAuthor: originalPost.user?.username || "Unknown",
+      originalProfilePicture: originalPost.user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png",
     });
-
-// Increment retweet count on the original post
-originalPost.retweets += 1;
-await originalPost.save();
 
     // Increment retweet count on the original post
     originalPost.retweets += 1;
     await originalPost.save();
 
+    // Create notification for the original post owner
+    await Notification.create({
+      type: "retweet",
+      actorId: userId,  // ✅ The user who retweeted
+      userId: originalPost.userId,  //  Correctly set the recipient
+      postId: originalPost.id,
+      message: `${retweeterName} retweeted your post`,
+    });
+    
+
+    // ✅ Fetch the retweet again, now including the retweeter’s username
+    const populatedRetweet = await Post.findByPk(retweetedPost.id, {
+      include: [{ model: User, as: "user", attributes: ["id", "username", "profilePicture"] }]
+    });
+
     res.status(201).json({
       message: "Post retweeted successfully!",
+      likes: originalPost.likes,
       retweets: originalPost.retweets,
-      retweetData: formatPost(retweetedPost), // Return formatted retweet post
+      retweetData: {
+        ...formatPost(populatedRetweet),
+        retweeterName: populatedRetweet.user?.username || "Unknown" // ✅ Finally fixes the issue
+      },
+      comments: 0,
     });
   } catch (error) {
-    console.error("Error retweeting post:", error);
+    console.error("❌ Error retweeting post:", error);
     res.status(500).json({ message: "An error occurred while retweeting the post." });
   }
 });
+
+
 
 
 
@@ -464,5 +595,46 @@ router.delete('/:id', authMiddleware, checkOwnership, async (req, res) => {
     res.status(500).json({ message: 'An error occurred while deleting the post.' });
   }
 });
+
+router.delete('/:id/retweet', authMiddleware, async (req, res) => {
+  try {
+      const { id } = req.params;
+      const userId = req.user.id;
+
+      // 🔹 Find the reposted post by this user
+      const retweetedPost = await Post.findOne({
+          where: { userId, isRetweet: true, originalPostId: id },
+      });
+
+      if (!retweetedPost) {
+          return res.status(404).json({ message: "Retweet not found." });
+      }
+
+      // 🔹 Find the original post to decrement retweet count
+      const originalPost = await Post.findByPk(id);
+      if (originalPost) {
+          originalPost.retweets = Math.max(0, originalPost.retweets - 1);
+          await originalPost.save();
+      }
+
+      // 🔹 Ensure likes on the retweeted post don't persist after deletion
+      await Like.destroy({
+          where: { postId: retweetedPost.id }
+      });
+
+      // 🔹 Delete the retweeted post
+      await retweetedPost.destroy();
+
+      res.status(200).json({ 
+          message: "Retweet removed successfully!", 
+          retweets: originalPost ? originalPost.retweets : 0 
+      });
+  } catch (error) {
+      console.error("Error removing retweet:", error);
+      res.status(500).json({ message: "An error occurred while removing retweet." });
+  }
+});
+
+
 
 module.exports = router;

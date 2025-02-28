@@ -15,7 +15,7 @@ import Home from "@/pages/Home"
 import Post from "@/components/Post_components/Post";
 import Profile from "./pages/Profile";
 import Explore from "./components/Explore";
-import PostCreation from "./pages/PostCreation";
+// import PostCreation from "./pages/PostCreation";
 import SearchResults from "./pages/SearchResults";
 import Settings from "./pages/Settings";
 import Signup from "./pages/Signup";
@@ -83,7 +83,7 @@ function AppContent() {
                     <Route path="/profile/:id" element={<Profile />} />  {/* Correct path */}
                     <Route path="/explore" element={<Explore />} />
                     <Route path="/activity" element={<ActivityPage />} />
-                    <Route path="/post/create" element={<PostCreation />} />
+                    {/* <Route path="/post/create" element={<PostCreation />} /> */}
                     <Route path="/post/:id" element={<Post />} />
                     <Route path="/search" element={<SearchResults />} />
                     <Route path="/signup" element={<Signup />} />

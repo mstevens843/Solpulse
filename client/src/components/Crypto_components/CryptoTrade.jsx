@@ -3,7 +3,7 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { api } from "@/api/apiConfig";
 import CryptoWalletIntegration from "./CryptoWalletIntegration";
 import Loader from "../Loader";
-import "@/css/components/Crypto_components/CryptoTrade.css"; 
+// import "@/css/components/Crypto_components/CryptoTrade.css"; 
 
 function CryptoTrade({ selectedCoin }) {
     const [tradeType, setTradeType] = useState("buy");

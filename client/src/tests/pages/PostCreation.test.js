@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import PostCreation from '../../Archive/PostCreation';
+import PostCreation from '../../pages/PostCreation';
 
 // Mock axios
 jest.mock('axios');
