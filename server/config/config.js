@@ -36,20 +36,18 @@ module.exports = {
     },
   },
   production: {
-    use_env_variable: 'DATABASE_URL', // USE DATABASE_URL DIRECTLY!
-    dialect: 'postgres', // Database dialect (PostgreSQL)
-    logging: false, // Disable logging in production
+    username: 'cryptouser',
+    password: 'FeXfTL8BPgpD99FNTqWLC4FSjDOMmyPA',
+    database: 'solrise_db',
+    host: 'dpg-cv0oa9dumphs739s4h10-a', // INTERNAL HOSTNAME from Render DB settings
+    dialect: 'postgres',
+    logging: false,
     dialectOptions: {
       ssl: {
-        require: true, // Render requires SSL
-        rejectUnauthorized: false, // Allow self-signed certificates
+        require: true,
+        rejectUnauthorized: false,
       },
     },
-    pool: { // Connection pooling
-      max: 10, // Higher max connections for production
-      min: 2, // Maintain minimum connections
-      acquire: 30000,
-      idle: 10000,
-    },
+    pool: { max: 10, min: 2, acquire: 30000, idle: 10000 },
   },
-};
+  }; 
