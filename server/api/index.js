@@ -10,7 +10,6 @@ const messageRoutes = require('./messages'); // Added messages route
 const notificationRoutes = require('./notifications'); // Added notifications route
 const trendingCryptoRoutes = require('./trendingCrypto'); // Added trendingCrypto route
 const searchRoutes = require('./search'); // Added search route
-const testRoutes = require('./test'); // Import the test route
 const jupiterRoutes = require('./jupiter'); 
 
 
@@ -42,7 +41,6 @@ router.use('/trendingCrypto', trendingCryptoRoutes); // Register /trendingCrypto
 console.log('/trendingCrypto route successfully registered');
 
 router.use('/search', searchRoutes); // Added search functionality
-router.use('/test', testRoutes); // Register the test route
 
 // Catch-all route for debugging
 router.use('*', (req, res) => {
