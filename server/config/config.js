@@ -36,10 +36,7 @@ module.exports = {
     },
   },
   production: {
-    username: process.env.DB_USERNAME, // Production database username
-    password: process.env.DB_PASSWORD, // Production database password
-    database: process.env.DB_NAME, // Production database name
-    host: process.env.DB_HOST, // Host address
+    use_env_variable: 'DATABASE_URL', // USE DATABASE_URL DIRECTLY!
     dialect: 'postgres', // Database dialect (PostgreSQL)
     logging: false, // Disable logging in production
     dialectOptions: {
