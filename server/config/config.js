@@ -1,5 +1,3 @@
-
-
 require('dotenv').config(); // Load environment variables
 
 const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'];
@@ -45,7 +43,10 @@ module.exports = {
     dialect: 'postgres', // Database dialect (PostgreSQL)
     logging: false, // Disable logging in production
     dialectOptions: {
-      ssl: false, // Disable SSL for production (if not required)
+      ssl: {
+        require: true, // Render requires SSL
+        rejectUnauthorized: false, // Allow self-signed certificates
+      },
     },
     pool: { // Connection pooling
       max: 10, // Higher max connections for production
@@ -55,17 +56,3 @@ module.exports = {
     },
   },
 };
-
-
-
-
-
-// 1. Logging:
-// Log SQL queries only in the development environment to avoid cluttering logs in production.
-// Update the logging property for the environments:
-// 2. SSL for Production:
-// If your production database requires SSL (e.g., hosted services like Heroku or AWS), add dialectOptions for the production environment:
-// 3. Connection Pooling:
-// Add a pool property to all environments for efficient connection management:
-// 4. Improved Comments and Defaults:
-// Add comments and better descriptions for each section to enhance clarity for team members.
