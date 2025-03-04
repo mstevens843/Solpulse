@@ -14,11 +14,15 @@ try {
     ...config,
     logging: env === 'development' ? console.log : false, // Log only in development
   });
+
+  // Actually test the DB connection here
+  await sequelize.authenticate();
   console.log(`Connected to ${env} database successfully!`);
 } catch (err) {
   console.error('Unable to connect to the database:', err.message);
   process.exit(1); // Exit if unable to connect to the database
 }
+
 
 try {
   // Read model files from the current directory
