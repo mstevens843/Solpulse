@@ -5,11 +5,11 @@ const authRoutes = require('./auth');
 const postRoutes = require('./posts');
 const commentRoutes = require('./comments');
 const userRoutes = require('./users');
-const tradeRoutes = require('./trade'); // Correct import of trade.js
-const messageRoutes = require('./messages'); // Added messages route
-const notificationRoutes = require('./notifications'); // Added notifications route
-const trendingCryptoRoutes = require('./trendingCrypto'); // Added trendingCrypto route
-const searchRoutes = require('./search'); // Added search route
+const tradeRoutes = require('./trade');
+const messageRoutes = require('./messages');
+const notificationRoutes = require('./notifications');
+const trendingCryptoRoutes = require('./trendingCrypto');
+const searchRoutes = require('./search');
 const jupiterRoutes = require('./jupiter'); 
 
 
@@ -23,24 +23,25 @@ const router = express.Router();
 // Log to confirm that routes are being registered
 console.log("Registering routes...");
 
-router.use('/auth', authRoutes); // Authentication and authorization
-router.use('/posts', postRoutes); // Posts (e.g., create, update, fetch)
-router.use('/comments', commentRoutes.router); // Comments and WebSocket logic
+router.use('/auth', authRoutes); 
+router.use('/posts', postRoutes);
+router.use('/comments', commentRoutes.router); 
 console.log(commentRoutes);
-router.use('/users', userRoutes); // User profile and account management
-router.use('/trade', tradeRoutes); // Trading-related routes
+router.use('/users', userRoutes); 
+router.use('/trade', tradeRoutes); 
 router.use('/jupiter', jupiterRoutes); 
 
 // Log when the /trade route is registered
 console.log('/trade route successfully registered');
 console.log('/jupiter route successfully registered');
 
-router.use('/messages', messageRoutes); // Added messages functionality
-router.use('/notifications', notificationRoutes); // Added notifications functionality
-router.use('/trendingCrypto', trendingCryptoRoutes); // Register /trendingCrypto route
+router.use('/messages', messageRoutes); 
+router.use('/notifications', notificationRoutes);
+router.use('/trendingCrypto', trendingCryptoRoutes);
 console.log('/trendingCrypto route successfully registered');
+router.use('/search', searchRoutes); 
 
-router.use('/search', searchRoutes); // Added search functionality
+
 
 // Catch-all route for debugging
 router.use('*', (req, res) => {

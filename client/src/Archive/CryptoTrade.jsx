@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { api } from "@/api/apiConfig";
-import CryptoWalletIntegration from "./CryptoWalletIntegration";
-import Loader from "../Loader";
+import CryptoWalletIntegration from "../components/Crypto_components/CryptoWalletIntegration";
+import Loader from "../components/Loader";
 // import "@/css/components/Crypto_components/CryptoTrade.css"; 
 
 function CryptoTrade({ selectedCoin }) {

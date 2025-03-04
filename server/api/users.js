@@ -1,5 +1,5 @@
 const express = require('express');
-const path = require('path');  // Add this line
+const path = require('path'); 
 const { User, Follower, Post, Notification } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const { param, validationResult } = require('express-validator');

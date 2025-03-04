@@ -35,7 +35,7 @@ function LikeButton({ postId, originalPostId, initialLikes = 0, currentUser, onL
 
             if (onLikeToggle) onLikeToggle(actualPostId, response.data.likes);
 
-            if (setPosts) { // ✅ Only update if `setPosts` is provided
+            if (setPosts) { // Only update if `setPosts` is provided
                 setPosts((prevPosts) =>
                     prevPosts.map((p) =>
                         p.id === actualPostId || p.originalPostId === actualPostId
@@ -75,7 +75,7 @@ LikeButton.propTypes = {
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     }).isRequired,
     onLikeToggle: PropTypes.func, 
-    setPosts: PropTypes.func, // ✅ Now optional with default empty function
+    setPosts: PropTypes.func, // Now optional with default empty function
 };
 
 export default LikeButton;

@@ -1,5 +1,5 @@
 import React from "react";
-import "@/css/components/Loader.css"; // Updated alias for CSS import
+import "@/css/components/Loader.css"; 
 
 function Loader() {
     return (

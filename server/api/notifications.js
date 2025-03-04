@@ -1,5 +1,5 @@
 const express = require('express');
-const { Notification, User, Comment, Message } = require('../models/Index'); // Include Comment and Message model
+const { Notification, User, Comment, Message } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 
@@ -34,7 +34,7 @@ switch (notification.type) {
   case 'transaction':
     message = `${actor.username} sent you ${notification.amount} SOL`;
     break;
-  case 'retweet':  // ✅ Add retweet case
+  case 'retweet':  // Add retweet case
     message = `${actor.username} reposted your post`;
     break;
   default:

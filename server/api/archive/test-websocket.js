@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { validateAndBroadcast } = require("../../utils/websocket");
 
-// Change to /socket instead of /api
 router.post("/test-websocket-event", (req, res) => {
     const { event, data } = req.body;
 

@@ -9,12 +9,12 @@ import RetweetButton from "@/components/Post_components/RetweetButton";
 import CommentSection from "@/components/Post_components/CommentSection";
 import PostModal from "@/components/Post_components/PostModal";
 import socket from "@/socket";
-import { AuthContext } from "@/context/AuthContext"; // ✅ Import AuthContext
+import { AuthContext } from "@/context/AuthContext"; // Import AuthContext
 import "@/css/components/Post_components/Post.css";
 
 function Post({ post, currentUser, onNewComment, setPosts }) {
     const [postComments, setPostComments] = useState(post.comments || []);
-    const { likedPosts, retweetedPosts } = useContext(AuthContext); // ✅ Get batch data from context
+    const { likedPosts, retweetedPosts } = useContext(AuthContext); // Get batch data from context
     const [commentCount, setCommentCount] = useState(0);
     const [isOverlayVisible, setOverlayVisible] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -42,7 +42,7 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
 
 
 
-    // ✅ Fetch batch like/retweet statuses ONCE per user
+    // Fetch batch like/retweet statuses ONCE per user
     // useEffect(() => {
     //     if (!currentUser?.id) return;
 
@@ -90,7 +90,7 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
     const formatDate = (date) =>
         date ? new Date(date).toLocaleString() : "Date not available";
 
-// ✅ Fetch comment count ONCE per post
+// Fetch comment count ONCE per post
 useEffect(() => {
     const fetchCommentCount = async () => {
         if (post.isRetweet && !post.originalPostId) {
@@ -107,7 +107,7 @@ useEffect(() => {
     };
 
     fetchCommentCount();
-}, [postIdToUse]); // ✅ Simplified dependency
+}, [postIdToUse]); // Simplified dependency
 
 
 
@@ -121,10 +121,10 @@ useEffect(() => {
             }
         };
 
-        socket.off("new-comment").on("new-comment", handleNewComment); // 🔹 Ensure only one listener exists
+        socket.off("new-comment").on("new-comment", handleNewComment); // Ensure only one listener exists
 
         return () => {
-            socket.off("new-comment", handleNewComment); // 🔹 Proper cleanup
+            socket.off("new-comment", handleNewComment); // Proper cleanup
         };
     }, [postIdToUse, onNewComment]);
     
@@ -133,7 +133,7 @@ useEffect(() => {
         if (!isOverlayVisible) {  
             try {
                 const response = await api.get(`/comments?postId=${postIdToUse}`);
-                setPostComments(response.data.comments); // ✅ Fetch latest comments
+                setPostComments(response.data.comments); // Fetch latest comments
             } catch (error) {
                 console.error("Failed to fetch comments for modal:", error);
             }
@@ -151,9 +151,9 @@ useEffect(() => {
         setErrorMessage("");
     
         try {
-            const { data } = await api.post("/comments", { postId: postIdToUse, content: newComment.trim() }); // ✅ Fixed postId reference
+            const { data } = await api.post("/comments", { postId: postIdToUse, content: newComment.trim() }); // Fixed postId reference
     
-            // ✅ Ensure comment list updates correctly
+            // Ensure comment list updates correctly
             onNewComment(data);
             setNewComment("");
             setShowCommentOverlay(false);
@@ -165,7 +165,7 @@ useEffect(() => {
         }
     };
 
-        // ✅ Ensure likes update globally
+        // Ensure likes update globally
         const handleLikeToggle = (postId, updatedLikes) => {
             setPosts((prevPosts) =>
                 prevPosts.map((p) =>
@@ -176,7 +176,7 @@ useEffect(() => {
             );
         };
     
-        // ✅ Ensure retweets update globally
+        // Ensure retweets update globally
         const handleRetweetToggle = (postId, isReposting, updatedRetweets, newRetweetData) => {
             setPosts((prevPosts) => {
                 let updatedPosts = prevPosts.map((p) =>
@@ -335,8 +335,8 @@ useEffect(() => {
                         <PostModal 
                             post={post} 
                             onClose={() => setModalOpen(false)} 
-                            likedPosts={likedPosts} // ✅ Pass to modal
-                            retweetedPosts={retweetedPosts} // ✅ Pass to modal
+                            likedPosts={likedPosts} // Pass to modal
+                            retweetedPosts={retweetedPosts} // Pass to modal
                         />
                     )}
                 </div>
@@ -372,7 +372,7 @@ Post.propTypes = {
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     }).isRequired,
     onNewComment: PropTypes.func,
-    setPosts: PropTypes.func, // ✅ Ensures global state updates
+    setPosts: PropTypes.func, // Ensures global state updates
 };
 
 export default Post;

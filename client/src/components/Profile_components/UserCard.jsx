@@ -15,7 +15,7 @@ function UserCard({ user, isInModal, onProfilePictureChange, currentUser }) {
     const [showModal, setShowModal] = useState(false);
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
     const [showTipModal, setShowTipModal] = useState(false);
-    const wallet = useWallet(); // ✅ Define wallet
+    const wallet = useWallet();
     const [viewingType, setViewingType] = useState(""); 
     const navigate = useNavigate();
 

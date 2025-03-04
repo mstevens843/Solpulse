@@ -1,7 +1,7 @@
 const express = require('express');
 const { Wallet } = require('../../models/Index');
-const authMiddleware = require('../../middleware/auth'); // JWT Authentication
-const { getWalletBalance } = require('../../utils/solana'); // SOL utility function
+const authMiddleware = require('../../middleware/auth'); 
+const { getWalletBalance } = require('../../utils/solana'); 
 const router = express.Router();
 
 /**

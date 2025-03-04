@@ -47,8 +47,6 @@ const handleValidationErrors = (errors) => {
     return errors.array().map((err) => ({ field: err.param, message: err.msg }));
 };
 
-// *** Route Definitions in Correct Order ***
-
 
 router.get('/detailed', authMiddleware, async (req, res) => {
     const { page = 1 } = req.query;
@@ -174,10 +172,7 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-/**
- * Add a new comment to a post.
- */
-/**
+/*
  * Add a new comment to a post.
  */
 router.post(
@@ -228,10 +223,10 @@ router.post(
                 isRead: false,
             });
 
-            // ✅ Broadcast the new comment event to WebSocket
+            // Broadcast the new comment event to WebSocket
             handleCommentEvent('new-comment', formattedComment);
 
-            // ✅ Send the correct response to the frontend
+            //  Send the correct response to the frontend
             res.status(201).json({
                 message: "Comment added successfully!",
                 comment: formattedComment,

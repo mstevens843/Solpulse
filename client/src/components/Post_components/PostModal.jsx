@@ -5,16 +5,16 @@ import { api } from "@/api/apiConfig";
 import LikeButton from "@/components/Post_components/LikeButton";
 import RetweetButton from "@/components/Post_components/RetweetButton";
 import CommentSection from "@/components/Post_components/CommentSection";
-import socket from "@/socket"; // ✅ Ensure socket is imported
+import socket from "@/socket";
 import "@/css/components/Post_components/PostModal.css";
 
-function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, setPosts }) { // ✅ Ensure setPosts is passed
+function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, setPosts }) { // Ensure setPosts is passed
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState(post.likes || 0);
   const [retweets, setRetweets] = useState(post.retweets || 0);
   const postIdToUse = post.isRetweet ? post.originalPostId : post.id;
 
-  // ✅ Fetch comments for original posts & retweets
+  // Fetch comments for original posts & retweets
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -28,7 +28,7 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
     fetchComments();
   }, [postIdToUse]);
 
-  // ✅ WebSocket Listener for New Comments
+  // WebSocket Listener for New Comments
   useEffect(() => {
     const handleNewComment = (newComment) => {
       if (newComment.postId === postIdToUse) {
@@ -43,7 +43,7 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
     };
   }, [postIdToUse]);
 
-  // ✅ Ensure likes update globally inside the modal
+  // Ensure likes update globally inside the modal
   const handleLikeToggle = (postId, updatedLikes) => {
     setLikes(updatedLikes);
     setPosts((prevPosts) =>
@@ -55,7 +55,7 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
     );
   };
 
-  // ✅ Ensure retweets update globally inside the modal
+  // Ensure retweets update globally inside the modal
   const handleRetweetToggle = (postId, isReposting, updatedRetweets, newRetweetData) => {
     setRetweets(updatedRetweets);
     setPosts((prevPosts) => {
@@ -66,7 +66,7 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
       );
 
       if (isReposting && newRetweetData) {
-        updatedPosts = [newRetweetData, ...updatedPosts]; // ✅ Add retweet to feed
+        updatedPosts = [newRetweetData, ...updatedPosts]; // Add retweet to feed
       }
 
       return updatedPosts;
@@ -84,23 +84,23 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
           <img src={post.mediaUrl} alt="Post media" className="post-media" />
         )}
 
-        {/* ✅ Updated Like & Retweet Buttons */}
+        {/* Updated Like & Retweet Buttons */}
         <div className="post-actions">
           <LikeButton 
             postId={postIdToUse} 
             initialLikes={likes}
             likedPosts={likedPosts}
             currentUser={currentUser}
-            onLikeToggle={handleLikeToggle} // ✅ Ensure likes sync inside the modal
-            setPosts={setPosts} // ✅ Pass setPosts for global updates
+            onLikeToggle={handleLikeToggle} // Ensure likes sync inside the modal
+            setPosts={setPosts} // Pass setPosts for global updates
           />
           <RetweetButton 
             postId={postIdToUse} 
             initialRetweets={retweets}
             retweetedPosts={retweetedPosts}
             currentUser={currentUser}
-            onRetweetToggle={handleRetweetToggle} // ✅ Ensure retweets sync inside the modal
-            setPosts={setPosts} // ✅ Pass setPosts for global updates
+            onRetweetToggle={handleRetweetToggle} // Ensure retweets sync inside the modal
+            setPosts={setPosts} // Pass setPosts for global updates
           />
         </div>
 
@@ -131,7 +131,7 @@ PostModal.propTypes = {
   currentUser: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   }),
-  setPosts: PropTypes.func.isRequired, // ✅ Ensures updates propagate across state
+  setPosts: PropTypes.func.isRequired, // Ensures updates propagate across state
 };
 
 export default PostModal;

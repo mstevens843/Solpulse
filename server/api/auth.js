@@ -5,7 +5,7 @@ const { check, validationResult } = require('express-validator');
 const { User } = require('../models/Index');
 const validateToken = require('../utils/validateToken');
 const jwt = require('jsonwebtoken');
-const { Op } = require('sequelize'); // import sequelize operators
+const { Op } = require('sequelize'); 
 
 
 // Helper function to generate JWT token

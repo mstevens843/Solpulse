@@ -35,7 +35,7 @@ const JupiterSwap = () => {
           initialSlippageBps: 50,
         },
         onSuccess: ({ txid, swapResult }) => {
-          console.log("✅ Swap Successful:", txid, swapResult);
+          console.log(" Swap Successful:", txid, swapResult);
           alert(`Swap Successful! Check Explorer: https://explorer.solana.com/tx/${txid}?cluster=mainnet-beta`);
         },
         onSwapError: ({ error }) => {
@@ -44,7 +44,7 @@ const JupiterSwap = () => {
         },
       });
     } else {
-      console.error("❌ Jupiter Terminal or Target Container not found.");
+      console.error(" Jupiter Terminal or Target Container not found.");
     }
   };
 

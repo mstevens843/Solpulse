@@ -8,7 +8,7 @@ function SearchBar({ query, setQuery, filters = [] }) {
     const [errorMessage, setErrorMessage] = useState("");
     const [searchSuggestions, setSearchSuggestions] = useState([]);
     const [selectedFilter, setSelectedFilter] = useState(filters[0] || "all");
-    const [isTyping, setIsTyping] = useState(false); // ✅ Track if user is typing
+    const [isTyping, setIsTyping] = useState(false); // Track if user is typing
     const navigate = useNavigate();
 
     // Debounced API call for search suggestions
@@ -41,16 +41,16 @@ function SearchBar({ query, setQuery, filters = [] }) {
             setErrorMessage("Please enter a search term.");
             return;
         }
-        setIsTyping(false); // ✅ Stops suggestions from showing
-        setSearchSuggestions([]); // ✅ Clears suggestions
+        setIsTyping(false); // Stops suggestions from showing
+        setSearchSuggestions([]); // Clears suggestions
         navigate(`/search?query=${encodeURIComponent(query)}&filter=${selectedFilter}`);
     };
 
     const handleSuggestionClick = (suggestion) => {
         const selectedQuery = suggestion.username || suggestion.content;
         setQuery(selectedQuery);
-        setSearchSuggestions([]); // ✅ Clears suggestions immediately
-        setIsTyping(false); // ✅ Stops showing suggestions
+        setSearchSuggestions([]); // Clears suggestions immediately
+        setIsTyping(false); // Stops showing suggestions
         navigate(`/search?query=${encodeURIComponent(selectedQuery)}&filter=${selectedFilter}`);
     };
 
@@ -71,7 +71,7 @@ function SearchBar({ query, setQuery, filters = [] }) {
                         value={query}
                         onChange={(e) => {
                             setQuery(e.target.value);
-                            setIsTyping(true); // ✅ Only show suggestions when typing
+                            setIsTyping(true); // Only show suggestions when typing
                         }}
                         className="search-input"
                     />

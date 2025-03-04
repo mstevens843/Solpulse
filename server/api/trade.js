@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const { check, validationResult } = require('express-validator'); // Validation middleware
+const { check, validationResult } = require('express-validator'); 
 require('dotenv').config();
 
 /**
@@ -54,7 +54,7 @@ router.post(
                 tradeDetails: result.data.trade, // Mock trade details
             });
         } catch (error) {
-            console.error('Error caught:', error); // Debug log
+            console.error('Error caught:', error);
         
             if (error.response) {
                 console.error('Error response received:', error.response.data);

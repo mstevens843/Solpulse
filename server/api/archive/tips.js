@@ -1,7 +1,7 @@
 const express = require('express');
-const { Tip, User } = require('../../models/Index'); // Assuming `User` model exists for including user details
-const authMiddleware = require('../../middleware/auth'); // JWT authentication middleware
-const { check, validationResult } = require('express-validator'); // Validation middleware
+const { Tip, User } = require('../../models/Index');
+const authMiddleware = require('../../middleware/auth');
+const { check, validationResult } = require('express-validator'); 
 const router = express.Router();
 
 /**

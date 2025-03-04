@@ -1,17 +1,17 @@
 import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig"; 
-import { AuthContext } from "@/context/AuthContext"; // ✅ Import AuthContext
+import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import "@/css/components/Post_components/PostButtons.css"; 
 
 function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUser, onRetweetToggle, setPosts }) {
-    const { retweetedPosts, setRetweetedPosts } = useContext(AuthContext); // ✅ Use AuthContext
+    const { retweetedPosts, setRetweetedPosts } = useContext(AuthContext); 
     const [retweetCount, setRetweetCount] = useState(initialRetweets);
     const [loading, setLoading] = useState(false);
 
     const actualPostId = originalPostId || postId;
-    const hasRetweeted = retweetedPosts.has(actualPostId); // ✅ Check batch data
+    const hasRetweeted = retweetedPosts.has(actualPostId); // Check batch data
 
     const handleRetweetToggle = async () => {
         if (loading || !currentUser?.id) {
@@ -22,14 +22,14 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
     
         try {
             if (hasRetweeted) {
-                // ✅ Un-retweet (Remove Retweet)
+                // Un-retweet (Remove Retweet)
                 const response = await api.delete(`/posts/${actualPostId}/retweet`);
                 const updatedRetweets = Math.max(0, response.data.retweets);
     
                 setRetweetCount(updatedRetweets);
                 toast.success("Repost removed successfully!");
     
-                // ✅ Update global context
+                // Update global context
                 setRetweetedPosts((prev) => {
                     const updated = new Set(prev);
                     updated.delete(actualPostId);
@@ -39,7 +39,7 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
 
                 if (onRetweetToggle) onRetweetToggle(actualPostId, false, updatedRetweets);
     
-                // ✅ Update UI after un-retweeting
+                // Update UI after un-retweeting
                 setPosts((prevPosts) =>
                     prevPosts.map((p) =>
                         p.id === actualPostId || p.originalPostId === actualPostId
@@ -48,14 +48,14 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
                     )
                 );
             } else {
-                // ✅ Retweet (New Repost)
+                // Retweet (New Repost)
                 const response = await api.post(`/posts/${actualPostId}/retweet`, { userId: currentUser.id });
                 const newRetweet = response.data.retweetData;
                 const updatedRetweets = newRetweet.retweets;
     
                 setRetweetCount(updatedRetweets);
     
-                // ✅ Update global context
+                // Update global context
                 setRetweetedPosts((prev) => {
                     const updated = new Set(prev);
                     updated.add(actualPostId);
@@ -83,7 +83,7 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
                     });
                 }
 
-                // ✅ Ensure UI correctly updates retweets
+                // Ensure UI correctly updates retweets
                 setPosts((prevPosts) =>
                     prevPosts.map((p) =>
                         p.id === actualPostId || p.originalPostId === actualPostId
@@ -124,8 +124,8 @@ RetweetButton.propTypes = {
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         username: PropTypes.string.isRequired,
     }).isRequired,
-    onRetweetToggle: PropTypes.func, // ✅ Optional function to sync parent state
-    setPosts: PropTypes.func.isRequired, // ✅ Required to propagate UI updates
+    onRetweetToggle: PropTypes.func, // Optional function to sync parent state
+    setPosts: PropTypes.func.isRequired, // Required to propagate UI updates
 };
 
 export default RetweetButton;

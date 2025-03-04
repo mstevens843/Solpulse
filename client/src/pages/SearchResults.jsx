@@ -96,7 +96,7 @@ function SearchResults() {
       <SearchBar
         query={query}
         setQuery={(q) => navigate(`/search?query=${encodeURIComponent(q)}&filter=${filter}`)}
-        onSearch={() => setSearchSuggestions([])} // ✅ Clears suggestions on search
+        onSearch={() => setSearchSuggestions([])} //  Clears suggestions on search
         filters={["all", "posts", "users"]}
       />
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import debounce from "lodash.debounce"; // Import debounce from lodash
+import debounce from "lodash.debounce";
 import { Line } from "react-chartjs-2";
-import "@/css/components/Crypto_components/CryptoTicker.css"; // Updated alias for CSS import
+import "@/css/components/Crypto_components/CryptoTicker.css"; 
 
 const excludedCoins = [
     "usdc",

@@ -4,8 +4,8 @@ module.exports = defineConfig({
   env: {
     SOLANA_NETWORK: process.env.VITE_SOLANA_NETWORK || "mainnet-beta",
     SOLANA_RPC_ENDPOINT: process.env.VITE_SOLANA_RPC_ENDPOINT || "https://api.mainnet-beta.solana.com",
-    CYPRESS_API_BASE_URL: process.env.CYPRESS_API_BASE_URL || "http://localhost:5000/api", // Updated to use the root env variable
-    CYPRESS_WEBSOCKET_URL: process.env.CYPRESS_WEBSOCKET_URL || "ws://localhost:5000", // Updated to use the root env variable
+    CYPRESS_API_BASE_URL: process.env.CYPRESS_API_BASE_URL || "http://localhost:5000/api", 
+    CYPRESS_WEBSOCKET_URL: process.env.CYPRESS_WEBSOCKET_URL || "ws://localhost:5000", 
     GOOGLE_ANALYTICS_ID: process.env.VITE_GOOGLE_ANALYTICS_ID || "",
     CRYPTO_API_KEY: process.env.VITE_CRYPTO_API_KEY || "",
   },

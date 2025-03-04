@@ -19,13 +19,13 @@ module.exports = {
     },
   },
   test: {
-    username: process.env.DB_USERNAME, // Database username for tests
-    password: process.env.DB_PASSWORD, // Database password for tests
-    database: process.env.DB_NAME_TEST, // Test database name
-    host: process.env.DB_HOST, // Host address
-    dialect: 'postgres', // Database dialect (PostgreSQL)
-    logging: false, // Disable logging in tests
-    pool: { // Connection pooling
+    username: process.env.DB_USERNAME, 
+    password: process.env.DB_PASSWORD, 
+    database: process.env.DB_NAME_TEST, 
+    host: process.env.DB_HOST, 
+    dialect: 'postgres', 
+    logging: false, 
+    pool: { 
       max: 5,
       min: 0,
       acquire: 30000,

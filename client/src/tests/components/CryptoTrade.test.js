@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import axios from 'axios';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import CryptoTrade from '../../components/Crypto_components/CryptoTrade';
+import CryptoTrade from '../../Archive/CryptoTrade';
 import Loader from '../../components/Loader';
 
 // Mocking axios

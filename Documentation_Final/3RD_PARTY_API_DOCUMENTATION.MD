@@ -1,32 +1,32 @@
-# 📡 SolPulse API Documentation
+# SolPulse API Documentation
 
-## 📝 Overview
+## Overview
 The SolPulse API provides **secure and efficient endpoints** to support user authentication, social interactions, messaging, notifications, and cryptocurrency-related functionalities. This documentation covers all available endpoints, including user profile management, posts, crypto trading, and wallet integration.
 
-### 📡 Base URL
+### Base URL
 
 *(Replace with your actual deployed API URL)*
 
 ---
 
-## 💱 Jupiter API Trading (trade.js)
+## Jupiter API Trading (trade.js)
 Handles **crypto trading** and **Solana token data** using **Jupiter API**.
 
-### 🔹 **Fetch Token Data**
+### **Fetch Token Data**
 | Method | Endpoint        | Description |
 |--------|--------------|-------------|
 | GET    | `/trade/tokens` | Fetch all tokens on Solana (Jupiter API) |
 | GET    | `/trade/tradable` | Fetch tradable tokens from Jupiter |
 | GET    | `/trade/token/:mintAddress` | Fetch details of a specific token |
 
-### 🔹 **Fetch Swap Quote**
+### **Fetch Swap Quote**
 | Method | Function        | Description |
 |--------|--------------|-------------|
 | `fetchSwapQuote()` | Fetches a swap quote based on selected tokens and amount |
 | `fetchTokenPrice(mintAddress)` | Fetches real-time price for a specific token |
 | `fetchTokenDecimals(mintAddress)` | Fetches token decimals for precision calculations |
 
-### 🔹 **Swap Execution**
+### **Swap Execution**
 | Method | Function        | Description |
 |--------|--------------|-------------|
 | `fetchSwapInstructions()` | Fetches swap instructions from Jupiter |
@@ -40,7 +40,7 @@ Handles **crypto trading** and **Solana token data** using **Jupiter API**.
 5. **Execute Swap** - The **Jupiter API** processes the trade.
 6. **Confirm Transaction** - The swap is confirmed on **Solana Explorer**.
 
-### 🏦 **Wallet & Blockchain Integration**
+### **Wallet & Blockchain Integration**
 | Feature | Description |
 |---------|-------------|
 | **Solana Wallet Adapter** | Users can connect wallets like **Phantom** or **Solflare** |
@@ -52,10 +52,10 @@ Handles **crypto trading** and **Solana token data** using **Jupiter API**.
 
 ---
 
-## 📈 CoinGecko Market Data (trendingCrypto.js)
+## CoinGecko Market Data (trendingCrypto.js)
 Fetches real-time **Solana ecosystem crypto data** using **CoinGecko API**.
 
-### 🔹 **Fetch Market Data**
+### **Fetch Market Data**
 | Method | Endpoint              | Description |
 |--------|----------------------|-------------|
 | GET    | `/trendingCrypto` | Fetch trending cryptocurrencies in the Solana ecosystem |
@@ -65,16 +65,16 @@ Fetches real-time **Solana ecosystem crypto data** using **CoinGecko API**.
 | GET    | `/trendingCrypto/chart/:id` | Fetch market chart data for a specific coin |
 | GET    | `/trendingCrypto/global` | Fetch global cryptocurrency market data |
 
-### 📌 **Trending Coins**
+### **Trending Coins**
 - **Fetches** real-time **Solana ecosystem trending cryptocurrencies** from **CoinGecko**.
 - **Updates** every **few minutes** for market changes.
 - **Filters out stablecoins like USDC** for relevant market tracking.
 
-### 📌 **Gainers & Losers**
+### **Gainers & Losers**
 - **Fetches top 10 gainers & losers** over the last **24 hours**.
 - **Reverse-sorted** for **top performing and worst performing assets**.
 
-### 📌 **NFT Market Data**
+### **NFT Market Data**
 | Method | Endpoint              | Description |
 |--------|----------------------|-------------|
 | GET    | `/trendingCrypto/nfts` | Fetch trending **Solana NFTs** |
@@ -83,17 +83,17 @@ Fetches real-time **Solana ecosystem crypto data** using **CoinGecko API**.
 - **Top 10 NFTs by floor price movement**.
 - **Includes image, contract address, floor price, and sales volume**.
 
-### 📌 **Market Chart Data**
+### **Market Chart Data**
 - **Fetches 7-day price chart for any token**.
 - **Displayed using Chart.js** in the front-end.
 
-### 📌 **Global Cryptocurrency Market Share**
+### **Global Cryptocurrency Market Share**
 - **Doughnut chart** visualizing:
   - **Bitcoin dominance**.
   - **Ethereum dominance**.
   - **Other cryptocurrencies combined**.
 
-### 📌 **Search Functionality**
+### **Search Functionality**
 | Method | Endpoint                | Description |
 |--------|------------------------|-------------|
 | GET    | `/trendingCrypto/search?query=<search-term>` | Search for a coin or NFT |
@@ -103,26 +103,26 @@ Fetches real-time **Solana ecosystem crypto data** using **CoinGecko API**.
 - **Returns real-time market cap, price, and trading volume.**
 - **Search debounced to avoid excessive API calls.**
 
-### 📌 **External API Used**
+### **External API Used**
 - **CoinGecko API** - Provides real-time crypto market data, trending assets, and NFT information.
 
 ---
 
-## 🚀 Deployment & Testing
+## Deployment & Testing
 - **Base URL:** _[Add your API URL]_  
 - **Authentication:** JWT-based authentication required for most routes.  
 - **API Keys:** API integrations use **CoinGecko, Jupiter, and DexScreener**.  
 
-📌 **For additional API details, refer to the backend code documentation.**
+**For additional API details, refer to the backend code documentation.**
 
 ---
 
-## 📩 Need Help?
+## Need Help?
 For any questions or API access, contact **[Your Name or Email]**.
 
 ---
 
-### ✅ Notes:
+### Notes:
 - **Integrated the full CoinGecko API market tracking.**
 - **Documented NFT data, market dominance, and search.**
 - **Added trending gainers, losers, and top 10 cryptocurrencies.**

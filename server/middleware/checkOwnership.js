@@ -1,4 +1,4 @@
-const { Post, Comment } = require('../models/Index'); // Import both models
+const { Post, Comment } = require('../models/Index');
 
 const checkOwnership = async (req, res, next) => {
     try {

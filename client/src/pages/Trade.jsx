@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import CryptoTrade from "@/components/Crypto_components/CryptoTrade";
 import TokenModal from "@/components/Crypto_components/TokenModal";
 import CryptoWallet from "@/components/Crypto_components/CryptoWallet";
 import { fetchTokenInfo, fetchTokenInfoByMint, fetchWalletTokens, fetchTokenPrice, fetchTokenDecimals } from "@/utils/tokenApi";
@@ -18,7 +17,6 @@ function Trade() {
     const [buyingCoin, setBuyingCoin] = useState(null);
     const [sellAmount, setSellAmount] = useState("");
     const [sellingCoin, setSellingCoin] = useState(null);
-    // const [buyAmount, setBuyAmount] = useState("");
     const [walletTokens, setWalletTokens] = useState([]);
     const [loading, setLoading] = useState(false);
     const [sellDropdownVisible, setSellDropdownVisible] = useState(false);
@@ -51,7 +49,7 @@ function Trade() {
             return;
         }
     
-        console.log("🟢 Wallet connected, fetching tokens...");
+        console.log(" Wallet connected, fetching tokens...");
         fetchWalletTokens(wallet.publicKey, setWalletTokens, walletTokensFetched, setWalletTokensFetched);
     }, [wallet.connected, wallet.publicKey]); 
     
@@ -63,7 +61,7 @@ function Trade() {
         
         const outputDecimals = quote?.outputDecimals ?? buyingCoin?.decimals ?? 5;
         
-        console.log(`🧐 Computing Buy Amount: outAmount=${quote.outAmount}, outputDecimals=${outputDecimals}`);
+        console.log(` Computing Buy Amount: outAmount=${quote.outAmount}, outputDecimals=${outputDecimals}`);
     
         return (quote.outAmount / 10 ** outputDecimals).toFixed(outputDecimals);
     }, [quote, buyingCoin]);
@@ -73,7 +71,7 @@ function Trade() {
         
         const inputDecimals = quote?.inputDecimals ?? selectedCoin?.decimals ?? 5;
         
-        console.log(`🧐 Computing Sell Amount: inAmount=${quote.inAmount}, inputDecimals=${inputDecimals}`);
+        console.log(` Computing Sell Amount: inAmount=${quote.inAmount}, inputDecimals=${inputDecimals}`);
     
         return (quote.inAmount / 10 ** inputDecimals).toFixed(inputDecimals);
     }, [quote, selectedCoin]); // Added selectedCoin to dependency array
@@ -97,7 +95,7 @@ function Trade() {
             }
         }
     
-        // ✅ Fetch price and decimals dynamically
+        // Fetch price and decimals dynamically
         const [tokenPrice, tokenDecimals] = await Promise.all([
             fetchTokenPrice(token.mint),
             fetchTokenDecimals(token.mint),
@@ -167,7 +165,7 @@ function Trade() {
             // Convert to atomic value (Jupiter expects raw integer values)
             const amountInAtomic = Math.floor(Number(sellAmount) * 10 ** inputDecimals);
     
-            console.log(`🔹 API Request: inputMint=${selectedCoin.mint}, outputMint=${buyingCoin.mint}, amount=${amountInAtomic}`);
+            console.log(`API Request: inputMint=${selectedCoin.mint}, outputMint=${buyingCoin.mint}, amount=${amountInAtomic}`);
     
             const response = await fetch(
                 `https://api.jup.ag/swap/v1/quote?inputMint=${selectedCoin.mint}&outputMint=${buyingCoin.mint}&amount=${amountInAtomic}&slippageBps=50&swapMode=ExactIn`
@@ -176,21 +174,21 @@ function Trade() {
             if (!response.ok) throw new Error("Failed to fetch swap quote");
     
             const data = await response.json();
-            console.log("🔹 Swap Quote Response:", data);
+            console.log("Swap Quote Response:", data);
     
-            // ✅ Fix: Convert `outAmount` to a number before adjusting decimals
+            // Fix: Convert `outAmount` to a number before adjusting decimals
             const parsedOutAmount = Number(data.outAmount);
-            console.log(`🔹 Parsed Output Amount: ${parsedOutAmount} (Divided by ${10 ** outputDecimals})`);
+            console.log(`Parsed Output Amount: ${parsedOutAmount} (Divided by ${10 ** outputDecimals})`);
     
             setQuote({
                 ...data,
-                outAmount: parsedOutAmount, // ✅ Keep it as a number before formatting later
+                outAmount: parsedOutAmount, // Keep it as a number before formatting later
                 inputDecimals,
-                outputDecimals, // ✅ Store decimals for later
+                outputDecimals, // Store decimals for later
             });
     
         } catch (error) {
-            console.error("🚨 Failed to fetch swap quote:", error);
+            console.error("Failed to fetch swap quote:", error);
             alert("⚠️ Error fetching swap quote. Please check your network and try again.");
         } finally {
             setLoadingQuote(false);
@@ -202,7 +200,7 @@ function Trade() {
 
     useEffect(() => {
         if (quote) {
-            console.log(`🔹 Quote Output Amount (Atomic): ${quote.outAmount}`);
+            console.log(`Quote Output Amount (Atomic): ${quote.outAmount}`);
         }
     }, [quote]);
 
@@ -211,12 +209,12 @@ function Trade() {
     // 2️ Fetch Swap Instructions from Jupiter
     const fetchSwapInstructions = async () => {
         if (!wallet.publicKey || !quote) {
-            console.warn("⚠️ Missing required parameters for swap instructions.");
+            console.warn("Missing required parameters for swap instructions.");
             return;
         }
     
         try {
-            console.log("🛠 Fetching swap instructions...");
+            console.log("Fetching swap instructions...");
     
             // Ensure numeric fields are correctly formatted as strings
             const quoteResponse = {
@@ -245,7 +243,7 @@ function Trade() {
                 dynamicComputeUnitLimit: true,
                 skipUserAccountsRpcCalls: false,
                 dynamicSlippage: true,
-                quoteResponse, // ✅ Properly formatted quoteResponse object
+                quoteResponse, // Properly formatted quoteResponse object
             };
     
             // Only add destinationTokenAccount if it's not null or undefined
@@ -253,7 +251,7 @@ function Trade() {
                 bodyPayload.destinationTokenAccount = quote.destinationTokenAccount;
             }
     
-            console.log("🔹 Request Payload for Swap Instructions:", JSON.stringify(bodyPayload, null, 2));
+            console.log("Request Payload for Swap Instructions:", JSON.stringify(bodyPayload, null, 2));
     
             const instructionResponse = await fetch("https://api.jup.ag/swap/v1/swap-instructions", {
                 method: "POST",
@@ -267,11 +265,11 @@ function Trade() {
             }
     
             const instructions = await instructionResponse.json();
-            console.log("✅ Swap Instructions Received:", instructions);
+            console.log("Swap Instructions Received:", instructions);
     
             return instructions;
         } catch (error) {
-            console.error("🚨 Failed to fetch swap instructions:", error);
+            console.error("Failed to fetch swap instructions:", error);
             alert("⚠️ Unable to fetch swap instructions. Please check your network and try again.");
         }
     };
@@ -288,7 +286,7 @@ function Trade() {
 // 3️ Execute Swap Transaction
 const executeSwap = async () => {
     if (!wallet.publicKey || !quote) {
-        alert("⚠️ Invalid swap details. Please check your selections.");
+        alert("Invalid swap details. Please check your selections.");
         return;
     }
 
@@ -326,7 +324,7 @@ const executeSwap = async () => {
             },
         };
 
-        console.log("🔹 Request Payload for Swap:", JSON.stringify(bodyPayload, null, 2));
+        console.log("Request Payload for Swap:", JSON.stringify(bodyPayload, null, 2));
 
         //  Send the swap request to Jupiter
         const swapResponse = await fetch("https://api.jup.ag/swap/v1/swap", {
@@ -359,13 +357,13 @@ const executeSwap = async () => {
         // Sign transaction
         const signedTransaction = await wallet.signTransaction(transaction);
 
-        // 🔥 Serialize the transaction before sending
+        // Serialize the transaction before sending
         const serializedTransaction = signedTransaction.serialize();
 
-        // 🔥 Send the signed transaction with retry logic
+        // Send the signed transaction with retry logic
         const signature = await fetchWithBackoff(connection.sendRawTransaction.bind(connection), [serializedTransaction]);
 
-        console.log("🚀 Direct Signature:", signature);
+        console.log("Direct Signature:", signature);
 
 
         // Ensure it's a valid Base58 string
@@ -373,16 +371,16 @@ const executeSwap = async () => {
             throw new Error(`Invalid signature: ${JSON.stringify(signature)}`);
         }
 
-        // ✅ Confirm Transaction
+        // Confirm Transaction
         await connection.confirmTransaction(
             { signature, lastValidBlockHeight },
             "processed"
         );
 
-        console.log("✅ Swap Successful:", `https://explorer.solana.com/tx/${signature}?cluster=mainnet-beta`);
+        console.log("Swap Successful:", `https://explorer.solana.com/tx/${signature}?cluster=mainnet-beta`);
         alert(`Swap Successful! Check Explorer: https://explorer.solana.com/tx/${signature}?cluster=mainnet-beta`);
     } catch (error) {
-        console.error("🚨 Swap failed:", error);
+        console.error("Swap failed:", error);
         alert("⚠️ Swap failed. Please check your connection and try again.");
     } finally {
         setIsSwapping(false);
@@ -420,8 +418,8 @@ const executeSwap = async () => {
                 <button
                     className="coin-select-button"
                     onClick={() => {
-                        console.log("🟢 Opening TokenModal for: sell");
-                        console.log("🔍 Wallet Tokens Passed to Modal:", walletTokens);
+                        console.log("Opening TokenModal for: sell");
+                        console.log("Wallet Tokens Passed to Modal:", walletTokens);
                         setModalType("sell");
                         setIsModalOpen(true);
                     }}
@@ -473,8 +471,8 @@ const executeSwap = async () => {
                     <button
                         className="coin-select-button"
                         onClick={() => {
-                            console.log("🟢 Opening TokenModal for: buy");
-                            console.log("🔍 Wallet Tokens Passed to Modal:", walletTokens);
+                            console.log("Opening TokenModal for: buy");
+                            console.log("Wallet Tokens Passed to Modal:", walletTokens);
                             setModalType("buy");
                             setIsModalOpen(true);
                         }}
