@@ -5,7 +5,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement,} from "chart.js";
 import { api } from "@/api/apiConfig";
 import debounce from "lodash.debounce"; 
-import CryptoTrade from "@/components/Crypto_components/CryptoTrade"; 
 import Loader from "@/components/Loader";
 import "@/css/pages/TrendingCrypto.css";
 
