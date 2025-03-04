@@ -2,9 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.sequelize.query(`
-      ALTER TYPE "enum_Notifications_type" ADD VALUE 'message';
-    `);
+
   },
 
   async down(queryInterface, Sequelize) {

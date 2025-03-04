@@ -47,8 +47,3 @@ module.exports = {
     `);
   },
 };
-solrise_db=> SELECT * FROM "Notifications";
- id | userId | actorId | type | message | amount | entityId | entityType | isRead | createdAt | updatedAt | deletedAt 
-----+--------+---------+------+---------+--------+----------+------------+--------+-----------+-----------+-----------
-(0 rows)
-

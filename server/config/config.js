@@ -39,7 +39,7 @@ module.exports = {
     username: 'cryptouser',
     password: 'FeXfTL8BPgpD99FNTqWLC4FSjDOMmyPA',
     database: 'solrise_db',
-    host: 'dpg-cv0oa9dumphs739s4h10-a', // INTERNAL HOSTNAME from Render DB settings
+    host: 'dpg-cv0oa9dumphs739s4h10-a.oregon-postgres.render.com',
     dialect: 'postgres',
     logging: false,
     dialectOptions: {

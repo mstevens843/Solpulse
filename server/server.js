@@ -1,5 +1,4 @@
-
-require('dotenv').config(); // Load environment variables at the very top
+require('dotenv').config();
 const http = require('http');
 const { Server } = require('socket.io');
 const sequelize = require('./models/Index'); // Sequelize connection
@@ -7,10 +6,6 @@ const app = require('./app'); // Express app configuration
 const commentRoutes = require('./api/comments'); // Comment routes for WebSocket setup
 const { setSocket } = require('./api/comments');
 const { allowedOrigins } = require('./config/config'); // Centralized allowed origins from config.js
-
-
-
-
 
 // Create HTTP server
 const server = http.createServer(app);
