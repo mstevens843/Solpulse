@@ -1,28 +1,24 @@
-# .gitignore for Node/Express Back-End
-
-# Dependency directory
+# Dependencies and build files
 node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+debug.log
 
 # Local environment variables
 .env
+.env.local
+.env.development
+.env.production
+.env.testing
 
-# Logs
-*.log
-logs/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Database files
+/db.sqlite
+/db.sqlite-journal
+/sequelize-meta.json
 
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# IDE and editor folders
-.vscode/
-.idea/
-
-# Miscellaneous
-*.lock
-.DS_Store
+# Misc
+/.vscode/
+/.idea/
+/coverage/

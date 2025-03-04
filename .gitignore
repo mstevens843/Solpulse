@@ -22,3 +22,4 @@ debug.log
 /.vscode/
 /.idea/
 /coverage/
+.env.local

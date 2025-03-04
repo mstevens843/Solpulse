@@ -3,7 +3,6 @@
 This document provides an overview of how authentication is implemented in this API, including details on JWT-based authentication, user registration, login, logout, protected routes, and ownership checks.
 
 ---
-
 ## Table of Contents
 
 1. [Overview](#overview)  
