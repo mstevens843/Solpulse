@@ -9,7 +9,7 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adap
 import { AuthProvider } from "@/context/AuthContext"; // Auth Context
 import socket from "./socket"; // WebSocket instance
 
-import NavBar from "@/components/Navbar";
+import NavBar from "@/components/NavBar";
 import LandingPage from "./pages/LandingPage";
 import Home from "@/pages/Home"
 import Post from "@/components/Post_components/Post";
