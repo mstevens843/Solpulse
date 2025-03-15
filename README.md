@@ -1,5 +1,7 @@
 # SolPulse — Main Project Overview
 
+**Live App:** [Visit SolPulse](https://solpulse-client.onrender.com)
+
 Welcome to **SolPulse**, a social-driven platform built on Solana that enables users to post, comment, like, and retweet crypto-related content, all while interfacing with Solana-based functionalities. This README provides a high-level overview of the project, its architecture, and how to get started. For more specific guides (authentication, API references, deployment, etc.), see the additional documentation linked below.
 
 ---
