@@ -1,3 +1,19 @@
+/**
+ * Post Component
+ *
+ * This component represents an individual post in the feed.
+ * - Displays post details (author, content, media, crypto tags).
+ * - Supports interactions: liking, retweeting, and commenting.
+ * - Handles WebSocket events for real-time updates.
+ * - Uses batch API calls to optimize fetching like/retweet/comment counts.
+ *
+ * Features:
+ * - **Handles retweets** (shows original post and retweeter details).
+ * - **Real-time updates** via WebSocket (`socket.on("new-comment")`).
+ * - **Optimized API calls**: avoids excessive requests by using batch fetching.
+ */
+
+
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
@@ -15,7 +31,7 @@ import "@/css/components/Post_components/Post.css";
 function Post({ post, currentUser, onNewComment, setPosts }) {
     const [postComments, setPostComments] = useState(post.comments || []);
     const { likedPosts, retweetedPosts } = useContext(AuthContext); // Get batch data from context
-    const [commentCount, setCommentCount] = useState(0);
+    const [commentCount, setCommentCount] = useState(post.commentCount || 0); // ✅ use prop if available
     const [isOverlayVisible, setOverlayVisible] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
@@ -25,7 +41,7 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
 
 
 
-    // 🔹 Ensure likes & retweets sync between the original post and retweets
+    //  Ensure likes & retweets sync between the original post and retweets
     const isRetweet = post.isRetweet;
     const postIdToUse = isRetweet ? post.originalPostId : post.id;
     const retweeterName = isRetweet ? post.retweeterName || post.user?.username : null;
@@ -90,24 +106,6 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
     const formatDate = (date) =>
         date ? new Date(date).toLocaleString() : "Date not available";
 
-// Fetch comment count ONCE per post
-useEffect(() => {
-    const fetchCommentCount = async () => {
-        if (post.isRetweet && !post.originalPostId) {
-            console.error("Repost is missing originalPostId");
-            return;
-        }
-
-        try {
-            const response = await api.get(`/comments/count?postId=${postIdToUse}`);
-            setCommentCount(response.data.count);
-        } catch (error) {
-            console.error("Failed to fetch comment count:", error);
-        }
-    };
-
-    fetchCommentCount();
-}, [postIdToUse]); // Simplified dependency
 
 
 
@@ -144,6 +142,8 @@ useEffect(() => {
         setOverlayVisible(!isOverlayVisible);
     };
     
+
+    // Listens for new comments via WebSocket and updates the UI.
     const handleAddComment = async () => {
         if (!newComment.trim()) return;
     
@@ -154,7 +154,7 @@ useEffect(() => {
             const { data } = await api.post("/comments", { postId: postIdToUse, content: newComment.trim() }); // Fixed postId reference
     
             // Ensure comment list updates correctly
-            onNewComment(data);
+            onNewComment(data.comment); // 👈 ensures avatar + author included
             setNewComment("");
             setShowCommentOverlay(false);
         } catch (error) {
@@ -193,6 +193,8 @@ useEffect(() => {
             });
         };
 
+
+    // Deletes a post with a fade-out effect before removal.
     const handleDeletePost = async () => {
         setIsDeleting(true);
 
@@ -254,7 +256,7 @@ useEffect(() => {
     
 <div className="post-content-wrapper">
                 <img
-                    src={`${postProfilePicture}?timestamp=${new Date().getTime()}`}
+                    src={postProfilePicture}
                     alt={`${postAuthor}'s profile`}
                     className="post-profile-picture"
                 />
@@ -322,7 +324,12 @@ useEffect(() => {
                             onRetweetToggle={handleRetweetToggle}
                             setPosts={setPosts}
                         />
-                        <CommentSection postId={postIdToUse} onNewComment={onNewComment} />
+                        <CommentSection
+                            postId={postIdToUse}
+                            originalPostId={post.originalPostId}
+                            onNewComment={onNewComment || (() => {})}
+                            setPosts={setPosts}
+                        />
                     </div>
     
                     <div className="view-comments-link">
@@ -376,3 +383,11 @@ Post.propTypes = {
 };
 
 export default Post;
+
+
+/**
+ * Potential Improvements:
+ * 1. **Lazy Loading for Images/Videos** - Improve performance for large media files.
+ * 2. **Better Error Handling** - Show detailed error messages on UI.
+ * 3. **Enhance WebSocket Handling** - Add animations when new comments arrive.
+ */

@@ -1,3 +1,18 @@
+/**
+ * This file is responsible for rendering the Community Feed,
+ * where users can view, create, and interact with posts.
+ * 
+ * Features:
+ * - Fetches posts from the API with pagination and filtering.
+ * - Implements infinite scrolling using the Intersection Observer API.
+ * - Provides a PostComposer for creating new posts.
+ * - Uses FeedFilter for sorting and filtering posts.
+ * - Handles loading and error states gracefully.
+ */
+
+
+
+
 import React, { useState, useEffect, useRef, useContext } from "react";
 import PropTypes from "prop-types";
 import Post from "@/components/Post_components/Post";
@@ -7,115 +22,200 @@ import { api } from "@/api/apiConfig";
 import { AuthContext } from "@/context/AuthContext";
 import "@/css/components/Post_components/Feed.css";
 
-
 function Feed({ currentUser }) {
-    const [posts, setPosts] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [filter, setFilter] = useState("all"); // Added filter state
-    const observerRef = useRef(null);
+  const [posts, setPosts] = useState([]);
+  const [postIds, setPostIds] = useState(new Set()); // ✅ #2 Track unique post IDs
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [filter, setFilter] = useState("all");
+  const observerRef = useRef(null);
+  const debounceTimeout = useRef(null); // ✅ #1 debounce reference
 
 
-    // Fetch posts from API with filter and pagination
-    const fetchPosts = async () => {
-        setLoading(true);
-        setError(null);
+  const buildCountsMap = (counts) => {
+    const map = {};
+    if (Array.isArray(counts)) {
+      counts.forEach(({ postId, count }) => (map[postId] = count));
+    } else if (counts && typeof counts === "object") {
+      Object.entries(counts).forEach(([postId, count]) => {
+        map[parseInt(postId)] = count;
+      });
+    } else {
+      console.warn("⚠️ Warning: Missing or invalid counts in response", counts);
+    }
+    return map;
+  };
 
-        try {
-            console.log("Fetching posts for page:", page);
-            const response = await api.get(`/posts?page=${page}&limit=5&filter=${filter}`);
-            
-            if (response.data && response.data.posts) {
-                setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
-                setHasMore(response.data.posts.length > 0);
-            } else {
-                setHasMore(false);
-            }
-        } catch (err) {
-            console.error("Error fetching posts:", err.response?.data || err.message);
-            setError("Failed to load posts. Please try again later.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
-    // Trigger fetching posts when page changes
-    useEffect(() => {
-        fetchPosts();
-    }, [page, filter]);
+  const fetchPosts = async () => {
+    setLoading(true);
+    setError(null);
+  
+    try {
+      console.log("Fetching posts for page:", page);
+      const response = await api.get(`/posts?page=${page}&limit=10&filter=${filter}`); // ✅ Increased batch size
+  
+      if (response.data?.posts) {
+        const newPosts = response.data.posts.filter(post => !postIds.has(post.id)); // ✅ Prevent duplicates
+  
+        // 🧠 Fetch comment counts in batch for new posts
+        const postIdsToCheck = newPosts.map((p) => p.id);
 
-    // Infinite Scroll using Intersection Observer
-    useEffect(() => {
-        if (!hasMore) return;
-
-        observerRef.current = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && !loading) {
-                setPage((prevPage) => prevPage + 1);
-            }
-        });
-
-        if (observerRef.current) {
-            observerRef.current.observe(document.getElementById("feed-end"));
+        if (postIdsToCheck.length === 0) {
+          setHasMore(false); // ⛔ No more posts, stop fetching
+          return;
         }
 
-        return () => observerRef.current?.disconnect();
-    }, [loading, hasMore]);
+        const countRes = await api.post("/comments/batch-count", { postIds: postIdsToCheck });
+        const counts = countRes.data?.counts; // ✅ define counts first
+        const countsMap = buildCountsMap(counts);
 
 
-    return (
-        <div className="community-feed-container">
+  
+        // 🧠 Add commentCount to each post
+        const enrichedPosts = newPosts.map((post) => ({
+          ...post,
+          commentCount: countsMap[post.id] || 0,
+        }));
+  
+        setPosts((prev) => [...prev, ...enrichedPosts]);
+        setPostIds((prev) => new Set([...prev, ...enrichedPosts.map(p => p.id)]));
+        setHasMore(enrichedPosts.length > 0);
+      } else {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error("Error fetching posts:", err.response?.data || err.message);
+      setError("Failed to load posts. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            <h3 className="community-feed-title">Community Feed</h3>
+  // Handle initial load by resetting to page 1
+  useEffect(() => {
+    setPage(1);
+  }, []);
 
-            <FeedFilter onFilterChange={(selectedFilter) => {
-                setFilter(selectedFilter);
-                setPosts([]);  // Reset posts when filter changes
-                setPage(1);
-                setHasMore(true);
-            }} />
+  // Fetch when page or filter changes
+  useEffect(() => {
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
 
-            {error && (
-                <div className="community-feed-error" role="alert" aria-live="assertive">
-                    <p>{error}</p>
-                </div>
-            )}
-            
-            <PostComposer onPostCreated={(newPost) => {
-                setPosts((prevPosts) => [newPost, ...prevPosts]);
-                window.scrollTo({ top: 0, behavior: "smooth" }); // Smooth scroll to top
-            }} />
+    debounceTimeout.current = setTimeout(() => {
+      fetchPosts();
+    }, 300);
+  }, [page, filter]);
 
 
-            <ul className="community-feed-list">
-                {posts.map((post, index) => (
-                    <li key={`${post.id}-${index}`} className="community-feed-post">
-                        <div className="post-container">
-                            <Post post={post} currentUser={currentUser} setPosts={setPosts} />
-                        </div>
-                    </li>
-                ))}
-            </ul>
+  useEffect(() => {
+    if (!hasMore || loading || page === 1) return; // Fix: Prevent premature page increase
 
 
-            {loading && (
-                <p className="community-feed-loading" role="status" aria-live="polite">
-                    Loading posts...
-                </p>
-            )}
-
-            <div id="feed-end"></div>
-
-            {!hasMore && (
-                <p className="community-feed-empty">No more posts to show.</p>
-            )}
-        </div>
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { rootMargin: "200px" } // ✅ #3 buffer scroll for smoother loading
     );
+
+    const target = document.getElementById("feed-end");
+    if (target) observerRef.current.observe(target);
+
+    return () => observerRef.current?.disconnect();
+  }, [loading, hasMore]);
+
+  const handleRetry = () => {
+    setError(null);
+    fetchPosts();
+  };
+
+  return (
+    <div className="community-feed-container">
+      <h3 className="community-feed-title">Community Feed</h3>
+
+      <FeedFilter
+        onFilterChange={(selectedFilter) => {
+          setFilter(selectedFilter);
+          setPosts([]);
+          setPostIds(new Set());
+          setPage(1); // This alone will trigger fetch via useEffect
+          setHasMore(true);
+        }}        
+      />
+
+      {error && (
+        <div className="community-feed-error" role="alert" aria-live="assertive">
+          <p>{error}</p>
+          <button onClick={handleRetry} className="retry-button">Retry</button> {/* ✅ #4 Retry */}
+        </div>
+      )}
+
+      <PostComposer
+        onPostCreated={(newPost) => {
+          if (!postIds.has(newPost.id)) { // ✅ #2 avoid prepending duplicate
+            setPosts((prevPosts) => [newPost, ...prevPosts]);
+            setPostIds((prevIds) => new Set([newPost.id, ...prevIds]));
+          }
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      />
+
+      <ul className="community-feed-list">
+        {posts.map((post, index) => (
+          <li key={`${post.id}-${index}`} className="community-feed-post">
+            <div className="post-container">
+              <Post post={post} currentUser={currentUser} setPosts={setPosts} />
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {loading && (
+        <p className="community-feed-loading" role="status" aria-live="polite">
+          Loading posts...
+        </p>
+      )}
+
+      <div id="feed-end"></div>
+
+      {!hasMore && !loading && (
+        <p className="community-feed-empty">No more posts to show.</p>
+      )}
+    </div>
+  );
 }
 
 Feed.propTypes = {
-    currentUser: PropTypes.object, // Made optional to avoid prop errors
+  currentUser: PropTypes.object,
 };
 
 export default Feed;
+
+
+/**
+ * Potential Improvements:
+ * 1. **Optimize API Requests**
+ *    - Debounce API calls when changing filters to prevent excessive requests.
+ *    - Fetch multiple pages at once to reduce frequent requests.
+ *
+ * 2. **Prevent Duplicate Posts**
+ *    - Implement a check to avoid adding duplicate posts when new posts arrive.
+ *    - Use a `Set` or a map with post IDs to track unique posts.
+ *
+ * 3. **Enhance Scroll Performance**
+ *    - Batch fetches instead of requesting new posts on each scroll event.
+ *    - Use a buffer so the next set of posts loads slightly before reaching the end.
+ *
+ * 4. **Improve Error Handling**
+ *    - Add a retry button for failed API requests instead of just showing an error.
+ *    - Show an offline mode message if the API is unreachable.
+ * 
+ * ✅ Improvement #1: Debounced API + batch fetch (5 → 10 posts)
+ * ✅ Improvement #2: Duplicate prevention using a Set
+ * ✅ Improvement #3: Scroll buffer using rootMargin
+ * ✅ Improvement #4: Retry button for errors
+ */

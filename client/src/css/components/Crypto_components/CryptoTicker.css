@@ -41,11 +41,11 @@
 /* Price List */
 .crypto-price-list {
     width: 100%;
-    height: 250px;  
-    overflow-y: auto;  
+    max-height: 70vh; /* ✅ Prevents overflow, scrolls if long */
+    overflow-y: auto;
     padding-right: 10px;
     margin-bottom: 1rem;
-}
+  }
 
 /* Individual Coin Price */
 .crypto-price-item {
@@ -146,7 +146,16 @@
         max-width: 100%;
     }
 
-    .crypto-price-list {
-        height: 200px; 
-    }
 }
+
+
+.sort-row {
+    display: flex;
+    justify-content: center; /* ✅ centers horizontally */
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  
+
+

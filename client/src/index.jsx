@@ -1,3 +1,15 @@
+/**
+ * index.js - Entry Point for React Application (SolPulse)
+ *
+ * This file is responsible for:
+ * - Rendering the root React component (`App`).
+ * - Wrapping the application in `AuthProvider` for authentication context.
+ * - Implementing `ErrorBoundary` to catch unexpected UI errors.
+ * - Setting up `ToastContainer` for user notifications.
+ * - Importing global CSS styles.
+ */
+
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';

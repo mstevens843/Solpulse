@@ -1,3 +1,14 @@
+/**
+ * PostModal Component
+ *
+ * This modal displays a single post with:
+ * - **Full post content, including media (if available).**
+ * - **Live comment updates via WebSockets.**
+ * - **Like & Retweet functionality, synced globally.**
+ * - **Ensures post state updates across the app.**
+ */
+
+
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
@@ -5,16 +16,22 @@ import { api } from "@/api/apiConfig";
 import LikeButton from "@/components/Post_components/LikeButton";
 import RetweetButton from "@/components/Post_components/RetweetButton";
 import CommentSection from "@/components/Post_components/CommentSection";
+import CommentItem from "@/components/Post_components/CommentItem";
 import socket from "@/socket";
 import "@/css/components/Post_components/PostModal.css";
 
 function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, setPosts }) { // Ensure setPosts is passed
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState(post.likes || 0);
+  const [loading, setLoading] = useState(true); // ✅ Loading state added
   const [retweets, setRetweets] = useState(post.retweets || 0);
   const postIdToUse = post.isRetweet ? post.originalPostId : post.id;
 
-  // Fetch comments for original posts & retweets
+  /**
+     * Fetch comments for original posts & retweets.
+     * Ensures proper loading of all relevant comments.
+     */
+  /** ✅ Fetch comments and show loading until done */
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -22,13 +39,19 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
         setComments(response.data.comments);
       } catch (error) {
         console.error("Failed to fetch comments:", error);
+      } finally {
+        setLoading(false); // ✅ Stop loading once request finishes
       }
     };
 
     fetchComments();
   }, [postIdToUse]);
 
-  // WebSocket Listener for New Comments
+  /**
+     * WebSocket Listener for New Comments
+     * - Listens for new comments in real time.
+     * - Ensures comments update live without refreshing.
+     */
   useEffect(() => {
     const handleNewComment = (newComment) => {
       if (newComment.postId === postIdToUse) {
@@ -43,7 +66,7 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
     };
   }, [postIdToUse]);
 
-  // Ensure likes update globally inside the modal
+  // Ensure likes update globally inside the modal, whenever user likes/unlikes a post. 
   const handleLikeToggle = (postId, updatedLikes) => {
     setLikes(updatedLikes);
     setPosts((prevPosts) =>
@@ -55,7 +78,7 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
     );
   };
 
-  // Ensure retweets update globally inside the modal
+  // Ensure retweets update globally inside the modal, whenever a user retweets/undos a retweet.
   const handleRetweetToggle = (postId, isReposting, updatedRetweets, newRetweetData) => {
     setRetweets(updatedRetweets);
     setPosts((prevPosts) => {
@@ -104,16 +127,29 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
           />
         </div>
 
-        <CommentSection postId={postIdToUse} onNewComment={(newComment) => setComments((prev) => [newComment, ...prev])} /> 
+        <CommentSection
+          postId={postIdToUse}
+          originalPostId={post.originalPostId}
+          onNewComment={(newComment) => setComments((prev) => [newComment, ...prev])}
+          setPosts={setPosts}
+        />
+
 
         <div className="post-comments">
-          {comments?.length > 0 ? (
-            comments.map((comment) => (
-              <div key={comment.id} className="comment">
-                <strong>{comment.author}</strong>
-                <p>{comment.content}</p>
-              </div>
-            ))
+          {loading ? (
+            <p className="loading-comments">Loading comments...</p>
+          ) : comments.length > 0 ? (
+            <ul className="comment-list">
+              {comments.map((comment) => (
+                <CommentItem
+                  key={comment.id}
+                  author={comment.author || "Unknown"}
+                  avatarUrl={comment.avatarUrl}
+                  content={comment.content}
+                  createdAt={comment.createdAt}
+                />
+              ))}
+            </ul>
           ) : (
             <p>No comments yet.</p>
           )}
@@ -122,6 +158,7 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
     </div>
   );
 }
+
 
 PostModal.propTypes = {
   post: PropTypes.object.isRequired,
@@ -135,3 +172,16 @@ PostModal.propTypes = {
 };
 
 export default PostModal;
+
+/**
+ * 🔹 **Potential Improvements:**
+ * 1. **Optimize WebSocket Handling**: Ensure listeners don’t persist across multiple modals. - SKIPPED
+ * 2. **Add Loading States**: Show a loading indicator while fetching comments.
+ * 3. **Support Video Previews**: Improve handling of video media. - SKIPPED
+ * 4. **Enable Live Likes/Retweets**: Use WebSockets to update likes/retweets in real time. - SKIPPED 
+ */
+
+/**
+ * Future Polish Ideas:
+ * Replace Loading comments... with a spinner or animation for smoother UX.
+ */

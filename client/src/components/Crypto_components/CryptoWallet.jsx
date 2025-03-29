@@ -1,3 +1,18 @@
+/**
+ * CryptoWallet.js
+ *
+ * This file is responsible for displaying a user's Solana wallet balance and recent transactions.
+ * It integrates with Phantom Wallet, fetches on-chain transactions, and provides filtering & sorting options.
+ *
+ * Features:
+ * - **Solana Blockchain Integration:** Uses `@solana/web3.js` to fetch wallet balance and transactions.
+ * - **Real-time Updates:** Periodically refreshes wallet data and supports manual refresh.
+ * - **Sorting & Filtering:** Allows users to filter transactions by type (Sent, Received, Tips) and sort by date.
+ * - **Optimized Performance:** Uses `useMemo`, `useCallback`, and `debounce` to reduce unnecessary re-renders.
+ * - **Error Handling:** Displays meaningful messages when Solana RPC or wallet connection fails.
+ */
+
+
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import debounce from "lodash/debounce";
 import CryptoTransaction from "./CryptoTransactions";
@@ -12,7 +27,10 @@ const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/dhWoE
 // Convert lamports to SOL
 const lamportsToSol = (lamports) => lamports / 1e9;
 
+
 // Fetch latest 5 transactions for a given wallet address
+//  * - Includes handling for SOL and SPL token transfers.
+
 const getWalletTransactions = async (walletAddress) => {
     try {
         const publicKey = new PublicKey(walletAddress);
@@ -38,6 +56,15 @@ const getWalletTransactions = async (walletAddress) => {
                 let tokenName = "SOL"; // Default to SOL
                 let amount = 0;
                 let type = "Unknown";
+
+                // ✅ Get from/to addresses using account keys
+                const accountKeys = transactionDetails.transaction?.message?.accountKeys || [];
+                const fromAddress = accountKeys[0]?.toBase58?.() || "Unknown"; // ✅ Sender
+                const toAddress = accountKeys[1]?.toBase58?.() || "Unknown";   // ✅ Receiver
+
+                // ✅ Get fee and slot
+                const fee = lamportsToSol(transactionDetails.meta?.fee || 0); // ✅ Fee in SOL
+                const slot = transactionDetails.slot; // ✅ Solana slot
 
                 // Check SPL token transfers (non-SOL tokens)
                 if (preBalances.length > 0 && postBalances.length > 0) {
@@ -75,6 +102,11 @@ const getWalletTransactions = async (walletAddress) => {
                     date: transactionDetails.blockTime
                         ? new Date(transactionDetails.blockTime * 1000).toISOString()
                         : "Unknown",
+                    slot, // ✅ Optimization #4
+                    fee,  // ✅ Optimization #6
+                    explorerUrl: `https://solscan.io/tx/${tx.signature}`, // ✅ Optimization #1
+                    from: fromAddress, // ✅ Optimization #5
+                    to: toAddress      // ✅ Optimization #5
                 };
             })
         );
@@ -89,6 +121,7 @@ const getWalletTransactions = async (walletAddress) => {
 
 
 
+
 function CryptoWallet({ walletConnected }) {
     const [balance, setBalance] = useState(0);
     const [transactions, setTransactions] = useState([]);
@@ -96,9 +129,16 @@ function CryptoWallet({ walletConnected }) {
     const [error, setError] = useState("");
     const [filter, setFilter] = useState("all");
     const [sortOrder, setSortOrder] = useState("latest");
+    const [usdPerSol, setUsdPerSol] = useState(null); // ✅ Store SOL to USD rate
 
     const wallet = useWallet();
 
+
+    /**
+     * Fetches wallet balance and latest transactions from the Solana blockchain.
+     * - Uses `debounce` to reduce API call frequency.
+     * - Stores wallet connection state in localStorage.
+     */
     const fetchWalletData = useCallback(
         debounce(async () => {
             setLoading(true);
@@ -109,14 +149,35 @@ function CryptoWallet({ walletConnected }) {
                     const publicKey = wallet.publicKey.toBase58();
                     console.log("Fetching wallet data for:", publicKey);
 
-                    // Fetch balance from Phantom wallet
+                    // ✅ Optimization 1: Check local cache first
+                    const cached = localStorage.getItem(`walletCache:${publicKey}`);
+                    if (cached) {
+                        const { balance: cachedBalance, transactions: cachedTxs, timestamp } = JSON.parse(cached);
+                        const isFresh = Date.now() - timestamp < 60_000;
+                        if (isFresh) {
+                            setBalance(cachedBalance);
+                            setTransactions(cachedTxs);
+                            setLoading(false);
+                            return;
+                        }
+                    }
+
                     const balanceLamports = await connection.getBalance(wallet.publicKey);
                     const balanceSOL = lamportsToSol(balanceLamports);
                     setBalance(balanceSOL);
 
-                    // Fetch latest transactions from Solana blockchain
                     const onChainTxs = await getWalletTransactions(publicKey);
                     setTransactions(onChainTxs);
+
+                    // ✅ Store in localStorage
+                    localStorage.setItem(
+                        `walletCache:${publicKey}`,
+                        JSON.stringify({
+                            balance: balanceSOL,
+                            transactions: onChainTxs,
+                            timestamp: Date.now(),
+                        })
+                    );
                 } else {
                     throw new Error("No wallet connected");
                 }
@@ -137,13 +198,40 @@ function CryptoWallet({ walletConnected }) {
         }
     }, [walletConnected]);
 
+    // Format balance for display
     const formattedBalance = useMemo(() => balance.toFixed(2), [balance]);
 
+    // Filter and sort transactions
     const filteredTransactions = useMemo(() => {
         return transactions
             .filter((tx) => (filter === "all" ? true : tx.type === filter))
             .sort((a, b) => (sortOrder === "latest" ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date)));
     }, [transactions, filter, sortOrder]);
+
+
+    const handleTransactionClick = (tx) => {
+        // ✅ Optimization 2: Placeholder for modal/detail view
+        console.log("Transaction clicked:", tx);
+    };
+
+
+    useEffect(() => {
+        const fetchSolPrice = async () => {
+            try {
+                const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd");
+                const data = await res.json();
+                const price = data?.solana?.usd;
+                if (price) setUsdPerSol(price);
+            } catch (err) {
+                console.error("❌ Failed to fetch SOL price:", err);
+            }
+        };
+    
+        fetchSolPrice();
+    
+        const interval = setInterval(fetchSolPrice, 60_000); // ✅ Refresh every 1 min
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div className="crypto-wallet-container">
@@ -206,7 +294,11 @@ function CryptoWallet({ walletConnected }) {
 
                             <ul className="crypto-wallet-transactions">
                                 {filteredTransactions.length > 0 ? (
-                                    filteredTransactions.map((tx) => <CryptoTransaction key={tx.id} transaction={tx} />)
+                                    filteredTransactions.map((tx) => (
+                                        <li key={tx.id} onClick={() => handleTransactionClick(tx)} className="transaction-item">
+                                            <CryptoTransaction transaction={tx} usdPerSol={usdPerSol} /> {/* ✅ Pass USD value */}
+                                        </li>
+                                    ))
                                 ) : (
                                     <p className="no-transactions-message">No transactions available.</p>
                                 )}
@@ -220,3 +312,12 @@ function CryptoWallet({ walletConnected }) {
 }
 
 export default CryptoWallet;
+
+
+/**
+ * 🔹 **Potential Improvements:**
+ * - **Cache Data:** Store wallet balance and transactions in localStorage for faster loading.
+ * - **Transaction Details:** Allow users to view full transaction metadata.
+ * - **Real-time Updates:** Implement WebSocket-based updates instead of polling. - SKIPPED
+ * - Added USD to SOL converison 
+ */

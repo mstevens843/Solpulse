@@ -1,3 +1,13 @@
+/**
+ * SearchResults.js - Displays search results for users and posts
+ *
+ * This file is responsible for:
+ * - Fetching and displaying search results based on the query and filter.
+ * - Handling pagination with infinite scrolling or a "Load More" button.
+ * - Managing search state, error handling, and UI updates.
+ */
+
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SearchBar from "@/components/SearchBar";
@@ -13,7 +23,7 @@ import { AuthContext } from "@/context/AuthContext";
 function SearchResults() {
   const location = useLocation();
   const navigate = useNavigate();
-  const query = new URLSearchParams(location.search).get("query") || "";
+  const initialQuery = new URLSearchParams(location.search).get("query") || "";
   const filter = new URLSearchParams(location.search).get("filter") || "all";
   const { user: currentUser } = useContext(AuthContext);
   const [results, setResults] = useState([]);
@@ -22,8 +32,14 @@ function SearchResults() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState([]); // Ensure suggestions reset
+
+  const [searchTerm, setSearchTerm] = useState(initialQuery); // ✅ Debounced input value
   
   
+  
+  /**
+   * Clears search suggestions when component mounts or updates.
+   */
   useEffect(() => {
     setSearchSuggestions([]); // Clears suggestions on page load
   }, []);
@@ -43,14 +59,29 @@ function SearchResults() {
           params: { query, filter, page },
         });
 
+        const rawResults = response.data.results || [];
+
+        const postResults = rawResults.filter(r => r.type === "post");
+        const postIds = postResults.map(p => p.id);
+        const countRes = await api.post("/comments/batch-count", { postIds });
+
+        const countsMap = {};
+        countRes.data.counts.forEach(({ postId, count }) => {
+          countsMap[postId] = count;
+        });
+
+        const enrichedResults = rawResults.map((result) =>
+          result.type === "post"
+            ? { ...result, commentCount: countsMap[result.id] || 0 }
+            : result
+        );
+
         if (page === 1) {
-          setResults(response.data.results || []);
+          setResults(enrichedResults);
         } else {
-          setResults((prevResults) => [
-            ...prevResults,
-            ...(response.data.results || []),
-          ]);
+          setResults((prev) => [...prev, ...enrichedResults]);
         }
+
 
         setHasMore(page < (response.data.totalPages || 1));
       } catch (error) {
@@ -83,22 +114,42 @@ function SearchResults() {
     }
   };
 
- 
+  /**
+   * Fetches search results when query, filter, or page changes.
+   */
   useEffect(() => {
     if (query.trim()) {
         fetchSearchResults(1);
     }
 }, [query, filter, fetchSearchResults]);
 
+
+
+/**
+ * Debounced Navigation Effect: Updates the URL. 
+ */
+useEffect(() => {
+  const delayDebounce = setTimeout(() => {
+    if (searchTerm.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchTerm)}&filter=${filter}`);
+    }
+  }, 350);
+
+  return () => clearTimeout(delayDebounce);
+}, [searchTerm, filter, navigate]);
+
+
+
   return (
     <div className="search-results-container">
       <h2>Search Results for "{query}"</h2>
       <SearchBar
-        query={query}
-        setQuery={(q) => navigate(`/search?query=${encodeURIComponent(q)}&filter=${filter}`)}
-        onSearch={() => setSearchSuggestions([])} //  Clears suggestions on search
-        filters={["all", "posts", "users"]}
-      />
+          query={searchTerm} // ✅ Controlled value
+          setQuery={setSearchTerm} // ✅ Typing updates state
+          onSearch={() => setSearchSuggestions([])} // ✅ Clears suggestions on search
+          filters={["all", "posts", "users"]}
+        />
+
 
       {errorMessage && (
         <div className="error-container">
@@ -138,3 +189,12 @@ function SearchResults() {
 }
 
 export default SearchResults;
+
+/**
+ * 🔹 Potential Improvements:
+ * - Implement debounced search to avoid unnecessary API calls while typing.
+ * - Add error handling for network failures or API rate limits.
+ * - Display user-specific recommendations when no results are found. - SKIPPED
+ * - Implement infinite scrolling instead of a "Load More" button. - SKIPPED
+ * - Optimize backend queries for better search performance on large datasets. - SKIPPED
+ */

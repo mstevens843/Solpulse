@@ -1,3 +1,12 @@
+/**
+ * SearchBar.js
+ * 
+ * This file is responsible for handling the search functionality within SolPulse.
+ * It provides a real-time search bar with autocomplete suggestions and supports 
+ * filtering by different categories (e.g., posts, users, topics).
+ */
+
+
 import React, { useState, useEffect, useCallback } from "react";
 import debounce from "lodash.debounce";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +20,10 @@ function SearchBar({ query, setQuery, filters = [] }) {
     const [isTyping, setIsTyping] = useState(false); // Track if user is typing
     const navigate = useNavigate();
 
-    // Debounced API call for search suggestions
+    /**
+     * Debounced API call for fetching search suggestions.
+     * Prevents excessive API calls while user is typing.
+     */
     const fetchSuggestions = useCallback(
         debounce(async (queryTerm) => {
             if (!queryTerm.trim()) {
@@ -29,12 +41,23 @@ function SearchBar({ query, setQuery, filters = [] }) {
         [selectedFilter]
     );
 
+
+     /**
+     * Trigger suggestion fetching when user is typing.
+     * Ensures debounce function is properly executed.
+     */
     useEffect(() => {
         if (isTyping) {
             fetchSuggestions(query);
         }
     }, [query, selectedFilter, isTyping, fetchSuggestions]);
 
+
+    /**
+     * Handles search submission.
+     * - Prevents submission if query is empty.
+     * - Clears suggestions after submission.
+     */
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         if (!query.trim()) {
@@ -46,6 +69,12 @@ function SearchBar({ query, setQuery, filters = [] }) {
         navigate(`/search?query=${encodeURIComponent(query)}&filter=${selectedFilter}`);
     };
 
+
+    /**
+     * Handles selection of a search suggestion.
+     * - Sets the query to the selected suggestion.
+     * - Clears suggestions and redirects to search results.
+     */
     const handleSuggestionClick = (suggestion) => {
         const selectedQuery = suggestion.username || suggestion.content;
         setQuery(selectedQuery);
@@ -54,6 +83,10 @@ function SearchBar({ query, setQuery, filters = [] }) {
         navigate(`/search?query=${encodeURIComponent(selectedQuery)}&filter=${selectedFilter}`);
     };
 
+
+    /**
+     * Resets search input, suggestions, and error messages.
+     */
     const handleReset = () => {
         setQuery("");
         setSearchSuggestions([]);
@@ -111,3 +144,10 @@ function SearchBar({ query, setQuery, filters = [] }) {
 }
 
 export default SearchBar;
+
+/**
+ * Potential Improvements:
+ * - Implement caching to reduce duplicate API calls for the same query.
+ * - Enhance filtering logic to support additional categories dynamically.
+ * - Improve error handling by displaying a fallback message when API requests fail.
+ */

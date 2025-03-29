@@ -1,4 +1,14 @@
-import React, { useState, useContext } from "react";
+/**
+ * RetweetButton Component
+ *
+ * - Allows users to repost or undo reposts of a given post.
+ * - Updates retweet count dynamically and syncs with global state.
+ * - Uses sessionStorage to persist retweet state across sessions.
+ * - Calls parent `setPosts` function to ensure UI updates globally.
+ */
+
+
+import React, { useState, useContext, useRef } from "react"; // ← add useRef
 import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig"; 
 import { AuthContext } from "@/context/AuthContext";
@@ -9,37 +19,53 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
     const { retweetedPosts, setRetweetedPosts } = useContext(AuthContext); 
     const [retweetCount, setRetweetCount] = useState(initialRetweets);
     const [loading, setLoading] = useState(false);
-
+    const [error, setError] = useState(""); // ✅ for showing retry errors
     const actualPostId = originalPostId || postId;
     const hasRetweeted = retweetedPosts.has(actualPostId); // Check batch data
+    const debounceRef = useRef(null); // ✅ debounce to avoid double taps
 
+
+
+
+    /**
+     * Handles retweet toggling:
+     * - If user has already retweeted, it will undo the retweet.
+     * - If user hasn't retweeted, it will create a new repost.
+     * - Updates UI, global state, and triggers parent updates.
+     */
     const handleRetweetToggle = async () => {
         if (loading || !currentUser?.id) {
             if (!currentUser?.id) toast.error("You need to log in to repost.");
             return;
         }
+    
+        // ✅ Optional: prevent rapid double clicks
+        if (debounceRef.current) return;
+        debounceRef.current = setTimeout(() => {
+            debounceRef.current = null;
+        }, 600);
+    
         setLoading(true);
+        setError("");
     
         try {
             if (hasRetweeted) {
-                // Un-retweet (Remove Retweet)
+                // Un-retweet
                 const response = await api.delete(`/posts/${actualPostId}/retweet`);
                 const updatedRetweets = Math.max(0, response.data.retweets);
     
                 setRetweetCount(updatedRetweets);
                 toast.success("Repost removed successfully!");
     
-                // Update global context
                 setRetweetedPosts((prev) => {
                     const updated = new Set(prev);
                     updated.delete(actualPostId);
                     sessionStorage.setItem("retweetedPosts", JSON.stringify([...updated]));
                     return updated;
                 });
-
+    
                 if (onRetweetToggle) onRetweetToggle(actualPostId, false, updatedRetweets);
     
-                // Update UI after un-retweeting
                 setPosts((prevPosts) =>
                     prevPosts.map((p) =>
                         p.id === actualPostId || p.originalPostId === actualPostId
@@ -48,21 +74,23 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
                     )
                 );
             } else {
-                // Retweet (New Repost)
-                const response = await api.post(`/posts/${actualPostId}/retweet`, { userId: currentUser.id });
+                // Retweet
+                const response = await api.post(`/posts/${actualPostId}/retweet`, {
+                    userId: currentUser.id,
+                });
+    
                 const newRetweet = response.data.retweetData;
                 const updatedRetweets = newRetweet.retweets;
     
                 setRetweetCount(updatedRetweets);
     
-                // Update global context
                 setRetweetedPosts((prev) => {
                     const updated = new Set(prev);
                     updated.add(actualPostId);
                     sessionStorage.setItem("retweetedPosts", JSON.stringify([...updated]));
                     return updated;
                 });
-
+    
                 if (onRetweetToggle) {
                     onRetweetToggle(actualPostId, true, updatedRetweets, {
                         id: newRetweet.id,
@@ -82,8 +110,7 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
                         createdAt: newRetweet.createdAt,
                     });
                 }
-
-                // Ensure UI correctly updates retweets
+    
                 setPosts((prevPosts) =>
                     prevPosts.map((p) =>
                         p.id === actualPostId || p.originalPostId === actualPostId
@@ -97,6 +124,7 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
         } catch (err) {
             console.error("Error toggling repost:", err);
             toast.error("Failed to update repost status.");
+            setError("Failed to update repost status. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -108,10 +136,21 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
                 onClick={handleRetweetToggle}
                 disabled={loading}
                 className={`retweet-button ${hasRetweeted ? "retweeted" : ""}`}
-                aria-label={`${hasRetweeted ? 'Undo Repost' : 'Repost'} post. Current reposts: ${retweetCount}`}
+                aria-label={`${hasRetweeted ? "Undo Repost" : "Repost"} post. Current reposts: ${retweetCount}`}
+                aria-pressed={hasRetweeted}
             >
                 {loading ? "Processing..." : hasRetweeted ? `Undo Repost (${retweetCount})` : `Repost (${retweetCount})`}
             </button>
+
+            {/* ✅ Show retry button if error */}
+            {error && (
+            <div className="retweet-error" role="alert" aria-live="assertive">
+                <p>{error}</p>
+                <button onClick={handleRetweetToggle} disabled={loading} className="retry-retweet-btn">
+                Retry
+                </button>
+            </div>
+            )}
         </div>
     );
 }
@@ -129,3 +168,22 @@ RetweetButton.propTypes = {
 };
 
 export default RetweetButton;
+
+
+/**
+ * 🔹 **Potential Improvements:**
+ * 1. **Optimize Retweet State Handling**:
+ *    - Consider using a reducer instead of multiple state updates.
+ *    - This can prevent unnecessary re-renders.
+ *
+ * 2. **Improve Performance with WebSockets**: - SKIPPED
+ *    - Implement real-time retweet updates using WebSockets.
+ *    - Would eliminate the need for polling or API re-fetching.
+ *
+ * 3. **Enhance Error Handling**:
+ *    - Handle network issues with a retry mechanism.
+ *    - Show more detailed errors in the UI.
+ *
+ * 4. **Add Animation Effects**: - SKIPPED
+ *    - Consider adding a fade-in/out animation for smoother retweet toggling.
+ */

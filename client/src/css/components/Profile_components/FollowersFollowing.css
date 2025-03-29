@@ -19,10 +19,127 @@
 }
 
 .user-list {
-  @apply grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 mt-6;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 /* Empty Message */
 .empty-message {
   @apply text-center text-solana-text-light italic mt-6;
+}
+
+
+.skeleton-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.skeleton-card {
+  height: 60px;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #2a2a2a 25%,
+    #3a3a3a 50%,
+    #2a2a2a 75%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.error-message {
+  color: #f87171;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.retry-btn {
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.retry-btn:hover {
+  background: #2563eb;
+}
+
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+}
+.tabs button {
+  padding: 0.5rem 1.5rem;
+  font-weight: bold;
+  border: none;
+  background: transparent;
+  color: white;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.tabs button.active {
+  border-color: #00ffa1;
+  color: #00ffa1;
+}
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: white;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+
+.ff-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+}
+
+.ff-tabs {
+  display: flex;
+  gap: 1rem;
+}
+
+.ff-tabs button {
+  background: none;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  color: white;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.ff-tabs button.active {
+  border-color: #00ffa1;
+  color: #00ffa1;
 }

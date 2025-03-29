@@ -2,6 +2,9 @@
 
 **Live App:** [Visit SolPulse](https://solpulse-client.onrender.com)
 
+# Back-end deployment URL: 
+https://solpulse.onrender.com
+
 Welcome to **SolPulse**, a social-driven platform built on Solana that enables users to post, comment, like, and retweet crypto-related content, all while interfacing with Solana-based functionalities. This README provides a high-level overview of the project, its architecture, and how to get started. For more specific guides (authentication, API references, deployment, etc.), see the additional documentation linked below.
 
 ---
@@ -11,10 +14,15 @@ Welcome to **SolPulse**, a social-driven platform built on Solana that enables u
 1. [Project Introduction](#project-introduction)  
 2. [Features](#features)  
 3. [Tech Stack](#tech-stack)  
-4. [Repository Structure](#repository-structure)  
-5. [Getting Started](#getting-started)  
-6. [Additional Documentation](#additional-documentation)  
-7. [License](#license)
+4. [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)  
+5. [Repository Structure](#repository-structure)  
+6. [Getting Started](#getting-started)  
+7. [Error Handling & Logging](#error-handling--logging)  
+8. [Additional Documentation](#additional-documentation)  
+9. [Contributing](#contributing)  
+10. [Contact](#contact)  
+11. [License](#license)  
+
 
 ---
 
@@ -81,6 +89,16 @@ Ultimately, **SolPulse** aims to be a community hub for crypto enthusiasts, prov
   - Environment-based `.env` files for secure configuration  
 
 ---
+
+
+## Entity Relationship Diagram (ERD)
+The following diagram represents the database structure for SolPulse, illustrating the relationships between Users, Posts, Comments, Likes, Retweets, and other key entities.
+
+![SolPulse ERD](./Documentation_Final/solpulse-ERD.png)
+
+---
+
+
 
 ## Repository Structure
 
@@ -154,6 +172,22 @@ Ultimately, **SolPulse** aims to be a community hub for crypto enthusiasts, prov
 
 
 
+
+## Error Handling & Logging
+### Backend:
+- All API responses follow a structured JSON format with specific error messages.
+- Common errors include:
+  - `"Invalid request parameters"` (handled via middleware validation)
+  - `"Database connection failed"` (logged with timestamps)
+  - `"User authentication failed"` (returns HTTP 401 Unauthorized)
+
+### Frontend:
+- **React Error Boundaries** prevent UI crashes and log unexpected errors.
+- WebSocket logs **are disabled in production** to avoid clutter.
+
+
+
+
 ## Additional Documentation
 - API Documentation (API_DOCUMENTATION.md)
 - Detailed info on your API endpoints, request/response formats, etc.
@@ -173,7 +207,29 @@ Ultimately, **SolPulse** aims to be a community hub for crypto enthusiasts, prov
 **Project Proposal (PROJECT_PROPOSAL.md)**:
 - Original project idea, scope, and requirements.
 
-# License
-- Include your preferred license here (e.g., MIT, GPL). If it’s not an open-source project, you can remove or modify this section accordingly.
+## Contributing
+We welcome contributions! Please follow these steps:
+
+1. **Fork the repository**  
+2. **Create a new branch** (`git checkout -b feature-new-feature`)  
+3. **Commit changes** (`git commit -m "Added feature XYZ"`)  
+4. **Push your branch** (`git push origin feature-new-feature`)  
+5. **Submit a pull request** – We will review and merge!
+
+For major changes, open an issue first to discuss the implementation.
+
+
+
+## Contact
+For any questions or support, feel free to reach out:
+
+- **GitHub:** [mstevens843](https://github.com/mstevens843)  
+- **Email:** [mathewstevens7457@gmail.com]
+
+
+## License
+This repository is **publicly viewable** but is **not open-source**.  
+All rights are reserved, and usage, distribution, or modification without permission is not allowed.
+
 
 - Enjoy SolPulse! If you have any questions, feel free to explore the additional documentation or reach out for support.

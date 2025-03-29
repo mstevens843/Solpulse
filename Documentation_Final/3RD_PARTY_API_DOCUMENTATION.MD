@@ -5,7 +5,7 @@ The SolPulse API provides **secure and efficient endpoints** to support user aut
 
 ### Base URL
 
-*(Replace with your actual deployed API URL)*
+*[(https://solpulse.onrender.com/api)](https://solpulse.onrender.com/api)*
 
 ---
 
@@ -32,7 +32,7 @@ Handles **crypto trading** and **Solana token data** using **Jupiter API**.
 | `fetchSwapInstructions()` | Fetches swap instructions from Jupiter |
 | `executeSwap()` | Executes a **Solana-based token swap** using Jupiter API |
 
-### 📌 **Swap Process in SolPulse**
+###  **Swap Process in SolPulse**
 1. **Fetch Token List** - Fetches all available tokens on **Solana**.
 2. **Select Tokens** - Users choose the token to **sell** and **buy**.
 3. **Fetch Swap Quote** - The **Jupiter API** returns the estimated amount for the swap.
@@ -47,7 +47,7 @@ Handles **crypto trading** and **Solana token data** using **Jupiter API**.
 | **Alchemy RPC URL** | Uses `https://solana-mainnet.g.alchemy.com/v2/dhWoE-s3HVNfalBWpWnzRIWfyJIqTamF` for blockchain interactions |
 | **Transaction Confirmation** | Uses `Connection.confirmTransaction()` to validate the swap |
 
-### 📌 **External API Used**
+###  **External API Used**
 - **Jupiter API** - Provides real-time **Solana trading** and **token data**.
 
 ---
@@ -109,7 +109,7 @@ Fetches real-time **Solana ecosystem crypto data** using **CoinGecko API**.
 ---
 
 ## Deployment & Testing
-- **Base URL:** _[Add your API URL]_  
+- **Base URL:** _[http://localhost:5000/api/]_  
 - **Authentication:** JWT-based authentication required for most routes.  
 - **API Keys:** API integrations use **CoinGecko, Jupiter, and DexScreener**.  
 
@@ -118,7 +118,7 @@ Fetches real-time **Solana ecosystem crypto data** using **CoinGecko API**.
 ---
 
 ## Need Help?
-For any questions or API access, contact **[Your Name or Email]**.
+For any questions or API access, contact **[Mathew Stevens at mathewstevens7457@gmail.com]**.
 
 ---
 
@@ -127,4 +127,4 @@ For any questions or API access, contact **[Your Name or Email]**.
 - **Documented NFT data, market dominance, and search.**
 - **Added trending gainers, losers, and top 10 cryptocurrencies.**
 - **Updated real-time price chart logic with Chart.js.**
-- **Let me know if any additional refinements are needed! 🚀**
+- **Let me know if any additional refinements are needed!**

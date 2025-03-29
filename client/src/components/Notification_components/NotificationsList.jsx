@@ -1,3 +1,21 @@
+/**
+ * NotificationsList.js
+ *
+ * This file is responsible for displaying a categorized list of user notifications.
+ * It allows users to:
+ * - View notifications filtered by type (likes, retweets, comments, follows, messages, tips).
+ * - Mark notifications as read individually or all at once.
+ * - Fetch detailed notifications using different API endpoints based on category.
+ *
+ * Features:
+ * - **Dynamic Tab Navigation:** Users can switch between different notification types.
+ * - **Optimized API Calls:** Clears previous notifications before fetching new ones to prevent stale data.
+ * - **Mark Read Functionality:** Allows marking individual notifications or all notifications as read.
+ * - **Icons for Different Notification Types:** Adds visual clarity for different actions.
+ */
+
+
+
 import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
@@ -16,14 +34,24 @@ const notificationTypes = ["likes", "retweets", "comments", "follows", "messages
 
 function NotificationsList() {
   const [notifications, setNotifications] = useState([]);
+  const [selectedNotifications, setSelectedNotifications] = useState([]); // ✅ #3 Bulk Actions: track selected notifications
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("likes");
+  const [sortOption, setSortOption] = useState("newest"); // ✅ #2 Custom Sorting: track selected sort
+
 
   useEffect(() => {
     fetchNotifications("likes"); // Load likes by default
   }, []);
 
+
+
+  /**
+   * Fetches notifications based on the selected category.
+   * - Uses dynamic endpoints for different notification types.
+   * - Resets the notification list before each fetch.
+   */
   const fetchNotifications = async (type) => {
     setLoading(true);
     setError("");
@@ -120,6 +148,11 @@ function NotificationsList() {
     }
   };
 
+
+  /**
+   * Marks a specific notification as read.
+   * - Uses a fade-out effect before removing the notification.
+   */
   const markNotificationAsRead = async (id) => {
     try {
       document.getElementById(`notification-${id}`).classList.add("removed");
@@ -136,6 +169,10 @@ function NotificationsList() {
     }
   };
 
+  /**
+   * Marks all notifications as read.
+   * - Clears the notification list after marking all as read.
+   */
   const markAllAsRead = async () => {
     try {
       await api.put("/notifications/mark-all-read");
@@ -145,6 +182,39 @@ function NotificationsList() {
       setError("Failed to mark all notifications as read.");
     }
   };
+
+  const markSelectedAsRead = async () => {
+    try {
+      await Promise.all(
+        selectedNotifications.map((id) => api.put(`/notifications/${id}/read`)) // ✅ #3 Bulk Actions: batch read
+      );
+      setNotifications((prev) => prev.filter((n) => !selectedNotifications.includes(n.id)));
+      setSelectedNotifications([]);
+    } catch (err) {
+      console.error("Failed to mark selected as read:", err);
+      setError("Some notifications failed to be marked as read.");
+    }
+  };
+
+
+  /**
+   * Refactored Sorting to make it expandable for the future. 
+   */
+  const sortedNotifications = [...notifications]
+  .filter((n) => (sortOption === "unread" ? !n.isRead : true)) // Optional filter
+  .sort((a, b) => {
+    switch (sortOption) {
+      case "newest":
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      case "oldest":
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      case "unread":
+        return new Date(b.createdAt) - new Date(a.createdAt); // Keep newest order after filter
+      default:
+        return 0;
+    }
+  });
+
 
   return (
     <div className="notifications-page-container">
@@ -165,29 +235,48 @@ function NotificationsList() {
         ))}
       </div>
 
-      <button className="notifications-page-mark-all-btn" onClick={markAllAsRead}>
-        Mark All as Read
-      </button>
+      <div className="notifications-controls">
+        <button onClick={markAllAsRead}>Mark All as Read</button>
+        {selectedNotifications.length > 0 && (
+          <button onClick={markSelectedAsRead}>Mark Selected as Read</button> // ✅ #3 Bulk Actions: button for selected
+        )}
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)} // ✅ #2 Custom Sorting: dropdown to control sorting
+          className="notification-sort-dropdown"
+        >
+          <option value="newest">Sort by Newest</option>
+          <option value="oldest">Sort by Oldest</option>
+          <option value="unread">Sort by Unread</option>
+          {/* <option value="type">Group by Type</option> // future enhancement */}
+
+        </select>
+      </div>
 
       {error && <p className="notifications-page-error">{error}</p>}
       {loading ? (
         <Loader />
-      ) : notifications.length > 0 ? (
+      ) : sortedNotifications.length > 0 ? (
         <ul className="notifications-page-list">
-          {notifications.map((notification) => (
+          {sortedNotifications.map((notification) => (
             <li
               key={notification.id}
               id={`notification-${notification.id}`}
               className={`notifications-card ${notification.isRead ? "read" : "unread"}`}
             >
-              <div className="notification-icon">
-                {notification.type === "like" && "❤️"}
-                {notification.type === "retweet" && "🔁"}
-                {notification.type === "comment" && "💬"}
-                {notification.type === "follow" && "➕"}
-                {notification.type === "message" && "✉️"}
-                {notification.type === "transaction" && "💰"}
-              </div>
+              <input
+                type="checkbox"
+                checked={selectedNotifications.includes(notification.id)} // ✅ #3 Bulk Actions: toggle checkbox
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedNotifications((prev) => [...prev, notification.id]);
+                  } else {
+                    setSelectedNotifications((prev) =>
+                      prev.filter((id) => id !== notification.id)
+                    );
+                  }
+                }}
+              />
 
               <div className="notification-content">
                 <p>
@@ -202,10 +291,7 @@ function NotificationsList() {
               </div>
 
               {!notification.isRead && (
-                <button
-                  className="notification-mark-read-btn"
-                  onClick={() => markNotificationAsRead(notification.id)}
-                >
+                <button onClick={() => markNotificationAsRead(notification.id)}>
                   Mark as Read
                 </button>
               )}
@@ -220,3 +306,11 @@ function NotificationsList() {
 }
 
 export default NotificationsList;
+
+
+/**
+ * 🔹 **Potential Improvements:**
+ * - **WebSocket Integration**: Implement real-time notifications instead of relying on API fetch. - SKIPPED
+ * - **Custom Sorting**: Allow users to sort notifications by date, type, or read status.
+ * - **Bulk Actions**: Enable users to delete or archive multiple notifications at once.
+ */

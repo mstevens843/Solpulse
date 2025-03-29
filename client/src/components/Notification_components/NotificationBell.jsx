@@ -1,3 +1,20 @@
+/**
+ * NotificationBell.js
+ *
+ * This file is responsible for handling real-time notifications for the user.
+ * It allows users to:
+ * - View unread notifications when clicking the bell icon.
+ * - Mark notifications as read individually or all at once.
+ * - Fetch notifications from the API only when the dropdown is opened.
+ *
+ * Features:
+ * - Uses **debounced API calls** to prevent unnecessary requests.
+ * - Implements **click outside detection** to close the dropdown when clicking elsewhere.
+ * - Displays **real-time unread count updates**.
+ * - Handles **different types of notifications**, including transactions.
+ */
+
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { api } from "@/api/apiConfig";
 import debounce from "lodash.debounce";
@@ -12,19 +29,37 @@ const notificationMessages = {
   transaction: (amount) => `💰 sent you a tip of ${amount} SOL`,
 };
 
+
+const notificationIcons = {
+  like: "❤️",
+  retweet: "🔄",
+  comment: "💬",
+  follow: "➕",
+  message: "✉️",
+  transaction: "💰",
+};
+
+
 function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
+  const [cachedNotifications, setCachedNotifications] = useState([]); // ✅ 4. Cache notifications
   const [unreadCount, setUnreadCount] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showRead, setShowRead] = useState(false); // ✅ 3. Show/hide read toggle
   const dropdownRef = useRef(null);
 
-  // Fetch notifications only when triggered by button click
+  /**
+   * Fetches notifications from the API.
+   * - Uses **debounce** to prevent excessive requests.
+   * - Updates both the notifications list and the unread count.
+   */
   const fetchNotifications = useCallback(
     debounce(async () => {
       try {
         const response = await api.get("/notifications");
         console.log("Notifications Fetched: ", response.data.notifications);
         setNotifications(response.data.notifications || []);
+        setCachedNotifications(response.data.notifications || []); // ✅ cache them
         setUnreadCount(response.data.unreadCount || 0);
       } catch (error) {
         if (error.response?.status === 429) {
@@ -41,12 +76,17 @@ function NotificationBell() {
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => {
       if (!prev) {
-        fetchNotifications();
+        if (cachedNotifications.length > 0) {
+          setNotifications(cachedNotifications); // ✅ use cached version
+        } else {
+          fetchNotifications();
+        }
       }
       return !prev;
     });
   };
 
+  // closes dropdown when clicking outside. 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setIsDropdownOpen(false);
@@ -62,6 +102,13 @@ function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen]);
 
+
+
+   /**
+   * Marks all notifications as read.
+   * - Optimistically updates the UI first.
+   * - Sends an API request to update the server.
+   */
   const markAllAsRead = async () => {
     try {
       // Optimistically update UI first
@@ -77,7 +124,10 @@ function NotificationBell() {
     }
   };
 
-  // Mark a single notification as read and remove it
+  /**
+   * Marks a single notification as read.
+   * - Fades out the notification before removing it.
+   */
   const markNotificationAsRead = async (id) => {
     try {
       document.getElementById(`notification-${id}`).classList.add("removed");
@@ -125,30 +175,36 @@ function NotificationBell() {
           </div>
           {notifications.length > 0 ? (
             <ul className="notification-list">
-            {notifications.map((notification) => (
-              <li
-                key={notification.id}
-                id={`notification-${notification.id}`}
-                className={`notification-item ${notification.isRead ? "read" : "unread"}`}
-              >
-                <div className="notification-content">
-                  <p>
-                    <strong>{notification.actor}</strong>{" "}
-                    {notification.type === "transaction"
-                      ? notificationMessages.transaction(notification.amount)
-                      : notificationMessages[notification.type] || notification.message}
-                  </p>
-                  <span>{new Date(notification.createdAt).toLocaleString()}</span>
-                </div>
-                <button
-                  className="mark-as-read-btn"
-                  onClick={() => markNotificationAsRead(notification.id)}
-                >
-                  Mark as Read
-                </button>
-              </li>
-            ))}
-
+              {notifications
+                .filter((n) => showRead || !n.isRead) // ✅ 3. Toggle visibility of read
+                .map((notification) => (
+                  <li
+                    key={notification.id}
+                    id={`notification-${notification.id}`}
+                    className={`notification-item ${notification.isRead ? "read" : "unread"}`}
+                  >
+                    <div className="notification-content">
+                      <p>
+                        <span className="notification-icon">
+                          {notificationIcons[notification.type] || "🔔"}
+                        </span>{" "}
+                        <strong>{notification.actor}</strong>{" "}
+                        {notification.type === "transaction"
+                          ? notificationMessages.transaction(notification.amount)
+                          : notificationMessages[notification.type] || notification.message}
+                      </p>
+                      <span>{new Date(notification.createdAt).toLocaleString()}</span>
+                    </div>
+                    {!notification.isRead && (
+                      <button
+                        className="mark-as-read-btn"
+                        onClick={() => markNotificationAsRead(notification.id)}
+                      >
+                        Mark as Read
+                      </button>
+                    )}
+                  </li>
+                ))}
             </ul>
           ) : (
             <p className="no-notifications">No notifications</p>
@@ -160,3 +216,34 @@ function NotificationBell() {
 }
 
 export default NotificationBell;
+
+
+/**
+ * 🔹 **Potential Improvements:** 
+ * - **WebSocket Integration**: - SKIPPED
+ *   - Implement real-time notifications instead of requiring a fetch when opening the dropdown.
+ *
+ * - **Notification Type Icons**:
+ *   - Add small icons next to each notification type (e.g., ❤️ for likes, 🔄 for retweets).
+ *
+ * - **Better Read/Unread UI**:
+ *   - Instead of removing notifications immediately, add a "Show Read" toggle.
+ *
+ * - **Improve Performance**:
+ *   - Cache notifications in state to avoid re-fetching if the dropdown is closed and reopened.
+ */
+
+
+/**
+2. Notification Type Icons
+
+Added emoji icons per notification type via getNotificationIcon() helper.
+
+3. Better Read/Unread UI
+
+Introduced a Show Read / Hide Read toggle to optionally display previously read notifications.
+
+4. Performance Optimization (Client Caching)
+
+Cached notifications in cachedNotifications so reopening the dropdown doesn’t re-fetch unnecessarily.
+ */

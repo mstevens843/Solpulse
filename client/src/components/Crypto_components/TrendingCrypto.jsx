@@ -1,4 +1,22 @@
-// components/TrendingCrypto.js
+/**
+ * TrendingCrypto.js
+ *
+ * This file is responsible for displaying trending cryptocurrencies within the Solana ecosystem.
+ * It provides users with:
+ * - A list of trending coins, top gainers, and top losers.
+ * - Real-time NFT floor price percentage changes.
+ * - A search function to filter cryptocurrencies.
+ * - An option to initiate trading directly from the list.
+ *
+ * Features:
+ * - **API Integration**: Fetches trending cryptocurrencies, gainers, losers, and NFT data.
+ * - **Local Storage Caching**: Saves trending coins locally to reduce redundant API calls.
+ * - **Real-time Data Updates**: Provides live price updates with a refresh button.
+ * - **User-Friendly UI**: Displays categories with easy-to-read lists and percentage changes.
+ */
+
+
+
 import React, { useState, useEffect, useMemo } from "react";
 import { api } from "@/api/apiConfig"; 
 import CryptoTicker from "@/components/CryptoTicker"; 
@@ -20,6 +38,12 @@ function TrendingCrypto() {
     const [refreshing, setRefreshing] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
+
+    /**
+     * Fetches trending cryptocurrency, NFT, and gainers/losers data.
+     * - Filters out stablecoins from the trending list.
+     * - Updates local storage for caching.
+     */
     const fetchTrendingData = async () => {
         setLoading(true);
         setError("");
@@ -66,6 +90,11 @@ function TrendingCrypto() {
         }
     }, [coins.length]);
 
+
+
+    /**
+     * Filters cryptocurrency list based on user search query.
+     */
     const filteredCoins = useMemo(
         () =>
             coins.filter(
@@ -181,3 +210,24 @@ function TrendingCrypto() {
 }
 
 export default TrendingCrypto;
+
+
+
+/**
+ * 🔹 **Potential Improvements:**
+ * 1. **Performance Optimization**:
+ *    - Implement caching strategies to reduce API load.
+ *    - Use WebSockets for real-time price updates.
+ *
+ * 2. **Expanded Data**:
+ *    - Display trading volume, liquidity, and other relevant data.
+ *    - Show historical performance trends.
+ *
+ * 3. **User Experience Enhancements**:
+ *    - Add a sorting feature for trending coins.
+ *    - Implement a dark/light mode toggle.
+ *
+ * 4. **Error Handling & Recovery**:
+ *    - Improve UI feedback when the API is unreachable.
+ *    - Implement an automatic retry mechanism for failed API calls.
+ */

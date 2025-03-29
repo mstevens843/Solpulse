@@ -1,3 +1,11 @@
+/**
+ * Comment Routes for SolPulse API
+ *
+ * - Manages user comments on posts.
+ * - Includes WebSocket support for real-time comment updates.
+ * - Implements validation, ownership checks, and notifications.
+ */
+
 const express = require('express');
 const { Comment, Notification, Post, User } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
@@ -6,9 +14,12 @@ const checkCommentOwnership = require('../middleware/checkCommentOwnership');
 
 const router = express.Router();
 
+const defaultAvatarUrl = process.env.DEFAULT_AVATAR_URL || 'https://your-fallback-url.com/default.png';
+
+
 /**
- * Set WebSocket instance for comment events.
- * @param {Object} socketInstance - The WebSocket server instance.
+ * WebSocket instance for broadcasting comment events.
+ * - Allows real-time updates for new, updated, and deleted comments.
  */
 let io;
 const setSocket = (socketInstance) => {
@@ -17,7 +28,10 @@ const setSocket = (socketInstance) => {
 };
 
 /**
- * Handle comment events for WebSocket clients.
+ * Broadcast comment events via WebSocket.
+ * 
+ * - Ensures WebSocket is initialized before emitting events.
+ * - Structures event data before broadcasting.
  */
 const handleCommentEvent = (event, payload) => {
     if (!io) {
@@ -41,13 +55,20 @@ const handleCommentEvent = (event, payload) => {
 };
 
 /**
- * Handle validation errors.
+ * Helper function to format validation errors.
  */
 const handleValidationErrors = (errors) => {
     return errors.array().map((err) => ({ field: err.param, message: err.msg }));
 };
 
 
+
+/**
+ * Fetch detailed comments on posts created by the logged-in user.
+ *
+ * - Supports pagination.
+ * - Includes comment author information.
+ */
 router.get('/detailed', authMiddleware, async (req, res) => {
     const { page = 1 } = req.query;
     
@@ -130,6 +151,70 @@ router.get('/count', async (req, res) => {
     }
 });
 
+
+/**
+ * Optimization Route 🚀
+ *
+ * @route   POST /api/comments/batch-count
+ * @desc    Returns comment counts for multiple postIds in a single request.
+ * @reason  This route significantly reduces the number of API calls needed
+ *          when displaying comment counts across multiple posts (e.g., in the
+ *          profile feed or homepage). Instead of sending 20+ individual requests,
+ *          the frontend can now send one batch request — improving performance,
+ *          reducing rate limit issues, and enhancing scalability.
+ * added:
+ * Allows empty postIds without throwing 400.
+
+Ensures consistent response shape: counts: [{ postId, count }].
+
+ * @access  Public
+ */
+router.post('/batch-count', async (req, res) => {
+    const { postIds } = req.body;
+
+    // ✅ Improved validation
+    if (!Array.isArray(postIds)) {
+        return res.status(400).json({ error: 'postIds must be an array' });
+    }
+
+    // ✅ Allow empty arrays and return empty counts instead of 400
+    if (postIds.length === 0) {
+        return res.status(200).json({ counts: [] });
+    }
+
+    try {
+        const counts = await Comment.findAll({
+            attributes: [
+                'postId',
+                [Comment.sequelize.fn('COUNT', Comment.sequelize.col('id')), 'count'],
+            ],
+            where: { postId: postIds },
+            group: ['postId'],
+        });
+
+        const countMap = {};
+        postIds.forEach(id => {
+            countMap[id] = 0; // default to 0
+        });
+
+        counts.forEach(({ postId, dataValues }) => {
+            countMap[postId] = parseInt(dataValues.count, 10);
+        });
+
+        // ✅ Format returned as expected by frontend
+        const formatted = Object.entries(countMap).map(([postId, count]) => ({
+            postId: parseInt(postId, 10),
+            count,
+        }));
+
+        res.status(200).json({ counts: formatted });
+    } catch (error) {
+        console.error('Error fetching batch comment counts:', error);
+        res.status(500).json({ error: 'Failed to fetch comment counts.' });
+    }
+});
+
+
 /**
  * Fetch comments for a specific post with pagination.
  */
@@ -211,7 +296,8 @@ router.post(
             const formattedComment = {
                 ...comment.toJSON(),
                 author: user ? user.username : "Unknown",
-                avatarUrl: user ? user.profilePicture || "http://localhost:5001/uploads/default-avatar.png" : "http://localhost:5001/uploads/default-avatar.png",
+                avatarUrl: user ? user.profilePicture || defaultAvatarUrl : defaultAvatarUrl,
+
             };
 
             // Notify the post owner
@@ -255,3 +341,22 @@ router.delete('/:id', authMiddleware, checkCommentOwnership, async (req, res) =>
 });
 
 module.exports = { router, setSocket };
+
+
+
+/**
+ * 🔍 Potential Issues & Optimizations
+1️⃣ No WebSocket Authentication
+
+Issue: Any client can receive WebSocket events.
+✅ Fix: Implement WebSocket authentication using JWT before broadcasting messages.
+2️⃣ Default Avatar URLs Should Be Dynamic
+
+Issue: Hardcoded /default-avatar.png may not work if deployed.
+✅ Fix: Store the URL in environment variables or database settings.
+3️⃣ No Soft Delete for Comments
+
+Issue: Deleted comments are permanently removed.
+✅ Fix: Implement a soft delete mechanism (e.g., isDeleted: true).
+
+ */

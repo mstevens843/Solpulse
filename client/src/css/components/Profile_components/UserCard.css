@@ -16,11 +16,12 @@
 
 /* Left Section: Profile Picture & Edit Button */
 .user-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
+  position: relative; /*  THIS is what allows the icon to overlay */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
 }
 
 /* Profile Picture */
@@ -217,3 +218,85 @@
   background-color: #00ddaa;
   color: #000;
 }
+
+
+/* Smooth Modal Animations */
+.fade-in {
+  animation: fadeIn 0.25s ease-in forwards;
+}
+.scale-in {
+  animation: scaleIn 0.25s ease-in forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Optional: Reset button style */
+.remove-pic-btn {
+  margin-top: 6px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.remove-pic-btn:hover {
+  background-color: #b91c1c;
+}
+
+
+.avatar-edit-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: #222;
+  border-radius: 50%;
+  padding: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  color: white;
+  z-index: 2;
+}
+
+.profile-pic-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+}
+
+.profile-pic-modal button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.choose-btn {
+  background-color: #1e90ff;
+  color: white;
+}
+
+.remove-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+

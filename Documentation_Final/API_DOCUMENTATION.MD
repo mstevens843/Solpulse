@@ -1,330 +1,228 @@
-# Authentication Guide
 
-This document provides an overview of how authentication is implemented in this API, including details on JWT-based authentication, user registration, login, logout, protected routes, and ownership checks.
+# 📄 API_DOCUMENTATION.md — SolPulse REST API (Detailed)
 
----
-## Table of Contents
+## 🧠 Overview
 
-1. [Overview](#overview)  
-2. [Environment Variables](#environment-variables)  
-3. [Authentication Flow](#authentication-flow)  
-4. [Auth Routes](#auth-routes)  
-   - [Register (POST `/auth/register`)](#register-post-authregister)  
-   - [Login (POST `/auth/login`)](#login-post-authlogin)  
-   - [Logout (POST `/auth/logout`)](#logout-post-authlogout)  
-   - [Get Current User (GET `/auth/me`)](#get-current-user-get-authme)  
-   - [Delete User (Testing Only) (POST `/auth/delete`)](#delete-user-testing-only-post-authdelete)  
-5. [Middlewares](#middlewares)  
-   - [Auth Middleware (`authMiddleware.js`)](#auth-middleware-authmiddlewarejs)  
-   - [Check Comment Ownership (`checkCommentOwnership.js`)](#check-comment-ownership-checkcommentownershipjs)  
-   - [Check Ownership (`checkOwnership.js`)](#check-ownership-checkownershipjs)  
-6. [Utility Helpers](#utility-helpers)  
-   - [Token Helpers (`token.js`)](#token-helpers-tokenjs)  
-   - [Validate Token (`validateToken.js`)](#validate-token-validatetokenjs)  
-7. [Example Usage](#example-usage)  
-8. [Error Handling](#error-handling)  
-9. [Additional Notes](#additional-notes)
+The SolPulse API powers a decentralized, Solana-themed crypto social network with:
+- User authentication
+- Posts and retweets
+- Comments
+- Direct messaging with tipping
+- Notifications
+- Full-text search
+- Real-time market data
+- On-chain trading via Jupiter
+
+### Base URL
+
+`https://solpulse.onrender.com/api`
 
 ---
 
-## Overview
+## 🛠️ Jupiter API Trading (trade.js)
 
-Authentication in this project is handled via **JSON Web Tokens (JWT)**. When a user successfully logs in or registers, the server generates a JWT which the client must include in the `Authorization` header (or in an `x-auth-token` header) in subsequent requests to access protected routes.
+### 🔁 Swap Tokens on Solana
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/trade/tokens` | Fetch all Solana tokens from Jupiter |
+| GET | `/trade/tradable` | Fetch only tradable tokens |
+| GET | `/trade/token/:mintAddress` | Get token metadata by mint address |
 
----
+### 📉 Quote + Execute Swaps
+| Function | Description |
+|----------|-------------|
+| `fetchSwapQuote()` | Get best quote for token swap |
+| `fetchTokenPrice(mintAddress)` | Real-time price lookup |
+| `fetchTokenDecimals(mintAddress)` | Precision helper |
+| `fetchSwapInstructions()` | Builds transaction for swap |
+| `executeSwap()` | Signs and submits transaction on-chain |
 
-## Environment Variables
-
-1. **`JWT_SECRET`**: The secret key used to sign the JWTs.  
-2. **`NODE_ENV`**: Environment mode (e.g., `development`, `production`). Used to restrict certain routes (like `/auth/delete` in production).
-
-Make sure these variables are set in your environment (e.g., in a `.env` file) before starting the server.
-
----
-
-## Authentication Flow
-
-1. **User Registration**: Create a new user with an email, username, and password. A JWT is returned.  
-2. **User Login**: Authenticates a user based on email or username plus password. Returns a JWT and user info.  
-3. **Token Validation**: Protected routes verify the presence and validity of the JWT.  
-4. **Logout**: Clears the token from the client (or cookies, depending on your front-end implementation).
-
----
-
-## Auth Routes
-
-All authentication routes are defined in **`routes/auth.js`**.
-
-### Register (POST `/auth/register`)
-
-**Description**: Creates a new user account and returns a JWT.
-
-**Request Body**:
-
-    {
-      "username": "string (required)",
-      "email": "string (required, valid email)",
-      "password": "string (required, at least 6 chars)",
-      "walletAddress": "string (optional)"
-    }
-
-**Response**:
-
-    {
-      "token": "JWT_STRING"
-    }
-
-**Example**:
-
-    curl -X POST \
-         -H "Content-Type: application/json" \
-         -d '{"username": "testuser", "email": "test@example.com", "password":"password123"}' \
-         http://localhost:3000/auth/register
+**Blockchain Details**
+- Wallets: Phantom, Solflare via Solana Wallet Adapter
+- RPC: Alchemy Solana mainnet
+- Uses `Connection.confirmTransaction()` to confirm
 
 ---
 
-### Login (POST `/auth/login`)
+## 📊 CoinGecko Market Data (trendingCrypto.js)
 
-**Description**: Authenticates a user by `email` or `username` plus `password`. Returns a JWT and user info.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/trendingCrypto` | Trending coins in the Solana ecosystem |
+| GET | `/trendingCrypto/top-gainers-losers` | Top 10 gainers & losers (24h) |
+| GET | `/trendingCrypto/nfts` | Trending Solana NFTs |
+| GET | `/trendingCrypto/search?query=` | Search for coin/NFT |
+| GET | `/trendingCrypto/chart/:id` | 7-day market chart |
+| GET | `/trendingCrypto/global` | BTC/ETH/Other market share |
 
-**Request Body**:
-
-    {
-      "identifier": "string (email or username)",
-      "password": "string"
-    }
-
-**Response**:
-
-    {
-      "token": "JWT_STRING",
-      "user": {
-        "id": 1,
-        "username": "testuser",
-        "email": "test@example.com"
-        // ... other user fields
-      }
-    }
-
-**Example**:
-
-    curl -X POST \
-         -H "Content-Type: application/json" \
-         -d '{"identifier": "test@example.com", "password":"password123"}' \
-         http://localhost:3000/auth/login
+**Extras:**
+- Filters out stablecoins like USDC
+- Uses Chart.js in frontend for visualizations
+- Debounced search to avoid CoinGecko rate limits
 
 ---
 
-### Logout (POST `/auth/logout`)
+## 🔐 Authentication Routes
 
-**Description**: Logs out a user by clearing the auth cookie/token on the client side (server just responds with a success message).
-
-**Response**:
-
-    {
-      "message": "Logged out successfully"
-    }
-
-**Example**:
-
-    curl -X POST http://localhost:3000/auth/logout
+| Method | Endpoint           | Description                          |
+|--------|--------------------|--------------------------------------|
+| POST   | `/auth/register`   | Create user + return JWT             |
+| POST   | `/auth/login`      | Authenticate + return JWT            |
+| POST   | `/auth/logout`     | Revoke JWT (temp memory blocklist)  |
+| GET    | `/auth/me`         | Validate + return current user       |
+| POST   | `/auth/delete`     | (Testing only) delete test user      |
 
 ---
 
-### Get Current User (GET `/auth/me`)
+## 👤 User Routes
 
-**Description**: Retrieves the current user profile based on the JWT.
+### Profile
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/users/me` | Get profile of logged-in user |
+| GET | `/users/:id` | Get public profile & posts |
+| PUT | `/users/profile/:id` | Update bio |
+| POST | `/users/upload-profile-picture` | Upload image (max 5MB, png/jpg/gif) |
 
-**Headers**:
-
-    Authorization: Bearer <token>
-    OR x-auth-token: <token>
-
-**Response**:
-
-    {
-      "id": 1,
-      "username": "testuser",
-      "email": "test@example.com"
-    }
-
-**Example**:
-
-    curl -X GET \
-         -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-         http://localhost:3000/auth/me
+### Follow System
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/users/:id/followers` | List of followers |
+| GET | `/users/:id/following` | List of following |
+| GET | `/users/:id/is-following` | Check follow status |
+| POST | `/users/:id/follow` | Follow a user |
+| DELETE | `/users/:id/unfollow` | Unfollow a user |
+| GET | `/users/followers/notifications` | Recent followers (paginated) |
 
 ---
 
-### Delete User (Testing Only) (POST `/auth/delete`)
+## 📝 Post Routes
 
-> **Note**: This route is **disabled** in production. It’s only for testing or development.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/posts` | Paginated posts |
+| GET | `/posts/:id` | Get post w/ comments |
+| POST | `/posts` | Create post (text + image + cryptoTag) |
+| DELETE | `/posts/:id` | Delete your own post |
 
-**Description**: Deletes a user by their email.
-
-**Request Body**:
-
-    {
-      "email": "user@example.com"
-    }
-
-**Response**:
-
-    {
-      "message": "User deleted successfully"
-    }
-
-**Example**:
-
-    curl -X POST \
-         -H "Content-Type: application/json" \
-         -d '{"email": "test@example.com"}' \
-         http://localhost:3000/auth/delete
+### Likes & Retweets
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/posts/:id/like-status` | Check if post is liked |
+| POST | `/posts/:id/like` | Like/unlike |
+| GET | `/posts/:id/retweet-status` | Check retweet status |
+| POST | `/posts/:id/retweet` | Retweet |
+| DELETE | `/posts/:id/retweet` | Un-retweet |
+| GET | `/posts/likes` | See who liked your posts |
+| GET | `/posts/retweets` | Who retweeted your posts |
+| GET | `/posts/likes/batch` | All liked post IDs |
+| GET | `/posts/retweets/batch` | All retweeted post IDs |
+| GET | `/posts/:id/profile-feed` | All posts & retweets by user |
 
 ---
 
-## Middlewares
+## 💬 Comment Routes
 
-### Auth Middleware (`authMiddleware.js`)
-
-- **Location**: `middleware/auth.js`  
-- **Purpose**: Validates the JWT and attaches the decoded user info to `req.user`. If the token is missing or invalid, responds with an error.
-
-**How It Works**:
-
-1. Looks for the token in the `Authorization` header (format: `Bearer <token>`) or in `x-auth-token`.  
-2. Uses the `validateToken` function to verify the JWT.  
-3. Attaches the decoded data (`id`, `username`) to `req.user`.  
-4. Proceeds to the next middleware or returns an error if invalid.
-
-**Example Usage**:
-
-    // In some route file
-    router.get("/protected-route", authMiddleware, (req, res) => {
-      // Access req.user for user details
-      res.json({ message: "You have access", user: req.user });
-    });
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/comments` | Comments for post |
+| GET | `/comments/count` | Total for post |
+| GET | `/comments/detailed` | Comments on your own posts |
+| POST | `/comments` | Create comment |
+| DELETE | `/comments/:id` | Delete your comment |
 
 ---
 
-### Check Comment Ownership (`checkCommentOwnership.js`)
+## ✉️ Messaging Routes
 
-- **Location**: `middleware/checkCommentOwnership.js`  
-- **Purpose**: Ensures the user making the request owns the comment they’re trying to modify/delete.
-
-**How It Works**:
-
-1. Finds the comment by its `id` from `req.params`.  
-2. Compares the comment’s `userId` with `req.user.id`.  
-3. If they don’t match, returns a `403` error. Otherwise, attaches the comment to `req.comment` and calls `next()`.
-
----
-
-### Check Ownership (`checkOwnership.js`)
-
-- **Location**: `middleware/checkOwnership.js`  
-- **Purpose**: A more generalized ownership check for both Posts and Comments.
-
-**How It Works**:
-
-1. Checks the URL pattern to see if it’s for `/comments` or `/posts`.  
-2. Finds the record (Comment or Post) by its `id`.  
-3. Compares the record’s `userId` with `req.user.id`.  
-4. Returns `403` if unauthorized, or attaches the record to `req.comment`/`req.post` and calls `next()`.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/messages` | All conversations (paginated) |
+| GET | `/messages/recent` | 5 most recent |
+| GET | `/messages/detailed` | With sender info |
+| GET | `/messages/search-users` | Search users to message |
+| PATCH | `/messages/:id/read` | Mark as read |
+| POST | `/messages` | Send message (text, image, tip) |
 
 ---
 
-## Utility Helpers
+## 🔔 Notification Routes
 
-### Token Helpers (`token.js`)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/notifications` | All notifications (paginated) |
+| GET | `/notifications/full` | With comment/message content |
+| GET | `/notifications/tips` | Only tip notifications |
+| PUT | `/notifications/:id/read` | Mark 1 notification read |
+| PUT | `/notifications/mark-all-read` | Mark all read |
+| POST | `/notifications/mark-all-read` | Alt: mark all read |
+| POST | `/notifications` | Create new (internal trigger) |
 
-- **Location**: `utils/token.js`
-- **Exports**:
-  1. **`generateToken(payload, expiresIn)`**: Generates a signed JWT. (Default expiration: `"500000h"`)  
-  2. **`verifyToken(token)`**: Verifies the JWT and returns the decoded payload or throws an error if invalid.  
-  3. **`decodeToken(token)`**: Decodes a JWT without verifying.  
-  4. **`validateToken(req)`**: A helper function that reads the token from the `Authorization` header and verifies it.
-
-> **Important**: `generateToken` and `validateToken` rely on `process.env.JWT_SECRET`. Make sure it is set.
-
----
-
-### Validate Token (`validateToken.js`)
-
-- **Location**: `utils/validateToken.js`
-- **Purpose**: A simplified helper that extracts the token from `req.headers.authorization`, splits out the `Bearer`, and calls `jwt.verify()`.
-
-**Usage**:
-
-    const validateToken = require('../utils/validateToken');
-
-    router.get('/protected', (req, res, next) => {
-      try {
-        const decoded = validateToken(req);
-        // do something with decoded data
-        res.json({ userId: decoded.id, username: decoded.username });
-      } catch (err) {
-        next(err);
-      }
-    });
+### Supported Notification Types
+- `like`
+- `comment`
+- `follow`
+- `message`
+- `transaction`
+- `retweet`
 
 ---
 
-## Example Usage
+## 🔍 Search Route
 
-Below is a quick example of how you might protect a route using `authMiddleware` and also check resource ownership:
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/search?query=solana` | Full-text search (users + posts) |
 
-    const express = require('express');
-    const router = express.Router();
-    const authMiddleware = require('../middleware/authMiddleware');
-    const checkCommentOwnership = require('../middleware/checkCommentOwnership');
-
-    router.delete('/comments/:id', authMiddleware, checkCommentOwnership, async (req, res) => {
-      try {
-        // If ownership check passes, the comment is attached to req.comment
-        await req.comment.destroy();
-        res.status(200).json({ message: 'Comment deleted successfully' });
-      } catch (error) {
-        res.status(500).json({ error: 'Server error' });
-      }
-    });
-
-    module.exports = router;
-
-1. **Client sends**: `DELETE /comments/123` with `Authorization: Bearer <JWT_TOKEN>`.  
-2. **Middleware checks**:  
-   - Is the token valid?  
-   - Does `req.user.id` match the `userId` on the comment with `id=123`?  
-3. **If authorized**, the comment is deleted. Otherwise, a `403 Forbidden` or `401 Unauthorized` error is returned.
+- Uses PostgreSQL `to_tsvector` + `plainto_tsquery`
+- Cached for 60s with NodeCache
+- Rate limited to 100/15min per IP
 
 ---
 
-## Error Handling
+## 📁 File Upload Rules
 
-Common authentication errors include:
-
-1. **Missing Token**: Returns `401` with `{"error": "Authorization token missing"}`.  
-2. **Invalid Token**: Returns `403` with `{"error": "Invalid token"}`.  
-3. **Token Expired**: Typically returns `403` with `{"error": "Token has expired"}`.  
-4. **No Access (ownership checks)**: Returns `403` with `{"error": "You are not authorized to perform this action"}`.
+- All uploads: `multipart/form-data`
+- Profile pics max size: 5MB
+- Stored in `/uploads/` directory
 
 ---
 
-## Additional Notes
+## 🔑 Authentication Notes
 
-**Token Expiration**:  
-- In `auth.js`, tokens are set to expire in **2 hours** for registration/login.  
-- In `token.js`, the default is `"500000h"` for `generateToken`.  
-  Make sure to unify or adjust these to your requirements.
+- All protected routes require:
+  `Authorization: Bearer <JWT>`
+- JWT expires in 2 hours
+- `/logout` revokes via memory store (no refresh tokens yet)
 
-**Logout**:  
-- Actual token invalidation requires client-side removal or server-side blacklisting.  
-- The provided `/auth/logout` route simply clears the token cookie in the response.
+---
 
-**Production Considerations**:  
-- Use **HTTPS** so tokens are not exposed in plain text.  
-- Avoid providing the `/auth/delete` route in production.
+## 🧪 Testing Notes
 
-**Ownership Checks**:  
-- Any route that modifies or deletes user-created content should have an ownership check.  
-  This is essential to prevent unauthorized changes.
+- `/auth/delete`: enabled only in test environments
+- Used to create/delete test accounts during integration tests
+
+---
+
+## 📦 Pagination
+
+- All list endpoints support:
+  - `page`: default 1
+  - `limit`: default 10 or 20 depending on route
+
+---
+
+## 🛡️ Rate Limiting
+
+| Route | Limit |
+|-------|-------|
+| `/auth/login` | 5 requests / 5 min |
+| `/search` | 100 requests / 15 min |
+
+---
+
+## 📬 Contact
+
+For issues or API onboarding:
+**Mathew Stevens**  
+📧 `mathewstevens7457@gmail.com`

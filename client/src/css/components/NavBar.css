@@ -195,3 +195,12 @@ button.logout-button:hover {
         font-size: 0.7rem;
     }
 }
+
+
+.navbar-wallet-button.connected {
+    color: #14f195;
+  }
+  
+  .navbar-wallet-button.disconnected {
+    color: #bbbbbb;
+  }

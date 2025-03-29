@@ -240,4 +240,12 @@
       font-size: 1.5rem;
     }
   }
+
+  .no-posts-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px;
+    text-align: center;
+  }
   

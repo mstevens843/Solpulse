@@ -1,12 +1,24 @@
+/**
+ * Notifications Routes for SolPulse API
+ *
+ * - Handles fetching, creating, and marking notifications as read.
+ * - Supports different notification types (likes, comments, follows, tips, messages).
+ * - Includes pagination, filtering, and real-time updates.
+ */
+
+
+
 const express = require('express');
 const { Notification, User, Comment, Message } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 
+
 /**
- * Utility function to format notifications with dynamic messages
- * @param {Array} notifications - Array of notification objects
- * @returns {Array} - Formatted notifications
+ * Utility function to format notifications with dynamic messages.
+ *
+ * - Fetches the actor (user who performed the action).
+ * - Generates human-readable messages for each notification type.
  */
 const formatNotifications = async (notifications) => {
   return Promise.all(
@@ -57,6 +69,11 @@ switch (notification.type) {
   );
 };
 
+
+/**
+ * GET /api/notifications/full
+ * Fetch full notifications with detailed content for comments/messages.
+ */
 router.get('/full', authMiddleware, async (req, res) => {
   try {
     const notifications = await Notification.findAll({
@@ -147,7 +164,10 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 
-
+/**
+ * PUT /api/notifications/mark-all-read
+ * Mark all notifications as read.
+ */
 router.put('/mark-all-read', authMiddleware, async (req, res) => {
   try {
     const [updatedCount] = await Notification.update(
@@ -225,6 +245,29 @@ router.post('/mark-all-read', authMiddleware, async (req, res) => {
 });
 
 
+/**
+ * POST /api/notifications
+ * 
+ * Creates a new notification in the database when an event occurs 
+ * (e.g., like, comment, follow, message, transaction).
+ * 
+ * This route is triggered when a user performs an action that requires 
+ * notifying another user, such as:
+ * - Liking a post
+ * - Reposting a post
+ * - Commenting on a post
+ * - Following another user
+ * - Sending a direct message
+ * - Sending a crypto tip (transaction)
+ * 
+ * @param {string} type - The type of notification (e.g., "like", "comment", "follow", "message", "transaction").
+ * @param {number} actorId - The ID of the user who performed the action.
+ * @param {number} userId - The ID of the user receiving the notification.
+ * @param {number} [amount] - The transaction amount (only for "transaction" type notifications).
+ * @param {string} [entityId] - The associated entity ID (e.g., post ID, comment ID, or transaction signature).
+ * 
+ * @returns {Object} The newly created notification object.
+ */
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { type, actorId, userId, amount, entityId } = req.body;
@@ -272,3 +315,29 @@ router.get('/tips', authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+/**
+ * 🔍 Potential Issues & Optimizations
+1️⃣ Inefficient Database Queries for Notifications - SKIPPED
+
+Issue: Each notification fetch requires an additional query to get the actor’s username.
+✅ Fix: Use Sequelize associations to fetch actor data in a single query:
+
+const notifications = await Notification.findAll({
+    where: { userId: req.user.id },
+    include: [{ model: User, as: 'actor', attributes: ['username'] }],
+    order: [['createdAt', 'DESC']],
+});
+2️⃣ No Real-Time WebSocket Updates for New Notifications - SKIPPED
+
+Issue: Users must refresh to see new notifications.
+✅ Fix: Emit WebSocket events for new notifications:
+
+io.emit('new-notification', formattedNotification);
+3️⃣ No Expiry or Auto-Archiving of Old Notifications - SKIPPED 
+
+Issue: Notifications keep accumulating, impacting performance.
+✅ Fix: Implement an auto-delete or archive mechanism for older notifications.
+ */

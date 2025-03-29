@@ -1,3 +1,11 @@
+/**
+ * NavBar.js
+ * 
+ * This file is responsible for rendering the main navigation bar for SolPulse.
+ * It provides links to different sections of the app, handles user authentication,
+ * and manages wallet connection/disconnection for Solana-based transactions.
+ */
+
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -5,6 +13,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import NotificationBell from "@/components/Notification_components/NotificationBell";
 import { AuthContext } from "@/context/AuthContext";
 import { api } from "@/api/apiConfig";
+import { toast } from "react-toastify";
 import "@/css/components/NavBar.css";
 
 const NavBar = () => {
@@ -15,24 +24,41 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchUser = async () => {
+        let retryCount = 0;
+        const maxRetries = 3;
+      
+        const fetchUserWithRetry = async () => {
+          while (retryCount < maxRetries) {
             try {
-                const response = await api.get("/auth/me");
-                setFetchedUser(response.data);
-                setUser(response.data);
+              const response = await api.get("/auth/me");
+              setFetchedUser(response.data);
+              setUser(response.data);
+              return; // ✅ Success — exit the retry loop
             } catch (error) {
-                console.error("Error fetching user:", error);
+              retryCount++;
+              console.error(`Attempt ${retryCount} - Error fetching user:`, error);
+              if (retryCount >= maxRetries) {
+                console.warn("Max retries reached. Giving up on fetching user.");
+              } else {
+                await new Promise((res) => setTimeout(res, 1000)); // Wait before retry
+              }
             }
+          }
         };
-
+      
         if (isAuthenticated && !fetchedUser) {
-            fetchUser();
+          fetchUserWithRetry();
         }
-    }, [isAuthenticated, fetchedUser, setUser]);
+      }, [isAuthenticated, fetchedUser, setUser]);
 
     console.log("NavBar User ID:", fetchedUser?.id);
 
-    // Logout Handler
+    /**
+     * Handle user logout
+     * - Calls backend logout API to invalidate session.
+     * - Clears authentication data from localStorage.
+     * - Redirects user to login page.
+     */
     const handleLogout = async () => {
         try {
             await api.post("/auth/logout"); // Call the backend to blacklist the token and clear cookies
@@ -45,6 +71,33 @@ const NavBar = () => {
             console.error("Logout failed:", error);
         }
     };
+
+    /**
+     * Wallet Connection Logic  
+     */
+    const connectWallet = (walletName) => async () => {
+        try {
+        await wallet.select(walletName);
+        await wallet.connect();
+        toast.success(`Connected to ${walletName}`);
+        setWalletMenuVisible(false);
+        } catch (err) {
+        toast.error(`Failed to connect with ${walletName}`);
+        console.error(err);
+        }
+    };
+    
+    const disconnectWallet = async () => {
+        try {
+        await wallet.disconnect();
+        toast.info("Wallet disconnected");
+        setWalletMenuVisible(false);
+        } catch (err) {
+        toast.error("Failed to disconnect wallet");
+        console.error(err);
+        }
+    };
+  
 
     return (
         <nav className="navbar" aria-label="Main Navigation">
@@ -125,57 +178,28 @@ const NavBar = () => {
                 )}
 
                 {/* Select Wallet Button */}
-                <li className=" navbar-item">
-                    <button 
-                        className="navbar-wallet-button" 
-                        onClick={() => setWalletMenuVisible(!walletMenuVisible)}
-                    >
-                        {wallet.connected 
-                            ? wallet.publicKey?.toString().slice(0, 6) + "..." + wallet.publicKey?.toString().slice(-4) 
-                            : "Select Wallet"}
-                    </button>
+                <li className="navbar-item">
+                <button
+                    className={`navbar-wallet-button ${wallet.connected ? "connected" : "disconnected"}`}
+                    onClick={() => setWalletMenuVisible((prev) => !prev)}
+                >
+                    {wallet.connected
+                    ? `Connected: ${wallet.wallet?.adapter.name || "Wallet"}`
+                    : "Select Wallet"}
+                </button>
 
-                    {walletMenuVisible && (
-                        <div className="wallet-options-dropdown">
-                            {!wallet.connected ? (
-                                <>
-                                    <button onClick={async () => {
-                                        try {
-                                            await wallet.select("Phantom");
-                                            await wallet.connect();
-                                            setWalletMenuVisible(false);
-                                        } catch (error) {
-                                            console.error("Wallet connection failed:", error);
-                                        }
-                                    }}>
-                                        Connect with Phantom
-                                    </button>
-                                    <button onClick={async () => {
-                                        try {
-                                            await wallet.select("Solflare");
-                                            await wallet.connect();
-                                            setWalletMenuVisible(false);
-                                        } catch (error) {
-                                            console.error("Wallet connection failed:", error);
-                                        }
-                                    }}>
-                                        Connect with Solflare
-                                    </button>
-                                </>
-                            ) : (
-                                <button onClick={async () => {
-                                    try {
-                                        await wallet.disconnect();
-                                        setWalletMenuVisible(false);
-                                    } catch (error) {
-                                        console.error("Wallet disconnection failed:", error);
-                                    }
-                                }}>
-                                    Disconnect Wallet
-                                </button>
-                            )}
-                        </div>
+                {walletMenuVisible && (
+                    <div className="wallet-options-dropdown">
+                    {!wallet.connected ? (
+                        <>
+                        <button onClick={connectWallet("Phantom")}>Connect with Phantom</button>
+                        <button onClick={connectWallet("Solflare")}>Connect with Solflare</button>
+                        </>
+                    ) : (
+                        <button onClick={disconnectWallet}>Disconnect Wallet</button>
                     )}
+                    </div>
+                )}
                 </li>
             </ul>
         </nav>
@@ -183,3 +207,11 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
+
+/**
+ * Potential Improvements:
+ * - Consider adding a loading indicator while fetching user data to prevent flickering. - SKIPPED
+ * - Improve error handling for failed API calls (e.g., retry logic for `/auth/me`). 
+ * - Optimize wallet connection UX by displaying connection status dynamically.
+ */

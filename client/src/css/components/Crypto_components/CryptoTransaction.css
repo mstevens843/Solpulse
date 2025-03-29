@@ -1,26 +1,29 @@
-/* Transaction Item */
+/* ✅ Expandable state visual cue */
 .crypto-transaction-item {
-    @apply bg-solana-light text-solana-dark p-4 rounded-md shadow-md mb-4 transition-transform transform hover:scale-105 hover:shadow-lg;
+    @apply cursor-pointer relative;
 }
 
-/* Transaction Type */
-.crypto-transaction-type {
-    @apply font-semibold text-solana-primary mb-2;
+/* ✅ Click indicator for expanded details */
+.crypto-transaction-item::after {
+    content: "Click to expand";
+    @apply absolute top-2 right-4 text-xs text-solana-primary opacity-60;
 }
 
-/* Transaction Amount */
-.crypto-transaction-amount {
-    @apply font-semibold text-solana-secondary mb-2;
+.crypto-transaction-item:hover::after {
+    @apply opacity-100;
 }
 
-/* Transaction Date */
-.crypto-transaction-date {
-    @apply text-solana-text-light font-medium relative;
+/* ✅ Expanded details */
+.crypto-transaction-details {
+    @apply mt-4 pl-2 border-l-2 border-solana-primary space-y-1 text-sm text-solana-dark;
 }
 
-/* Hover Tooltip for Date */
-.crypto-transaction-date:hover::after {
-    content: attr(title);
-    @apply absolute left-0 bottom-full bg-solana-dark text-solana-text-dark p-2 rounded-md text-xs shadow-md whitespace-nowrap;
+/* ✅ Explorer link hover */
+.tx-link:hover {
+    @apply underline text-solana-primary;
 }
 
+/* ✅ Address style */
+.tx-address {
+    @apply font-mono break-all text-solana-secondary;
+}

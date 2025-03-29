@@ -130,3 +130,10 @@
         font-size: 18px;
     }
 }
+
+
+.comment-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem; /* Adds spacing after the CommentSection */
+  }

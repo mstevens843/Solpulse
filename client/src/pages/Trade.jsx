@@ -1,3 +1,14 @@
+/**
+ * Trade.js - A crypto trading interface that enables swapping tokens using Jupiter's API on the Solana blockchain.
+ *
+ * This file is responsible for:
+ * - Fetching and displaying token balances from the connected Solana wallet.
+ * - Fetching swap quotes and executing transactions via Jupiter.
+ * - Managing token selection, amount input, and real-time conversion rates.
+ * - Handling wallet connection and transaction submission with retries.
+ */
+
+
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import TokenModal from "@/components/Crypto_components/TokenModal";
 import CryptoWallet from "@/components/Crypto_components/CryptoWallet";
@@ -5,13 +16,16 @@ import { fetchTokenInfo, fetchTokenInfoByMint, fetchWalletTokens, fetchTokenPric
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, PublicKey, Transaction, VersionedTransaction } from "@solana/web3.js";
 import { debounce } from "lodash";
+import { toast } from "react-toastify";
 import "@/css/pages/Trade.css";
 
 const SOLANA_RPC_URL = "https://solana-mainnet.g.alchemy.com/v2/dhWoE-s3HVNfalBWpWnzRIWfyJIqTamF"; // Solana Mainnet RPC
 // const SOLANA_RPC_URL = "https://solana-mainnet.rpcpool.com";
 
 
-
+/**
+ * Trade Component - Handles token swaps via Jupiter.
+ */
 function Trade() {
     const [selectedCoin, setSelectedCoin] = useState(null);
     const [buyingCoin, setBuyingCoin] = useState(null);
@@ -43,6 +57,10 @@ function Trade() {
         return address.replace(/pump$/i, ""); //  Removes "pump" suffix (case insensitive)
     };
 
+
+    /**
+     * Fetches wallet tokens when the wallet connects.
+     */
     useEffect(() => {
         if (!wallet.connected || !wallet.publicKey) {
             console.log("⏳ Waiting for wallet connection before fetching tokens.");
@@ -55,7 +73,9 @@ function Trade() {
     
     
 
-
+    /**
+     * Computes the expected amount of tokens to be received in the swap.
+     */
     const computedBuyAmount = useMemo(() => {
         if (!quote || !buyingCoin) return "";
         
@@ -77,10 +97,13 @@ function Trade() {
     }, [quote, selectedCoin]); // Added selectedCoin to dependency array
 
     
-    
+    /**
+     * Handles token selection from the modal.
+     */
     const handleCoinSelect = async (token, type) => {
         let selectedToken = token;
-    
+        
+        // Fetch missing token info
         if (!token.name || token.name === "Unknown Token") { 
             console.log("🔍 Fetching missing token info...");
             const fetchedToken = await fetchTokenInfo(token.mint);
@@ -119,16 +142,19 @@ function Trade() {
     };
 
 
-
+    /**
+     * Fetches a swap quote using Jupiter's API.
+     */
     async function fetchWithBackoff(fn, args, retries = 3, delay = 1000) {
         try {
             const result = await fn(...args); // Ensure fn is connection.sendRawTransaction
             return result; // This should be the signature
         } catch (error) {
             if (retries > 0) {
-                console.warn(`Retrying... (${retries} attempts left)`);
+                console.warn(`Retrying... (${retries} attempts left)`); // ✅ Retry logic improves swap success rate during congestion
                 await new Promise(res => setTimeout(res, delay));
                 return fetchWithBackoff(fn, args, retries - 1, delay * 2); // Exponential backoff
+                
             } else {
                 throw error;
             }
@@ -148,7 +174,9 @@ function Trade() {
 
 
 
-
+    /**
+     * Fetches a swap quote using Jupiter's API.
+     */
     const fetchSwapQuote = debounce(async () => {
         if (!wallet.publicKey || !selectedCoin || !buyingCoin || !sellAmount) {
             console.warn("⚠️ Missing required parameters for swap quote.");
@@ -378,11 +406,15 @@ const executeSwap = async () => {
         );
 
         console.log("Swap Successful:", `https://explorer.solana.com/tx/${signature}?cluster=mainnet-beta`);
-        alert(`Swap Successful! Check Explorer: https://explorer.solana.com/tx/${signature}?cluster=mainnet-beta`);
-    } catch (error) {
-        console.error("Swap failed:", error);
-        alert("⚠️ Swap failed. Please check your connection and try again.");
-    } finally {
+        toast.success("Swap Successful!", {
+            position: "top-center",
+            autoClose: 3000,
+          });
+          window.open(`https://explorer.solana.com/tx/${signature}?cluster=mainnet-beta`, "_blank");
+        } catch (error) {
+            console.error("Swap failed:", error);
+            toast.error(error?.message || "⚠️ Swap failed. Please try again.");
+          } finally {
         setIsSwapping(false);
     }
 };
@@ -524,11 +556,15 @@ const executeSwap = async () => {
 
                 {/* 🚀 Swap Button */}
                 <button 
-                    className="swap-button" 
-                    onClick={executeSwap} 
-                    disabled={isSwapping || !quote}
+                className="swap-button" 
+                onClick={executeSwap} 
+                disabled={isSwapping || !quote}
                 >
-                    {isSwapping ? "Swapping..." : "Swap"}
+                {isSwapping ? (
+                    <>
+                    <span className="spinner" /> Swapping...
+                    </>
+                ) : "Swap"}
                 </button>
             </div>
 
@@ -542,3 +578,18 @@ const executeSwap = async () => {
         
 
 export default Trade;
+
+
+/**
+ * 🔹 Potential Improvements:
+ * - Implement error-handling for failed swaps with retry logic.
+ * - Add real-time price updates for token pairs.
+ * - Improve UI/UX with better loading indicators and success confirmations.
+ */
+
+
+/**
+ * Possble updates later
+ * - real-time price-updated
+ * - success annimations for swaps.
+ */

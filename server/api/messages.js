@@ -1,13 +1,37 @@
+/**
+ * Messaging Routes for SolPulse API
+ *
+ * - Manages user-to-user messaging.
+ * - Supports message sending, retrieval, and search.
+ * - Includes notifications and read receipts.
+ */
+
 const express = require('express');
 
 const { Message, User, Notification } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const { Op } = require('sequelize'); // import sequelize operators
+const multer = require('multer');
+const path = require('path');
 const router = express.Router();
 
+
+// Configure Multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/messages'); // or wherever you want to store
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({ storage });
+
 /**
- * Utility function to format messages
+ * Utility function to format messages for consistent API responses.
  */
 const formatMessages = (messages) => {
   return messages.map((msg) => ({
@@ -21,7 +45,10 @@ const formatMessages = (messages) => {
   }));
 };
 
-// Create a new route to fetch messages ensuring sender username is included:
+/**
+ * GET /api/messages/detailed
+ * Fetch paginated messages for the logged-in user with sender details.
+ */
 router.get('/detailed', authMiddleware, async (req, res) => {
   const { page = 1 } = req.query;  // Default page is 1
   const limit = 10;  // Fixed pagination limit
@@ -70,8 +97,7 @@ router.get('/detailed', authMiddleware, async (req, res) => {
 
 /**
  * GET /api/messages/search-users
- * Search users based on query input for message recipient suggestions
- * Placed at the top to allow searching functionality before fetching messages
+ * Search users based on query input for message recipient suggestions.
  */
 router.get('/search-users', authMiddleware, async (req, res) => {
   const { query } = req.query;
@@ -153,17 +179,30 @@ router.get('/', authMiddleware, async (req, res) => {
 /**
  * PATCH /api/messages/:id/read
  * Mark a message as read
+ * changes -
+ * ✅ Key Changes
+ * paranoid: false allows fetching soft-deleted messages.
+ *  Added a deletedAt check to return a 410 Gone response for deleted messages.
  */
 router.patch('/:id/read', authMiddleware, async (req, res) => {
   try {
     console.log('Marking message as read. User:', req.user.id, 'Message ID:', req.params.id);
-    const message = await Message.findByPk(req.params.id);
+    
+    // Fetch message including soft-deleted ones
+    const message = await Message.findByPk(req.params.id, { paranoid: false });
+
+    // Check ownership and existence
     if (!message || message.recipientId !== req.user.id) {
       return res.status(404).json({ error: 'Message not found or unauthorized.' });
     }
 
+    // Prevent marking deleted messages as read
+    if (message.deletedAt) {
+      return res.status(410).json({ error: 'Message has been deleted.' });
+    }
+
     message.read = true;
-    message.readAt = new Date(); // Set the readAt timestamp
+    message.readAt = new Date();
     await message.save();
 
     res.json({ message: 'Message marked as read.', id: message.id });
@@ -173,6 +212,7 @@ router.patch('/:id/read', authMiddleware, async (req, res) => {
   }
 });
 
+
 /**
  * POST /api/messages
  * Send a new message
@@ -181,6 +221,7 @@ router.post(
   '/',
   [
     authMiddleware,
+    upload.single('attachment'), // ✅ Accept file under 'attachment' key
     check('recipient', 'Recipient username is required').not().isEmpty(),
     check('message', 'Message content is required').not().isEmpty(),
   ],
@@ -206,6 +247,7 @@ router.post(
         content: message.trim(),
         cryptoTip: cryptoTip !== undefined && cryptoTip !== null ? parseFloat(cryptoTip) : 0.0, // Default to 0.0 if missing
         read: false,
+        attachmentPath: file ? `/uploads/messages/${file.filename}` : null, // ✅ Add this field to your model if needed
       });
 
       console.log('Creating notification for recipient...');
@@ -232,3 +274,24 @@ router.post(
   }
 );
 module.exports = router;
+
+/**
+ * 🔍 Potential Issues & Optimizations
+1️⃣ No WebSocket Notification for New Messages - skipped
+
+Issue: Messages are stored but don’t trigger real-time updates. - skipped. 
+✅ Fix: Integrate WebSocket event broadcasting:
+io.emit('new-message', { sender: req.user.username, content: message });
+2️⃣ No Message Encryption for Privacy
+
+Issue: Messages are stored in plaintext. - skipped. 
+✅ Fix: Implement AES encryption using crypto-js or similar.
+3️⃣ No Soft Deletion for Messages
+
+Issue: Messages are permanently deleted when marked as read. 
+ */
+
+
+
+// Update the POST /api/messages route to use Multer middleware and extract fields from req.body and the uploaded file from req.file.
+// ✅ Updated POST /api/messages Route (with Multer support)

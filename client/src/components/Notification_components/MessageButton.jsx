@@ -1,3 +1,11 @@
+/**
+ * MessageButton Component
+ *
+ * - Allows users to send direct messages to other users.
+ * - Includes an optional crypto tip field (commented out for now).
+ * - Uses a modal to display the message input form.
+ * - Shows success or error messages after sending.
+ */
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig";
@@ -13,12 +21,23 @@ const MessageButton = ({ recipientUsername }) => {
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
+
+    /**
+     * Toggles the message modal.
+     * - Resets error and success messages on open/close.
+     */
     const toggleModal = () => {
         setIsMessageModalOpen((prev) => !prev);
         setErrorMessage(""); // Clear any previous error
         setSuccessMessage(""); // Clear success message
     };
 
+
+    /**
+     * Sends a direct message to the recipient.
+     * - Prevents empty messages from being sent.
+     * - Sends an optional crypto tip (currently disabled in UI).
+     */
     const handleSendMessage = async () => {
         if (loading) return;
 
@@ -111,3 +130,22 @@ MessageButton.propTypes = {
 };
 
 export default MessageButton;
+
+
+/**
+ * 🔹 **Potential Improvements:**
+ * 1. **WebSocket Integration**: - SKIPPED
+ *    - Use WebSockets for real-time messaging instead of relying solely on API requests.
+ *
+ * 2. **Enhanced Error Handling**:
+ *    - Display backend validation errors more clearly.
+ *    - Retry failed message sends instead of showing an error.
+ *
+ * 3. **Improve Crypto Tip Feature**:
+ *    - Allow users to send tips with Solana transactions.
+ *    - Include a dropdown for selecting different cryptocurrencies.
+ *
+ * 4. **UI/UX Enhancements**: - SKIPPED
+ *    - Add a character counter for message input.
+ *    - Animate modal opening and closing for a smoother experience.
+ */

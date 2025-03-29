@@ -1,25 +1,72 @@
+/**
+ * LandingPage.js - User Authentication & Entry Page for SolPulse
+ *
+ * This page is responsible for:
+ * - Displaying the landing page with a login form.
+ * - Handling user authentication (login).
+ * - Redirecting authenticated users to the home page.
+ * - Remembering login details if "Remember Me" is selected.
+ * - Fetching user details on mount to determine login status.
+ */
+
+
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import CryptoTicker from "@/components/Crypto_components/CryptoTicker";
 import { api } from "@/api/apiConfig";
+import { lazy, Suspense } from "react";
+const CryptoTicker = lazy(() => import("@/components/Crypto_components/CryptoTicker"));
 import { AuthContext } from "@/context/AuthContext";
 import "@/css/pages/LandingPage.css";
 
 function LandingPage() {
+    // State management for user authentication
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    // Login form state
     const [identifier, setIdentifier] = useState(localStorage.getItem("rememberedIdentifier") || "");
     const [email, setEmail] = useState(localStorage.getItem("rememberedEmail") || "");
     const [password, setPassword] = useState(localStorage.getItem("rememberedPassword") || "");
     const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe") === "true");
     const [showPassword, setShowPassword] = useState(false);
+
     const navigate = useNavigate();
     const { setIsAuthenticated, setUser: setAuthUser } = useContext(AuthContext);
 
+
+    // Add State for Tracking Attempts
+    const [loginAttempts, setLoginAttempts] = useState(0);
+    const [isCooldown, setIsCooldown] = useState(false);
+
+
+
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            navigate("/home");
+        }
+    }, [navigate]);
+
+
+
+    /**
+     * Fetch user data if logged in.
+     * This function runs on mount to check if the user is already authenticated.
+     * Now /users/me won’t fire off useless 401s if there’s no token.
+
+     */
     const fetchUser = useCallback(async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setLoading(false);
+            return;
+        }
+    
         try {
-            const response = await api.get("/users/me");
+            const response = await api.get("/users/me", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setUser(response.data);
         } catch (err) {
             console.error("Error fetching user data:", err);
@@ -28,6 +75,7 @@ function LandingPage() {
         }
     }, []);
 
+    // Remember login credentials if "Remember Me" is checked
     useEffect(() => {
         fetchUser();
     }, [fetchUser]);
@@ -39,6 +87,10 @@ function LandingPage() {
         }
     }, [rememberMe, email, password]);
 
+    /**
+     * Validate login form input fields before submitting.
+     * @returns {boolean} True if form is valid, otherwise false.
+     */
     const validateForm = () => {
         if (identifier.trim().length === 0) {
             setError("Email or Username is required.");
@@ -51,17 +103,27 @@ function LandingPage() {
         return true;
     };
     
-    // Update handleSubmit function
+    /**
+     * Handle login form submission.
+     * - Sends credentials to the API for authentication.
+     * - Stores token and user details in local storage upon successful login.
+     * - Redirects the user to the home page.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+    
+        if (isCooldown) {
+            setError("Too many login attempts. Please wait 30 seconds before trying again.");
+            return;
+        }
     
         if (!validateForm()) return;
     
         setLoading(true);
     
         const payload = {
-            identifier: identifier.trim(),  // Either email or username
+            identifier: identifier.trim(), // Either email or username
             password: password.trim(),
         };
     
@@ -94,6 +156,16 @@ function LandingPage() {
         } catch (err) {
             console.error("Login Error:", err.response?.data || err.message);
             setError(err.response?.data?.error || "Unable to log in. Please try again later.");
+    
+            // ✅  Rate limit logic: 3 failed attempts trigger 30s cooldown
+            setLoginAttempts((prev) => prev + 1);
+            if (loginAttempts + 1 >= 3) {
+                setIsCooldown(true);
+                setTimeout(() => {
+                    setIsCooldown(false);
+                    setLoginAttempts(0);
+                }, 30000); // ✅  30-second lockout
+            }
         } finally {
             setLoading(false);
         }
@@ -105,7 +177,9 @@ function LandingPage() {
                 <div className="crypto-info">
                     <h1>Welcome to SolPulse</h1>
                     <p>Explore the world of Solana social media, share insights, and connect with like-minded enthusiasts.</p>
-                    <CryptoTicker />
+                    <Suspense fallback={<p>Loading crypto data...</p>}>
+                        <CryptoTicker isCompact={true} />
+                    </Suspense>
                 </div>
 
                 <div className="auth-section">
@@ -178,3 +252,14 @@ function LandingPage() {
 }
 
 export default LandingPage;
+
+/**
+ * Potential Improvements:
+ * - **Auto Redirect Logged-in Users:** If a user is already authenticated, they should be redirected immediately instead of waiting for API validation.
+ * - **Rate Limiting on Login Attempts:** Implement a delay for multiple failed login attempts to prevent brute force attacks.
+ * - **Security Improvements:**
+ *   - Avoid storing passwords in localStorage, even when hashed. - SKIP 
+ *   - Implement HTTP-only secure cookies for session storage instead of localStorage for authentication. - SKIP
+ * - **Lazy Load CryptoTicker Component:** Since it's not critical to authentication, it can be lazy-loaded for faster performance.
+ * - **Enhance UI Feedback:** Consider adding a loading spinner or animation during login attempts for better UX. - SKIP 
+ */

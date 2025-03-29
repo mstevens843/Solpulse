@@ -1,3 +1,14 @@
+/**
+ * Settings.js - User Account Settings Page for SolPulse
+ *
+ * This file is responsible for:
+ * - Allowing users to update their account settings (email, password, privacy, notifications, theme, wallet address).
+ * - Storing updated settings in localStorage for persistence.
+ * - Fetching user settings from the backend when necessary.
+ * - Handling account deletion with a confirmation modal.
+ */
+
+
 import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
@@ -17,28 +28,48 @@ function Settings() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showPasswordField, setShowPasswordField] = useState(false);
 
-  useEffect(() => {
-    document.title = "Settings | Solrise";
 
-    const storedSettings = JSON.parse(localStorage.getItem("userSettings"));
-    if (storedSettings) {
-      setEmail(storedSettings.email || "");
-      setWalletAddress(storedSettings.walletAddress || "");
-    } else {
-      fetchSettings();
+
+  // Local Storage only holds non-sensitive preferences (theme, notifications, privacy, walletAddress)
+  useEffect(() => {
+    const cached = JSON.parse(localStorage.getItem("userSettings"));
+    if (cached) {
+      setPrivacy(cached.privacy || "public");
+      setNotifications(cached.notifications || "enabled");
+      setTheme(cached.theme || "dark");
+      setWalletAddress(cached.walletAddress || "");
     }
+  
+    // Always fetch fresh values to ensure consistency
+    fetchSettings();
   }, []);
 
+  /**
+   * Fetch user settings from the backend.
+   */
   const fetchSettings = async () => {
     setLoading(true);
     try {
       const response = await api.get(`/users/me`);
       const { email, privacy, walletAddress, notifications, theme } = response.data;
+  
       setEmail(email || "");
       setPrivacy(privacy || "public");
       setWalletAddress(walletAddress || "");
       setNotifications(notifications || "enabled");
       setTheme(theme || "dark");
+  
+      // ✅ Store only non-sensitive settings
+      localStorage.setItem(
+        "userSettings",
+        JSON.stringify({
+          walletAddress,
+          privacy,
+          notifications,
+          theme,
+        })
+      );
+  
       setErrorMessage("");
     } catch (error) {
       setErrorMessage("Failed to load settings. Please try again.");
@@ -47,6 +78,13 @@ function Settings() {
     }
   };
 
+
+
+  /**
+   * Handle updating user settings.
+   * - Sends updated settings to the backend.
+   * - Stores settings in localStorage for persistence.
+   */
   const handleUpdateSettings = async (e) => {
     e.preventDefault();
     setErrorMessage("");
@@ -64,15 +102,30 @@ function Settings() {
     }
   };
 
+  /**
+   * Handle account deletion process.
+   * - Triggers a confirmation modal before proceeding.
+   */
   const handleDeleteAccount = () => {
     setShowConfirmationModal(true);
   };
 
+  
+  /**
+   * Confirm account deletion.
+   * - Sends a request to delete the account.
+   * - Logs the user out after deletion.
+   */
   const confirmDeleteAccount = () => {
     console.log("Account deleted.");
     setShowConfirmationModal(false);
   };
 
+
+  /**
+   * Cancel account deletion.
+   * - Closes the confirmation modal.
+   */
   const cancelDeleteAccount = () => {
     setShowConfirmationModal(false);
   };
@@ -173,3 +226,11 @@ function Settings() {
 }
 
 export default Settings;
+
+/**
+ * 🔹 Potential Improvements:
+ * - Implement multi-factor authentication (MFA) for added security. - SKIPPED
+ * - Allow users to change their email with email verification. - SKIPPED
+ * - Store user preferences in the database instead of localStorage for improved security.
+ * - Implement session-based authentication to prevent token exposure in localStorage. - WILL IMPLEMENT LATER
+ */

@@ -1,4 +1,21 @@
-import React, { useState } from "react";
+/**
+ * PostComposer Component
+ *
+ * This component allows users to create posts with:
+ * - **Text content** (up to 280 characters).
+ * - **Optional media uploads** (images/videos).
+ * - **Crypto tags** for categorization.
+ * - **Form validation** to ensure correct input.
+ * - **Real-time UI updates** after successful post creation.
+ *
+ * Features:
+ * - Uses `react-toastify` for success/error messages.
+ * - Validates and restricts media file types and sizes.
+ * - Handles expired JWT errors by prompting re-login.
+ */
+
+
+import React, { useState, useRef } from "react";
 import { api } from "@/api/apiConfig";
 import MediaUpload from "@/components/Post_components/MediaUpload";
 import "@/css/components/Post_components/PostComposer.css";
@@ -11,17 +28,20 @@ function PostComposer({ onPostCreated }) {
   const [cryptoTag, setCryptoTag] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [dragActive, setDragActive] = useState(false);
+  const dropRef = useRef(null);
 
+  /** ✅ #1 Improved Error Handling */
   const validateMedia = (file) => {
     const allowedTypes = ["image/jpeg", "image/png", "video/mp4"];
     const maxSize = 5 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
-      setErrorMessage("Only JPG, PNG, and MP4 files are allowed.");
+      setErrorMessage("❌ Invalid file type. Only JPG, PNG, and MP4 allowed.");
       return false;
     }
     if (file.size > maxSize) {
-      setErrorMessage("File size must not exceed 5MB.");
+      setErrorMessage("❌ File too large. Max size is 5MB.");
       return false;
     }
     return true;
@@ -32,18 +52,17 @@ function PostComposer({ onPostCreated }) {
     setErrorMessage("");
 
     if (!content.trim()) {
-      setErrorMessage("Content cannot be empty.");
+      setErrorMessage("❌ Content cannot be empty.");
       return;
     }
     if (content.length > 280) {
-      setErrorMessage("Content cannot exceed 280 characters.");
+      setErrorMessage("❌ Content cannot exceed 280 characters.");
       return;
     }
-    if (media && !validateMedia(media)) {
-      return;
-    }
+    if (media && !validateMedia(media)) return;
 
     setLoading(true);
+
     const formData = new FormData();
     formData.append("content", content);
     if (media) formData.append("media", media);
@@ -63,31 +82,26 @@ function PostComposer({ onPostCreated }) {
       setCryptoTag("");
       onPostCreated(response.data.post);
 
-      // Toast message for successful post creation with dismiss options
-      toast.success("Post created successfully!", {
+      toast.success("✅ Post created!", {
         autoClose: 3000,
-        closeOnClick: true,
-        closeButton: true,
-        draggable: true,
         transition: Slide,
-        pauseOnHover: false, // Ensure it doesn't pause on hover
-        pauseOnFocusLoss: false, // Avoid pausing when the tab loses focus
+        pauseOnHover: false,
+        pauseOnFocusLoss: false,
       });
     } catch (error) {
       console.error("Error creating post:", error);
-
       const serverError = error.response?.data?.error;
 
-      if (serverError && serverError.toLowerCase().includes("jwt expired")) {
-        setErrorMessage("Please log back in.");
+      if (serverError?.toLowerCase().includes("jwt expired")) {
+        setErrorMessage("Session expired. Please log back in.");
+      } else if (serverError) {
+        setErrorMessage(`Server error: ${serverError}`);
       } else {
-        setErrorMessage(serverError || "Failed to create the post. Please try again.");
+        setErrorMessage("❌ Could not create post. Please try again.");
       }
-      toast.error("Failed to create the post.", {
+
+      toast.error("❌ Failed to post.", {
         autoClose: 3000,
-        closeOnClick: true,
-        closeButton: true,
-        draggable: true,
         transition: Slide,
         pauseOnHover: false,
         pauseOnFocusLoss: false,
@@ -97,8 +111,39 @@ function PostComposer({ onPostCreated }) {
     }
   };
 
+  /** ✅ #4 Drag & Drop Upload Handler */
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragActive(false);
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles && droppedFiles.length > 0) {
+      const file = droppedFiles[0];
+      if (validateMedia(file)) {
+        setMedia(file);
+        toast.info("📎 Media attached via drag & drop!", { autoClose: 2000 });
+      }
+    }
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
   return (
-    <div className="post-composer-container">
+    <div
+      className={`post-composer-container ${dragActive ? "drag-active" : ""}`}
+      onDragEnter={handleDrag}
+      onDragLeave={handleDrag}
+      onDragOver={handleDrag}
+      onDrop={handleDrop}
+      ref={dropRef}
+    >
       <form onSubmit={handleSubmit}>
         <textarea
           value={content}
@@ -108,15 +153,24 @@ function PostComposer({ onPostCreated }) {
           className="composer-textarea"
           aria-label="Post content"
         />
+        <p className="char-counter">
+          {content.length}/280
+        </p>
 
-        {/* New Row for Media Upload & Crypto Tag */}
+        {/* Emoji toggle button (non-functional for now) */}
+        <button
+          type="button"
+          onClick={() => toast.info("🛠️ Emoji picker coming soon!", { autoClose: 2000 })}
+          className="emoji-toggle-button"
+        >
+          😀 Emoji
+        </button>
+
         <div className="composer-options">
-          {/* Post Button on the Left */}
           <button type="submit" disabled={loading} className="submit-button">
             {loading ? "Posting..." : "Post"}
           </button>
 
-          {/* Camera Icon & Crypto Tag on the Right */}
           <div className="right-options">
             <MediaUpload
               onMediaSelect={(file) => {
@@ -126,29 +180,27 @@ function PostComposer({ onPostCreated }) {
             <input
               type="text"
               value={cryptoTag}
-              onChange={(e) => {
-                console.log("Crypto tag input:", e.target.value);
-                setCryptoTag(e.target.value);
-              }}
+              onChange={(e) => setCryptoTag(e.target.value)}
               placeholder="Add a crypto tag (e.g., SOL)"
               className="crypto-tag-input"
             />
           </div>
         </div>
 
+        {media && (
+          <p className="media-preview-message">📎 Media ready to upload: {media.name}</p>
+        )}
         {errorMessage && <p className="error-message">{errorMessage}</p>}
       </form>
 
       <ToastContainer
         position="top-right"
         autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
         pauseOnFocusLoss={false}
-        draggable
         pauseOnHover={false}
+        closeOnClick
+        draggable
+        transition={Slide}
         theme="dark"
         enableMultiContainer
       />
@@ -157,3 +209,12 @@ function PostComposer({ onPostCreated }) {
 }
 
 export default PostComposer;
+
+
+/**
+ * 🔹 **Potential Improvements:**
+ * 1. **Improve Error Handling**: Display more detailed errors for failed uploads.
+ * 2. **Show Media Preview**: Display selected media before posting. - SKIPPED
+ * 3. **Auto-Suggest Crypto Tags**: Fetch trending crypto tags and suggest them. - SKIPPED
+ * 4. **Support Drag & Drop Upload**: Allow users to drag and drop files.
+ */

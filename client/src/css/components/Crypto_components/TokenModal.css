@@ -82,3 +82,30 @@
     font-weight: bold;
     color: #00FFBD;
 }
+
+
+
+/* Optional - Add to TokenModal.css */
+.token-item.selected-token {
+    @apply border-2 border-solana-primary bg-solana-light;
+}
+
+.token-loading {
+    @apply text-sm text-solana-primary mb-2;
+}
+
+.token-error {
+    @apply text-red-500 text-sm mb-2;
+}
+
+.token-price {
+    @apply text-xs font-medium text-solana-text-light;
+}
+
+.change.up {
+    @apply text-green-500;
+}
+.change.down {
+    @apply text-red-500;
+}
+

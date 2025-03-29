@@ -1,9 +1,16 @@
 
 
+/* Container */
+.explore-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
 /* Header */
 .explore-header h2 {
   font-size: 2.2rem;
-  margin-top: rem;
   font-weight: bold;
   background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
   -webkit-background-clip: text;
@@ -12,27 +19,49 @@
   margin-top: 1.5rem;
 }
 
- .search-bar-container {
+/* Search Bar Container */
+.search-bar-container {
   max-width: 1000px;
   width: 100%;
-  margin-bottom: 10px
- }
+  margin-bottom: 10px;
+}
 
+/* ✅ Filter Controls */
+.filter-controls {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0.5rem 0 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: #cccccc;
+}
 
-/* Trending Topics Section */
+.filter-controls select {
+  background-color: #1f1f1f;
+  color: #00ffcc;
+  border: 1px solid #00ffcc;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 1rem;
+}
+
+/* Trending Section Container */
 .trending-section {
   margin-top: 0rem;
   width: 100%;
   max-width: 1000px;
-  height: 715px; 
-  overflow-y: auto; 
+  height: 715px;
+  overflow-y: auto;
   border-radius: 12px;
   background: #1c1c1e;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
   scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #00ffcc #121212; 
+  scrollbar-color: #00ffcc #121212;
+  scroll-behavior: smooth;
 }
 
+/* Custom Scrollbars */
 .trending-section::-webkit-scrollbar {
   width: 10px;
 }
@@ -41,23 +70,21 @@
   background: #121212;
   border-radius: 10px;
 }
+
 .trending-section::-webkit-scrollbar-thumb {
   background: #00ffcc;
   border-radius: 10px;
 }
 
-/* Ensure smooth scrolling */
-.trending-section {
-  scroll-behavior: smooth;
-}
-
+/* Sticky Right Panel (if needed in layout) */
 .home-right {
   position: sticky;
   top: 2rem;
-  max-height: calc(100vh - 4rem); 
+  max-height: calc(100vh - 4rem);
   overflow-y: visible;
 }
 
+/* Trending Title */
 .trending-title {
   font-size: 1.9rem;
   color: #00ffcc;
@@ -67,18 +94,17 @@
   text-align: center;
 }
 
-
-/* Trending Posts Grid */
+/* Grid Layout for Posts */
 .trending-posts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 0rem;
   margin-top: 0rem;
-  padding-left:1rem;
+  padding-left: 1rem;
   margin-right: 12px;
 }
 
-/* Trending Post Card */
+/* Individual Trending Post */
 .trending-post {
   background: #1f1f1f;
   max-height: 9rem;
@@ -106,7 +132,7 @@
   color: #ffffff;
 }
 
-/* Error and Loading Messages */
+/* Error Display */
 .explore-error {
   color: #ff4d4d;
   background: rgba(255, 0, 0, 0.2);
@@ -115,6 +141,7 @@
   text-align: center;
 }
 
+/* Loading Text */
 .explore-loading {
   color: #bbbbbb;
   font-size: 1.2rem;
@@ -129,7 +156,7 @@
   margin-top: 1.5rem;
 }
 
-/* Responsive Design */
+/* Responsive Styles */
 @media (max-width: 768px) {
   .explore-container {
     padding: 3rem 1.5rem;
@@ -145,5 +172,5 @@
 
   .trending-section {
     width: 100%;
-}
+  }
 }

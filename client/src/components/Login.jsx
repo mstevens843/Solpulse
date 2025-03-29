@@ -1,3 +1,13 @@
+/**
+ * Login.js - User authentication page.
+ *
+ * This file is responsible for:
+ * - Handling user login.
+ * - Managing authentication state via context.
+ * - Storing user credentials securely if "Remember Me" is enabled.
+ */
+
+
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/api/apiConfig";
@@ -5,7 +15,7 @@ import "@/css/pages/Login.css";
 import { AuthContext } from "@/context/AuthContext";
 
 const Login = ({ redirectPath = "/dashboard" }) => {
-    const [email, setEmail] = useState(localStorage.getItem("rememberedEmail") || "");
+    const [identifier, setIdentifier] = useState(localStorage.getItem("rememberedIdentifier") || "");
     const [password, setPassword] = useState(localStorage.getItem("rememberedPassword") || "");
     const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe") === "true");
     const [error, setError] = useState("");
@@ -15,15 +25,20 @@ const Login = ({ redirectPath = "/dashboard" }) => {
     const { setIsAuthenticated, setUser } = useContext(AuthContext);
 
     useEffect(() => {
-        if (rememberMe && email && password) {
-            localStorage.setItem("rememberedEmail", email);
+        if (rememberMe && identifier && password) {
+            localStorage.setItem("rememberedIdentifier", identifier); // ✅
             localStorage.setItem("rememberedPassword", password);
         }
-    }, [rememberMe, email, password]);
+    }, [rememberMe, identifier, password]);
 
+
+    /**
+     * Validates the login form inputs.
+     * @returns {boolean} - Whether the form inputs are valid.
+     */
     const validateForm = () => {
-        if (!email.trim().includes("@")) {
-            setError("Invalid email format.");
+        if (!identifier.trim()) {
+            setError("Username or email is required.");
             return false;
         }
         if (password.trim().length < 6) {
@@ -33,6 +48,11 @@ const Login = ({ redirectPath = "/dashboard" }) => {
         return true;
     };
 
+
+    /**
+     * Handles user login submission.
+     * @param {Event} e - Form submit event.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -44,7 +64,7 @@ const Login = ({ redirectPath = "/dashboard" }) => {
         try {
             console.log("Sending login request to /auth/login...");
             const response = await api.post("/auth/login", {
-                email: email.trim(),
+                identifier: identifier.trim(), // ✅ Rename to match backend
                 password: password.trim(),
             });
 
@@ -55,11 +75,11 @@ const Login = ({ redirectPath = "/dashboard" }) => {
                 localStorage.setItem("user", JSON.stringify(response.data.user));
 
                 if (rememberMe) {
-                    localStorage.setItem("rememberedEmail", email);
+                    localStorage.setItem("rememberedIdentifier", identifier);
                     localStorage.setItem("rememberedPassword", password);
                     localStorage.setItem("rememberMe", "true");
                 } else {
-                    localStorage.removeItem("rememberedEmail");
+                    localStorage.setItem("rememberedIdentifier", identifier);
                     localStorage.removeItem("rememberedPassword");
                     localStorage.removeItem("rememberMe");
                 }
@@ -73,7 +93,12 @@ const Login = ({ redirectPath = "/dashboard" }) => {
             }
         } catch (err) {
             console.error("Login Error:", err);
-            setError("Unable to log in. Please try again later.");
+          
+            const backendError =
+              err.response?.data?.error ||
+              (Array.isArray(err.response?.data?.errors) && err.response.data.errors[0]?.msg);
+          
+            setError(backendError || "Unable to log in. Please try again later.");
         } finally {
             setLoading(false);
         }
@@ -93,10 +118,10 @@ const Login = ({ redirectPath = "/dashboard" }) => {
                     )}
                     <form onSubmit={handleSubmit} aria-label="Login form">
                         <input
-                            type="email"
+                            type="text"
                             placeholder="Username or email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={identifier}
+                            onChange={(e) => setIdentifier(e.target.value)}
                             required
                         />
                         <div className="password-container">
@@ -140,3 +165,11 @@ const Login = ({ redirectPath = "/dashboard" }) => {
 };
 
 export default Login;
+
+
+/**
+ * 🔹 Potential Improvements:
+ * - Implement OAuth login options (Google, Twitter, etc.). - SKIPPED
+ * - Add rate limiting to prevent brute-force attacks. - SKIPPED
+ * - Enhance error handling with specific messages from the backend.
+ */

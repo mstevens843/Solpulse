@@ -34,7 +34,7 @@ SolPulse introduces **Solana-based tipping and trading**, allowing users to **ea
 
 ### **Crypto Tipping & Trading**
 - **Tip Users in SOL**: Reward high-quality content using micro-payments.
-- **DEX Integration (Planned Feature)**: Users may execute trades directly from the dashboard.
+- **DEX Integration (Planned Feature)**: Users may execute trades directly from the trade page.
 - **Customizable Price Alerts**: Users can set price alerts for favorite tokens.
 
 ### **Real-Time Notifications**
@@ -46,7 +46,7 @@ SolPulse introduces **Solana-based tipping and trading**, allowing users to **ea
 
 ### **Security & User Privacy**
 - **2FA Authentication (Planned Feature)**
-- **Customizable Privacy Settings**: Users can control profile visibility and interactions.
+- **Customizable Privacy Settings (Planned Feature)**: Users can control profile visibility and interactions.
 
 ---
 
@@ -66,7 +66,7 @@ SolPulse introduces **Solana-based tipping and trading**, allowing users to **ea
 
 ### **APIs & Blockchain Integrations**
 - **CoinGecko API** – Real-time crypto market data
-- **Dexscreener API** – Meme coin tracking
+- **Dexscreener API (Planned)** – Meme coin tracking
 - **Phantom Wallet API** – Wallet authentication & tipping
 - **Web3.js** – Blockchain interactions
 
@@ -125,7 +125,7 @@ SolPulse will continuously evolve with new features such as:
 ---
 
 ##  Links & Resources
-- **GitHub Repo**: _[Link to Repository]_  
+- **GitHub Repo**: [Link to Repository](https://github.com/mstevens843/Solpulse)
 - **Live Deployment**: _[Link to Live App]_  
 - **API Documentation**: _[Link to API Docs]_  
 
@@ -135,4 +135,4 @@ SolPulse will continuously evolve with new features such as:
 SolPulse is a **fully functional social media platform** for crypto enthusiasts, integrating **real-time market data, tipping, and user engagement**. As a Solana-first platform, it brings **decentralized interactions** to social media while empowering users with **financial incentives** for quality contributions.
 
 ---
- **Built by: [Your Name]** | Powered by **Solana & Web3**
+ **Built by: [Mathew Stevens]** | Powered by **Solana & Web3**

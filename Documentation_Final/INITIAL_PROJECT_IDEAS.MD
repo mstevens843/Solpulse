@@ -74,15 +74,15 @@ The platform would require:
 
 ---
 
-## Final Decision: SolPulse 🚀
+## Final Decision: SolPulse 
 After evaluating the initial ideas, **SolPulse** was chosen as the **final capstone project** due to its potential impact, scalability, and integration with the Solana ecosystem. The platform combines **crypto trading, social engagement, and content rewards**, making it unique in the blockchain space.
 
 ---
-### 🚀 Next Steps:
+###  Next Steps:
 1. **Build and refine SolPulse features**  
 2. **Optimize API integrations for real-time crypto data**  
 3. **Enhance security and user authentication**  
 4. **Deploy and test wallet tipping & trading capabilities**  
 5. **Launch beta version & gather user feedback**  
 
-SolPulse is now a fully developed crypto social media platform with real-world applications. 🎉
+SolPulse is now a fully developed crypto social media platform with real-world applications. 

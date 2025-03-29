@@ -1,3 +1,13 @@
+/**
+ * App.js - Main Application Entry Point for SolPulse
+ *
+ * This file is responsible for:
+ * - Setting up the React Router for navigation.
+ * - Managing authentication state using `AuthProvider`.
+ * - Integrating Solana wallet providers (`Phantom`, `Solflare`).
+ * - Establishing WebSocket connections for real-time updates.
+ */
+
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ConnectionProvider } from "@solana/wallet-adapter-react";
@@ -8,6 +18,8 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adap
 
 import { AuthProvider } from "@/context/AuthContext"; // Auth Context
 import socket from "./socket"; // WebSocket instance
+import ScrollToTop from "@/utils/ScrollToTop"; // ✅ Add this at the top
+
 
 import NavBar from "@/components/NavBar";
 import LandingPage from "./pages/LandingPage";
@@ -29,24 +41,40 @@ import JupiterSwap from "@/pages/JupiterSwap";
 
 
 function App() {
-    // Determine Solana network from environment variables
+    /**
+     * Determines the Solana network to use (Mainnet, Devnet, or Testnet).
+     * Defaults to `Devnet` if no environment variable is provided.
+     */
     const network = import.meta.env.VITE_SOLANA_NETWORK || WalletAdapterNetwork.Devnet;
     const endpoint = clusterApiUrl(network);
 
-    // Wallet Adapters for Solana
+    /**
+     * Wallet Adapters for Solana.
+     * - Phantom Wallet
+     * - Solflare Wallet
+     */
     const wallets = [
         new PhantomWalletAdapter(),
         new SolflareWalletAdapter({ network }),
     ];
 
+    /**
+     * WebSocket connection handling for real-time events.
+     * - Logs when the WebSocket connects or disconnects.
+     * - Cleans up event listeners when the component unmounts.
+     */
     // WebSocket connection handling
     useEffect(() => {
         socket.on("connect", () => {
-            console.log("WebSocket connected:", socket.id);
+            if (import.meta.env.VITE_ENV === "development") {
+                console.log("WebSocket connected:", socket.id);
+            }
         });
 
         socket.on("disconnect", () => {
-            console.log("WebSocket disconnected");
+            if (import.meta.env.VITE_ENV === "development") {
+                console.log("WebSocket disconnected");
+            }
         });
 
         return () => {
@@ -54,6 +82,7 @@ function App() {
             socket.off("disconnect");
         };
     }, []);
+
 
     return (
         <AuthProvider>
@@ -68,19 +97,28 @@ function App() {
     );
 }
 
+
+/**
+ * AppContent - Manages page routing and conditional navbar rendering.
+ * 
+ * - Uses `useLocation()` to conditionally hide the navbar on certain paths.
+ * - Defines all routes and their respective components.
+ */
 function AppContent() {
     const location = useLocation();
     const hideNavbarOnPaths = ["/"];
 
     return (
         <div className="app-container">
+            {/* 👇 Scroll to top on route change */}
+            <ScrollToTop />
             {/* Conditionally render the NavBar */}
             {!hideNavbarOnPaths.includes(location.pathname) && <NavBar />}
             <main>
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/home" element={<Home />} />
-                    <Route path="/profile/:id" element={<Profile />} />  {/* Correct path */}
+                    <Route path="/profile/:id" element={<Profile key={location.pathname} />} />
                     <Route path="/explore" element={<Explore />} />
                     <Route path="/activity" element={<ActivityPage />} />
                     {/* <Route path="/post/create" element={<PostCreation />} /> */}
@@ -100,3 +138,13 @@ function AppContent() {
 }
 
 export default App;
+
+
+
+/**
+ * Potential Improvements:
+ * - **Lazy Loading:** Implement React's `Suspense` to dynamically load routes and reduce initial load time. - Skipped
+ * - **Error Boundary Handling:** Wrap routes inside an error boundary to gracefully catch component errors. - Skipped
+ * - **WebSocket Optimizations:** Implement a reconnect mechanism if the WebSocket disconnects unexpectedly. - Skipped
+ * - **Enhanced Routing Logic:** Store `hideNavbarOnPaths` in a config file for better maintainability. - Skipped 
+ */

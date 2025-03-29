@@ -1,5 +1,22 @@
+/**
+ * MessagesInbox.js
+ *
+ * This file is responsible for managing the user's inbox, allowing them to:
+ * - View, send, and reply to messages.
+ * - Search for recipients and select from recent message history.
+ * - Mark messages as read and handle pagination for browsing older messages.
+ *
+ * Features:
+ * - Fetches messages on mount and updates dynamically when a new message is sent.
+ * - Implements a debounced search for users to reduce unnecessary API calls.
+ * - Uses modals for sending new messages and viewing full message details.
+ * - Handles pagination for browsing messages efficiently.
+ */
+
 import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig";
+import { Picker } from 'emoji-mart';
+import data from "@emoji-mart/data";
 import Loader from "@/components/Loader";
 import MessageModal from "@/components/Notification_components/MessageModal";
 import "@/css/components/Notification_components/MessagesInbox.css";
@@ -11,6 +28,7 @@ function MessagesInbox() {
   const [recipient, setRecipient] = useState("");
   const [suggestedRecipients, setSuggestedRecipients] = useState([]);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [attachment, setAttachment] = useState(null); // ✅ #2 Track selected file attachment
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [error, setError] = useState("");
@@ -20,6 +38,8 @@ function MessagesInbox() {
   const [showModal, setShowModal] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // ✅ Toggle for emoji picker
+
 
 
   useEffect(() => {
@@ -33,6 +53,11 @@ function MessagesInbox() {
     }
   }, [showModal]);
 
+
+  /**
+   * Fetches messages from the API.
+   * - Updates `messages` state and manages pagination.
+   */
   const fetchMessages = async (page = 1) => {
     setIsLoadingMessages(true);
     try {
@@ -49,6 +74,10 @@ function MessagesInbox() {
     }
   };
 
+  
+  /**
+   * Fetches a list of recent recipients for quick selection.
+   */
   const fetchRecentRecipients = async () => {
     try {
       const response = await api.get("/messages/recent-recipients");
@@ -58,7 +87,9 @@ function MessagesInbox() {
     }
   };
 
-  // Debounced search for users
+  /**
+   * Handles debounced user search when typing recipient username.
+   */
   const handleRecipientChange = (e) => {
     const query = e.target.value;
     setRecipient(query);
@@ -83,52 +114,68 @@ function MessagesInbox() {
     }
   };
 
+  // Selects a recipent from search suggestions.
   const selectRecipient = (username) => {
     setRecipient(username);
     setSuggestedUsers([]);
     setSuggestedRecipients([]);
   };
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccessMessage("");
-    setIsSendingMessage(true);
+// Sends a new message to the selected recipient.
+const handleSendMessage = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccessMessage("");
+  setIsSendingMessage(true);
 
-    if (!recipient.trim() || !newMessage.trim()) {
-      setError("Recipient and message are required.");
-      setIsSendingMessage(false);
-      return;
-    }
+  if (!recipient.trim() || !newMessage.trim()) {
+    setError("Recipient and message are required.");
+    setIsSendingMessage(false);
+    return;
+  }
 
-    const newMessageData = {
-      recipient: recipient.trim(),
-      message: newMessage.trim(),
-    };
+  const formData = new FormData(); // ✅ #2 Using FormData for file + text
+  formData.append("recipient", recipient.trim());
+  formData.append("message", newMessage.trim());
+  if (attachment) {
+    formData.append("attachment", attachment);
+  }
 
-    try {
-      await api.post("/messages", newMessageData);
-      setNewMessage("");
-      setRecipient("");
-      setSuccessMessage("Message sent successfully!");
-      setShowModal(false);
-      fetchMessages();
-    } catch (err) {
-      console.error("Error sending message:", err);
-      setError("Failed to send message.");
-    } finally {
-      setIsSendingMessage(false);
-    }
-  };
+  try {
+    await api.post("/messages", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }); // ✅ Send formData instead of newMessageData
 
+    setNewMessage("");
+    setRecipient("");
+    setAttachment(null); // ✅ #2 Reset attachment state
+    setSuccessMessage("Message sent successfully!");
+    setShowModal(false);
+    fetchMessages();
+  } catch (err) {
+    console.error("Error sending message:", err);
+    setError("Failed to send message.");
+  } finally {
+    setIsSendingMessage(false);
+  }
+};
+
+
+
+  // Opens a message in modal view.
   const handleOpenMessage = (message) => {
     setSelectedMessage(message);
   };
 
+  // Closes the message modal. 
   const handleCloseModal = () => {
     setSelectedMessage(null);
   };
 
+
+  // Sends the reply to a message. 
   const handleReply = async (messageId, replyContent) => {
     if (!replyContent.trim()) {
       setError("Reply cannot be empty.");
@@ -151,6 +198,7 @@ function MessagesInbox() {
     }
   };
 
+  // Marks a message as read when clicked. 
   const markAsRead = async (message) => {
     try {
       if (!message.read) {
@@ -189,6 +237,9 @@ function MessagesInbox() {
               <p>
                 <strong>{msg.sender}</strong>: {msg.content}
               </p>
+              {msg.readAt && ( // ✅ #3 Show read receipt timestamp if available
+                <p className="message-read-at">Seen at {new Date(msg.readAt).toLocaleString()}</p>
+              )}
             </div>
 
           ))
@@ -270,6 +321,35 @@ function MessagesInbox() {
                 required
               />
 
+              {/* ✅ Emoji toggle and picker */}
+              <button
+                type="button"
+                className="emoji-toggle-btn"
+                onClick={() => setShowEmojiPicker((prev) => !prev)}
+              >
+                😊
+              </button>
+              {showEmojiPicker && (
+                <Picker
+                  data={data}
+                  onEmojiSelect={(emoji) => {
+                    setNewMessage((prev) => prev + emoji.native);
+                    setShowEmojiPicker(false); // ✅ Auto-close picker after selection
+                  }}
+                  title="Pick an emoji"
+                  emoji="point_up"
+                  style={{ width: "100%", marginBottom: "1rem" }}
+                />
+              )}
+
+              {/* ✅ #2 File attachment input */}
+              <label>Attachment:</label>
+              <input
+                type="file"
+                accept="image/*,video/*"
+                onChange={(e) => setAttachment(e.target.files[0])}
+              />
+
               <button type="submit" disabled={isSendingMessage}>
                 {isSendingMessage ? "Sending..." : "Send Message"}
               </button>
@@ -277,6 +357,9 @@ function MessagesInbox() {
           </div>
         </div>
       )}
+
+
+      
 
       {/* Message Modal for viewing full message and replying */}
       {selectedMessage && (
@@ -291,3 +374,23 @@ function MessagesInbox() {
 }
 
 export default MessagesInbox;
+
+
+/**
+ * 🔹 **Potential Improvements:**
+ * - Implement real-time message updates using WebSockets. - SKIPPED
+ * - Allow file attachments (images, videos) in messages.
+ * - Add read receipts to indicate when a message has been seen.
+ */
+
+
+//* -----------------------------------------------------------------------------
+//* 🆕 Emoji Picker Support (Send New Message Modal)
+//* -----------------------------------------------------------------------------
+//* 1. Imported `Picker` from `emoji-mart` and its required CSS.
+//* 2. Added `showEmojiPicker` state to control picker visibility.
+//* 3. Added a toggle button (😊) below the message textarea.
+//* 4. When clicked, the picker shows and lets the user select emojis.
+//* 5. Selected emojis are appended to `newMessage` using `emoji.native`.
+//* 6. All existing features (user suggestions, file attachments, etc.) remain intact.
+//* -----------------------------------------------------------------------------

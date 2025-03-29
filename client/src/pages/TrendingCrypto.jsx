@@ -1,3 +1,15 @@
+/**
+ * TrendingCrypto.js - Displays real-time market trends, gainers, losers, and NFT activity in the Solana ecosystem.
+ *
+ * This file is responsible for:
+ * - Fetching and displaying trending cryptocurrencies.
+ * - Showing market data, including top gainers, losers, and NFT sales.
+ * - Displaying a market chart for selected coins.
+ * - Handling search queries for crypto assets.
+ * - Fetching global market dominance data.
+ */
+
+
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Line } from "react-chartjs-2";
 import { Doughnut } from 'react-chartjs-2';
@@ -6,12 +18,16 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { api } from "@/api/apiConfig";
 import debounce from "lodash.debounce"; 
 import Loader from "@/components/Loader";
+import FallbackImage from "@/components/Helper_components/FallbackImage";
 import "@/css/pages/TrendingCrypto.css";
+import { ToastContainer, toast } from "react-toastify";
 
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
 
-
+/**
+ * Fetches trending cryptocurrency data from the backend and displays it in a structured format.
+ */
 function TrendingCrypto() {
     const [coins, setCoins] = useState(
         JSON.parse(localStorage.getItem("trendingCoins")) || []
@@ -36,7 +52,25 @@ function TrendingCrypto() {
     // Helper function to delay requests
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    // Fetch market chart data
+    /**
+     * ✅ 1. Retry Logic Utility Function (Place near top, before component)
+     */
+    const retryRequest = async (fn, retries = 3, delay = 1000) => {
+        try {
+            return await fn();
+        } catch (err) {
+            if (retries > 0) {
+                await new Promise(res => setTimeout(res, delay));
+                return retryRequest(fn, retries - 1, delay * 2); // Exponential backoff
+            } else {
+                throw err;
+            }
+        }
+    };
+
+    /**
+     * Fetches global market dominance data.
+     */
     const fetchMarketChartData = async (coinId) => {
         try {
             setLoadingChart(true);
@@ -77,7 +111,9 @@ function TrendingCrypto() {
     };
 
 
-    // Fetch global market data from the backend API
+    /**
+     * Fetches trending coins.
+     */
     const fetchGlobalMarketData = async () => {
         try {
             const response = await api.get("/trendingCrypto/global");
@@ -104,37 +140,50 @@ function TrendingCrypto() {
 
 
 
-    // Fetch trending coins
+    /**
+     * Fetches top gainers and losers with a delay to prevent rate limiting.
+     * ✅ 2. Toasts and Retry Integrated into fetchTrendingCoins
+     */
     const fetchTrendingCoins = async () => {
         try {
             setLoading(true);
-            const response = await api.get("/trendingCrypto");
+            const response = await retryRequest(() => api.get("/trendingCrypto"));
             setCoins(response.data.slice(0, 10));
+            toast.success("Trending coins updated.");
         } catch (err) {
+            toast.error("❌ Failed to load trending coins.");
             setError("Failed to load trending coins.");
         } finally {
             setLoading(false);
         }
     };
+    
 
-
-    // Fetch gainers and losers with delay
+    /**
+     * Fetches trending NFTs.
+     * Toast + Retry for fetchGainerLosers 
+     */
     const fetchGainersLosers = async () => {
         try {
             setLoadingGainersLosers(true);
             await delay(1000);
-            const response = await api.get("/trendingCrypto/top-gainers-losers");
+            const response = await retryRequest(() => api.get("/trendingCrypto/top-gainers-losers"));
             setGainers(response.data.topGainers.slice(0, 10));
             setLosers(response.data.topLosers.slice(0, 10).reverse());
+            toast.success("Gainers & losers updated.");
         } catch (err) {
+            toast.error("❌ Failed to load gainers and losers.");
             setError("Failed to load gainers and losers.");
         } finally {
             setLoadingGainersLosers(false);
         }
     };
+    
 
 
-    // Fetch NFT details by contract address
+    /**
+     * Fetches cryptocurrency search results.
+     */
     const fetchNfts = async () => {
         try {
             setLoadingNFTs(true);
@@ -241,6 +290,7 @@ function TrendingCrypto() {
                     value={searchQuery}
                     onChange={handleSearchChange}
                     className="crypto-search-input"
+                    autoFocus
                 />
                 {loadingSearch && <div className="loader"></div>}
                 {error && <p className="error-message">{error}</p>}
@@ -248,9 +298,9 @@ function TrendingCrypto() {
                     <ul className="search-results">
                         {searchResults.map((coin) => (
                             <li key={coin.id} onClick={() => handleSelectCoin(coin)}>
-                                <img src={coin.thumb || "/default-coin.png"} alt={coin.name} />
-                                {coin.name} ({coin.symbol.toUpperCase()})
-                            </li>
+                            <FallbackImage src={coin.thumb} alt={coin.name} />
+                            {coin.name} ({coin.symbol.toUpperCase()})
+                          </li>
                         ))}
                     </ul>
                 )}
@@ -261,7 +311,7 @@ function TrendingCrypto() {
                 <h3>
                     {selectedCoin.name || "Unknown"} ({selectedCoin.symbol ? selectedCoin.symbol.toUpperCase() : "N/A"})
                 </h3>
-                <img src={selectedCoin.image || "/default-coin.png"} alt={selectedCoin.name || "Unknown"} />
+                <FallbackImage src={selectedCoin.image} alt={selectedCoin.name} />
                 <p>Price: ${selectedCoin.current_price?.toFixed(2) || "N/A"}</p>
                 <p>Market Cap: ${selectedCoin.market_cap?.toLocaleString() || "N/A"}</p>
                 <p>24h Change: {selectedCoin.price_change_24h?.toFixed(2) || "N/A"}%</p>
@@ -369,12 +419,17 @@ function TrendingCrypto() {
                     <ul className="coins-list">
                         {filteredCoins.map((coin) => (
                             <li key={coin.id} className="coin-item">
-                                <img className="crypto-coin-image" src={coin.image || "/default-coin.png"} alt={coin.name} />
+                                <FallbackImage
+                                    src={coin.image}
+                                    alt={coin.name}
+                                    className="crypto-coin-image"
+                                />
+
                                 <div className="coin-details">
                                     <span className="coin-name">{coin.name} ({coin.symbol.toUpperCase()})</span>
                                     <span className="coin-price">${coin.current_price.toFixed(2)}</span>
                                 </div>
-                                <button className="trade-button-trending" onClick={() => setSelectedCoin(coin.symbol)}>Trade</button>
+                                <button className="trade-button-trending" onClick={() => setSelectedCoin(coin)}>Trade</button>
                             </li>
                         ))}
                     </ul>
@@ -415,8 +470,19 @@ function TrendingCrypto() {
             >
                 {(loadingCoins || loadingGainersLosers || loadingNFTs || loadingSearch) ? "Refreshing..." : "Refresh Prices"}
             </button>
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar theme="dark" />
         </div>
     );    
 }
 
 export default TrendingCrypto;
+
+
+/**
+ * 🔹 Potential Improvements:
+ * - Implement caching for fetched data to reduce API calls.
+ * - Improve error handling with retry mechanisms.
+ * - Add more UI elements like coin details and live price updates.
+ */
+
+

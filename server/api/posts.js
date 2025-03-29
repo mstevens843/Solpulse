@@ -1,3 +1,14 @@
+/**
+ *  Posts Routes - SolPulse API
+ * 
+ * Handles:
+ * - Posting, liking, retweeting, and deleting posts.
+ * - Fetching posts, trending posts, and liked posts.
+ * - Handling media uploads via Multer.
+ * - Managing retweets and batch fetching for client-side optimization.
+ */
+
+
 const express = require('express');
 const { Post, Comment, User, Like, Retweet, Notification } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
@@ -19,7 +30,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /**
- * Utility function to format post responses
+ * Utility function - Format Post Responses
+ * 
+ * - Formats post data for frontend consumption
+ * - Ensures proper handing of retweets
  */
 const formatPost = (post, currentUserId = null) => ({
   id: post.id || null,
@@ -59,10 +73,20 @@ const formatPost = (post, currentUserId = null) => ({
 });
 
 
+/**
+ * Route: Fetch Profile Feed
+ * 
+ * - Gets a user's posts and retweets.
+ * - Formats them correctly.
+ */
 router.get('/:id/profile-feed', async (req, res) => {
   try {
     const { id } = req.params;
     const userId = parseInt(id, 10);
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
+
     if (isNaN(userId)) {
       return res.status(400).json({ message: "Invalid user ID format." });
     }
@@ -78,9 +102,11 @@ router.get('/:id/profile-feed', async (req, res) => {
         }
       ],
       order: [['createdAt', 'DESC']],
+      limit,
+      offset
     });
 
-    // Fetch user's retweets and include both the original post details and the retweeter
+    // Fetch user's retweets
     const retweets = await Post.findAll({
       where: { userId, isRetweet: true },
       include: [
@@ -90,24 +116,23 @@ router.get('/:id/profile-feed', async (req, res) => {
           include: [{ model: User, as: 'user', attributes: ['username', 'profilePicture'] }],
         },
         {
-          model: User,  //  Fetch retweeter info
+          model: User,
           as: 'user',
           attributes: ['username', 'profilePicture']
         }
       ],
       order: [['createdAt', 'DESC']],
+      limit,
+      offset
     });
 
-    //  Ensure retweeterName is included in the response
     const formattedRetweets = retweets.map((retweet) => ({
       ...formatPost(retweet, userId),
-      retweeterName: retweet.user?.username || "Unknown" //  Adds correct retweeter name
+      retweeterName: retweet.user?.username || "Unknown"
     }));
 
-    // Format original posts correctly
     const formattedPosts = userPosts.map((post) => formatPost(post, userId));
 
-    // Merge and sort all posts/retweets by descending order (latest first)
     const combinedPosts = [...formattedPosts, ...formattedRetweets].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
@@ -118,6 +143,7 @@ router.get('/:id/profile-feed', async (req, res) => {
     res.status(500).json({ message: "Failed to fetch posts and retweets." });
   }
 });
+
 
 
 /**
@@ -175,10 +201,6 @@ router.get('/trending', async (req, res) => {
       limit: 20,
       include: [{ model: User, as: 'user', attributes: ['username', 'profilePicture'] }],
     });
-
-    if (!trendingPosts.length) {
-      return res.status(404).json({ message: 'No trending posts found' });
-    }
 
     const formattedPosts = trendingPosts.map(formatPost);
     res.json({ posts: formattedPosts });
@@ -638,3 +660,11 @@ router.delete('/:id/retweet', authMiddleware, async (req, res) => {
 
 
 module.exports = router;
+
+
+/**
+ * 🔍 Potential Issues & Optimizations
+✅ Optimize Retweet & Like Queries
+✅ Use WebSockets for Real-Time Likes & Retweets
+✅ Batch Fetch Likes & Retweets Instead of Individual Requests
+ */

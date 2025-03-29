@@ -694,3 +694,24 @@ img.coin-logo {
 .swap-button:hover:not(:disabled) {
     background-color: #388e3c;
 } */
+
+
+
+/* Spinner for swap feedback */
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #4caf50;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  

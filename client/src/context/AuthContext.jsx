@@ -1,8 +1,27 @@
+/**
+ * AuthProvider.js - Provides authentication context for SolPulse.
+ *
+ * This file is responsible for:
+ * - Managing user authentication state and session persistence.
+ * - Fetching and storing user data securely in localStorage.
+ * - Handling user likes and retweets with sessionStorage for efficiency.
+ * - Exposing authentication state and user details via `AuthContext`.
+ */
+
+
 import React, { createContext, useState, useEffect } from "react";
 import { api } from "@/api/apiConfig"; // Axios instance
 
 export const AuthContext = createContext();
 
+
+/**
+ * AuthProvider Component
+ *
+ * - Manages user authentication state.
+ * - Loads user details from localStorage or fetches them from the API.
+ * - Handles storing and retrieving liked and retweeted posts efficiently.
+ */
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -10,6 +29,13 @@ export const AuthProvider = ({ children }) => {
     const [likedPosts, setLikedPosts] = useState(new Set()); //  Store liked posts
     const [retweetedPosts, setRetweetedPosts] = useState(new Set()); //  Store retweeted posts
 
+
+    /**
+     * Loads user authentication state on mount.
+     *
+     * - Retrieves token from `localStorage`.
+     * - If a user is stored, loads it; otherwise, fetches fresh user data.
+     */
     useEffect(() => {
         const token = localStorage.getItem("token");
 
@@ -52,7 +78,15 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-     //  Load likes/retweets from sessionStorage (for persistence across reloads)
+
+
+
+
+     /**
+     * Loads liked and retweeted posts from sessionStorage.
+     *
+     * - Ensures like/retweet state persists across page reloads.
+     */
      useEffect(() => {
         const storedLikes = sessionStorage.getItem("likedPosts");
         const storedRetweets = sessionStorage.getItem("retweetedPosts");
@@ -61,7 +95,12 @@ export const AuthProvider = ({ children }) => {
         if (storedRetweets) setRetweetedPosts(new Set(JSON.parse(storedRetweets)));
     }, []);
 
-    //  Fetch batch like/retweet statuses ONCE per user
+    /**
+     * Fetches batch like/retweet statuses for the logged-in user.
+     *
+     * - Reduces API calls by using batch endpoints.
+     * - Stores results in sessionStorage for faster access.
+     */
     useEffect(() => {
         if (!user?.id) return;
 
@@ -78,7 +117,7 @@ export const AuthProvider = ({ children }) => {
                 setLikedPosts(likedPostIds);
                 setRetweetedPosts(retweetedPostIds);
 
-                // ✅ Store in sessionStorage to reduce API calls
+                //  Store in sessionStorage to reduce API calls
                 sessionStorage.setItem("likedPosts", JSON.stringify([...likedPostIds]));
                 sessionStorage.setItem("retweetedPosts", JSON.stringify([...retweetedPostIds]));
             } catch (err) {
@@ -111,3 +150,12 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+
+/**
+ * Potential Improvements: - SKIP ALL FOR NOW
+ * - **Token Expiry Handling:** Implement token refresh or auto-logout when token expires.
+ * - **Centralized Error Handling:** Create a dedicated error handler to standardize error responses.
+ * - **Performance Optimization:** Store user state in a global state manager (e.g., Redux or Zustand).
+ * - **Lazy Loading User Data:** Fetch only when required instead of preloading on mount.
+ */
