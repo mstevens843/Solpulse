@@ -239,10 +239,17 @@ router.get('/', authMiddleware, async (req, res) => {
 
       // Fetch comments with pagination
       const comments = await Comment.findAndCountAll({
-          where: { postId },
-          order: [['createdAt', 'DESC']],
-          limit: parseInt(limit, 10),
-          offset,
+        where: { postId },
+        order: [['createdAt', 'DESC']],
+        limit: parseInt(limit, 10),
+        offset,
+        include: [
+            {
+              model: User,
+              as: 'commentAuthor', // ✅ MATCHES YOUR MODEL
+              attributes: ['username', 'profilePicture'],
+            },
+          ],
       });
 
       res.status(200).json({

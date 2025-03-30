@@ -156,6 +156,33 @@
   margin-top: 1.5rem;
 }
 
+
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.category-tab {
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #00ffcc;
+  background-color: transparent;
+  color: #00ffcc;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.category-tab.active,
+.category-tab:hover {
+  background-color: #00ffcc;
+  color: black;
+}
+
+
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .explore-container {

@@ -109,6 +109,11 @@ module.exports = (sequelize, DataTypes) => {
           hooks: true,
       });
 
+      Post.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'author', // ✅ this alias must match your include query
+      });
+
       Post.hasMany(models.Comment, {
           foreignKey: 'postId',
           as: 'comments',

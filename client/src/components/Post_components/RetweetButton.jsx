@@ -12,6 +12,7 @@ import React, { useState, useContext, useRef } from "react"; // ← add useRef
 import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig"; 
 import { AuthContext } from "@/context/AuthContext";
+import RepostCount from "@/components/Post_components/RepostCount";
 import { toast } from "react-toastify";
 import "@/css/components/Post_components/PostButtons.css"; 
 
@@ -39,7 +40,6 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
             return;
         }
     
-        // ✅ Optional: prevent rapid double clicks
         if (debounceRef.current) return;
         debounceRef.current = setTimeout(() => {
             debounceRef.current = null;
@@ -50,7 +50,7 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
     
         try {
             if (hasRetweeted) {
-                // Un-retweet
+                // ✅ UNDO RETWEET
                 const response = await api.delete(`/posts/${actualPostId}/retweet`);
                 const updatedRetweets = Math.max(0, response.data.retweets);
     
@@ -64,7 +64,9 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
                     return updated;
                 });
     
-                if (onRetweetToggle) onRetweetToggle(actualPostId, false, updatedRetweets);
+                if (onRetweetToggle) {
+                    onRetweetToggle(actualPostId, false, updatedRetweets);
+                }
     
                 setPosts((prevPosts) =>
                     prevPosts.map((p) =>
@@ -74,7 +76,7 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
                     )
                 );
             } else {
-                // Retweet
+                // ✅ DO RETWEET
                 const response = await api.post(`/posts/${actualPostId}/retweet`, {
                     userId: currentUser.id,
                 });
@@ -130,6 +132,57 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
         }
     };
 
+    // <button
+    //                             className="delete-post-button"
+    //                             onClick={handleDeletePost}
+    //                             disabled={isDeleting}
+    //                         >
+    //                             {isDeleting ? "Processing..." : isRetweet ? "Undo Repost" : "Delete"}
+    //                         </button>
+
+    // const handleDeletePost = async () => {
+    //         setIsDeleting(true);
+    
+    //         try {
+    //             setPosts((prevPosts) =>
+    //                 prevPosts.map((p) => (p.id === post.id ? { ...p, fading: true } : p))
+    //             );
+    
+    //             setTimeout(async () => {
+    //                 await api.delete(`/posts/${post.id}`);
+    
+    //                 setPosts((prevPosts) => prevPosts.filter((p) => p.id !== post.id));
+    
+    //                 toast.success("Post deleted successfully!", {
+    //                     position: "top-right",
+    //                     autoClose: 3000,
+    //                     hideProgressBar: false,
+    //                     closeOnClick: true,
+    //                     pauseOnHover: true,
+    //                     draggable: true,
+    //                     theme: "dark",
+    //                 });
+    //             }, 300);
+    //         } catch (error) {
+    //             console.error("Error deleting post:", error);
+    //             toast.error("Failed to delete post. Please try again.", {
+    //                 position: "top-right",
+    //                 autoClose: 3000,
+    //                 hideProgressBar: false,
+    //                 closeOnClick: true,
+    //                 pauseOnHover: true,
+    //                 draggable: true,
+    //                 theme: "dark",
+    //             });
+    
+    //             setPosts((prevPosts) =>
+    //                 prevPosts.map((p) => (p.id === post.id ? { ...p, fading: false } : p))
+    //             );
+    //         } finally {
+    //             setIsDeleting(false);
+    //         }
+    //     };
+
     return (
         <div className="retweet-button-container">
             <button
@@ -139,7 +192,11 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
                 aria-label={`${hasRetweeted ? "Undo Repost" : "Repost"} post. Current reposts: ${retweetCount}`}
                 aria-pressed={hasRetweeted}
             >
-                {loading ? "Processing..." : hasRetweeted ? `Undo Repost (${retweetCount})` : `Repost (${retweetCount})`}
+                {loading ? "Processing..." : (
+                <>
+                    {hasRetweeted ? "Undo Repost" : "Repost"} <RepostCount count={retweetCount} />
+                </>
+                )}           
             </button>
 
             {/* ✅ Show retry button if error */}

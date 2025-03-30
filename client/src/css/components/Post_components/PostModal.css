@@ -110,6 +110,26 @@
     background: transparent;
 }
 
+.post-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .post-author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    object-fit: cover;
+  }
+  
+  .post-author-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #fff;
+  }
+
 /* Responsive Design */
 @media (max-width: 500px) {
     .post-modal-content {

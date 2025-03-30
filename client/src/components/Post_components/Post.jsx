@@ -36,25 +36,34 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
     const [author, setAuthor] = useState(post.author || "");
+    const isRetweet = post?.isRetweet || false;
+    const postIdToUse = isRetweet ? post.originalPostId : post.id;
+    const retweeterName = isRetweet ? post.retweeterName || post.user?.username : null;
+
     
 
 
 
 
     //  Ensure likes & retweets sync between the original post and retweets
-    const isRetweet = post.isRetweet;
-    const postIdToUse = isRetweet ? post.originalPostId : post.id;
-    const retweeterName = isRetweet ? post.retweeterName || post.user?.username : null;
-    const postAuthor = isRetweet && post.originalAuthor ? post.originalAuthor : post.author;
+    // 🛡️ Fallbacks to prevent null-related crashes
+    const postAuthor = isRetweet && post.originalAuthor
+    ? post.originalAuthor
+    : post.author || "Unknown";
+
     const postProfilePicture = isRetweet && post.originalProfilePicture
     ? post.originalProfilePicture.startsWith("http")
-        ? post.originalProfilePicture
-        : `http://localhost:5001${post.originalProfilePicture.startsWith("/uploads") ? post.originalProfilePicture : `/uploads/${post.originalProfilePicture}`}`
+    ? post.originalProfilePicture
+    : `http://localhost:5001${post.originalProfilePicture.startsWith("/uploads") ? post.originalProfilePicture : `/uploads/${post.originalProfilePicture}`}`
     : post.profilePicture
-        ? post.profilePicture.startsWith("http")
-            ? post.profilePicture
-            : `http://localhost:5001${post.profilePicture.startsWith("/uploads") ? post.profilePicture : `/uploads/${post.profilePicture}`}`
-        : "http://localhost:5001/uploads/default-avatar.png";
+    ? post.profilePicture.startsWith("http")
+        ? post.profilePicture
+        : `http://localhost:5001${post.profilePicture.startsWith("/uploads") ? post.profilePicture : `/uploads/${post.profilePicture}`}`
+    : "http://localhost:5001/uploads/default-avatar.png";
+
+    const originalUserIdSafe = post.originalUserId || post.userId;
+    const originalPostIdSafe = post.isRetweet && post.originalPostId ? post.originalPostId : post.id;
+
 
 
 
@@ -179,16 +188,28 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
         // Ensure retweets update globally
         const handleRetweetToggle = (postId, isReposting, updatedRetweets, newRetweetData) => {
             setPosts((prevPosts) => {
-                let updatedPosts = prevPosts.map((p) =>
-                    p.id === postId || p.originalPostId === postId
-                        ? { ...p, retweets: updatedRetweets }
-                        : p
-                );
-    
-                if (isReposting && newRetweetData) {
-                    updatedPosts = [newRetweetData, ...updatedPosts]; // Add new repost to the feed
+                const seenIds = new Set(); // Prevent duplicates
+        
+                let updatedPosts = [];
+        
+                for (const post of prevPosts) {
+                    const isOriginal = post.id === postId;
+                    const isRetweetOfOriginal = post.originalPostId === postId;
+        
+                    if (isOriginal || isRetweetOfOriginal) {
+                        updatedPosts.push({ ...post, retweets: updatedRetweets });
+                        seenIds.add(post.id);
+                    } else {
+                        updatedPosts.push(post);
+                        seenIds.add(post.id);
+                    }
                 }
-    
+        
+                // 🔥 Add the new retweet to top of feed (if it exists and isn't already in list)
+                if (isReposting && newRetweetData && !seenIds.has(newRetweetData.id)) {
+                    updatedPosts = [newRetweetData, ...updatedPosts];
+                }
+        
                 return updatedPosts;
             });
         };
@@ -240,17 +261,20 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
 
     
     
-    return (
-        <div className={`individual-post-container ${post.fading ? "fading" : ""}`}>
-            <ToastContainer />
-    
-            {isRetweet && (
-            <div className="repost-indicator">
-                {post.userId === currentUser.id
-                    ? "You reposted"
-                    : `${retweeterName || "Unknown"} reposted`}
-            </div>
-        )}
+    if (!post) return null;
+
+
+return (
+  <div className={`individual-post-container ${post.fading ? "fading" : ""}`}>
+    <ToastContainer />
+
+    {isRetweet && (
+      <div className="repost-indicator">
+        {post.userId === currentUser?.id
+          ? "You reposted"
+          : `${retweeterName || "Unknown"} reposted`}
+      </div>
+    )}
 
 
     
@@ -263,8 +287,8 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
                 <div className="individual-post-content-wrapper">
                     <div className="individual-post-header">
                         <div className="post-author-details">
-                        <Link to={`/profile/${post.isRetweet ? post.originalUserId : post.userId}`} className="post-author-link">
-                            <h4 className="individual-post-author">{postAuthor}</h4>
+                        <Link to={`/profile/${originalUserIdSafe}`} className="post-author-link">
+                        <h4 className="individual-post-author">{postAuthor}</h4>
                         </Link>
 
                             <p className="individual-post-date">{formatDate(post.createdAt)}</p>
@@ -316,35 +340,31 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
                             onLikeToggle={handleLikeToggle}
                             setPosts={setPosts}
                         />
-                        <RetweetButton
+                       <RetweetButton
                             postId={postIdToUse}
                             originalPostId={post.originalPostId}
-                            initialRetweets={post.retweets}
+                            initialRetweets={post.retweets} // ✅ Just use `post.retweets`
                             currentUser={currentUser}
                             onRetweetToggle={handleRetweetToggle}
-                            setPosts={setPosts}
-                        />
-                        <CommentSection
-                            postId={postIdToUse}
-                            originalPostId={post.originalPostId}
-                            onNewComment={onNewComment || (() => {})}
                             setPosts={setPosts}
                         />
                     </div>
     
                     <div className="view-comments-link">
                         <a href="#" onClick={(e) => { e.preventDefault(); setModalOpen(true); }} className="view-comments-link">
-                            View All Comments ({commentCount})
+                            View/Add Comments ({commentCount})
                         </a>
                     </div>
     
                     {isModalOpen && (
                         <PostModal 
-                            post={post} 
-                            onClose={() => setModalOpen(false)} 
-                            likedPosts={likedPosts} // Pass to modal
-                            retweetedPosts={retweetedPosts} // Pass to modal
-                        />
+                        post={post} 
+                        onClose={() => setModalOpen(false)} 
+                        likedPosts={likedPosts}
+                        retweetedPosts={retweetedPosts}
+                        currentUser={currentUser}   // ✅ MUST BE HERE
+                        setPosts={setPosts}
+                      />
                     )}
                 </div>
             </div>

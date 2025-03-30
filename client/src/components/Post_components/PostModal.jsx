@@ -96,34 +96,65 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
     });
   };
 
-  return (
-    <div className="post-modal-overlay" onClick={onClose}>
-      <div className="post-modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="close-modal-btn" onClick={onClose}>✖</button>
-        <h2>{post.author || "Unknown Author"}</h2> 
-        <p>{post.content}</p>
+  const resolvedAvatarUrl =
+    post.profilePicture?.startsWith("http")
+      ? post.profilePicture
+      : post.profilePicture
+      ? `${import.meta.env.VITE_API_BASE_URL.replace("/api", "")}${post.profilePicture}`
+      : "/uploads/default-avatar.png";
 
-        {post.mediaUrl && (
-          <img src={post.mediaUrl} alt="Post media" className="post-media" />
-        )}
 
-        {/* Updated Like & Retweet Buttons */}
+      console.log("🧪 currentUser inside CommentSection:", currentUser);
+
+      return (
+        <div className="post-modal-overlay" onClick={onClose}>
+          <div className="post-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-modal-btn" onClick={onClose}>✖</button>
+    
+            {/* ✅ Post Header */}
+            <div className="post-modal-header">
+              <Link to={`/profile/${post.userId}`}>
+                <img
+                  src={resolvedAvatarUrl}
+                  alt="Author avatar"
+                  className="post-author-avatar"
+                />
+              </Link>
+              <div className="post-author-info">
+                <Link to={`/profile/${post.userId}`}>
+                  <span className="post-author-name">
+                    {post.author || "Unknown Author"}
+                  </span>
+                </Link>
+                <span className="post-timestamp">
+                  {post.createdAt ? new Date(post.createdAt).toLocaleString() : ""}
+                </span>
+              </div>
+            </div>
+    
+            <p className="post-content">{post.content}</p>
+    
+            {post.mediaUrl && (
+              <img src={post.mediaUrl} alt="Post media" className="post-media" />
+            )}
+
+        {/* Buttons */}
         <div className="post-actions">
-          <LikeButton 
-            postId={postIdToUse} 
+          <LikeButton
+            postId={postIdToUse}
             initialLikes={likes}
             likedPosts={likedPosts}
             currentUser={currentUser}
-            onLikeToggle={handleLikeToggle} // Ensure likes sync inside the modal
-            setPosts={setPosts} // Pass setPosts for global updates
+            onLikeToggle={handleLikeToggle}
+            setPosts={setPosts}
           />
-          <RetweetButton 
-            postId={postIdToUse} 
+          <RetweetButton
+            postId={postIdToUse}
             initialRetweets={retweets}
             retweetedPosts={retweetedPosts}
             currentUser={currentUser}
-            onRetweetToggle={handleRetweetToggle} // Ensure retweets sync inside the modal
-            setPosts={setPosts} // Pass setPosts for global updates
+            onRetweetToggle={handleRetweetToggle}
+            setPosts={setPosts}
           />
         </div>
 
@@ -132,23 +163,37 @@ function PostModal({ post, onClose, likedPosts, retweetedPosts, currentUser, set
           originalPostId={post.originalPostId}
           onNewComment={(newComment) => setComments((prev) => [newComment, ...prev])}
           setPosts={setPosts}
+          currentUser={currentUser}
         />
 
-
+        {/* Comments */}
         <div className="post-comments">
           {loading ? (
             <p className="loading-comments">Loading comments...</p>
           ) : comments.length > 0 ? (
             <ul className="comment-list">
-              {comments.map((comment) => (
-                <CommentItem
-                  key={comment.id}
-                  author={comment.author || "Unknown"}
-                  avatarUrl={comment.avatarUrl}
-                  content={comment.content}
-                  createdAt={comment.createdAt}
-                />
-              ))}
+              {comments.map((comment) => {
+                const avatarUrl =
+                comment.avatarUrl?.startsWith("http")
+                  ? comment.avatarUrl
+                  : comment.avatarUrl
+                  ? `${import.meta.env.VITE_API_BASE_URL.replace("/api", "")}${comment.avatarUrl}`
+                  : comment.commentAuthor?.profilePicture?.startsWith("http")
+                  ? comment.commentAuthor.profilePicture
+                  : comment.commentAuthor?.profilePicture
+                  ? `${import.meta.env.VITE_API_BASE_URL.replace("/api", "")}${comment.commentAuthor.profilePicture}`
+                  : "/uploads/default-avatar.png";
+
+                return (
+                  <CommentItem
+                    key={comment.id}
+                    author={comment.author || comment.commentAuthor?.username || "Unknown"}
+                    avatarUrl={avatarUrl}
+                    content={comment.content}
+                    createdAt={comment.createdAt}
+                  />
+                );
+              })}
             </ul>
           ) : (
             <p>No comments yet.</p>

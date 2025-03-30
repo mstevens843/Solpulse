@@ -319,3 +319,399 @@ Error: Token has expired. Please log in again.
     at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
     at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
     at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T00:31:35.683Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:180:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T00:31:35.700Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:180:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T00:31:36.694Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:180:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T00:31:36.708Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:180:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T00:31:37.703Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:180:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T00:31:37.717Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:180:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T01:25:13.225Z] ERROR - ConnectionManager.getConnection was called after the connection manager was closed!
+Error: ConnectionManager.getConnection was called after the connection manager was closed!
+    at ConnectionManager.getConnection (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:70:13)
+    at /Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:305:111
+    at /Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:59:25
+    at new Promise (<anonymous>)
+    at retryAsPromised (/Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:48:12)
+    at Sequelize.query (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:300:12)
+    at PostgresQueryInterface.select (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:33)
+    at User.findAll (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1140:47)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async User.findOne (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1240:12)
+[2025-03-30T01:25:13.232Z] ERROR - ConnectionManager.getConnection was called after the connection manager was closed!
+Error: ConnectionManager.getConnection was called after the connection manager was closed!
+    at ConnectionManager.getConnection (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:70:13)
+    at /Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:305:111
+    at /Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:59:25
+    at new Promise (<anonymous>)
+    at retryAsPromised (/Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:48:12)
+    at Sequelize.query (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:300:12)
+    at PostgresQueryInterface.select (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:33)
+    at User.findAll (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1140:47)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async User.findOne (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1240:12)
+[2025-03-30T01:25:15.131Z] ERROR - ConnectionManager.getConnection was called after the connection manager was closed!
+Error: ConnectionManager.getConnection was called after the connection manager was closed!
+    at ConnectionManager.getConnection (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:70:13)
+    at /Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:305:111
+    at /Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:59:25
+    at new Promise (<anonymous>)
+    at retryAsPromised (/Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:48:12)
+    at Sequelize.query (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:300:12)
+    at PostgresQueryInterface.select (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:33)
+    at User.findAll (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1140:47)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async User.findOne (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1240:12)
+[2025-03-30T01:25:15.137Z] ERROR - ConnectionManager.getConnection was called after the connection manager was closed!
+Error: ConnectionManager.getConnection was called after the connection manager was closed!
+    at ConnectionManager.getConnection (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:70:13)
+    at /Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:305:111
+    at /Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:59:25
+    at new Promise (<anonymous>)
+    at retryAsPromised (/Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:48:12)
+    at Sequelize.query (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:300:12)
+    at PostgresQueryInterface.select (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:33)
+    at User.findAll (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1140:47)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async User.findOne (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1240:12)
+[2025-03-30T01:25:17.121Z] ERROR - ConnectionManager.getConnection was called after the connection manager was closed!
+Error: ConnectionManager.getConnection was called after the connection manager was closed!
+    at ConnectionManager.getConnection (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:70:13)
+    at /Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:305:111
+    at /Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:59:25
+    at new Promise (<anonymous>)
+    at retryAsPromised (/Users/development/Desktop/SolPulse/server/node_modules/retry-as-promised/dist/index.js:48:12)
+    at Sequelize.query (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/sequelize.js:300:12)
+    at PostgresQueryInterface.select (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:33)
+    at User.findAll (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1140:47)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async User.findOne (/Users/development/Desktop/SolPulse/server/node_modules/sequelize/lib/model.js:1240:12)
+[2025-03-30T04:31:57.893Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:31:57.914Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:31:59.460Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:31:59.467Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:01.455Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:01.459Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:25.415Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:25.424Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:26.471Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:26.476Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:27.555Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:27.571Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:29.454Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:29.459Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:31.456Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:32:31.460Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:33:49.544Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:33:49.564Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:33:50.556Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:33:50.572Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:33:51.565Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)
+[2025-03-30T04:33:51.580Z] ERROR - Token has expired. Please log in again.
+Error: Token has expired. Please log in again.
+    at validateToken (/Users/development/Desktop/SolPulse/server/utils/validateToken.js:40:19)
+    at /Users/development/Desktop/SolPulse/server/api/auth.js:189:25
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/layer.js:95:5)
+    at /Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/Users/development/Desktop/SolPulse/server/node_modules/express/lib/router/index.js:175:3)

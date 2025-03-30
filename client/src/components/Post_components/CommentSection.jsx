@@ -24,8 +24,8 @@ import "@/css/components/Post_components/CommentSection.css";
 
 
 
-function CommentSection({ postId, originalPostId, onNewComment, setPosts }) { // Pass setPosts for global updates
-    const [newComment, setNewComment] = useState("");
+function CommentSection({ postId, originalPostId, onNewComment, setPosts, currentUser }) {
+  const [newComment, setNewComment] = useState("");
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [showCommentOverlay, setShowCommentOverlay] = useState(false);
@@ -100,91 +100,98 @@ function CommentSection({ postId, originalPostId, onNewComment, setPosts }) { //
           setShowEmojiPicker(false); // Fail-safe fallback
         }
       };
-      
+
+      const profilePic = currentUser?.profilePicture || currentUser?.avatarUrl;
+
+      const resolvedAvatarUrl =
+        profilePic?.startsWith("http")
+          ? profilePic
+          : profilePic
+          ? `${import.meta.env.VITE_API_BASE_URL.replace("/api", "")}${profilePic}`
+          : "/uploads/default-avatar.png";
 
 
     return (
-        <>
-            <button
-                className="comment-icon-button"
-                onClick={() => setShowCommentOverlay(true)}
-                aria-label="Add a comment"
-            >
-                💬
-            </button>
-            <button
-                className="comment-text"
-                onClick={() => setShowCommentOverlay(true)}
-                aria-label="Add a comment"
-            >
-                Add a Comment
-            </button>
-
-            {showCommentOverlay && (
-                <div className="comment-overlay" onClick={() => setShowCommentOverlay(false)}>
-                    <div className="overlay-content" onClick={(e) => e.stopPropagation()}>
-                        <button 
-                            className="close-overlay-button" 
-                            onClick={() => setShowCommentOverlay(false)}
-                            aria-label="Close comment section"
-                        >
-                            &times;
-                        </button>
-                        <h3>Add a Comment</h3>
-                        <textarea
-                            value={newComment}
-                            onChange={(e) => setNewComment(e.target.value)}
-                            placeholder="Write your comment..."
-                            aria-label="Comment input"
-                            disabled={loading}
-                            className="comment-input"
-                        />
-                        {/* ✅ Suggestion 2 - Character counter */}
-                        <p className="char-counter">
-                            {newComment.length}/{MAX_COMMENT_LENGTH}
-                        </p>
-                        {/* ✅ Emoji picker toggle */}
-                        <button
-                            type="button"
-                            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                            className="emoji-toggle-button"
-                        >
-                            😀 Emoji
-                        </button>
-
-                        {/* ✅ Emoji Picker */}
-                        
-                        {showEmojiPicker && (
-                        <div className="emoji-picker-wrapper">
-                            <Picker data={data} onEmojiSelect={handleEmojiSelect} theme="light" />
-                        </div>
-                        )}
-                        <button
-                            onClick={handleAddComment}
-                            disabled={loading || !newComment.trim()}
-                            className="comment-button"
-                        >
-                            {loading ? "Adding..." : "Add Comment"}
-                        </button>
-                        {/* ✅ Suggestion 3 - Better error message */}
-                        {errorMessage && (
-                            <p className="error-message" aria-live="assertive">
-                                {errorMessage}
-                            </p>
-                        )}
-                    </div>
-                </div>
-            )}
-        </>
+      <div className="comment-section-inline">
+        <div className="comment-row">
+          <img
+            src={resolvedAvatarUrl}
+            alt={`${currentUser?.username || "Your"}'s avatar`}
+            className="comment-avatar"
+          />
+          <div className="comment-meta-input">
+            <p className="comment-username">{currentUser?.username || "Your"}</p>
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Post your reply"
+              aria-label="Comment input"
+              className="comment-input"
+              disabled={loading}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleAddComment();
+                }
+              }}
+              autoFocus
+            />
+          </div>
+        </div>
+    
+        <div className="comment-input-actions">
+          <button
+            type="button"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            className="emoji-toggle-button"
+            aria-label="Toggle emoji picker"
+            disabled={loading}
+          >
+            😀
+          </button>
+    
+          <span className="char-counter">
+            {newComment.length}/{MAX_COMMENT_LENGTH}
+          </span>
+    
+          <button
+            onClick={handleAddComment}
+            disabled={loading || !newComment.trim()}
+            className="comment-button"
+          >
+            {loading ? "Posting..." : "Reply"}
+          </button>
+        </div>
+    
+        {showEmojiPicker && (
+          <div className="emoji-picker-wrapper">
+            <Picker data={data} onEmojiSelect={handleEmojiSelect} theme="dark" />
+          </div>
+        )}
+    
+        {errorMessage && (
+          <p className="error-message" aria-live="assertive">
+            {errorMessage}
+          </p>
+        )}
+      </div>
     );
-}
+  }
+
+
 
 CommentSection.propTypes = {
-    postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    originalPostId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Support for retweets
-    onNewComment: PropTypes.func, // Ensure function exists
-    setPosts: PropTypes.func, // Pass setPosts for global state update
+  postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  originalPostId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onNewComment: PropTypes.func,
+  setPosts: PropTypes.func,
+  currentUser: PropTypes.shape({
+    username: PropTypes.string,
+    profilePicture: PropTypes.string,
+    avatarUrl: PropTypes.string,
+  }),
 };
+
 
 export default CommentSection;
 

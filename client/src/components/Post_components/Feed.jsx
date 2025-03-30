@@ -16,10 +16,10 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import PropTypes from "prop-types";
 import Post from "@/components/Post_components/Post";
-import FeedFilter from "@/components/Post_components/FeedFilter";
 import PostComposer from "@/components/Post_components/PostComposer";
 import { api } from "@/api/apiConfig";
 import { AuthContext } from "@/context/AuthContext";
+import { categorizePost } from "@/utils/categorizePost";
 import "@/css/components/Post_components/Feed.css";
 
 function Feed({ currentUser }) {
@@ -32,6 +32,8 @@ function Feed({ currentUser }) {
   const [filter, setFilter] = useState("all");
   const observerRef = useRef(null);
   const debounceTimeout = useRef(null); // ✅ #1 debounce reference
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
 
 
   const buildCountsMap = (counts) => {
@@ -137,15 +139,18 @@ function Feed({ currentUser }) {
     <div className="community-feed-container">
       <h3 className="community-feed-title">Community Feed</h3>
 
-      <FeedFilter
-        onFilterChange={(selectedFilter) => {
-          setFilter(selectedFilter);
-          setPosts([]);
-          setPostIds(new Set());
-          setPage(1); // This alone will trigger fetch via useEffect
-          setHasMore(true);
-        }}        
-      />
+      {/* ✅ Category tab UI */}
+      <div className="category-tabs">
+        {["All", "🔥 Meme", "🎨 NFT", "🪙 Crypto", "🧠 DAO", "💣 On-chain Drama"].map((cat) => (
+          <button
+            key={cat}
+            className={`category-tab ${selectedCategory === cat ? "active" : ""}`}
+            onClick={() => setSelectedCategory(cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
 
       {error && (
         <div className="community-feed-error" role="alert" aria-live="assertive">
@@ -165,14 +170,23 @@ function Feed({ currentUser }) {
       />
 
       <ul className="community-feed-list">
-        {posts.map((post, index) => (
-          <li key={`${post.id}-${index}`} className="community-feed-post">
-            <div className="post-container">
-              <Post post={post} currentUser={currentUser} setPosts={setPosts} />
-            </div>
-          </li>
-        ))}
+        {posts
+          .filter((post) => {
+            const cleanCategory = selectedCategory.replace(/^[^\w]+/, "").trim(); // Remove emoji
+            return cleanCategory === "All"
+              ? true
+              : categorizePost(post.content || "") === cleanCategory;
+          })
+          
+          .map((post, index) => (
+            <li key={`${post.id}-${index}`} className="community-feed-post">
+              <div className="post-container">
+                <Post post={post} currentUser={currentUser} setPosts={setPosts} />
+              </div>
+            </li>
+          ))}
       </ul>
+
 
       {loading && (
         <p className="community-feed-loading" role="status" aria-live="polite">

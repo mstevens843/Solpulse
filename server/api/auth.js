@@ -140,7 +140,16 @@ router.post(
       const token = generateToken(user);
       const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-      res.status(200).json({ token, refreshToken, user });
+      res.status(200).json({
+        token,
+        refreshToken,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          profilePicture: user.profilePicture || null, // ✅ add this!
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -179,7 +188,7 @@ router.get('/me', async (req, res, next) => {
     try {
         const decoded = validateToken(req);
         const user = await User.findByPk(decoded.id, {
-            attributes: ['id', 'username', 'email'],
+          attributes: ['id', 'username', 'email', 'profilePicture'], // ✅ Added profilePicture
         });
         if (!user) {
             return res.status(404).json({ error: 'User not found' });

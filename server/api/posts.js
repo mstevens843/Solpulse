@@ -55,8 +55,9 @@ const formatPost = (post, currentUserId = null) => ({
   mediaUrl: post.mediaUrl || null,
   cryptoTag: post.cryptoTag || null,
   likes: post.likes || 0,
-  retweets: post.retweets || 0,
-  isRetweet: post.isRetweet || false,
+  retweets: post.isRetweet 
+  ? post.originalPost?.retweets || 0 
+  : post.retweets || 0,  isRetweet: post.isRetweet || false,
   originalPostId: post.originalPostId || null,
 
   // Fix: Correctly determine `retweeterName` dynamically
@@ -151,6 +152,11 @@ router.get('/:id/profile-feed', async (req, res) => {
  * @desc    Get all posts with optional user filtering and pagination
  * @access  Public
  */
+/**
+ * @route   GET /api/posts
+ * @desc    Get all posts with optional user filtering and pagination
+ * @access  Public
+ */
 router.get('/', async (req, res) => {
   const { userId, page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
@@ -164,16 +170,26 @@ router.get('/', async (req, res) => {
       offset,
       order: [['createdAt', 'DESC']],
       include: [
-        { model: User, as: 'user', attributes: ['id', 'username', 'profilePicture'] },
-        { 
-          model: Post, 
-          as: 'originalPost', 
-          include: [{ model: User, as: 'user', attributes: ['id', 'username', 'profilePicture'] }]
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'username', 'profilePicture'] // ✅ DO NOT add author here
+        },
+        {
+          model: Post,
+          as: 'originalPost',
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'username', 'profilePicture'] // ✅ Same here
+            }
+          ]
         }
-      ],
+      ]
     });
 
-    const formattedPosts = posts.map(formatPost);
+    const formattedPosts = posts.map(formatPost); // ✅ adds author, etc.
 
     res.json({
       posts: formattedPosts,
@@ -188,18 +204,54 @@ router.get('/', async (req, res) => {
 });
 
 
+
 /**
  * @route   GET /api/posts/trending
  * @desc    Get trending posts sorted by likes
  * @access  Public
  */
+// router.get('/trending', async (req, res) => {
+//   try {
+//     const trendingPosts = await Post.findAll({
+//       where: { deletedAt: null },
+//       order: [['likes', 'DESC']],
+//       limit: 10,
+//       include: [{ model: User, as: 'user', attributes: ['username', 'profilePicture'] }],
+//     });
+
+//     const formattedPosts = trendingPosts.map(formatPost);
+//     res.json({ posts: formattedPosts });
+//   } catch (err) {
+//     console.error('Error fetching trending posts:', err);
+//     res.status(500).json({ error: 'Failed to fetch trending posts.' });
+//   }
+// });
+
+
 router.get('/trending', async (req, res) => {
   try {
     const trendingPosts = await Post.findAll({
       where: { deletedAt: null },
       order: [['likes', 'DESC']],
       limit: 20,
-      include: [{ model: User, as: 'user', attributes: ['username', 'profilePicture'] }],
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'username', 'profilePicture']
+        },
+        {
+          model: Post,
+          as: 'originalPost',
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'username', 'profilePicture']
+            }
+          ]
+        }
+      ]
     });
 
     const formattedPosts = trendingPosts.map(formatPost);
@@ -586,6 +638,7 @@ router.post('/:id/retweet', authMiddleware, async (req, res) => {
       retweets: originalPost.retweets,
       retweetData: {
         ...formatPost(populatedRetweet),
+        retweets: originalPost.retweets,
         retweeterName: populatedRetweet.user?.username || "Unknown" // Finally fixes the issue
       },
       comments: 0,

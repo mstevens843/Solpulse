@@ -12,9 +12,12 @@ import React, { useState, useEffect, useCallback, useRef } from "react"; // ✅ 
 import { api } from "@/api/apiConfig";
 import Post from "@/components/Post_components/Post";
 import SearchBar from "@/components/SearchBar";
+import { useAuth } from "@/context/AuthContext";
+import { categorizePost } from "@/utils/categorizePost";
 import "@/css/components/Explore.css";
 
 function Explore() {
+  const { currentUser } = useAuth(); // ✅ grabs logged-in user
   const [trendingPosts, setTrendingPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
@@ -23,51 +26,61 @@ function Explore() {
   const [hasMore, setHasMore] = useState(true); // ✅ Tracks if more posts are available
   const [filter, setFilter] = useState("24h"); // ✅ Time filter state
   const observer = useRef(); // ✅ IntersectionObserver ref
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
 
   /**
    * ✅ Fetch trending posts with filter & pagination
    */
- useEffect(() => {
-  const fetchTrending = async () => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await api.get(`/posts/trending?page=${page}&filter=${filter}`);
-      const newPosts = response.data.posts || [];
-
-      const postIds = newPosts.map((p) => p.id);
-      const countRes = await api.post("/comments/batch-count", { postIds });
-
-      // Map postId to count
-      const countsMap = {};
-      countRes.data.counts.forEach(({ postId, count }) => {
-        countsMap[postId] = count;
-      });
-
-      // Enrich posts
-      const enrichedPosts = newPosts.map((post) => ({
-        ...post,
-        commentCount: countsMap[post.id] || 0,
-      }));
-
-      setTrendingPosts((prev) =>
-        page === 1 ? enrichedPosts : [...prev, ...enrichedPosts]
-      );
-
-      if (newPosts.length === 0) setHasMore(false);
-    } catch (err) {
-      console.error("Error fetching trending posts:", err);
-      setError("Failed to load trending posts. Please refresh and try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchTrending();
-}, [page, filter]);
+  useEffect(() => {
+    const fetchTrending = async () => {
+      if (loading || !hasMore) return;
+  
+      setLoading(true);
+      setError("");
+  
+      try {
+        const response = await api.get(`/posts/trending?page=${page}&filter=${filter}`);
+        const newPosts = response.data.posts || [];
+  
+        // ✅ Check for duplicates or end of list
+        const isDuplicatePage =
+          newPosts.length === 0 ||
+          newPosts.every((newPost) =>
+            trendingPosts.find((p) => p.id === newPost.id)
+          );
+  
+        if (isDuplicatePage) {
+          setHasMore(false);
+          return;
+        }
+  
+        const postIds = newPosts.map((p) => p.id);
+        const countRes = await api.post("/comments/batch-count", { postIds });
+  
+        const countsMap = {};
+        countRes.data.counts.forEach(({ postId, count }) => {
+          countsMap[postId] = count;
+        });
+  
+        const enrichedPosts = newPosts.map((post) => ({
+          ...post,
+          commentCount: countsMap[post.id] || 0,
+        }));
+  
+        setTrendingPosts((prev) =>
+          page === 1 ? enrichedPosts : [...prev, ...enrichedPosts]
+        );
+      } catch (err) {
+        console.error("Error fetching trending posts:", err);
+        setError("Failed to load trending posts. Please refresh and try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchTrending(); // ✅ Make sure this stays inside useEffect
+  }, [page, filter]); // ✅ Dependency array
 
   /**
    * ✅ Reset on filter change
@@ -85,15 +98,16 @@ function Explore() {
    */
   const lastPostRef = useCallback(
     (node) => {
-      if (loading) return;
+      if (loading || !hasMore) return;
       if (observer.current) observer.current.disconnect();
-
+  
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
+        const first = entries[0];
+        if (first.isIntersecting && !loading && hasMore) {
           setPage((prev) => prev + 1);
         }
       });
-
+  
       if (node) observer.current.observe(node);
     },
     [loading, hasMore]
@@ -104,7 +118,7 @@ function Explore() {
       <header className="explore-header">
         <h2>Explore</h2>
       </header>
-
+  
       {/* Search Bar */}
       <section className="search-bar-container">
         <SearchBar
@@ -113,7 +127,7 @@ function Explore() {
           filters={["all", "posts", "users"]}
         />
       </section>
-
+  
       {/* ✅ Filter Dropdown */}
       <section className="filter-controls">
         <label>Filter by:</label>
@@ -123,37 +137,64 @@ function Explore() {
           <option value="month">This Month</option>
         </select>
       </section>
-
+  
+      {/* ✅ Trending Section */}
       <section className="trending-section">
         <h3 className="trending-title">Trending Topics</h3>
-
+  
+  
+        {/* ✅ Category Tabs (just once here!) */}
+        <section className="category-tabs">
+          {["All", "🔥 Meme", "🎨 NFT", "🪙 Crypto", "🧠 DAO", "💣 On-chain Drama"].map((cat) => (
+            <button
+              key={cat}
+              className={`category-tab ${selectedCategory === cat ? "active" : ""}`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </section>
+  
+        <hr className="my-4 border-gray-600" />
+  
         {error && <p className="explore-error" role="alert">{error}</p>}
-
+  
         {/* ✅ Trending Posts */}
         {trendingPosts.length === 0 && !loading ? (
           <p className="trending-empty">No trending posts found. Try searching for specific topics.</p>
         ) : (
           <div className="trending-posts-grid">
-            {trendingPosts.map((post, idx) => {
-              const isLast = idx === trendingPosts.length - 1;
-              return (
-                <div
-                  key={post.id}
-                  ref={isLast ? lastPostRef : null}
-                  className="trending-post"
-                >
-                  <Post post={post} currentUser={null} setPosts={setTrendingPosts} />
-                </div>
-              );
-            })}
+            {trendingPosts
+              .filter((post) => {
+                const cleanCategory = selectedCategory.replace(/^[^\w]+/, "").trim(); // Remove emoji
+                return cleanCategory === "All"
+                  ? true
+                  : categorizePost(post.content || "") === cleanCategory;
+              })
+              
+              .map((post, idx, arr) => {
+                const isLast = idx === arr.length - 1;
+                return (
+                  <div
+                    key={post.id}
+                    ref={isLast ? lastPostRef : null}
+                    className="trending-post"
+                  >
+                    <Post post={post} currentUser={currentUser} setPosts={setTrendingPosts} />
+                  </div>
+                );
+              })}
           </div>
         )}
-
-        {loading && <p className="explore-loading">Loading...</p>} {/* ✅ Loader during fetch */}
+  
+        {loading && <p className="explore-loading">Loading...</p>}
       </section>
     </div>
   );
-}
+}  
+    
+
 
 export default Explore;
 

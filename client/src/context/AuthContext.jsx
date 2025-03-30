@@ -151,6 +151,9 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
+import { useContext } from "react";
+
+export const useAuth = () => useContext(AuthContext);
 
 /**
  * Potential Improvements: - SKIP ALL FOR NOW
