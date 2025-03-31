@@ -100,9 +100,11 @@ const handleChange = (e) => {
     e.preventDefault();
     setErrors({});
     
-    if (!validateInputs()) return;
-  
+    const isValid = validateInputs();
+    if (!isValid) return;
+
     setLoading(true);
+
   
     try {
       const response = await api.post("/auth/register", {
@@ -120,11 +122,10 @@ const handleChange = (e) => {
         setIsAuthenticated(true); // ✅ Add this
         setUser(response.data.user); // ✅ And this
 
-        toast.success("Signup successful! Redirecting to login page...", {
-          position: "top-center",
-          autoClose: 1500,
-          onClose: () => navigate("/home"),
-        });
+        setLoading(false); // ✅ Reset loading regardless of outcome
+
+        navigate("/home", { state: { signupSuccess: true } });
+
       } else {
         setErrors({ form: "Signup failed. Please try again." });
       }
@@ -162,8 +163,6 @@ const handleChange = (e) => {
         toast.error(errorMessage);
       }
       
-    } finally {
-      setLoading(false); // ✅ Reset loading regardless of outcome
     }
   };
 

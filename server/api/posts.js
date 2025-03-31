@@ -16,6 +16,7 @@ const checkOwnership = require('../middleware/checkOwnership');
 const { Op } = require('sequelize');
 const multer = require('multer');
 const path = require('path');
+const { categorizePost } = require("../utils/categorizePost"); // ✅ now exists in backend
 const router = express.Router();
 
 // Multer configuration for media uploads
@@ -71,6 +72,8 @@ const formatPost = (post, currentUserId = null) => ({
   retweetedAt: post.retweetedAt || post.createdAt || new Date(),
   createdAt: post.createdAt || new Date(),
   updatedAt: post.updatedAt || new Date(),
+  category: post.category || "General",
+
 });
 
 
@@ -505,16 +508,20 @@ router.get('/:id', async (req, res) => {
  * @desc    Create a new post with optional media and cryptoTag
  * @access  Private
  */
+
 router.post('/', authMiddleware, upload.single('media'), async (req, res) => {
   const { content, cryptoTag } = req.body;
   const mediaUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
   try {
+    const category = categorizePost(content); // ✅ Assign category based on content
+
     const post = await Post.create({
       userId: req.user.id,
       content,
       mediaUrl,
       cryptoTag,
+      category, // ✅ Store it in DB
     });
 
     const populatedPost = await Post.findByPk(post.id, {

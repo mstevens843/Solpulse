@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
-import MediaUpload from '../../components/Post_components/MediaUpload';
+import MediaUpload from '../../components/Post_components/Actions/MediaUpload';
 import axios from 'axios';
 
 jest.mock('axios');

@@ -20,15 +20,15 @@ import { Link } from "react-router-dom";
 import { api } from "@/api/apiConfig";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import LikeButton from "@/components/Post_components/LikeButton";
-import RetweetButton from "@/components/Post_components/RetweetButton";
-import CommentSection from "@/components/Post_components/CommentSection";
-import PostModal from "@/components/Post_components/PostModal";
+import LikeButton from "@/components/Post_components/Actions/LikeButton";
+import RetweetButton from "@/components/Post_components/Actions/RetweetButton";
+import CommentSection from "@/components/Post_components/Actions/CommentSection";
+import CommentModal from "@/components/Post_components/Modals/CommentModal";
 import socket from "@/socket";
 import { AuthContext } from "@/context/AuthContext"; // Import AuthContext
 import "@/css/components/Post_components/Post.css";
 
-function Post({ post, currentUser, onNewComment, setPosts }) {
+function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore = false }) {
     const [postComments, setPostComments] = useState(post.comments || []);
     const { likedPosts, retweetedPosts } = useContext(AuthContext); // Get batch data from context
     const [commentCount, setCommentCount] = useState(post.commentCount || 0); // ✅ use prop if available
@@ -265,7 +265,15 @@ function Post({ post, currentUser, onNewComment, setPosts }) {
 
 
 return (
-  <div className={`individual-post-container ${post.fading ? "fading" : ""}`}>
+        <div
+        className={`individual-post-container ${post.fading ? "fading" : ""}`}
+        onClick={onClick} // ✅ Makes the entire post clickable (for Explore)
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+        if (e.key === "Enter") onClick?.();
+        }}
+    >
     <ToastContainer />
 
     {isRetweet && (
@@ -286,6 +294,7 @@ return (
                 />
                 <div className="individual-post-content-wrapper">
                     <div className="individual-post-header">
+                        
                         <div className="post-author-details">
                         <Link to={`/profile/${originalUserIdSafe}`} className="post-author-link">
                         <h4 className="individual-post-author">{postAuthor}</h4>
@@ -351,13 +360,29 @@ return (
                     </div>
     
                     <div className="view-comments-link">
-                        <a href="#" onClick={(e) => { e.preventDefault(); setModalOpen(true); }} className="view-comments-link">
+                        <a
+                            href="#"
+                            onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation(); // ✅ Prevents Explore modal from opening
+                            setModalOpen(true);
+                            }}
+                            className="view-comments-link"
+                        >
                             View/Add Comments ({commentCount})
                         </a>
                     </div>
+
+
+                    {/* ✅ Add hint for explore */}
+                {fromExplore && (
+                    <div className="explore-post-hint">
+                    <span>Click to view full post →</span>
+                    </div>
+                )}
     
                     {isModalOpen && (
-                        <PostModal 
+                        <CommentModal 
                         post={post} 
                         onClose={() => setModalOpen(false)} 
                         likedPosts={likedPosts}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import Explore from '../../components/Explore';
+import Explore from '../../components/Post_components/Explore';
 
 jest.mock('axios');
 

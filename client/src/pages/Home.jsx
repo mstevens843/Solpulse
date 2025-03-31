@@ -11,14 +11,28 @@
 import React, { useContext, useEffect, useState, Suspense } from "react";
 import Feed from "@/components/Post_components/Feed";
 import { AuthContext } from "@/context/AuthContext";
+import { useLocation, useNavigate } from "react-router-dom"; // ✅ Also import navigate
+
 import "@/css/pages/Home.css";
 
 // ✅ #1 Lazy Load: Defer loading of sidebars until needed
-const Explore = React.lazy(() => import("@/components/Explore"));
+const Explore = React.lazy(() => import("@/components/Post_components/Explore"));
 const CryptoTicker = React.lazy(() => import("@/components/Crypto_components/CryptoTicker"));
 
 function Home() {
   const { user } = useContext(AuthContext);  // Get user from context
+  const location = useLocation();
+  const navigate = useNavigate(); // ✅ Add this below your other hooks
+
+  const [showWelcome, setShowWelcome] = useState(false); // Fixed here
+
+  useEffect(() => {
+    if (location.state?.signupSuccess) {
+      setShowWelcome(true); // ✅ Show banner
+      navigate(location.pathname, { replace: true, state: {} }); // ✅ Clear state on first mount only
+    }
+  }, [location, navigate]);
+
 
   // ✅ #2 Skeleton Loader state for Feed loading experience
   const [feedLoading, setFeedLoading] = useState(true);
@@ -28,7 +42,13 @@ function Home() {
   }, []);
 
   return (
-    <div className="home-page-container">
+      <div className="home-page-container" style={{ paddingTop: showWelcome ? '70px' : '50px' }}> 
+
+      {showWelcome && (
+        <div className="welcome-banner">
+          🎉 Signup Successful! Welcome to SolPulse. 
+        </div>
+      )}
 
       <aside className="home-left">
         {/* ✅ #1 Lazy load with fallback */}

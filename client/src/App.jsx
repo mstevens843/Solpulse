@@ -26,7 +26,7 @@ import LandingPage from "./pages/LandingPage";
 import Home from "@/pages/Home"
 import Post from "@/components/Post_components/Post";
 import Profile from "./pages/Profile";
-import Explore from "./components/Explore";
+import Explore from "./components/Post_components/Explore";
 // import PostCreation from "./pages/PostCreation";
 import SearchResults from "./pages/SearchResults";
 import Settings from "./pages/Settings";

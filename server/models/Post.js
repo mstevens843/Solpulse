@@ -47,6 +47,11 @@ module.exports = (sequelize, DataTypes) => {
                   },
               },
           },
+          category: {
+            type: DataTypes.ENUM("Meme", "NFT", "Crypto", "DAO", "On-chain Drama", "General"),
+            allowNull: false,
+            defaultValue: "General",
+          },
           likes: {
               type: DataTypes.INTEGER,
               allowNull: false,

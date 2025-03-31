@@ -19,7 +19,6 @@ import Post from "@/components/Post_components/Post";
 import PostComposer from "@/components/Post_components/PostComposer";
 import { api } from "@/api/apiConfig";
 import { AuthContext } from "@/context/AuthContext";
-import { categorizePost } from "@/utils/categorizePost";
 import "@/css/components/Post_components/Feed.css";
 
 function Feed({ currentUser }) {
@@ -98,9 +97,8 @@ function Feed({ currentUser }) {
 
   // Handle initial load by resetting to page 1
   useEffect(() => {
-    setPage(1);
+    fetchPosts(); // fetch page 1 on mount
   }, []);
-
   // Fetch when page or filter changes
   useEffect(() => {
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
@@ -112,21 +110,20 @@ function Feed({ currentUser }) {
 
 
   useEffect(() => {
-    if (!hasMore || loading || page === 1) return; // Fix: Prevent premature page increase
-
-
+    if (!hasMore || loading) return; // ✅ Fix: Allow observer setup on all pages
+  
     observerRef.current = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
           setPage((prevPage) => prevPage + 1);
         }
       },
-      { rootMargin: "200px" } // ✅ #3 buffer scroll for smoother loading
+      { rootMargin: "200px" }
     );
-
+  
     const target = document.getElementById("feed-end");
     if (target) observerRef.current.observe(target);
-
+  
     return () => observerRef.current?.disconnect();
   }, [loading, hasMore]);
 
@@ -134,6 +131,8 @@ function Feed({ currentUser }) {
     setError(null);
     fetchPosts();
   };
+
+  
 
   return (
     <div className="community-feed-container">
@@ -175,7 +174,7 @@ function Feed({ currentUser }) {
             const cleanCategory = selectedCategory.replace(/^[^\w]+/, "").trim(); // Remove emoji
             return cleanCategory === "All"
               ? true
-              : categorizePost(post.content || "") === cleanCategory;
+              : (post.category || "General") === cleanCategory;
           })
           
           .map((post, index) => (

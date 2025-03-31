@@ -77,11 +77,12 @@
   align-items: flex-start;
   width: 100%; 
 }
-.individual-post-content-wrapper {
-  flex-grow: 1; 
-  width: 100%; 
-}
 
+.individual-post-content-wrapper {
+  flex-grow: 1;
+  width: 100%;
+  padding-right: 1rem; /* add right space for alignment */
+}
 .individual-post-crypto-tag {
   font-size: .8rem;
   color: #ffffff;
@@ -176,3 +177,15 @@ button.comment-text, button.like-button, button.retweet-button {
 }
 
 
+.explore-post-hint {
+  font-size: 0.75rem;
+  color: #00ffcc;
+  text-align: right;
+  font-style: italic;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  opacity: 1;
+  display: block !important;  /* ← force it to render */
+  position: relative;
+  z-index: 10;
+}

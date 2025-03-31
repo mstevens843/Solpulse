@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import LikeButton from '../../components/Post_components/LikeButton';
+import LikeButton from '../../components/Post_components/Actions/LikeButton';
 
 // Mock axios
 jest.mock('axios');

@@ -1,0 +1,137 @@
+/* ✅ Inline Comment Section (Twitter-style) */
+.comment-section-inline {
+    background-color: transparent;
+    border-top: 1px solid #2c2c2c;
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .comment-input {
+    width: 100%;
+    min-height: 80px;
+    background-color: #181818;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    resize: vertical;
+  }
+  
+  .comment-input::placeholder {
+    color: #888;
+  }
+  
+  .comment-input:disabled {
+    background-color: #222;
+    color: #666;
+    cursor: not-allowed;
+  }
+  
+  .comment-input-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .emoji-toggle-button {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .emoji-toggle-button:hover {
+    transform: scale(1.15);
+  }
+  
+  .char-counter {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-left: auto;
+  }
+  
+  .comment-button {
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .comment-button:disabled {
+    background-color: #444;
+    cursor: not-allowed;
+  }
+  
+  .comment-button:hover:not(:disabled) {
+    background-color: #0d8ae0;
+  }
+  
+  .emoji-picker-wrapper {
+    position: relative;
+    z-index: 10;
+    margin-top: 0.5rem;
+    animation: fadeIn 0.2s ease-in;
+  }
+
+  .comment-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .comment-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 9999px;
+    object-fit: cover;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .comment-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .comment-meta-input {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .comment-username {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #eaeaea;
+    margin-bottom: 4px;
+  }
+  
+  
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .error-message {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+  

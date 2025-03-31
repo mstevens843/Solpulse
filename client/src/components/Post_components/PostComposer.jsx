@@ -17,7 +17,7 @@
 
 import React, { useState, useRef } from "react";
 import { api } from "@/api/apiConfig";
-import MediaUpload from "@/components/Post_components/MediaUpload";
+import MediaUpload from "@/components/Post_components/Actions/MediaUpload";
 import "@/css/components/Post_components/PostComposer.css";
 import { toast, ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
