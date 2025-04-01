@@ -47,7 +47,7 @@
 /* Result Item */
 .result-item {
     background: #1f4068;
-    padding: 2rem;
+    padding: 0rem;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
     transition: all 0.3s ease;
@@ -114,3 +114,68 @@
         width: 100%;
     }
 }
+
+
+/* UserListItem.css */
+
+.user-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* ✅ Pushes follow button to right */
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    box-sizing: border-box;
+    gap: 1rem;
+  }
+  
+  .user-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+  
+  .user-list-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-grow: 1;
+    min-width: 0; /* ✅ Prevents overflow */
+  }
+  
+  .user-list-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 9999px;
+    object-fit: cover;
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    flex-shrink: 0;
+  }
+  
+  .user-list-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .user-list-username {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #00ffc2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .user-list-bio {
+    font-size: 0.85rem;
+    color: #cccccc;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .user-list-follow-btn {
+    flex-shrink: 0;
+  }

@@ -31,7 +31,7 @@ function SearchBar({ query, setQuery, filters = [] }) {
                 return;
             }
             try {
-                const response = await api.get(`/search?query=${encodeURIComponent(queryTerm)}&filter=${selectedFilter}`);
+                const response = await api.get(`/search/suggestions?query=${encodeURIComponent(queryTerm)}`);
                 const validResults = response.data.results.filter(item => item.username || item.content);
                 setSearchSuggestions(validResults);
             } catch (error) {
@@ -130,15 +130,17 @@ function SearchBar({ query, setQuery, filters = [] }) {
 
             {errorMessage && <p className="search-error">{errorMessage}</p>}
 
+            <div style={{ position: "relative", width: "100%", maxWidth: "400px" }}>
             {isTyping && searchSuggestions.length > 0 && query.trim() && (
                 <ul className="autocomplete-suggestions">
-                    {searchSuggestions.map((suggestion, index) => (
-                        <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
-                            {suggestion.username || suggestion.content}
-                        </li>
-                    ))}
+                {searchSuggestions.map((suggestion, index) => (
+                    <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                    {suggestion.username || suggestion.content}
+                    </li>
+                ))}
                 </ul>
             )}
+            </div>
         </div>
     );
 }

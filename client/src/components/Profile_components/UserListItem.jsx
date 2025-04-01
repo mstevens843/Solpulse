@@ -12,11 +12,11 @@ Optional Message or Tip buttons (if needed later)
 
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import FollowButton from "@/components/Profile_components/FollowButton";
 import "@/css/components/Profile_components/UserListItem.css";
 
-function UserListItem({ user, currentUserId }) {
+function UserListItem({ user, currentUserId, showBio = false }) {
   const navigate = useNavigate();
   const defaultAvatar = "http://localhost:5001/uploads/default-avatar.png";
 
@@ -28,28 +28,39 @@ function UserListItem({ user, currentUserId }) {
     navigate(`/profile/${user.id}`);
   };
 
-  // ✅ Local state for tracking if you're following them
-  const [isFollowing, setIsFollowing] = useState(user.isFollowedByCurrentUser ?? false);
+  // Track whether currentUser is following this user
+  const [isFollowing, setIsFollowing] = useState(
+    user.isFollowedByCurrentUser ?? false
+  );
 
-  // ✅ Update follow state when toggled
   const handleFollowToggle = (newState) => {
     setIsFollowing(newState);
   };
 
   return (
     <div className="user-list-item" onClick={handleClick}>
-      <img
-        src={`${profilePicUrl}?t=${new Date().getTime()}`}
-        alt={`${user.username}'s profile`}
-        className="user-list-avatar"
+      {/* ✅ Profile picture links to user profile */}
+      <Link
+        to={`/profile/${user.id}`}
         onClick={(e) => e.stopPropagation()}
-      />
+        className="user-list-avatar-link"
+      >
+        <img
+          src={`${profilePicUrl}?t=${new Date().getTime()}`}
+          alt={`${user.username}'s profile`}
+          className="user-list-avatar"
+        />
+      </Link>
 
       <div className="user-list-info">
         <div className="user-list-username">@{user.username}</div>
-        {user.bio && <div className="user-list-bio">{user.bio}</div>}
+        {/* Only show the bio if showBio is true and the user has a bio */}
+        {showBio && user.bio && (
+          <div className="user-list-bio">{user.bio}</div>
+        )}
       </div>
 
+      {/* Don't show follow button if it's the same user */}
       {user.id !== currentUserId && (
         <div
           className="user-list-follow-btn"
@@ -57,8 +68,8 @@ function UserListItem({ user, currentUserId }) {
         >
           <FollowButton
             userId={user.id}
-            isFollowingYou={user.isFollowingYou} // ✅ Do they follow you?
-            onFollowToggle={handleFollowToggle}  // ✅ You toggled follow?
+            isFollowingYou={user.isFollowingYou}
+            onFollowToggle={handleFollowToggle}
           />
         </div>
       )}
@@ -73,9 +84,10 @@ UserListItem.propTypes = {
     profilePicture: PropTypes.string,
     bio: PropTypes.string,
     isFollowedByCurrentUser: PropTypes.bool,
-    isFollowingYou: PropTypes.bool, // ✅ Needed for 3-state logic
+    isFollowingYou: PropTypes.bool,
   }).isRequired,
-  currentUserId: PropTypes.number.isRequired,
+  currentUserId: PropTypes.number,
+  showBio: PropTypes.bool, // <-- new optional prop
 };
 
 export default UserListItem;

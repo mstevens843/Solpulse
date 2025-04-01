@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 function RepostCount({ count }) {
   return (
     <span className="repost-count" aria-label={`Retweeted ${count} times`}>
-      {`(${count})`}
+      {`${count}`}
     </span>
   );
 }

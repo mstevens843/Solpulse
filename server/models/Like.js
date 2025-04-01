@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
   Like.associate = function (models) {
       Like.belongsTo(models.User, {
           foreignKey: 'userId',
-          as: 'likedByUser', // Renamed for clarity
+          as: 'user', // Renamed for clarity
           onDelete: 'CASCADE',
           onUpdate: 'CASCADE',
       });

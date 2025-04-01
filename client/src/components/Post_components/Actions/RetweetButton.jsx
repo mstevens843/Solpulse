@@ -194,7 +194,7 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
             >
                 {loading ? "Processing..." : (
                 <>
-                    {hasRetweeted ? "Undo Repost" : "Repost"} <RepostCount count={retweetCount} />
+                {loading ? "..." : hasRetweeted ? `🔁 ${retweetCount}` : `↪️ ${retweetCount}`}
                 </>
                 )}           
             </button>

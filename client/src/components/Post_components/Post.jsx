@@ -27,6 +27,7 @@ import CommentModal from "@/components/Post_components/Modals/CommentModal";
 import socket from "@/socket";
 import { AuthContext } from "@/context/AuthContext"; // Import AuthContext
 import "@/css/components/Post_components/Post.css";
+import PostInteractionsModal from "@/components/Post_components/Modals/PostInteractionsModal";
 
 function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore = false }) {
     const [postComments, setPostComments] = useState(post.comments || []);
@@ -39,6 +40,11 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
     const isRetweet = post?.isRetweet || false;
     const postIdToUse = isRetweet ? post.originalPostId : post.id;
     const retweeterName = isRetweet ? post.retweeterName || post.user?.username : null;
+    const [showInteractions, setShowInteractions] = useState(false);
+    const [interactionType, setInteractionType] = useState("likes");
+    const originalUserIdSafe = post.originalUserId || post.userId;
+
+
 
     
 
@@ -47,22 +53,34 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
 
     //  Ensure likes & retweets sync between the original post and retweets
     // 🛡️ Fallbacks to prevent null-related crashes
+    // Instead of:
     const postAuthor = isRetweet && post.originalAuthor
     ? post.originalAuthor
-    : post.author || "Unknown";
-
-    const postProfilePicture = isRetweet && post.originalProfilePicture
-    ? post.originalProfilePicture.startsWith("http")
-    ? post.originalProfilePicture
-    : `http://localhost:5001${post.originalProfilePicture.startsWith("/uploads") ? post.originalProfilePicture : `/uploads/${post.originalProfilePicture}`}`
-    : post.profilePicture
-    ? post.profilePicture.startsWith("http")
-        ? post.profilePicture
-        : `http://localhost:5001${post.profilePicture.startsWith("/uploads") ? post.profilePicture : `/uploads/${post.profilePicture}`}`
-    : "http://localhost:5001/uploads/default-avatar.png";
-
-    const originalUserIdSafe = post.originalUserId || post.userId;
-    const originalPostIdSafe = post.isRetweet && post.originalPostId ? post.originalPostId : post.id;
+    : (post.authorName || post.author || "Unknown");
+  
+  /**
+   *   1) If retweet & we have originalProfilePicture, use it.
+   *   2) Otherwise, try post.authorAvatar or post.profilePicture.
+   *   3) If none, fallback to default.
+   */
+  let postProfilePicture = "http://localhost:5001/uploads/default-avatar.png";
+  if (isRetweet && post.originalProfilePicture) {
+    // If the originalProfilePicture doesn't start with http, prefix the base path
+    postProfilePicture = post.originalProfilePicture.startsWith("http")
+      ? post.originalProfilePicture
+      : `http://localhost:5001${post.originalProfilePicture.startsWith("/uploads")
+          ? post.originalProfilePicture
+          : `/uploads/${post.originalProfilePicture}`
+        }`;
+  } else if (post.authorAvatar || post.profilePicture) {
+    const pic = post.authorAvatar || post.profilePicture;
+    postProfilePicture = pic.startsWith("http")
+      ? pic
+      : `http://localhost:5001${pic.startsWith("/uploads")
+          ? pic
+          : `/uploads/${pic}`
+        }`;
+  }
 
 
 
@@ -287,11 +305,14 @@ return (
 
     
 <div className="post-content-wrapper">
+            <Link to={`/profile/${originalUserIdSafe}`} className="post-profile-link">
+
                 <img
                     src={postProfilePicture}
                     alt={`${postAuthor}'s profile`}
                     className="post-profile-picture"
                 />
+            </Link>
                 <div className="individual-post-content-wrapper">
                     <div className="individual-post-header">
                         
@@ -341,24 +362,51 @@ return (
     
                     {/* ✅ Updated Like & Retweet Buttons to sync with batch data */}
                     <div className="individual-post-actions">
+                    <div className="action-button-with-count">
                         <LikeButton
-                            postId={postIdToUse}
-                            originalPostId={post.originalPostId}
-                            initialLikes={post.likes}
-                            currentUser={currentUser}
-                            onLikeToggle={handleLikeToggle}
-                            setPosts={setPosts}
+                        postId={postIdToUse}
+                        originalPostId={post.originalPostId}
+                        initialLikes={post.likes}
+                        currentUser={currentUser}
+                        onLikeToggle={handleLikeToggle}
+                        setPosts={setPosts}
                         />
-                       <RetweetButton
-                            postId={postIdToUse}
-                            originalPostId={post.originalPostId}
-                            initialRetweets={post.retweets} // ✅ Just use `post.retweets`
-                            currentUser={currentUser}
-                            onRetweetToggle={handleRetweetToggle}
-                            setPosts={setPosts}
-                        />
+                        <span
+                        className="interaction-count likes-count"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setInteractionType("likes");
+                            setShowInteractions(true);
+                        }}
+                        >
+                        {/* {post.likes} Likes */}
+                        View Likes
+                        </span>
                     </div>
-    
+
+                    <div className="action-button-with-count">
+                        <RetweetButton
+                        postId={postIdToUse}
+                        originalPostId={post.originalPostId}
+                        initialRetweets={post.retweets}
+                        currentUser={currentUser}
+                        onRetweetToggle={handleRetweetToggle}
+                        setPosts={setPosts}
+                        />
+                        <span
+                        className="interaction-count reposts-count"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setInteractionType("reposts");
+                            setShowInteractions(true);
+                        }}
+                        >
+                        {/* {post.retweets} Reposts */}
+                        View Reposts
+                        </span>
+                    </div>
+                    </div>
+                        
                     <div className="view-comments-link">
                         <a
                             href="#"
@@ -393,10 +441,17 @@ return (
                     )}
                 </div>
             </div>
+            {showInteractions && (
+            <PostInteractionsModal
+                postId={postIdToUse}
+                isOpen={showInteractions}
+                onClose={() => setShowInteractions(false)}
+                defaultTab={interactionType}
+                currentUserId={currentUser.id}
+            />
+            )}
         </div>
     );
-    
-    
 }   
 
 Post.propTypes = {

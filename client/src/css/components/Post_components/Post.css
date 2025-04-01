@@ -189,3 +189,38 @@ button.comment-text, button.like-button, button.retweet-button {
   position: relative;
   z-index: 10;
 }
+
+
+.interaction-count {
+  cursor: pointer;
+  color: #888;
+  font-size: 0.85rem;
+  margin-left: 8px;
+}
+
+.interaction-count:hover {
+  text-decoration: underline;
+}
+
+.individual-post-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.action-button-with-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #888;
+  cursor: pointer;
+}
+
+.action-button-with-count .interaction-count:hover {
+  text-decoration: underline;
+}
+
+.post-author-link:hover .individual-post-author {
+  text-decoration: underline;
+}

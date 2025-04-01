@@ -153,3 +153,52 @@ select.search-filter:hover {
     font-size: 1.1rem;
     color: #ffffff;
 }
+
+/* Autocomplete Suggestions */
+.autocomplete-suggestions {
+    margin-top: 0.5rem;
+    width: 100%;
+    max-width: 400px;
+    max-height: 250px;
+    overflow-y: auto;
+    background-color: #1a1a2e;
+    border: 1px solid #00ffcc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    list-style: none;
+    padding: 0;
+    z-index: 1000;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.autocomplete-suggestions li {
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    color: #00ffcc;
+    border-bottom: 1px solid rgba(0, 255, 204, 0.1);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    word-break: break-word; /* Prevents overflow */
+}
+
+/* Hover Interaction */
+.autocomplete-suggestions li:hover {
+    background-color: #0da688;
+    color: #000000;
+}
+
+/* Custom Scrollbar */
+.autocomplete-suggestions::-webkit-scrollbar {
+    width: 6px;
+}
+
+.autocomplete-suggestions::-webkit-scrollbar-thumb {
+    background-color: #00ffcc;
+    border-radius: 10px;
+}
+
+.autocomplete-suggestions::-webkit-scrollbar-track {
+    background: transparent;
+}

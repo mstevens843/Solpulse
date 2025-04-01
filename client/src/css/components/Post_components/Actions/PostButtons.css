@@ -9,3 +9,29 @@
     white-space: nowrap;
     border: 0;
   }
+
+  .retweet-button {
+    font-size: 1rem;
+    border: none;
+    background: transparent;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+
+  
+  .retweet-button:hover {
+    color: #1da1f2;
+  }
+
+
+  .repost-icon {
+    transition: color 0.2s ease;
+    color: #aaa; /* gray-ish */
+    font-size: 1rem;
+  }
+  
+  .repost-icon.active {
+    color: #00ffcc; /* match your highlight neon green, or use #1da1f2 for Twitter blue */
+  }

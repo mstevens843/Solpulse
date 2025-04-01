@@ -354,16 +354,18 @@ router.get("/likes/batch", authMiddleware, async (req, res) => {
 // Batch fetch all retweeted posts for a user
 router.get("/retweets/batch", authMiddleware, async (req, res) => {
   try {
-      const userId = req.user.id;
-      const retweetedPosts = await Retweet.findAll({ 
-          where: { userId }, 
-          attributes: ["postId"] 
-      });
-
-      res.json({ retweetedPosts: retweetedPosts.map((retweet) => retweet.postId) });
+    const userId = req.user.id;
+    // read from Posts table
+    const retweetedPosts = await Post.findAll({
+      where: { isRetweet: true, userId },
+      attributes: ["originalPostId"],
+    });
+    res.json({
+      retweetedPosts: retweetedPosts.map(p => p.originalPostId),
+    });
   } catch (error) {
-      console.error("Error fetching batch retweet data:", error);
-      res.status(500).json({ error: "Failed to fetch batch retweet data." });
+    console.error("Error fetching batch retweet data:", error);
+    res.status(500).json({ error: "Failed to fetch batch retweet data." });
   }
 });
 
@@ -658,6 +660,131 @@ router.post('/:id/retweet', authMiddleware, async (req, res) => {
 
 
 
+
+/**
+ * @route   GET /api/posts/:id/interactions
+ * @desc    Get users who liked or reposted a post
+ * @access  Public
+ */
+/**
+ * @route   GET /api/posts/:id/interactions
+ * @desc    Get users who liked or reposted a post
+ * @access  Public (or Private if you prefer)
+ */
+router.get('/:id/interactions', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const currentUserId = req.user?.id || null; // If you want to check who is viewing
+
+    // 1) Get all likes on this post
+    const likes = await Like.findAll({
+      where: { postId: id },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          // Make sure we include what we need:
+          attributes: ['id', 'username', 'profilePicture', 'bio'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    // 2) Get all reposts (retweets) of this post
+    const reposts = await Post.findAll({
+      where: { originalPostId: id, isRetweet: true },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'username', 'profilePicture', 'bio'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    // OPTIONAL: If you also want to add "isFollowedByCurrentUser" or "isFollowingYou":
+    //    (You can skip this if you don't need follow logic here)
+    //
+    //    For each user in likes[] or reposts[], you could run a quick check with your
+    //    Followers model. Typically you'd do a Promise.all or something similar. But
+    //    here's a minimal synchronous example just for clarity:
+
+    // Turn them into plain objects so we can attach extra fields
+    const likesMapped = [];
+    for (const like of likes) {
+      const user = like.user;
+      // If you want follow info, do something like:
+      // let isFollowedByCurrentUser = false;
+      // let isFollowingYou = false;
+      // if (currentUserId) {
+      //   isFollowedByCurrentUser = !!(await Follower.findOne({
+      //     where: {
+      //       followerId: currentUserId,
+      //       followingId: user.id,
+      //     },
+      //   }));
+      //   isFollowingYou = !!(await Follower.findOne({
+      //     where: {
+      //       followerId: user.id,
+      //       followingId: currentUserId,
+      //     },
+      //   }));
+      // }
+      likesMapped.push({
+        id: user.id,
+        username: user.username,
+        profilePicture: user.profilePicture,
+        bio: user.bio,
+        // isFollowedByCurrentUser,
+        // isFollowingYou,
+      });
+    }
+
+    const repostsMapped = [];
+    for (const retweet of reposts) {
+      const user = retweet.user;
+      // same optional follower logic...
+      repostsMapped.push({
+        id: user.id,
+        username: user.username,
+        profilePicture: user.profilePicture,
+        bio: user.bio,
+        // isFollowedByCurrentUser,
+        // isFollowingYou,
+      });
+    }
+
+    res.status(200).json({
+      likes: likesMapped,
+      reposts: repostsMapped,
+    });
+  } catch (error) {
+    console.error("Error fetching post interactions:", error);
+    res.status(500).json({ message: "Failed to fetch interactions." });
+  }
+});
+
+
+/**
+ * {
+  "likes": [
+    {
+      "id": 1,
+      "username": "satoshi",
+      "profilePicture": "/uploads/satoshi.png"
+    }
+  ],
+  "reposts": [
+    {
+      "id": 2,
+      "username": "vitalik",
+      "profilePicture": "/uploads/vitalik.png"
+    }
+  ]
+}
+
+ */
 
 
 /**
