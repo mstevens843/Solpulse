@@ -30,7 +30,7 @@ const notificationMessages = {
   transaction: (amount) => `💰 sent you a tip of ${amount} SOL`,
 };
 
-const notificationTypes = ["likes", "retweets", "comments", "follows", "messages", "tips", "notifications"];
+const notificationTypes = ["likes", "retweets", "comments", "follows", "messages", "tips", "all"];
 
 function NotificationsList() {
   const [notifications, setNotifications] = useState([]);
@@ -139,7 +139,15 @@ function NotificationsList() {
               createdAt: item.createdAt,
               isRead: item.isRead || false,
             }))
-          : response.data.notifications || []
+            : response.data.notifications.map((item) => ({
+              id: item.id,
+              actor: item.actor || `User unknown`,
+              profilePicture: item.profilePicture || null, // ✅ Optional for later display
+              message: item.message,
+              content: item.content || null,
+              createdAt: item.createdAt,
+              isRead: item.isRead || false,
+          }))
       );
     } catch (err) {
       setError("Failed to fetch notifications. Please try again.");
@@ -219,7 +227,7 @@ function NotificationsList() {
   return (
     <div className="notifications-page-container">
       <h2 className="notifications-page-header">Notifications</h2>
-
+  
       <div className="notifications-tabs">
         {notificationTypes.map((type) => (
           <button
@@ -230,29 +238,36 @@ function NotificationsList() {
               fetchNotifications(type);
             }}
           >
-            {type.charAt(0).toUpperCase() + type.slice(1)}
+            {type === "all"
+              ? "All"
+              : type.charAt(0).toUpperCase() + type.slice(1)}
           </button>
         ))}
       </div>
-
+  
       <div className="notifications-controls">
-        <button onClick={markAllAsRead}>Mark All as Read</button>
+        <button className="notifications-action-btn" onClick={markAllAsRead}>
+          Mark All as Read
+        </button>
+  
         {selectedNotifications.length > 0 && (
-          <button onClick={markSelectedAsRead}>Mark Selected as Read</button> // ✅ #3 Bulk Actions: button for selected
+          <button className="notifications-action-btn" onClick={markSelectedAsRead}>
+            Mark Selected as Read
+          </button>
         )}
+  
         <select
           value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)} // ✅ #2 Custom Sorting: dropdown to control sorting
+          onChange={(e) => setSortOption(e.target.value)}
           className="notification-sort-dropdown"
         >
           <option value="newest">Sort by Newest</option>
           <option value="oldest">Sort by Oldest</option>
           <option value="unread">Sort by Unread</option>
           {/* <option value="type">Group by Type</option> // future enhancement */}
-
         </select>
       </div>
-
+  
       {error && <p className="notifications-page-error">{error}</p>}
       {loading ? (
         <Loader />
@@ -266,7 +281,7 @@ function NotificationsList() {
             >
               <input
                 type="checkbox"
-                checked={selectedNotifications.includes(notification.id)} // ✅ #3 Bulk Actions: toggle checkbox
+                checked={selectedNotifications.includes(notification.id)}
                 onChange={(e) => {
                   if (e.target.checked) {
                     setSelectedNotifications((prev) => [...prev, notification.id]);
@@ -277,11 +292,12 @@ function NotificationsList() {
                   }
                 }}
               />
-
+  
               <div className="notification-content">
                 <p>
                   <strong>{notification.actor}</strong> {notification.message}
                 </p>
+  
                 {notification.content && (
                   <p className="notification-extra-content">"{notification.content}"</p>
                 )}
@@ -289,9 +305,12 @@ function NotificationsList() {
                   {new Date(notification.createdAt).toLocaleString()}
                 </span>
               </div>
-
+  
               {!notification.isRead && (
-                <button onClick={() => markNotificationAsRead(notification.id)}>
+                <button
+                  className="notification-mark-read-btn"
+                  onClick={() => markNotificationAsRead(notification.id)}
+                >
                   Mark as Read
                 </button>
               )}

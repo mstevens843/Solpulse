@@ -43,26 +43,7 @@ function CommentList({ postId, currentUser, onClose }) {
             await api.delete(`/comments/${commentId}`);
             setComments(comments.filter(comment => comment.id !== commentId));
 
-            toast.success("Comment deleted successfully!", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "dark",
-            });
-        } catch (error) {
-            console.error("Failed to delete comment:", error);
-            toast.error("Failed to delete comment. Please try again.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                theme: "dark",
-            });
+           
         } finally {
             setDeletingCommentId(null);
         }
@@ -77,7 +58,6 @@ function CommentList({ postId, currentUser, onClose }) {
 
     return (
         <div className="comment-list-overlay" onClick={onClose}>
-            <ToastContainer />
             <div className="comment-list-container" onClick={(e) => e.stopPropagation()}>
                 <div className="comment-list-header">
                     <h3>Comments</h3>

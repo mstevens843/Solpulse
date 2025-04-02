@@ -71,14 +71,13 @@ const handleValidationErrors = (errors) => {
  */
 router.get('/detailed', authMiddleware, async (req, res) => {
     const { page = 1 } = req.query;
-    
-    const limit = 10;  // Fixed pagination limit
+  
+    const limit = 10;
     const offset = (page - 1) * limit;
   
     try {
       console.log('Fetching comments on posts for user:', req.user.id);
   
-      // Step 1: Find all posts created by the logged-in user
       const userPosts = await Post.findAll({
         where: { userId: req.user.id },
         attributes: ['id'],
@@ -88,16 +87,15 @@ router.get('/detailed', authMiddleware, async (req, res) => {
         return res.status(404).json({ error: 'No posts found for this user.' });
       }
   
-      // Extract post IDs
       const postIds = userPosts.map(post => post.id);
   
-      // Step 2: Find comments on the user's posts
       const { count, rows } = await Comment.findAndCountAll({
         where: { postId: postIds },
+        attributes: ['id', 'content', 'userId', 'postId', 'createdAt'], // ✅ Added userId
         include: [
           {
             model: User,
-            as: 'user',
+            as: 'commentAuthor',
             attributes: ['id', 'username'],
           },
         ],
@@ -113,7 +111,9 @@ router.get('/detailed', authMiddleware, async (req, res) => {
       res.json({
         comments: rows.map((comment) => ({
           id: comment.id,
-          author: comment.user?.username || `User ${comment.user?.id || 'unknown'}`,
+          userId: comment.userId,
+          postId: comment.postId,
+          author: comment.user?.username ?? `User ${comment.userId}`,
           content: comment.content,
           createdAt: comment.createdAt,
         })),
@@ -122,11 +122,11 @@ router.get('/detailed', authMiddleware, async (req, res) => {
         currentPage: parseInt(page),
       });
     } catch (err) {
-      console.error('Error fetching detailed comments:', err);
-      res.status(500).json({ error: 'Failed to fetch comments.' });
-    }
+        console.error('Sequelize error:', err.message);
+        console.error('Full error:', err);
+        res.status(500).json({ error: 'Failed to fetch comments.' });
+      }
   });
-  
   
 /**
  * Fetch total comment count for a post.
@@ -243,13 +243,14 @@ router.get('/', authMiddleware, async (req, res) => {
         order: [['createdAt', 'DESC']],
         limit: parseInt(limit, 10),
         offset,
+        attributes: ['id', 'content', 'userId', 'postId', 'createdAt'], // ✅ here
         include: [
-            {
-              model: User,
-              as: 'commentAuthor', // ✅ MATCHES YOUR MODEL
-              attributes: ['username', 'profilePicture'],
-            },
-          ],
+          {
+            model: User,
+            as: 'commentAuthor',
+            attributes: ['username', 'profilePicture'],
+          },
+        ],
       });
 
       res.status(200).json({

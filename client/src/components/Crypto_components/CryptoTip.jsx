@@ -162,7 +162,6 @@ const CryptoTip = ({ recipientId, recipientWallet, currentUser, onTipSuccess, co
 
         return (
             <div className="crypto-tip-container">
-              <ToastContainer />
               <h3 className="crypto-tip-heading">Send a Tip</h3>
         
               {wallet.connected && wallet.publicKey ? ( // ✅ #4

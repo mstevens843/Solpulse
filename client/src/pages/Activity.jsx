@@ -31,6 +31,14 @@ function ActivityPage() {
     <div className="activity-page">
       <h2>Activity</h2>
       <div className="activity-tabs" role="tablist">
+      <button
+          className={`tab-button ${activeTab === "notifications" ? "active" : ""}`}
+          onClick={() => setActiveTab("notifications")}
+          aria-selected={activeTab === "notifications"}
+          role="tab"
+        >
+          Notifications
+        </button>
         <button
           className={`tab-button ${activeTab === "messages" ? "active" : ""}`}
           onClick={() => setActiveTab("messages")}
@@ -39,19 +47,11 @@ function ActivityPage() {
         >
           Messages
         </button>
-        <button
-          className={`tab-button ${activeTab === "notifications" ? "active" : ""}`}
-          onClick={() => setActiveTab("notifications")}
-          aria-selected={activeTab === "notifications"}
-          role="tab"
-        >
-          Notifications
-        </button>
       </div>
 
       {/* 3️⃣ Add basic animation on tab switch */}
       <div className={`activity-content fade-in`}>
-        {activeTab === "messages" ? <MessagesInbox /> : <NotificationsList />}
+        {activeTab === "notifications" ? <NotificationsList /> : <MessagesInbox /> }
       </div>
     </div>
   );

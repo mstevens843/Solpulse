@@ -97,7 +97,7 @@
 /* Grid Layout for Posts */
 .trending-posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 0rem;
   position: relative;
   isolation: isolate; /* 🔐 Prevents z-index bleed from children */
@@ -129,7 +129,56 @@
   z-index: 2;
 }
 
+/* Explore-specific post styles */
+.trending-post .individual-post-container {
+  padding: 0.75rem 0.75rem;
+  border-radius: 12px;
+  box-shadow: none;
+  background-color: transparent;
+}
 
+.trending-post .repost-indicator {
+  margin-left: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.trending-post .individual-post-content {
+  font-size: 1rem;
+  margin-left: 0.5rem;
+  margin-top: 0.1rem;
+  color: #e0e0e0;
+  word-wrap: break-word;
+}
+
+.trending-post .individual-post-header {
+  margin-left: 0.6rem;
+}
+
+.trending-post .post-author-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0rem;
+  margin-bottom: 0.3rem;
+}
+
+.trending-post .individual-post-date {
+  font-size: 0.68rem;
+  opacity: 0.7;
+  margin-top: 0rem;
+  padding-top: 0rem;
+  line-height: 1.2;
+}
+
+
+.trending-post .individual-post-actions {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: .5rem;
+}
 
 .trending-post h4 {
   font-size: 1rem;
@@ -142,6 +191,8 @@
   font-size: 1rem;
   color: #ffffff;
 }
+
+
 
 /* Error Display */
 .explore-error {

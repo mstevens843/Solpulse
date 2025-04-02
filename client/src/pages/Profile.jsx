@@ -279,7 +279,7 @@ function Profile() {
 
     return (
         <div className="profile-container">
-            <ToastContainer />
+            {/* <ToastContainer /> */}
     
             {loading ? (
                 <div className="profile-loader">

@@ -32,7 +32,7 @@ import PostInteractionsModal from "@/components/Post_components/Modals/PostInter
 function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore = false }) {
     const [postComments, setPostComments] = useState(post.comments || []);
     const { likedPosts, retweetedPosts } = useContext(AuthContext); // Get batch data from context
-    const [commentCount, setCommentCount] = useState(post.commentCount || 0); // ✅ use prop if available
+    const [commentCount, setCommentCount] = useState(post.commentCount || 0);
     const [isOverlayVisible, setOverlayVisible] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
@@ -139,19 +139,35 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
     // Listen for new comments in websocket and update ui. 
     useEffect(() => {
         const handleNewComment = (comment) => {
-            if (comment.postId === postIdToUse) {
-                setPostComments((prev) => [comment, ...prev]);
-                setCommentCount((prev) => prev + 1);
-                onNewComment(comment);
+          if (comment.postId === postIdToUse) {
+            setPostComments((prev) => [comment, ...prev]);
+            onNewComment(comment);
+      
+            // ✅ Update comment count globally
+            setPosts((prevPosts) =>
+              prevPosts.map((p) =>
+                p.id === postIdToUse || p.originalPostId === postIdToUse
+                  ? {
+                      ...p,
+                      commentCount: (p.commentCount || 0) + 1,
+                    }
+                  : p
+              )
+            );
+      
+            // ✅ Sync local counter if you're viewing this post
+            if (post.id === postIdToUse) {
+              setCommentCount((prev) => prev + 1);
             }
+          }
         };
-
-        socket.off("new-comment").on("new-comment", handleNewComment); // Ensure only one listener exists
-
+      
+        socket.off("new-comment").on("new-comment", handleNewComment);
+      
         return () => {
-            socket.off("new-comment", handleNewComment); // Proper cleanup
+          socket.off("new-comment", handleNewComment);
         };
-    }, [postIdToUse, onNewComment]);
+      }, [postIdToUse, onNewComment, post.id]);
     
 
     const handleToggleOverlay = async () => {
@@ -292,7 +308,7 @@ return (
         if (e.key === "Enter") onClick?.();
         }}
     >
-    <ToastContainer />
+    {/* <ToastContainer /> */}
 
     {isRetweet && (
       <div className="repost-indicator">
@@ -405,21 +421,32 @@ return (
                         View Reposts
                         </span>
                     </div>
+                    <div className="action-button-with-count">
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setModalOpen(true);
+                        }}
+                        className="comment-icon-link"
+                    >
+                        💬 {commentCount}
+                    </a>
+
+                    <span
+                        className="interaction-count comments-count"
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        setModalOpen(true);
+                        }}
+                    >
+                        Add/View Comments
+                    </span>
+                    </div>
                     </div>
                         
-                    <div className="view-comments-link">
-                        <a
-                            href="#"
-                            onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation(); // ✅ Prevents Explore modal from opening
-                            setModalOpen(true);
-                            }}
-                            className="view-comments-link"
-                        >
-                            View/Add Comments ({commentCount})
-                        </a>
-                    </div>
+                   
 
 
                     {/* ✅ Add hint for explore */}

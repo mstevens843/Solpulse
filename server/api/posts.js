@@ -74,6 +74,8 @@ const formatPost = (post, currentUserId = null) => ({
   updatedAt: post.updatedAt || new Date(),
   category: post.category || "General",
 
+  commentCount: post.comments?.length || 0  // ✅ ADDED: comment count as number
+
 });
 
 
@@ -265,6 +267,8 @@ router.get('/trending', async (req, res) => {
   }
 });
 
+
+
 /**
  * @route   GET /api/posts/likes
  * @desc    Get posts liked by the authenticated user
@@ -272,7 +276,7 @@ router.get('/trending', async (req, res) => {
  */
 router.get('/likes', authMiddleware, async (req, res) => {
   try {
-    // Step 1: Find posts created by the logged-in user (Brad)
+    // Step 1: Find posts created by the logged-in user
     const userPosts = await Post.findAll({
       where: { userId: req.user.id },
       attributes: ['id', 'content'],
@@ -282,7 +286,6 @@ router.get('/likes', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'No posts found for this user.' });
     }
 
-    // Extract Brad's post IDs
     const postIds = userPosts.map((post) => post.id);
 
     // Step 2: Find who liked these posts
@@ -292,18 +295,18 @@ router.get('/likes', authMiddleware, async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['username'],  // Get the user who liked the post
+          attributes: ['username'], // Who liked it
         },
         {
           model: Post,
-          as: 'post',
+          as: 'likedPost',
           attributes: ['content', 'userId'],
           include: [
             {
               model: User,
               as: 'user',
-              attributes: ['username'],  // Get the original post owner
-            }
+              attributes: ['username'], // Original post owner
+            },
           ],
         },
       ],
@@ -314,16 +317,16 @@ router.get('/likes', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'No likes found for your posts.' });
     }
 
-    // Step 3: Format the response to show who liked Brad's posts
-    res.status(200).json({
-      likes: likes.map((like) => ({
-        postId: like.postId,
-        postOwner: like.post.user.username,  // Show post owner's name (Brad)
-        content: like.post.content,  // Show post content
-        likedBy: like.user.username,  // Show user who liked the post
-        createdAt: like.createdAt,
-      })),
-    });
+    // Step 3: Format response
+    const formatted = likes.map((like) => ({
+      postId: like.postId,
+      postOwner: like.likedPost?.user?.username || 'Unknown',
+      content: like.likedPost?.content || '',
+      likedBy: like.user?.username || 'Unknown',
+      createdAt: like.createdAt,
+    }));
+
+    res.status(200).json({ likes: formatted });
   } catch (error) {
     console.error('Error fetching liked posts:', error);
     res.status(500).json({ message: 'Failed to fetch liked posts.' });

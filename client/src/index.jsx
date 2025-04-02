@@ -31,7 +31,7 @@ root.render(
                 <App />
             </AuthProvider>
         </ErrorBoundary>
-    </React.StrictMode>
+     </React.StrictMode>
 );
 
 reportWebVitals();

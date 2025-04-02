@@ -47,45 +47,54 @@ function CommentSection({ postId, originalPostId, onNewComment, setPosts, curren
      * - Updates the comment count in the global post list.
      */
     const handleAddComment = async () => {
-        if (!newComment.trim() || loading) return;
-      
-        setLoading(true);
-      
-        try {
-          const { data } = await api.post("/comments", {
-            postId: actualPostId,
-            content: newComment.trim(),
-          });
-      
-          const newCommentData = data.comment; // ✅ Extract the comment correctly
-      
-          setErrorMessage("");
-          setNewComment("");
-          onNewComment(newCommentData); // ✅ This ensures author/avatar get passed
-          setShowCommentOverlay(false);
-      
-          toast.success("Comment added!", {
-            position: "top-right",
-            autoClose: 2000,
-            theme: "dark",
-          });
-      
-          setPosts((prevPosts) =>
-            prevPosts.map((p) =>
-              p.id === actualPostId || p.originalPostId === actualPostId
-                ? { ...p, comments: (p.comments || 0) + 1 }
-                : p
-            )
-          );
-        } catch (error) {
-          console.error("Failed to add comment:", error);
-          const specificError =
-            error.response?.data?.error || error.message || "Unknown error occurred.";
-          setErrorMessage(`Failed to add comment: ${specificError}`);
-        } finally {
-          setLoading(false);
-        }
-      };
+      if (!newComment.trim() || loading) return;
+    
+      setLoading(true);
+    
+      try {
+        const { data } = await api.post("/comments", {
+          postId: actualPostId, // or postIdToUse
+          content: newComment.trim(),
+        });
+    
+        const newCommentData = data.comment;
+    
+        // Show a single toast for your own newly added comment
+        toast.success("Comment added!", {
+          toastId: "comment-added-toast",
+          position: "top-right",
+          autoClose: 2000,
+          theme: "dark",
+        });
+    
+        // Clear the text field and error
+        setErrorMessage("");
+        setNewComment("");
+        setShowCommentOverlay(false);
+    
+        // Immediately append your new comment to the UI
+        onNewComment(newCommentData);
+    
+        // Also update the post’s comment count
+        setPosts((prevPosts) =>
+          prevPosts.map((p) =>
+            p.id === actualPostId || p.originalPostId === actualPostId
+              ? {
+                  ...p,
+                  commentCount: (p.commentCount || 0) + 1, // increments numeric commentCount
+                }
+              : p
+          )
+        );
+      } catch (error) {
+        console.error("Failed to add comment:", error);
+        const specificError =
+          error.response?.data?.error || error.message || "Unknown error occurred.";
+        setErrorMessage(`Failed to add comment: ${specificError}`);
+      } finally {
+        setLoading(false);
+      }
+    };
       
 
     const handleEmojiSelect = (emoji) => {

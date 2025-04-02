@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  padding: 1rem;
   background: #1a1a1a;
 }
 
@@ -157,7 +157,7 @@
 
 .post-container {
   background: #121212;
-  padding: 1rem;
+  padding: 0rem;
   border-radius: 8px;
   margin-bottom: .5rem;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
@@ -223,4 +223,9 @@ p.individual-post-date {
   .post-content {
       font-size: 0.9rem;
   }
+}
+
+
+.community-feed-post li {
+  
 }

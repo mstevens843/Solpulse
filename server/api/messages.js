@@ -247,7 +247,7 @@ router.post(
         content: message.trim(),
         cryptoTip: cryptoTip !== undefined && cryptoTip !== null ? parseFloat(cryptoTip) : 0.0, // Default to 0.0 if missing
         read: false,
-        attachmentPath: file ? `/uploads/messages/${file.filename}` : null, // ✅ Add this field to your model if needed
+        attachmentPath: req.file ? `/uploads/messages/${req.file.filename}` : null, // ✅ Add this field to your model if needed
       });
 
       console.log('Creating notification for recipient...');

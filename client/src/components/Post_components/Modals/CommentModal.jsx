@@ -18,6 +18,7 @@ import RetweetButton from "@/components/Post_components/Actions/RetweetButton";
 import CommentSection from "@/components/Post_components/Actions/CommentSection";
 import CommentItem from "@/components/Post_components/CommentItem";
 import socket from "@/socket";
+import { toast } from "react-toastify"; // ✅ Make sure this is already at the top
 import "@/css/components/Post_components/Modals/PostModal.css";
 
 function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, setPosts }) { // Ensure setPosts is passed
@@ -25,6 +26,9 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
   const [likes, setLikes] = useState(post.likes || 0);
   const [loading, setLoading] = useState(true); // ✅ Loading state added
   const [retweets, setRetweets] = useState(post.retweets || 0);
+  const [deletingCommentId, setDeletingCommentId] = useState(null);
+
+  // Use postIdToUse for retweets
   const postIdToUse = post.isRetweet ? post.originalPostId : post.id;
 
   /**
@@ -52,19 +56,84 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
      * - Listens for new comments in real time.
      * - Ensures comments update live without refreshing.
      */
-  useEffect(() => {
-    const handleNewComment = (newComment) => {
-      if (newComment.postId === postIdToUse) {
-        setComments((prev) => [newComment, ...prev]);
-      }
-    };
+  // ✅ Move this ABOVE useEffect so it's accessible
+  const handleNewComment = (newComment) => {
+    if (newComment.postId !== postIdToUse) return;
 
-    socket.off("new-comment").on("new-comment", handleNewComment);
+    setComments((prev) => {
+      const isDuplicate = prev.some((c) => c.id === newComment.id);
+      if (isDuplicate) return prev;
+      return [newComment, ...prev];
+    });
+
+    // ✅ Also increment the global commentCount
+    setPosts((prevPosts) =>
+      prevPosts.map((p) =>
+        p.id === postIdToUse || p.originalPostId === postIdToUse
+          ? {
+              ...p,
+              commentCount: (p.commentCount || 0) + 1,
+            }
+          : p
+      )
+    );
+  };
+
+  // Set up the socket listener
+  useEffect(() => {
+    socket.off("new-comment", handleNewComment);
+    socket.on("new-comment", handleNewComment);
 
     return () => {
       socket.off("new-comment", handleNewComment);
     };
-  }, [postIdToUse]);
+  }, [postIdToUse, currentUser?.id]);
+
+
+
+
+
+// ✅ Updated delete logic with toastId
+const handleDeleteComment = async (commentId) => {
+  setDeletingCommentId(commentId);
+
+  try {
+    await api.delete(`/comments/${commentId}`);
+
+    // Remove locally
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
+
+    // ✅ Decrement global commentCount (not increment!)
+    setPosts((prevPosts) =>
+      prevPosts.map((p) =>
+        p.id === postIdToUse || p.originalPostId === postIdToUse
+          ? {
+              ...p,
+              commentCount: Math.max((p.commentCount || 1) - 1, 0),
+            }
+          : p
+      )
+    );
+
+    toast.success("Comment deleted", {
+      toastId: `comment-deleted-${commentId}`, // ← UNIQUE PER COMMENT
+      position: "top-right",
+      autoClose: 2000,
+      theme: "dark",
+    });
+  } catch (error) {
+    console.error("Failed to delete comment:", error);
+    toast.error("Failed to delete comment", {
+      toastId: "comment-delete-error-toast",
+      position: "top-right",
+      autoClose: 3000,
+      theme: "dark",
+    });
+  } finally {
+    setDeletingCommentId(null);
+  }
+};
+
 
   // Ensure likes update globally inside the modal, whenever user likes/unlikes a post. 
   const handleLikeToggle = (postId, updatedLikes) => {
@@ -161,7 +230,7 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
         <CommentSection
           postId={postIdToUse}
           originalPostId={post.originalPostId}
-          onNewComment={(newComment) => setComments((prev) => [newComment, ...prev])}
+          onNewComment={handleNewComment}
           setPosts={setPosts}
           currentUser={currentUser}
         />
@@ -185,13 +254,26 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
                   : "/uploads/default-avatar.png";
 
                 return (
+                  <li key={comment.id} className="comment-item-with-delete">
                   <CommentItem
-                    key={comment.id}
                     author={comment.author || comment.commentAuthor?.username || "Unknown"}
                     avatarUrl={avatarUrl}
                     content={comment.content}
                     createdAt={comment.createdAt}
                   />
+                  {comment.userId === currentUser?.id && (
+                    <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    disabled={deletingCommentId === comment.id}
+                    className="delete-comment-btn"
+                    aria-label="Delete comment"
+                  >
+                    <span className="trash-icon">
+                      {deletingCommentId === comment.id ? "..." : "🗑️"}
+                    </span>
+                  </button>
+                  )}
+                </li>
                 );
               })}
             </ul>
@@ -203,6 +285,7 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
     </div>
   );
 }
+
 
 
 CommentModal.propTypes = {

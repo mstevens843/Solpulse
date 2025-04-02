@@ -24,9 +24,8 @@ const formatNotifications = async (notifications) => {
   return Promise.all(
     notifications.map(async (notification) => {
       // Fetch actor (user who performed the action)
-      const actor = await User.findByPk(notification.actorId, {
-        attributes: ['username'],
-      });
+      const actor = notification.actor;
+
 
       // Generate appropriate notification message based on type
 let message;
@@ -139,6 +138,13 @@ router.get('/', authMiddleware, async (req, res) => {
   try {
     const { count, rows } = await Notification.findAndCountAll({
       where: whereCondition,
+      include: [
+        {
+          model: User,
+          as: 'actor',
+          attributes: ['id', 'username', 'profilePicture'], // ✅ match frontend needs
+        },
+      ],
       order: [['createdAt', 'DESC']],
       limit: parseInt(limit),
       offset: parseInt(offset),
