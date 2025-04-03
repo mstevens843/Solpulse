@@ -44,22 +44,23 @@ const formatPost = (post, currentUserId = null) => ({
     ? post.originalUserId || post.originalPost?.userId || null
     : post.userId || null,
 
-  author: post.isRetweet
-    ? post.originalPost?.user?.username || post.originalAuthor || "Unknown"
-    : post.user?.username || post.author || "Unknown",
+    author: post.isRetweet
+    ? post.originalPost?.user?.username || post.originalAuthor || 'Unknown'
+    : post.user?.username || post.author || 'Unknown',
 
   profilePicture: post.isRetweet
     ? post.originalPost?.user?.profilePicture || post.originalProfilePicture || "http://localhost:5001/uploads/default-avatar.png"
     : post.user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png",
 
-  content: post.content || '',
-  mediaUrl: post.mediaUrl || null,
-  cryptoTag: post.cryptoTag || null,
-  likes: post.likes || 0,
-  retweets: post.isRetweet 
-  ? post.originalPost?.retweets || 0 
-  : post.retweets || 0,  isRetweet: post.isRetweet || false,
-  originalPostId: post.originalPostId || null,
+    content: post.content || '',
+    mediaUrl: post.mediaUrl || null,
+    cryptoTag: post.cryptoTag || null,
+    likes: post.likes || 0,
+    retweets: post.isRetweet
+      ? post.originalPost?.retweets || 0
+      : post.retweets || 0,
+    isRetweet: post.isRetweet || false,
+    originalPostId: post.originalPostId || null,
 
   // Fix: Correctly determine `retweeterName` dynamically
   retweeterName: post.isRetweet
@@ -72,7 +73,7 @@ const formatPost = (post, currentUserId = null) => ({
   retweetedAt: post.retweetedAt || post.createdAt || new Date(),
   createdAt: post.createdAt || new Date(),
   updatedAt: post.updatedAt || new Date(),
-  category: post.category || "General",
+  category: post.category || 'General',
 
   commentCount: post.comments?.length || 0  // ✅ ADDED: comment count as number
 
@@ -94,47 +95,49 @@ router.get('/:id/profile-feed', async (req, res) => {
     const offset = (page - 1) * limit;
 
     if (isNaN(userId)) {
-      return res.status(400).json({ message: "Invalid user ID format." });
+      return res.status(400).json({ message: 'Invalid user ID format.' });
     }
 
-    // Fetch user's original posts (excluding retweets)
+    // user's original posts
     const userPosts = await Post.findAll({
       where: { userId, isRetweet: false },
       include: [
         {
           model: User,
           as: 'user',
-          attributes: ['username', 'profilePicture']
-        }
+          attributes: ['username', 'profilePicture'],
+        },
       ],
       order: [['createdAt', 'DESC']],
       limit,
-      offset
+      offset,
     });
 
-    // Fetch user's retweets
+    // user's retweets
     const retweets = await Post.findAll({
       where: { userId, isRetweet: true },
       include: [
         {
           model: Post,
           as: 'originalPost',
-          include: [{ model: User, as: 'user', attributes: ['username', 'profilePicture'] }],
+          include: [
+            { model: User, as: 'user', attributes: ['username', 'profilePicture'] },
+          ],
         },
         {
           model: User,
           as: 'user',
-          attributes: ['username', 'profilePicture']
-        }
+          attributes: ['username', 'profilePicture'],
+        },
       ],
       order: [['createdAt', 'DESC']],
       limit,
-      offset
+      offset,
     });
 
     const formattedRetweets = retweets.map((retweet) => ({
       ...formatPost(retweet, userId),
-      retweeterName: retweet.user?.username || "Unknown"
+      retweeterName: retweet.user?.username || 'Unknown',
     }));
 
     const formattedPosts = userPosts.map((post) => formatPost(post, userId));
@@ -145,10 +148,11 @@ router.get('/:id/profile-feed', async (req, res) => {
 
     res.status(200).json({ posts: combinedPosts });
   } catch (error) {
-    console.error("Error fetching user posts and retweets:", error);
-    res.status(500).json({ message: "Failed to fetch posts and retweets." });
+    console.error('Error fetching user posts and retweets:', error);
+    res.status(500).json({ message: 'Failed to fetch posts and retweets.' });
   }
 });
+
 
 
 
@@ -165,7 +169,6 @@ router.get('/:id/profile-feed', async (req, res) => {
 router.get('/', async (req, res) => {
   const { userId, page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
-
   const whereCondition = userId ? { userId } : {};
 
   try {
@@ -178,7 +181,7 @@ router.get('/', async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username', 'profilePicture'] // ✅ DO NOT add author here
+          attributes: ['id', 'username', 'profilePicture'],
         },
         {
           model: Post,
@@ -187,14 +190,14 @@ router.get('/', async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['id', 'username', 'profilePicture'] // ✅ Same here
-            }
-          ]
-        }
-      ]
+              attributes: ['id', 'username', 'profilePicture'],
+            },
+          ],
+        },
+      ],
     });
 
-    const formattedPosts = posts.map(formatPost); // ✅ adds author, etc.
+    const formattedPosts = posts.map(formatPost);
 
     res.json({
       posts: formattedPosts,
@@ -207,6 +210,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch posts.' });
   }
 });
+
 
 
 
@@ -243,7 +247,7 @@ router.get('/trending', async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username', 'profilePicture']
+          attributes: ['id', 'username', 'profilePicture'],
         },
         {
           model: Post,
@@ -252,11 +256,11 @@ router.get('/trending', async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['id', 'username', 'profilePicture']
-            }
-          ]
-        }
-      ]
+              attributes: ['id', 'username', 'profilePicture'],
+            },
+          ],
+        },
+      ],
     });
 
     const formattedPosts = trendingPosts.map(formatPost);
@@ -268,7 +272,6 @@ router.get('/trending', async (req, res) => {
 });
 
 
-
 /**
  * @route   GET /api/posts/likes
  * @desc    Get posts liked by the authenticated user
@@ -276,7 +279,7 @@ router.get('/trending', async (req, res) => {
  */
 router.get('/likes', authMiddleware, async (req, res) => {
   try {
-    // Step 1: Find posts created by the logged-in user
+    // Step 1: Find all post IDs from this user
     const userPosts = await Post.findAll({
       where: { userId: req.user.id },
       attributes: ['id', 'content'],
@@ -288,27 +291,36 @@ router.get('/likes', authMiddleware, async (req, res) => {
 
     const postIds = userPosts.map((post) => post.id);
 
-    // Step 2: Find who liked these posts
+    // Step 2: Find all Likes for these posts, including Notification + User + Post
     const likes = await Like.findAll({
-      where: { postId: postIds },
+      where: { postId: { [Op.in]: postIds } },
       include: [
         {
           model: User,
           as: 'user',
-          attributes: ['username'], // Who liked it
+          attributes: ['username'], // Who liked
         },
         {
           model: Post,
           as: 'likedPost',
-          attributes: ['content', 'userId'],
+          attributes: ['content'],
           include: [
             {
               model: User,
               as: 'user',
-              attributes: ['username'], // Original post owner
+              attributes: ['username'], // Owner of liked post
             },
           ],
         },
+        {
+          model: Notification,
+          as: 'notification',
+          attributes: ['id', 'isRead'],
+          where: {
+            isRead: false, // ✅ show only unread
+          },
+          required: true, // ✅ exclude likes with no matching unread notif
+        }
       ],
       order: [['createdAt', 'DESC']],
     });
@@ -319,16 +331,18 @@ router.get('/likes', authMiddleware, async (req, res) => {
 
     // Step 3: Format response
     const formatted = likes.map((like) => ({
+      notificationId: like.notification?.id || null,
       postId: like.postId,
       postOwner: like.likedPost?.user?.username || 'Unknown',
       content: like.likedPost?.content || '',
       likedBy: like.user?.username || 'Unknown',
       createdAt: like.createdAt,
+      isRead: like.notification?.isRead ?? false, // ✅ Pull actual status
     }));
 
     res.status(200).json({ likes: formatted });
   } catch (error) {
-    console.error('Error fetching liked posts:', error);
+    console.error('❌ Error fetching liked posts:', error);
     res.status(500).json({ message: 'Failed to fetch liked posts.' });
   }
 });
@@ -339,36 +353,35 @@ router.get('/likes', authMiddleware, async (req, res) => {
 // liked and retweeted posts at once.
 
 // Batch fetch all liked posts for a user
-router.get("/likes/batch", authMiddleware, async (req, res) => {
+router.get('/likes/batch', authMiddleware, async (req, res) => {
   try {
-      const userId = req.user.id;
-      const likedPosts = await Like.findAll({ 
-          where: { userId }, 
-          attributes: ["postId"] 
-      });
+    const userId = req.user.id;
+    const likedPosts = await Like.findAll({
+      where: { userId },
+      attributes: ['postId'],
+    });
 
-      res.json({ likedPosts: likedPosts.map((like) => like.postId) });
+    res.json({ likedPosts: likedPosts.map((like) => like.postId) });
   } catch (error) {
-      console.error("Error fetching batch like data:", error);
-      res.status(500).json({ error: "Failed to fetch batch like data." });
+    console.error('Error fetching batch like data:', error);
+    res.status(500).json({ error: 'Failed to fetch batch like data.' });
   }
 });
 
 // Batch fetch all retweeted posts for a user
-router.get("/retweets/batch", authMiddleware, async (req, res) => {
+router.get('/retweets/batch', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    // read from Posts table
     const retweetedPosts = await Post.findAll({
       where: { isRetweet: true, userId },
-      attributes: ["originalPostId"],
+      attributes: ['originalPostId'],
     });
     res.json({
-      retweetedPosts: retweetedPosts.map(p => p.originalPostId),
+      retweetedPosts: retweetedPosts.map((p) => p.originalPostId),
     });
   } catch (error) {
-    console.error("Error fetching batch retweet data:", error);
-    res.status(500).json({ error: "Failed to fetch batch retweet data." });
+    console.error('Error fetching batch retweet data:', error);
+    res.status(500).json({ error: 'Failed to fetch batch retweet data.' });
   }
 });
 
@@ -379,98 +392,107 @@ router.get("/retweets/batch", authMiddleware, async (req, res) => {
  * @desc    Check if the authenticated user has liked a specific post
  * @access  Private
  *  */
-router.get("/:id/like-status", authMiddleware, async (req, res) => {
+router.get('/:id/like-status', authMiddleware, async (req, res) => {
   try {
-      const { id } = req.params;
-      const userId = req.user.id;
+    const { id } = req.params;
+    const userId = req.user.id;
+    const existingLike = await Like.findOne({
+      where: { postId: id, userId },
+    });
 
-      const existingLike = await Like.findOne({
-          where: { postId: id, userId }
-      });
-
-      res.status(200).json({ liked: !!existingLike }); // Returns true if liked, false otherwise
+    res.status(200).json({ liked: !!existingLike });
   } catch (error) {
-      console.error("Error checking like status:", error);
-      res.status(500).json({ error: "Failed to check like status." });
+    console.error('Error checking like status:', error);
+    res.status(500).json({ error: 'Failed to check like status.' });
   }
 });
-
 
 /**
  * @route   GET /api/posts/:id/retweet-status
  * @desc    Check if the authenticated user has retweeted a specific post
  * @access  Private
  */
-router.get("/:id/retweet-status", authMiddleware, async (req, res) => {
+router.get('/:id/retweet-status', authMiddleware, async (req, res) => {
   try {
-      const { id } = req.params;
-      const userId = req.user.id;
+    const { id } = req.params;
+    const userId = req.user.id;
+    const existingRetweet = await Post.findOne({
+      where: { userId, isRetweet: true, originalPostId: id },
+    });
 
-      const existingRetweet = await Post.findOne({
-          where: { userId, isRetweet: true, originalPostId: id }
-      });
-
-      res.status(200).json({ retweeted: !!existingRetweet }); // Returns true if retweeted, false otherwise
+    res.status(200).json({ retweeted: !!existingRetweet });
   } catch (error) {
-      console.error("Error checking retweet status:", error);
-      res.status(500).json({ error: "Failed to check retweet status." });
+    console.error('Error checking retweet status:', error);
+    res.status(500).json({ error: 'Failed to check retweet status.' });
   }
 });
-
 
 /**
  * @route   GET /api/posts/retweets
  * @desc    Get posts retweeted by the authenticated user
  * @access  Private
  */
+// ✅ Full route using Retweet model directly
 router.get('/retweets', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
-    //  Fetch retweets of the user's posts
-    const retweets = await Post.findAll({
-      where: { 
-        isRetweet: true,
-        originalUserId: userId //  Gets retweets of the user's posts
-      },
+    // Find all retweets of your posts using Retweet model
+    const retweets = await Retweet.findAll({
       include: [
         {
-          model: User,
-          as: 'user', //  Retweeter info
-          attributes: ['username'],
-        },
-        {
           model: Post,
-          as: 'originalPost', //  Original post details
-          attributes: ['content', 'userId'],
+          as: 'post',
           include: [
+            {
+              model: Post,
+              as: 'originalPost',
+              where: { userId: userId }, // You're the original author
+              include: [
+                {
+                  model: User,
+                  as: 'user',
+                  attributes: ['username'],
+                },
+              ],
+            },
             {
               model: User,
               as: 'user',
-              attributes: ['username'],  //  Original post owner
-            }
+              attributes: ['username'],
+            },
           ],
+        },
+        {
+          model: Notification,
+          as: 'notification',
+          attributes: ['id', 'isRead'], // ✅ Include isRead
+          where: {
+            isRead: false, // ✅ Only fetch unread retweet notifications
+          },
+          required: true, // ✅ Ensure the notification exists and is unread
         },
       ],
       order: [['createdAt', 'DESC']],
     });
 
     if (!retweets.length) {
-      return res.status(404).json({ message: 'No retweets found for your posts.' });
+      return res.status(200).json({ retweets: [] });
     }
 
-    //  Format response
-    res.status(200).json({
-      retweets: retweets.map((retweet) => ({
-        postId: retweet.originalPostId,
-        postOwner: retweet.originalPost?.user?.username || "Unknown", //  Original post owner
-        content: retweet.originalPost?.content || "No content", //  Original post content
-        retweetedBy: retweet.user?.username || "Unknown", //  Retweeter username
-        createdAt: retweet.createdAt,
-      })),
-    });
+    const formatted = retweets.map((retweet) => ({
+      notificationId: retweet.notification?.id || null,
+      postId: retweet.post?.originalPostId,
+      postOwner: retweet.post?.originalPost?.user?.username || 'Unknown',
+      content: retweet.post?.originalPost?.content || 'No content',
+      retweetedBy: retweet.post?.user?.username || 'Unknown',
+      createdAt: retweet.createdAt,
+      isRead: retweet.notification?.isRead ?? false, // ✅ Accurate status
+    }));
+
+    res.status(200).json({ retweets: formatted });
   } catch (error) {
-    console.error('Error fetching retweeted posts:', error);
+    console.error('❌ Error fetching retweeted posts:', error);
     res.status(500).json({ message: 'Failed to fetch retweeted posts.' });
   }
 });
@@ -488,26 +510,28 @@ router.get('/:id', async (req, res) => {
       include: [
         { model: Comment, as: 'comments' },
         { model: User, as: 'user', attributes: ['id', 'username', 'profilePicture'] },
-        { 
-          model: Post, 
-          as: 'originalPost', 
-          include: [{ model: User, as: 'user', attributes: ['id', 'username', 'profilePicture'] }] 
-        }
+        {
+          model: Post,
+          as: 'originalPost',
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'username', 'profilePicture'],
+            },
+          ],
+        },
       ],
     });
 
     if (!post) return res.status(404).json({ message: 'Post not found.' });
-
-    //  Fix: Correctly determine original user (even for retweets)
     const formattedPost = formatPost(post);
-
     res.status(200).json({ post: formattedPost, comments: formattedPost.comments || [] });
   } catch (error) {
     console.error('Error fetching post:', error);
     res.status(500).json({ message: 'An error occurred while fetching the post.' });
   }
 });
-
 /**
  * @route   POST /api/posts
  * @desc    Create a new post with optional media and cryptoTag
@@ -519,27 +543,35 @@ router.post('/', authMiddleware, upload.single('media'), async (req, res) => {
   const mediaUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
   try {
-    const category = categorizePost(content); // ✅ Assign category based on content
-
+    const category = categorizePost(content);
     const post = await Post.create({
       userId: req.user.id,
       content,
       mediaUrl,
       cryptoTag,
-      category, // ✅ Store it in DB
+      category,
     });
 
     const populatedPost = await Post.findByPk(post.id, {
-      include: [{ model: User, as: 'user', attributes: ['username', 'profilePicture'] }],
+      include: [
+        { model: User, as: 'user', attributes: ['username', 'profilePicture'] },
+      ],
     });
 
-    res.status(201).json({ post: formatPost(populatedPost), message: 'Post created successfully!' });
+    res.status(201).json({
+      post: formatPost(populatedPost),
+      message: 'Post created successfully!',
+    });
   } catch (err) {
     console.error('Error creating post:', err);
     res.status(500).json({ error: 'Failed to create post.' });
   }
 });
-
+/**
+ * @route   POST /api/posts/:id/like
+ * @desc    Like a post
+ * @access  Private
+ */
 /**
  * @route   POST /api/posts/:id/like
  * @desc    Like a post
@@ -547,38 +579,72 @@ router.post('/', authMiddleware, upload.single('media'), async (req, res) => {
  */
 router.post('/:id/like', authMiddleware, async (req, res) => {
   try {
-      const { id } = req.params;
-      const userId = req.user.id;
+    const { id } = req.params;
+    const userId = req.user.id;
 
-      const post = await Post.findByPk(id);
-      if (!post) return res.status(404).json({ message: "Post not found." });
+    const post = await Post.findByPk(id);
+    if (!post) return res.status(404).json({ message: 'Post not found.' });
 
-      // Check if the user already liked this post
-      const existingLike = await Like.findOne({ where: { postId: id, userId } });
+    const existingLike = await Like.findOne({ where: { postId: id, userId } });
 
-      if (existingLike) {
-          await existingLike.destroy();
-          post.likes = Math.max(0, post.likes - 1);
-      } else {
-          await Like.create({ postId: id, userId });
-          post.likes += 1;
-      }
-
+    if (existingLike) {
+      // 👎 Unlike
+      await existingLike.destroy();
+      post.likes = Math.max(0, post.likes - 1);
       await post.save();
 
-      // Update all retweeted versions of the post
+      // Update all retweet versions of this post
       await Post.update(
-          { likes: post.likes },
-          { where: { originalPostId: id, isRetweet: true } }
+        { likes: post.likes },
+        { where: { originalPostId: id, isRetweet: true } }
       );
 
-      res.status(200).json({ 
-          likes: post.likes, 
-          message: existingLike ? "Like removed" : "Post liked" 
+      return res.status(200).json({
+        likes: post.likes,
+        message: 'Like removed',
       });
+    } else {
+      // 👍 Like
+      let newNotification = null;
+
+      if (post.userId !== userId) {
+        newNotification = await Notification.create({
+          userId: post.userId,   // Recipient
+          actorId: userId,       // Who liked
+          type: 'like',
+          entityId: String(post.id),
+          entityType: 'Post',
+        });
+
+        console.log('✅ Notification created with ID:', newNotification.id);
+      }
+
+      const newLike = await Like.create({
+        postId: id,
+        userId,
+        notificationId: newNotification?.id || null, // ✅ Attach it if created
+      });
+
+      console.log('✅ Like created with notification ID:', newLike.notificationId);
+
+      post.likes += 1;
+      await post.save();
+
+      await Post.update(
+        { likes: post.likes },
+        { where: { originalPostId: id, isRetweet: true } }
+      );
+
+      return res.status(200).json({
+        likes: post.likes,
+        message: 'Post liked',
+      });
+    }
   } catch (error) {
-      console.error("Error liking/unliking post:", error);
-      res.status(500).json({ message: "An error occurred while liking/unliking the post." });
+    console.error('❌ Error liking/unliking post:', error);
+    res.status(500).json({
+      message: 'An error occurred while liking/unliking the post.',
+    });
   }
 });
 
@@ -588,22 +654,27 @@ router.post('/:id/like', authMiddleware, async (req, res) => {
  * @desc    Retweet a post
  * @access  Private
  */
+/**
+ * @route   POST /api/posts/:id/retweet
+ * @desc    Retweet a post
+ * @access  Private
+ */
 router.post('/:id/retweet', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;  // Retweeter’s ID
-    const retweeterName = req.user.username;  // Retweeter’s username
+    const userId = req.user.id;
+    const retweeterName = req.user.username;
 
-    // Fetch the original post
+    // Step 1: Fetch the original post
     const originalPost = await Post.findByPk(id, {
-      include: [{ model: User, as: "user", attributes: ["id", "username", "profilePicture"] }]
+      include: [{ model: User, as: "user", attributes: ["id", "username", "profilePicture"] }],
     });
 
     if (!originalPost) {
       return res.status(404).json({ message: "Post not found." });
     }
 
-    // Check if the user already retweeted this post
+    // Step 2: Prevent duplicate retweet
     const existingRetweet = await Post.findOne({
       where: { userId, isRetweet: true, originalPostId: id },
     });
@@ -612,36 +683,47 @@ router.post('/:id/retweet', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: "You have already retweeted this post." });
     }
 
-    // Create the retweet post
+    // Step 3: Create notification
+    let newNotification = null;
+    if (originalPost.userId !== userId) {
+      newNotification = await Notification.create({
+        type: "retweet",
+        actorId: userId,
+        userId: originalPost.userId,
+        postId: originalPost.id,
+        message: `${retweeterName} retweeted your post`,
+      });
+
+      console.log("✅ Notification created:", newNotification.id);
+    }
+
+    // Step 4: Create the retweet post
     const retweetedPost = await Post.create({
-      userId,  // This is the retweeter
+      userId,
       content: originalPost.content,
       mediaUrl: originalPost.mediaUrl,
       cryptoTag: originalPost.cryptoTag,
       isRetweet: true,
       originalPostId: originalPost.id,
-      originalUserId: originalPost.userId, 
+      originalUserId: originalPost.userId,
       originalAuthor: originalPost.user?.username || "Unknown",
       originalProfilePicture: originalPost.user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png",
     });
 
-    // Increment retweet count on the original post
+    // Step 5: Save it in the Retweets table with notificationId
+    await Retweet.create({
+      postId: retweetedPost.id,
+      userId,
+      notificationId: newNotification?.id || null, // ✅ Link notification
+    });
+
+    // Step 6: Update retweet count
     originalPost.retweets += 1;
     await originalPost.save();
 
-    // Create notification for the original post owner
-    await Notification.create({
-      type: "retweet",
-      actorId: userId,  // The user who retweeted
-      userId: originalPost.userId,  //  Correctly set the recipient
-      postId: originalPost.id,
-      message: `${retweeterName} retweeted your post`,
-    });
-    
-
-    // Fetch the retweet again, now including the retweeter’s username
+    // Step 7: Fetch updated retweet with user info
     const populatedRetweet = await Post.findByPk(retweetedPost.id, {
-      include: [{ model: User, as: "user", attributes: ["id", "username", "profilePicture"] }]
+      include: [{ model: User, as: "user", attributes: ["id", "username", "profilePicture"] }],
     });
 
     res.status(201).json({
@@ -651,17 +733,15 @@ router.post('/:id/retweet', authMiddleware, async (req, res) => {
       retweetData: {
         ...formatPost(populatedRetweet),
         retweets: originalPost.retweets,
-        retweeterName: populatedRetweet.user?.username || "Unknown" // Finally fixes the issue
+        retweeterName: populatedRetweet.user?.username || "Unknown",
       },
       comments: 0,
     });
   } catch (error) {
-    console.error("Error retweeting post:", error);
+    console.error("❌ Error retweeting post:", error);
     res.status(500).json({ message: "An error occurred while retweeting the post." });
   }
 });
-
-
 
 
 /**

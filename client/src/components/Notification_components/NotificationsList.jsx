@@ -84,51 +84,60 @@ function NotificationsList() {
 
     try {
       const response = await api.get(endpoint);
+      console.log("Notifications fetched:", response.data);
+
+       // ✅ Add debug log only for retweets
+    if (type === "retweets") {
+      console.log("🔥 Retweet data raw:", response.data.retweets);
+    }
+
       setNotifications(
         type === "likes"
           ? response.data.likes.map((item) => ({
-              id: item.postId,
+              id: item.notificationId || item.id, // ✅ Use real notification ID
               actor: item.likedBy || `User unknown`,
               message: `${item.likedBy} liked your post`,
               content: item.content,
               createdAt: item.createdAt,
-              isRead: false,
+              isRead: item.isRead || false, // ✅ ← Use real isRead if it exists
             }))
           : type === "retweets"
             ? response.data.retweets.map((item) => ({
-                id: item.postId,  // Use postId from API response
+                id: item.notificationId || item.id, // ✅ Use real notification ID
                 actor: item.retweetedBy || "Unknown",  // Use correct actor field
                 message: `${item.retweetedBy} reposted your post`,  // Ensure correct message
                 content: item.content || "No content", 
                 createdAt: item.createdAt,
                 isRead: false,  // No isRead field in retweets, default to false
               }))
-          : type === "comments"
-          ? response.data.comments.map((item) => ({
-              id: item.id,
-              actor: item.author || `User ${item.userId}`,
-              message: `${item.author} commented on your post`,
-              content: item.content,
-              createdAt: item.createdAt,
-              isRead: false,
-            }))
-          : type === "follows"
-          ? response.data.followers.map((item) => ({
-              id: item.id,
-              actor: item.actor,
-              message: `${item.actor} started following you`,
-              content: null,
-              createdAt: item.createdAt,
-              isRead: false,
-            }))
+              : type === "comments"
+              ? response.data.comments.map((item) => ({
+                  id: item.notificationId || item.id, // Match likes/retweets
+                  actor: item.actor || `User unknown`,
+                  message: item.message || "commented on your post",
+                  content: item.content || null,
+                  createdAt: item.createdAt,
+                  isRead: item.isRead || false,
+                }))
+            
+                : type === "follows"
+                ? response.data.followers.map((item) => ({
+                    id: item.notificationId || item.id,  // Use real notification ID
+                    actor: item.actor || "User unknown",  // Ensure correct actor
+                    message: item.message || "started following you",  // Default follow message
+                    content: null,  // Follows don't need extra content
+                    createdAt: item.createdAt,
+                    isRead: item.isRead || false,  // Use real isRead field if it exists
+                }))
+                            
           : type === "messages"
           ? response.data.messages.map((item) => ({
-              id: item.id,
+              id: item.notificationId || item.id, // ✅ Use real notification ID
               actor: item.sender || `User unknown`,
               message: `${item.sender} sent you a message`,
               content: item.content,
               createdAt: item.createdAt,
-              isRead: item.read || false,
+              isRead: item.isRead || false, // ✅ Use notification isRead, not message.read
             }))
           : type === "tips"
           ? response.data.tips.map((item) => ({
@@ -163,13 +172,11 @@ function NotificationsList() {
    */
   const markNotificationAsRead = async (id) => {
     try {
-      document.getElementById(`notification-${id}`).classList.add("removed");
-
+      document.getElementById(`notification-${id}`)?.classList.add("removed");
+  
       setTimeout(async () => {
         await api.put(`/notifications/${id}/read`);
-        setNotifications((prev) =>
-          prev.filter((notification) => notification.id !== id)
-        );
+        setNotifications((prev) => prev.filter((n) => n.id !== id)); // ✅ remove from UI
       }, 300);
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -306,7 +313,9 @@ function NotificationsList() {
                 </span>
               </div>
   
-              {!notification.isRead && (
+              {notification.isRead ? (
+                <span className="notification-read-indicator">✓ Read</span>
+              ) : (
                 <button
                   className="notification-mark-read-btn"
                   onClick={() => markNotificationAsRead(notification.id)}

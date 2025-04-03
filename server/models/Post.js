@@ -114,7 +114,8 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         hooks: true,
       });
-  
+
+
       // -- Has Many Comments --
       Post.hasMany(models.Comment, {
         foreignKey: 'postId',

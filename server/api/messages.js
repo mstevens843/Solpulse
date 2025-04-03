@@ -50,20 +50,24 @@ const formatMessages = (messages) => {
  * Fetch paginated messages for the logged-in user with sender details.
  */
 router.get('/detailed', authMiddleware, async (req, res) => {
-  const { page = 1 } = req.query;  // Default page is 1
-  const limit = 10;  // Fixed pagination limit
+  const { page = 1 } = req.query;
+  const limit = 10;
   const offset = (page - 1) * limit;
 
   try {
-    console.log('Fetching messages with sender details for user:', req.user.id);
-    
     const { count, rows } = await Message.findAndCountAll({
       where: { recipientId: req.user.id },
       include: [
         {
           model: User,
           as: 'sender',
-          attributes: ['id', 'username'], 
+          attributes: ['id', 'username'],
+        },
+        {
+          model: Notification,
+          as: 'notification',
+          attributes: ['id', 'isRead'],
+          required: false,
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -77,13 +81,15 @@ router.get('/detailed', authMiddleware, async (req, res) => {
 
     res.json({
       messages: rows.map((msg) => ({
-        id: msg.id,
+        id: msg.notificationId || msg.id,
+        notificationId: msg.notificationId || null,
         sender: msg.sender?.username || `User ${msg.sender?.id || 'unknown'}`,
         content: msg.content,
         cryptoTip: msg.cryptoTip !== undefined ? msg.cryptoTip : 0.0,
         read: msg.read,
         readAt: msg.readAt || null,
         createdAt: msg.createdAt,
+        isRead: msg.notification?.isRead || false,
       })),
       totalMessages: count,
       totalPages: Math.ceil(count / limit),
@@ -221,7 +227,7 @@ router.post(
   '/',
   [
     authMiddleware,
-    upload.single('attachment'), // ✅ Accept file under 'attachment' key
+    upload.single('attachment'),
     check('recipient', 'Recipient username is required').not().isEmpty(),
     check('message', 'Message content is required').not().isEmpty(),
   ],
@@ -240,23 +246,24 @@ router.post(
         return res.status(404).json({ error: 'Recipient not found.' });
       }
 
-      console.log('Creating new message...');
-      const newMessage = await Message.create({
-        senderId: req.user.id,
-        recipientId: recipientUser.id,
-        content: message.trim(),
-        cryptoTip: cryptoTip !== undefined && cryptoTip !== null ? parseFloat(cryptoTip) : 0.0, // Default to 0.0 if missing
-        read: false,
-        attachmentPath: req.file ? `/uploads/messages/${req.file.filename}` : null, // ✅ Add this field to your model if needed
-      });
-
       console.log('Creating notification for recipient...');
-      await Notification.create({
+      const notification = await Notification.create({
         userId: recipientUser.id,
         actorId: req.user.id,
         type: 'message',
         message: `You have a new message from ${req.user.username || 'Unknown User'}.`,
         isRead: false,
+      });
+
+      console.log('Creating new message...');
+      const newMessage = await Message.create({
+        senderId: req.user.id,
+        recipientId: recipientUser.id,
+        content: message.trim(),
+        cryptoTip: cryptoTip !== undefined && cryptoTip !== null ? parseFloat(cryptoTip) : 0.0,
+        read: false,
+        notificationId: notification.id, // ✅ Attach notification ID
+        attachmentPath: req.file ? `/uploads/messages/${req.file.filename}` : null,
       });
 
       res.status(201).json({

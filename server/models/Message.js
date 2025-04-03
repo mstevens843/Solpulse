@@ -60,7 +60,17 @@ module.exports = (sequelize, DataTypes) => {
                     },
                 },
             },
-        },
+              // ✅ Add the new field here
+            notificationId: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                references: {
+                model: 'Notifications',
+                key: 'id',
+                },
+                onDelete: 'SET NULL',
+            },
+            },
         {
             timestamps: true, // ✅ Automatically includes createdAt and updatedAt
             paranoid: true,   // ✅ Enables soft deletes

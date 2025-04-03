@@ -1,63 +1,81 @@
 module.exports = (sequelize, DataTypes) => {
-  const Retweet = sequelize.define(
+    const Retweet = sequelize.define(
       'Retweet',
       {
-          postId: {
-              type: DataTypes.INTEGER,
-              allowNull: false,
-              references: {
-                  model: 'Posts',
-                  key: 'id',
-              },
-              onDelete: 'CASCADE', // ✅ Automatically clean up when original post is deleted
+        postId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: {
+            model: 'Posts',
+            key: 'id',
           },
-          userId: {
-              type: DataTypes.INTEGER,
-              allowNull: false,
-              references: {
-                  model: 'Users',
-                  key: 'id',
-              },
-              onDelete: 'CASCADE', // ✅ Automatically clean up if user is deleted
+          onDelete: 'CASCADE',
+        },
+        userId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: {
+            model: 'Users',
+            key: 'id',
           },
+          onDelete: 'CASCADE',
+        },
+        notificationId: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          references: {
+            model: 'Notifications',
+            key: 'id',
+          },
+          onDelete: 'SET NULL',
+          onUpdate: 'CASCADE',
+        },
       },
       {
-          timestamps: true,
-          tableName: 'Retweets',
-          indexes: [
-              {
-                  unique: true,
-                  fields: ['userId', 'postId'], // ✅ Enforce uniqueness: no double-retweeting
-              },
-              {
-                  fields: ['postId'], // ✅ Index for faster retweet lookups by post
-              },
-              {
-                  fields: ['userId'], // ✅ Index for faster retweet lookups by user
-              },
-          ],
-          defaultScope: {
-              attributes: { exclude: ['updatedAt'] }, //  ✅ Only return necessary fields. 
+        timestamps: true,
+        tableName: 'Retweets',
+        indexes: [
+          {
+            unique: true,
+            fields: ['userId', 'postId'], // ✅ Prevent duplicate retweets
           },
+          {
+            fields: ['postId'],
+          },
+          {
+            fields: ['userId'],
+          },
+        ],
+        defaultScope: {
+          attributes: { exclude: ['updatedAt'] },
+        },
       }
-  );
-
-  Retweet.associate = function (models) {
+    );
+  
+    Retweet.associate = function (models) {
       Retweet.belongsTo(models.User, {
-          foreignKey: 'userId',
-          as: 'user',
-          onDelete: 'CASCADE',
+        foreignKey: 'userId',
+        as: 'user',
+        onDelete: 'CASCADE',
       });
-
+  
       Retweet.belongsTo(models.Post, {
-          foreignKey: 'postId',
-          as: 'post',
-          onDelete: 'CASCADE',
+        foreignKey: 'postId',
+        as: 'post',
+        onDelete: 'CASCADE',
       });
+  
+      Retweet.belongsTo(models.Notification, {
+        foreignKey: 'notificationId',
+        as: 'notification',
+        onDelete: 'SET NULL',
+        onUpdate: 'CASCADE',
+      });
+    };
+  
+    return Retweet;
   };
-
-  return Retweet;
-};
+  
 
 
 /**

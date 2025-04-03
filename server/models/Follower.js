@@ -22,6 +22,16 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',
             },
+            notificationId: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                references: {
+                    model: 'Notifications',
+                    key: 'id',
+                },
+                onDelete: 'SET NULL',
+                onUpdate: 'CASCADE',
+            },
         },
         {
             timestamps: true,
@@ -53,6 +63,12 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'followingId',
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE',
+        });
+
+        // ✅ Add association
+        Follower.belongsTo(models.Notification, {
+            foreignKey: 'notificationId',
+            as: 'notification',
         });
     };
 

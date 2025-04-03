@@ -183,8 +183,15 @@ router.get('/followers/notifications', authMiddleware, async (req, res) => {
       include: [
         {
           model: User,
-          as: 'followerUser', // ✅ MATCH this to your model
+          as: 'followerUser',
           attributes: ['id', 'username', 'profilePicture'],
+        },
+        {
+          model: Notification,
+          as: 'notification',
+          attributes: ['id', 'isRead'],
+          where: { isRead: false },
+          required: true,
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -197,11 +204,13 @@ router.get('/followers/notifications', authMiddleware, async (req, res) => {
     }
 
     const followers = rows.map((follow) => ({
-      id: follow.followerUser.id,
+      id: follow.notification?.id || follow.followerUser.id,
+      notificationId: follow.notification?.id || null,
       actor: follow.followerUser.username,
       profilePicture: follow.followerUser.profilePicture || null,
       message: `${follow.followerUser.username} started following you`,
       createdAt: follow.createdAt,
+      isRead: follow.notification?.isRead ?? false,
     }));
 
     res.json({
@@ -214,7 +223,7 @@ router.get('/followers/notifications', authMiddleware, async (req, res) => {
     console.error('Error fetching follower notifications:', error);
     res.status(500).json({ error: 'Failed to fetch follower notifications.' });
   }
-});
+});;
 
 
 
@@ -352,31 +361,44 @@ router.get('/:id/following', authMiddleware, async (req, res) => {
  * - Responds with a success message if the follow action is successful.
  */
 router.post('/:id/follow', authMiddleware, param('id').isInt(), async (req, res) => {
-    // Validate the ID parameter
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const { id: followingId } = req.params; // Extract the user ID to follow
-    const followerId = req.user.id; // Get the authenticated user's ID
+  const { id: followingId } = req.params;
+  const followerId = req.user.id;
 
-    try {
-        // Attempt to create a follow relationship
-        if (followerId === parseInt(followingId)) {
-            return res.status(400).json({ message: 'You cannot follow yourself.' });
-        }
-        // Attempt to create a follow relationship
-        const [follow, created] = await Follower.findOrCreate({
-            where: { followerId, followingId },
-        });
-
-        if (!created) {
-            return res.status(400).json({ message: 'You are already following this user.' });
-        }
-
-        res.status(201).json({ message: 'User followed successfully.' });
-    } catch (error) {
-        res.status(500).json({ message: 'An error occurred while following the user.' });
+  try {
+    if (followerId === parseInt(followingId)) {
+      return res.status(400).json({ message: 'You cannot follow yourself.' });
     }
+
+    // Prevent duplicates
+    const existing = await Follower.findOne({ where: { followerId, followingId } });
+    if (existing) {
+      return res.status(400).json({ message: 'You are already following this user.' });
+    }
+
+    // ✅ Create notification for the followed user
+    const notification = await Notification.create({
+      userId: followingId,
+      actorId: followerId,
+      type: 'follow',
+      message: `User ${req.user.username} started following you`,
+      isRead: false,
+    });
+
+    // ✅ Create follow + attach notificationId
+    await Follower.create({
+      followerId,
+      followingId,
+      notificationId: notification.id,
+    });
+
+    res.status(201).json({ message: 'User followed successfully.' });
+  } catch (error) {
+    console.error('❌ Error following user:', error);
+    res.status(500).json({ message: 'An error occurred while following the user.' });
+  }
 });
 
 

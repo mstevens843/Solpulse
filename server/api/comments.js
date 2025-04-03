@@ -76,10 +76,12 @@ router.get('/detailed', authMiddleware, async (req, res) => {
     const offset = (page - 1) * limit;
   
     try {
-      console.log('Fetching comments on posts for user:', req.user.id);
+      const userId = req.user.id;
+      console.log('Fetching comments for posts owned by user:', userId);
   
+      // Step 1: Get post IDs the user owns
       const userPosts = await Post.findAll({
-        where: { userId: req.user.id },
+        where: { userId },
         attributes: ['id'],
       });
   
@@ -87,47 +89,66 @@ router.get('/detailed', authMiddleware, async (req, res) => {
         return res.status(404).json({ error: 'No posts found for this user.' });
       }
   
-      const postIds = userPosts.map(post => post.id);
+      const postIds = userPosts.map((post) => post.id);
   
-      const { count, rows } = await Comment.findAndCountAll({
-        where: { postId: postIds },
-        attributes: ['id', 'content', 'userId', 'postId', 'createdAt'], // ✅ Added userId
-        include: [
-          {
-            model: User,
-            as: 'commentAuthor',
-            attributes: ['id', 'username'],
-          },
-        ],
+      // Step 2: Find all unread comment notifications linked to this user's posts
+      const unreadNotifications = await Notification.findAll({
+        where: {
+          userId,
+          type: 'comment',
+          isRead: false,
+        },
         order: [['createdAt', 'DESC']],
         limit,
         offset,
+        include: [
+          {
+            model: User,
+            as: 'actor',
+            attributes: ['username'],
+          },
+        ],
       });
   
-      if (!rows.length) {
-        return res.status(404).json({ error: 'No comments found on your posts.' });
+      if (!unreadNotifications.length) {
+        return res.status(200).json({
+          comments: [],
+          totalComments: 0,
+          totalPages: 0,
+          currentPage: parseInt(page),
+        });
       }
   
-      res.json({
-        comments: rows.map((comment) => ({
-          id: comment.id,
-          userId: comment.userId,
-          postId: comment.postId,
-          author: comment.user?.username ?? `User ${comment.userId}`,
-          content: comment.content,
-          createdAt: comment.createdAt,
-        })),
-        totalComments: count,
-        totalPages: Math.ceil(count / limit),
+      // Step 3: Format the response to match existing shape
+      const formatted = unreadNotifications.map((notif) => ({
+        id: notif.id,
+        actor: notif.actor?.username || 'Unknown',
+        message: notif.message || 'commented on your post',
+        content: notif.content || null,
+        createdAt: notif.createdAt,
+        isRead: notif.isRead ?? false,
+      }));
+  
+      // Step 4: Count all unread comment notifs for this user for pagination
+      const total = await Notification.count({
+        where: {
+          userId,
+          type: 'comment',
+          isRead: false,
+        },
+      });
+  
+      res.status(200).json({
+        comments: formatted,
+        totalComments: total,
+        totalPages: Math.ceil(total / limit),
         currentPage: parseInt(page),
       });
     } catch (err) {
-        console.error('Sequelize error:', err.message);
-        console.error('Full error:', err);
-        res.status(500).json({ error: 'Failed to fetch comments.' });
-      }
+      console.error('❌ Sequelize error in /comments/detailed:', err.message);
+      res.status(500).json({ error: 'Failed to fetch comment notifications.' });
+    }
   });
-  
 /**
  * Fetch total comment count for a post.
  * This needs to come first to ensure `/count` is not overridden by `/comments/:id`.
