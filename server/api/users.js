@@ -352,31 +352,44 @@ router.get('/:id/following', authMiddleware, async (req, res) => {
  * - Responds with a success message if the follow action is successful.
  */
 router.post('/:id/follow', authMiddleware, param('id').isInt(), async (req, res) => {
-    // Validate the ID parameter
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  // Validate the ID parameter
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const { id: followingId } = req.params; // Extract the user ID to follow
-    const followerId = req.user.id; // Get the authenticated user's ID
+  const { id: followingId } = req.params; // The user being followed
+  const followerId = req.user.id;         // The authenticated user (who is following)
 
-    try {
-        // Attempt to create a follow relationship
-        if (followerId === parseInt(followingId)) {
-            return res.status(400).json({ message: 'You cannot follow yourself.' });
-        }
-        // Attempt to create a follow relationship
-        const [follow, created] = await Follower.findOrCreate({
-            where: { followerId, followingId },
-        });
-
-        if (!created) {
-            return res.status(400).json({ message: 'You are already following this user.' });
-        }
-
-        res.status(201).json({ message: 'User followed successfully.' });
-    } catch (error) {
-        res.status(500).json({ message: 'An error occurred while following the user.' });
+  try {
+    if (followerId === parseInt(followingId)) {
+      return res.status(400).json({ message: 'You cannot follow yourself.' });
     }
+
+    // Attempt to create a follow record
+    const [follow, created] = await Follower.findOrCreate({
+      where: { followerId, followingId },
+    });
+
+    if (!created) {
+      return res.status(400).json({ message: 'You are already following this user.' });
+    }
+
+    // **Create a Notification** so the followed user sees "X started following you"
+    await Notification.create({
+      userId: parseInt(followingId), // The user being followed is the 'recipient'
+      actorId: followerId,          // The one who triggered the follow
+      type: 'follow',
+      entityId: String(followingId), // Could store the userId being followed
+      entityType: 'User',
+      // If you want a custom message:
+      // message: `${req.user.username} started following you!`
+      // Otherwise let your existing "formatNotifications" or "beforeCreate" handle it
+    });
+
+    res.status(201).json({ message: 'User followed successfully.' });
+  } catch (error) {
+    console.error('Error following user:', error);
+    res.status(500).json({ message: 'An error occurred while following the user.' });
+  }
 });
 
 

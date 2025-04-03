@@ -62,6 +62,88 @@ const handleValidationErrors = (errors) => {
 };
 
 
+/**
+ * Optimization Route 🚀
+ *
+ * @route   POST /api/comments/batch-count
+ * @desc    Returns comment counts for multiple postIds in a single request.
+ * @reason  This route significantly reduces the number of API calls needed
+ *          when displaying comment counts across multiple posts (e.g., in the
+ *          profile feed or homepage). Instead of sending 20+ individual requests,
+ *          the frontend can now send one batch request — improving performance,
+ *          reducing rate limit issues, and enhancing scalability.
+ * added:
+ * Allows empty postIds without throwing 400.
+
+Ensures consistent response shape: counts: [{ postId, count }].
+
+ * @access  Public
+ */
+router.post('/batch-count', async (req, res) => {
+    let { postIds } = req.body;
+  
+    // 1) Debug log the incoming data
+    console.log('[DEBUG] batch-count postIds received:', postIds);
+  
+    // 2) Basic validation: Must be an array
+    if (!Array.isArray(postIds)) {
+      return res.status(400).json({ error: 'postIds must be an array' });
+    }
+  
+    // 3) If it's empty, return empty array (not an error)
+    if (postIds.length === 0) {
+      return res.status(200).json({ counts: [] });
+    }
+  
+    try {
+      // 4) Convert all IDs to integers & filter out any NaN
+      //    This ensures only valid numeric IDs go to Sequelize
+      postIds = postIds
+        .map((id) => parseInt(id, 10))
+        .filter((num) => !isNaN(num));
+  
+      // Extra debug
+      console.log('[DEBUG] batch-count postIds after parseInt:', postIds);
+  
+      if (!postIds.length) {
+        // If everything was invalid, return empty
+        return res.status(200).json({ counts: [] });
+      }
+  
+      const counts = await Comment.findAll({
+        attributes: [
+          'postId',
+          [Comment.sequelize.fn('COUNT', Comment.sequelize.col('id')), 'count'],
+        ],
+        where: { postId: postIds }, // Using the now-filtered array
+        group: ['postId'],
+      });
+  
+      // 5) Build default 0 for all IDs
+      const countMap = {};
+      postIds.forEach((id) => {
+        countMap[id] = 0;
+      });
+  
+      // 6) Insert real counts
+      counts.forEach(({ postId, dataValues }) => {
+        countMap[postId] = parseInt(dataValues.count, 10);
+      });
+  
+      // 7) Format for the frontend
+      const formatted = Object.entries(countMap).map(([postId, count]) => ({
+        postId: parseInt(postId, 10),
+        count,
+      }));
+  
+      res.status(200).json({ counts: formatted });
+    } catch (error) {
+      console.error('Error fetching batch comment counts:', error);
+      // Return the exact error for debugging
+      return res.status(500).json({ error: error.message || 'Failed to fetch comment counts.' });
+    }
+  });
+
 
 /**
  * Fetch detailed comments on posts created by the logged-in user.
@@ -127,6 +209,52 @@ router.get('/detailed', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch comments.' });
       }
   });
+
+
+/**
+ * POST /api/comments/:postId
+ * Creates a new comment on a given post & Notification for the post owner
+ */
+
+  router.post('/:postId', authMiddleware, async (req, res) => {
+    try {
+      const { postId } = req.params;
+      const { content } = req.body;
+      const userId = req.user.id;
+  
+      const post = await Post.findByPk(postId);
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found' });
+      }
+  
+      // optional: if (post.userId === userId) skip?
+  
+      const newComment = await Comment.create({
+        postId,
+        userId,
+        content,
+      });
+  
+      // Create a Notification for the post owner
+      const newNotification = await Notification.create({
+        userId: post.userId, // recipient is the post owner
+        actorId: userId,
+        type: 'comment',
+        entityId: String(newComment.id),
+        entityType: 'Comment',
+      });
+  
+      res.status(201).json({
+        message: 'Comment created successfully',
+        comment: newComment,
+        notification: newNotification,
+      });
+    } catch (error) {
+        console.error('Error creating comment:', error);
+        res.status(500).json({ error: 'Failed to create comment' });
+      }
+    });
+    
   
 /**
  * Fetch total comment count for a post.
@@ -152,67 +280,6 @@ router.get('/count', async (req, res) => {
 });
 
 
-/**
- * Optimization Route 🚀
- *
- * @route   POST /api/comments/batch-count
- * @desc    Returns comment counts for multiple postIds in a single request.
- * @reason  This route significantly reduces the number of API calls needed
- *          when displaying comment counts across multiple posts (e.g., in the
- *          profile feed or homepage). Instead of sending 20+ individual requests,
- *          the frontend can now send one batch request — improving performance,
- *          reducing rate limit issues, and enhancing scalability.
- * added:
- * Allows empty postIds without throwing 400.
-
-Ensures consistent response shape: counts: [{ postId, count }].
-
- * @access  Public
- */
-router.post('/batch-count', async (req, res) => {
-    const { postIds } = req.body;
-
-    // ✅ Improved validation
-    if (!Array.isArray(postIds)) {
-        return res.status(400).json({ error: 'postIds must be an array' });
-    }
-
-    // ✅ Allow empty arrays and return empty counts instead of 400
-    if (postIds.length === 0) {
-        return res.status(200).json({ counts: [] });
-    }
-
-    try {
-        const counts = await Comment.findAll({
-            attributes: [
-                'postId',
-                [Comment.sequelize.fn('COUNT', Comment.sequelize.col('id')), 'count'],
-            ],
-            where: { postId: postIds },
-            group: ['postId'],
-        });
-
-        const countMap = {};
-        postIds.forEach(id => {
-            countMap[id] = 0; // default to 0
-        });
-
-        counts.forEach(({ postId, dataValues }) => {
-            countMap[postId] = parseInt(dataValues.count, 10);
-        });
-
-        // ✅ Format returned as expected by frontend
-        const formatted = Object.entries(countMap).map(([postId, count]) => ({
-            postId: parseInt(postId, 10),
-            count,
-        }));
-
-        res.status(200).json({ counts: formatted });
-    } catch (error) {
-        console.error('Error fetching batch comment counts:', error);
-        res.status(500).json({ error: 'Failed to fetch comment counts.' });
-    }
-});
 
 
 /**
