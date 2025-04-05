@@ -24,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.STRING,
           allowNull: true, // Optional: can be auto-generated
         },
+        content: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
         amount: {
           type: DataTypes.FLOAT,
           allowNull: true, // Used for tips

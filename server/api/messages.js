@@ -55,48 +55,61 @@ router.get('/detailed', authMiddleware, async (req, res) => {
   const offset = (page - 1) * limit;
 
   try {
+    console.log('Fetching messages with unread notifications for user:', req.user.id);
+
     const { count, rows } = await Message.findAndCountAll({
-      where: { recipientId: req.user.id },
+      where: {
+        recipientId: req.user.id
+      },
       include: [
-        {
-          model: User,
-          as: 'sender',
-          attributes: ['id', 'username'],
-        },
         {
           model: Notification,
           as: 'notification',
           attributes: ['id', 'isRead'],
-          required: false,
+          where: {
+            isRead: false // ✅ Only fetch unread message notifications
+          },
+          required: true // ✅ Exclude messages without notifications
         },
+        {
+          model: User,
+          as: 'sender',
+          attributes: ['id', 'username', 'profilePicture'] // ✅ include it
+        }
       ],
       order: [['createdAt', 'DESC']],
       limit,
-      offset,
+      offset
     });
 
     if (!rows.length) {
-      return res.status(404).json({ error: 'No messages found.' });
+      return res.status(200).json({
+        messages: [],
+        totalMessages: 0,
+        totalPages: 0,
+        currentPage: parseInt(page)
+      });
     }
 
-    res.json({
+    res.status(200).json({
       messages: rows.map((msg) => ({
-        id: msg.notificationId || msg.id,
-        notificationId: msg.notificationId || null,
+        id: msg.id,
         sender: msg.sender?.username || `User ${msg.sender?.id || 'unknown'}`,
+        profilePicture: msg.sender?.profilePicture || null, // ✅ Added this
         content: msg.content,
         cryptoTip: msg.cryptoTip !== undefined ? msg.cryptoTip : 0.0,
         read: msg.read,
         readAt: msg.readAt || null,
         createdAt: msg.createdAt,
-        isRead: msg.notification?.isRead || false,
+        notificationId: msg.notification?.id || null,
+        isRead: msg.notification?.isRead === true
       })),
       totalMessages: count,
       totalPages: Math.ceil(count / limit),
-      currentPage: parseInt(page),
+      currentPage: parseInt(page)
     });
   } catch (err) {
-    console.error('Error fetching detailed messages:', err);
+    console.error('❌ Error fetching unread message notifications:', err);
     res.status(500).json({ error: 'Failed to fetch messages.' });
   }
 });

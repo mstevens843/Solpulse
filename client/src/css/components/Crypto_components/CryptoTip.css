@@ -1,48 +1,74 @@
-/* CryptoTip Container */
-.crypto-tip-container {
-    @apply bg-solana-dark p-6 rounded-lg shadow-lg text-solana-text-dark;
-}
+/* ✅ Wallet display refinements */
+.wallet-connection-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    background-color: #1e1e1e;
+    color: #e5e7eb;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    border: 1px solid #333;
+  }
+  
+  .wallet-status-icon {
+    color: #00ff88;
+    font-size: 16px;
+  }
+  
+  .wallet-status-text {
+    font-weight: 600;
+  }
+  
+  .wallet-address {
+    font-family: monospace;
+    font-size: 13px;
+    color: #00ffa2;
+    background: rgba(0, 255, 162, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    word-break: break-all;
+  }
+  
+  /* ✅ Token selector updated style */
+  .crypto-tip-token-selector {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #00ffa2;
+    border-radius: 6px;
+    background-color: #111827;
+    color: #e5e7eb;
+    font-size: 14px;
+    font-weight: 500;
+    appearance: auto;
+  }
+  
+  .crypto-tip-token-selector option {
+    background-color: #111827;
+    color: #e5e7eb;
+  }
+  
+  /* ✅ Label style tweak */
+  .crypto-tip-token-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d1d5db;
+    margin-bottom: 6px;
+  }
 
-/* Tip Heading */
-.crypto-tip-heading {
-    @apply text-solana-primary text-xl font-bold mb-4 text-center;
-}
+  .crypto-tip-token-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px; /* 🔥 Creates spacing between dropdown and Send Tip */
+  }
+  
 
-/* Tip Form */
-.crypto-tip-form {
-    @apply flex flex-col gap-4;
+  /* 🔥 Toast link override */
+.Toastify__toast-body a,
+.Toastify__toast-body a.toast-link {
+  color: black !important;
+  font-weight: 600;
+  text-decoration: underline;
 }
-
-/* Tip Input Field */
-.crypto-tip-input {
-    @apply w-full p-2 border border-solana-primary rounded-md bg-solana-light text-solana-dark focus:outline-none focus:ring-2 focus:ring-solana-secondary;
-}
-
-/* Tip Message Input (Optional) */
-.crypto-tip-message-input {
-    @apply w-full p-2 border border-solana-primary rounded-md bg-solana-light text-solana-dark focus:outline-none focus:ring-2 focus:ring-solana-secondary resize-none h-24;
-}
-
-/* Preset Tip Buttons */
-.crypto-tip-preset-container {
-    @apply flex justify-center gap-2;
-}
-
-.crypto-tip-preset-button {
-    @apply bg-solana-secondary text-solana-dark font-medium py-1 px-3 rounded-md hover:bg-solana-primary transition-colors duration-300;
-}
-
-/* Submit Button */
-.crypto-tip-submit-button {
-    @apply bg-solana-gradient text-solana-dark font-semibold py-2 px-4 rounded-md hover:bg-solana-secondary transition-all duration-300;
-}
-
-.crypto-tip-submit-button:disabled {
-    @apply bg-gray-500 text-gray-300 cursor-not-allowed;
-}
-
-/* Feedback Message */
-.crypto-tip-message {
-    @apply text-center font-semibold mt-4 text-solana-text-light;
-}
-

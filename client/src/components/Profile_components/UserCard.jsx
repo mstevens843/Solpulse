@@ -26,6 +26,7 @@ import ProfilePicCropModal from "@/components/Profile_components/ProfilePicCropM
 import { FaEnvelope } from "react-icons/fa";
 import "@/css/components/Profile_components/UserCard.css";
 import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function UserCard({ user, followersCount, followingCount, isInModal, onProfilePictureChange, currentUser }) {
@@ -284,17 +285,18 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
                     <div className="modal-content crypto-tip-modal" onClick={(e) => e.stopPropagation()}>
                     <button className="close-btn" onClick={toggleTipModal}>X</button>
                     <CryptoTip
-                            recipientId={user.id}
-                            recipientWallet={user.walletAddress}
-                            currentUser={currentUser}
-                            onTipSuccess={(message) => {
-                                alert(message);
-                                toggleTipModal();
-                            }}
-                        />
+                        recipientId={user.id}
+                        recipientWallet={user.walletAddress}
+                        currentUser={currentUser}
+                        onTipSuccess={(message) => {
+                        alert(message);
+                        toggleTipModal();
+                        }}
+                        toggleTipModal={toggleTipModal} // ✅ Passed in here
+                    />
                     </div>
                 </div>
-            )}
+                )}
 
                 {/* Message Modal */}
                 {isMessageModalOpen && (
@@ -309,6 +311,8 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
                     </div>
                 </div>
                 )}
+                <ToastContainer position="top-right" autoClose={4000} theme="dark" />
+
         </div>
     );
 }

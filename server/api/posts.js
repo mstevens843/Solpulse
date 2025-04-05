@@ -298,8 +298,7 @@ router.get('/likes', authMiddleware, async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['username'], // Who liked
-        },
+          attributes: ['username', 'profilePicture'],         },
         {
           model: Post,
           as: 'likedPost',
@@ -308,7 +307,7 @@ router.get('/likes', authMiddleware, async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['username'], // Owner of liked post
+              attributes: ['username', 'profilePicture'], 
             },
           ],
         },
@@ -336,6 +335,7 @@ router.get('/likes', authMiddleware, async (req, res) => {
       postOwner: like.likedPost?.user?.username || 'Unknown',
       content: like.likedPost?.content || '',
       likedBy: like.user?.username || 'Unknown',
+      profilePicture: like.user?.profilePicture || null, // ✅ include in response
       createdAt: like.createdAt,
       isRead: like.notification?.isRead ?? false, // ✅ Pull actual status
     }));
@@ -452,14 +452,14 @@ router.get('/retweets', authMiddleware, async (req, res) => {
                 {
                   model: User,
                   as: 'user',
-                  attributes: ['username'],
+                  attributes: ['username', 'profilePicture'],  
                 },
               ],
             },
             {
               model: User,
               as: 'user',
-              attributes: ['username'],
+              attributes: ['username', 'profilePicture'],  
             },
           ],
         },
@@ -486,6 +486,7 @@ router.get('/retweets', authMiddleware, async (req, res) => {
       postOwner: retweet.post?.originalPost?.user?.username || 'Unknown',
       content: retweet.post?.originalPost?.content || 'No content',
       retweetedBy: retweet.post?.user?.username || 'Unknown',
+      profilePicture: retweet.post?.user?.profilePicture || null,
       createdAt: retweet.createdAt,
       isRead: retweet.notification?.isRead ?? false, // ✅ Accurate status
     }));

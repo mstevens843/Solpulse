@@ -41,10 +41,21 @@ function NotificationsList() {
   const [sortOption, setSortOption] = useState("newest"); // ✅ #2 Custom Sorting: track selected sort
 
 
-  useEffect(() => {
-    fetchNotifications("likes"); // Load likes by default
-  }, []);
+  // useEffect(() => {
+  //   fetchNotifications("likes"); // Load likes by default
+  // }, []);
 
+  useEffect(() => {
+    const storedTab = localStorage.getItem("activeNotificationTab") || "likes";
+    setActiveTab(storedTab);
+    fetchNotifications(storedTab);
+  }, []);
+  
+  const handleTabClick = (type) => {
+    setActiveTab(type);
+    localStorage.setItem("activeNotificationTab", type);
+    fetchNotifications(type);
+  };
 
 
   /**
@@ -97,6 +108,7 @@ function NotificationsList() {
               id: item.notificationId || item.id, // ✅ Use real notification ID
               actor: item.likedBy || `User unknown`,
               message: `${item.likedBy} liked your post`,
+              profilePicture: item.profilePicture || null, // ✅ frontend can now use this
               content: item.content,
               createdAt: item.createdAt,
               isRead: item.isRead || false, // ✅ ← Use real isRead if it exists
@@ -106,6 +118,7 @@ function NotificationsList() {
                 id: item.notificationId || item.id, // ✅ Use real notification ID
                 actor: item.retweetedBy || "Unknown",  // Use correct actor field
                 message: `${item.retweetedBy} reposted your post`,  // Ensure correct message
+                profilePicture: item.profilePicture || null, // ✅ frontend can now use this
                 content: item.content || "No content", 
                 createdAt: item.createdAt,
                 isRead: false,  // No isRead field in retweets, default to false
@@ -115,6 +128,7 @@ function NotificationsList() {
                   id: item.notificationId || item.id, // Match likes/retweets
                   actor: item.actor || `User unknown`,
                   message: item.message || "commented on your post",
+                  profilePicture: item.profilePicture || null, // ✅ frontend can now use this
                   content: item.content || null,
                   createdAt: item.createdAt,
                   isRead: item.isRead || false,
@@ -125,38 +139,44 @@ function NotificationsList() {
                     id: item.notificationId || item.id,  // Use real notification ID
                     actor: item.actor || "User unknown",  // Ensure correct actor
                     message: item.message || "started following you",  // Default follow message
+                    profilePicture: item.profilePicture || null, // ✅ frontend can now use this
                     content: null,  // Follows don't need extra content
                     createdAt: item.createdAt,
                     isRead: item.isRead || false,  // Use real isRead field if it exists
                 }))
                             
-          : type === "messages"
-          ? response.data.messages.map((item) => ({
-              id: item.notificationId || item.id, // ✅ Use real notification ID
-              actor: item.sender || `User unknown`,
-              message: `${item.sender} sent you a message`,
-              content: item.content,
-              createdAt: item.createdAt,
-              isRead: item.isRead || false, // ✅ Use notification isRead, not message.read
-            }))
-          : type === "tips"
-          ? response.data.tips.map((item) => ({
-              id: item.id,
-              actor: item.actor|| `User unknown`,
-              message: notificationMessages.transaction(item.amount),
-              content: item.content,
-              createdAt: item.createdAt,
-              isRead: item.isRead || false,
-            }))
-            : response.data.notifications.map((item) => ({
-              id: item.id,
-              actor: item.actor || `User unknown`,
-              profilePicture: item.profilePicture || null, // ✅ Optional for later display
-              message: item.message,
-              content: item.content || null,
-              createdAt: item.createdAt,
-              isRead: item.isRead || false,
-          }))
+                : type === "messages"
+                ? response.data.messages
+                    .filter((item) => item.notificationId !== null) // ✅ Only include ones with notificationId
+                    .map((item) => ({
+                      id: item.notificationId,
+                      actor: item.sender || `User unknown`,
+                      message: `${item.sender} sent you a message`,
+                      profilePicture: item.profilePicture || null, // ✅ frontend can now use this
+                      content: item.content,
+                      createdAt: item.createdAt,
+                      isRead: item.isRead || false,
+                    })) 
+                    : type === "tips"
+                    ? response.data.tips.map((item) => ({
+                        id: item.id,
+                        actor: item.actor || `User unknown`,
+                        message: notificationMessages.transaction(item.amount),
+                        profilePicture: item.profilePicture || null, // ✅ frontend can now use this
+
+                        content: item.content,
+                        createdAt: item.createdAt,
+                        isRead: false, // ✅ Always false now
+                      }))
+                  : response.data.notifications.map((item) => ({
+                    id: item.id,
+                    actor: item.actor || `User unknown`,
+                    profilePicture: item.profilePicture || null,
+                    message: item.message,
+                    content: item.content || null,
+                    createdAt: item.createdAt,
+                    isRead: false, // ✅ always false because backend filters only unread
+                  }))
       );
     } catch (err) {
       setError("Failed to fetch notifications. Please try again.");
@@ -181,6 +201,23 @@ function NotificationsList() {
     } catch (error) {
       console.error("Error marking notification as read:", error);
       setError("Failed to mark notification as read.");
+    }
+  };
+
+  /**
+   * Marks all notifications from respective tab as read. 
+   * - Clears the notification list for respective category after marking all as read.
+   */
+  const markTabAsRead = async () => {
+    try {
+      // Make a new endpoint or filter IDs by type
+      const idsToMark = notifications.map((n) => n.id);
+  
+      await Promise.all(idsToMark.map((id) => api.put(`/notifications/${id}/read`)));
+      setNotifications([]);
+    } catch (err) {
+      console.error("Error marking tab as read:", err);
+      setError("Failed to mark tab notifications as read.");
     }
   };
 
@@ -240,10 +277,7 @@ function NotificationsList() {
           <button
             key={type}
             className={`notifications-tab ${activeTab === type ? "active" : ""}`}
-            onClick={() => {
-              setActiveTab(type);
-              fetchNotifications(type);
-            }}
+            onClick={() => handleTabClick(type)}
           >
             {type === "all"
               ? "All"
@@ -253,9 +287,15 @@ function NotificationsList() {
       </div>
   
       <div className="notifications-controls">
-        <button className="notifications-action-btn" onClick={markAllAsRead}>
-          Mark All as Read
-        </button>
+        {activeTab === "all" ? (
+          <button className="notifications-action-btn" onClick={markAllAsRead}>
+            Mark All as Read
+          </button>
+        ) : (
+          <button className="notifications-action-btn" onClick={markTabAsRead}>
+            Mark All as Read
+          </button>
+        )}
   
         {selectedNotifications.length > 0 && (
           <button className="notifications-action-btn" onClick={markSelectedAsRead}>
@@ -300,18 +340,32 @@ function NotificationsList() {
                 }}
               />
   
-              <div className="notification-content">
-                <p>
-                  <strong>{notification.actor}</strong> {notification.message}
-                </p>
+              <img
+                src={
+                  notification.profilePicture?.startsWith("http")
+                    ? notification.profilePicture
+                    : notification.profilePicture
+                    ? `${import.meta.env.VITE_API_BASE_URL.replace("/api", "")}${notification.profilePicture}`
+                    : "/uploads/default-avatar.png"
+                }
+                alt={`${notification.actor}'s avatar`}
+                className="notification-avatar"
+              />
   
-                {notification.content && (
-                  <p className="notification-extra-content">"{notification.content}"</p>
-                )}
-                <span className="notification-time">
-                  {new Date(notification.createdAt).toLocaleString()}
-                </span>
-              </div>
+            <div className="notification-content">
+              <p className="notification-message">
+                <strong>{notification.actor}</strong>{" "}
+                {notification.message.replace(`${notification.actor} `, "")}
+              </p>
+
+              {notification.content && (
+                <p className="notification-tip-message">💬 "{notification.content}"</p>
+              )}
+
+              <span className="notification-time">
+                {new Date(notification.createdAt).toLocaleString()}
+              </span>
+          </div>
   
               {notification.isRead ? (
                 <span className="notification-read-indicator">✓ Read</span>

@@ -56,6 +56,7 @@ switch (notification.type) {
         id: notification.id,
         user: notification.userId,
         actor: actor.username,
+        profilePicture: actor.profilePicture || null, // ✅ ADDED here
         type: notification.type,
         message: message,
         amount: notification.amount || null,
@@ -83,7 +84,7 @@ router.get('/full', authMiddleware, async (req, res) => {
     const detailedNotifications = await Promise.all(
       notifications.map(async (notification) => {
         const actor = await User.findByPk(notification.actorId, {
-          attributes: ['username'],
+          attributes: ['username', 'profilePicture'],
         });
 
         let content = null;
@@ -95,11 +96,30 @@ router.get('/full', authMiddleware, async (req, res) => {
             content = comment ? comment.content : "Comment not found";
             message = `${actor.username} commented on your post`;
             break;
+
           case 'message':
             const msg = await Message.findByPk(notification.entityId);
             content = msg ? msg.content : "Message not found";
             message = `${actor.username} sent you a message`;
             break;
+
+          case 'transaction':
+            content = notification.content || null; // ✅ show tip message
+            message = `${actor.username} sent you ${notification.amount} SOL`;
+            break;
+
+          case 'retweet':
+            message = `${actor.username} reposted your post`;
+            break;
+
+          case 'like':
+            message = `${actor.username} liked your post`;
+            break;
+
+          case 'follow':
+            message = `${actor.username} started following you`;
+            break;
+
           default:
             message = `${actor.username} ${notification.type}`;
         }
@@ -108,9 +128,12 @@ router.get('/full', authMiddleware, async (req, res) => {
           id: notification.id,
           user: notification.userId,
           actor: actor.username,
+          profilePicture: actor.profilePicture || null,
           type: notification.type,
-          message: message,
-          content: content,  // Include full content for comments/messages
+          message,
+          content, // ✅ included for tips/comments/messages
+          amount: notification.amount || null,
+          entityId: notification.entityId || null,
           isRead: notification.isRead,
           createdAt: notification.createdAt,
         };
@@ -124,6 +147,7 @@ router.get('/full', authMiddleware, async (req, res) => {
   }
 });
 
+
 /**
  * GET /api/notifications
  * Fetch all notifications for the authenticated user with pagination
@@ -132,8 +156,12 @@ router.get('/', authMiddleware, async (req, res) => {
   const { page = 1, limit = 10, type } = req.query;
   const offset = (page - 1) * limit;
 
-  const whereCondition = { userId: req.user.id };
-  if (type) whereCondition.type = type; // Filter by type if provided
+  const whereCondition = {
+    userId: req.user.id,
+    isRead: false, // ✅ Only fetch unread notifications
+  };
+
+  if (type) whereCondition.type = type;
 
   try {
     const { count, rows } = await Notification.findAndCountAll({
@@ -150,9 +178,7 @@ router.get('/', authMiddleware, async (req, res) => {
       offset: parseInt(offset),
     });
 
-    const unreadCount = await Notification.count({
-      where: { userId: req.user.id, isRead: false },
-    });
+    const unreadCount = count;
 
     const formattedNotifications = await formatNotifications(rows);
 
@@ -164,7 +190,7 @@ router.get('/', authMiddleware, async (req, res) => {
       currentPage: parseInt(page),
     });
   } catch (err) {
-    console.error('Error fetching notifications:', err);
+    console.error('❌ Error fetching notifications:', err);
     res.status(500).json({ error: 'Failed to fetch notifications' });
   }
 });
@@ -276,7 +302,7 @@ router.post('/mark-all-read', authMiddleware, async (req, res) => {
  */
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { type, actorId, userId, amount, entityId } = req.body;
+    const { type, actorId, userId, amount, entityId, content } = req.body;
 
     if (!type || !actorId || !userId) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -286,8 +312,9 @@ router.post('/', authMiddleware, async (req, res) => {
       type,
       actorId,
       userId,
-      amount: type === 'transaction' ? amount : null, // Only store amount for tips
-      entityId: entityId || null, // Store transaction signature for tips
+      amount: type === 'transaction' ? amount : null,
+      entityId: entityId || null,
+      content: content || null, // ✅ Add this line
     });
 
     res.status(201).json(newNotification);
@@ -304,22 +331,41 @@ router.post('/', authMiddleware, async (req, res) => {
 router.get('/tips', authMiddleware, async (req, res) => {
   try {
     const tipNotifications = await Notification.findAll({
-      where: { userId: req.user.id, type: 'transaction' },
+      where: {
+        userId: req.user.id,
+        type: 'transaction',
+        isRead: false,
+      },
+      include: [
+        {
+          model: User,
+          as: 'actor',
+          attributes: ['username', 'profilePicture'],
+        },
+      ],
       order: [['createdAt', 'DESC']],
     });
 
-    if (!tipNotifications.length) {
-      return res.json({ tips: [] }); // Return empty array if no tips found
-    }
+    const formattedTips = tipNotifications.map((n) => ({
+      id: n.id,
+      user: n.userId,
+      actor: n.actor.username,
+      profilePicture: n.actor.profilePicture,
+      type: n.type,
+      message: `${n.actor.username} sent you ${n.amount} SOL`,
+      content: n.content || null,
+      amount: n.amount,
+      entityId: n.entityId,
+      isRead: n.isRead,
+      createdAt: n.createdAt,
+    }));
 
-    const formattedTips = await formatNotifications(tipNotifications);
     res.json({ tips: formattedTips });
   } catch (err) {
     console.error('Error fetching tip notifications:', err);
     res.status(500).json({ error: 'Failed to fetch tip notifications' });
   }
 });
-
 module.exports = router;
 
 

@@ -105,8 +105,8 @@ router.get('/detailed', authMiddleware, async (req, res) => {
           {
             model: User,
             as: 'actor',
-            attributes: ['username'],
-          },
+            attributes: ['username', 'profilePicture'],            
+        },
         ],
       });
   
@@ -127,6 +127,7 @@ router.get('/detailed', authMiddleware, async (req, res) => {
         content: notif.content || null,
         createdAt: notif.createdAt,
         isRead: notif.isRead ?? false,
+        profilePicture: notif.actor?.profilePicture || null, // ✅ ADD THIS
       }));
   
       // Step 4: Count all unread comment notifs for this user for pagination

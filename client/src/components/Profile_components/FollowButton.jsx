@@ -13,10 +13,14 @@ import { toast } from "react-toastify";
 import { FaUserPlus, FaUserCheck } from "react-icons/fa";
 import "@/css/components/Profile_components/FollowButton.css";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "@/context/AuthContext";
 
-const followStatusCache = {}; // 🔁 In-memory follow status cache
+
+const followStatusCache = {}; // { currentUserId: { [targetUserId]: true/false } }
+// 🔁 In-memory follow status cache
 
 const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowToggle }) => {
+  const { user: currentUser } = useAuth(); //  get logged-in user
   const [isFollowing, setIsFollowing] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -24,21 +28,30 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
    * Fetch follow status from backend if not cached
    */
   const fetchFollowStatus = useCallback(async () => {
-    if (followStatusCache[userId] !== undefined) {
-      setIsFollowing(followStatusCache[userId]);
+    if (!currentUser?.id) return;
+
+    
+  const userCache = followStatusCache[currentUser.id] || {};
+    if (userCache[userId] !== undefined) {
+      setIsFollowing(userCache[userId]);
       return;
     }
 
     try {
       const response = await api.get(`/users/${userId}/is-following`);
       const status = response.data.isFollowing;
-      followStatusCache[userId] = status;
+
+      followStatusCache[currentUser.id] = {
+        ...userCache,
+        [userId]: status,
+      };
+
       setIsFollowing(status);
     } catch (error) {
       console.error("Error fetching follow status:", error);
       toast.error("Failed to load follow status.");
     }
-  }, [userId]);
+  }, [userId, currentUser?.id]);
 
   useEffect(() => {
     fetchFollowStatus();
@@ -48,7 +61,7 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
    * Toggle follow/unfollow logic (with optimistic UI).
    */
   const handleFollowToggle = async () => {
-    if (loading || isFollowing === null) return;
+    if (loading || isFollowing === null || !currentUser?.id) return;
 
     const newFollowState = !isFollowing;
     setIsFollowing(newFollowState);

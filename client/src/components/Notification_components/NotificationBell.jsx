@@ -57,15 +57,19 @@ function NotificationBell() {
     debounce(async () => {
       try {
         const response = await api.get("/notifications");
-        console.log("Notifications Fetched: ", response.data.notifications);
-        setNotifications(response.data.notifications || []);
-        setCachedNotifications(response.data.notifications || []); // ✅ cache them
-        setUnreadCount(response.data.unreadCount || 0);
+        const data = response?.data || {};
+        const fetched = data.notifications || [];
+  
+        console.log("📥 Notifications Fetched:", fetched);
+  
+        setNotifications(fetched);
+        setCachedNotifications(fetched); // ✅ Cache it
+        setUnreadCount(data.unreadCount ?? fetched.length); // ✅ Fallback to count
       } catch (error) {
         if (error.response?.status === 429) {
-          console.warn("Rate limit hit. Retry later.");
+          console.warn("⚠️ Rate limit hit. Retry later.");
         } else {
-          console.error("Error fetching notifications:", error);
+          console.error("❌ Error fetching notifications:", error);
         }
       }
     }, 300),
@@ -77,8 +81,10 @@ function NotificationBell() {
     setIsDropdownOpen((prev) => {
       if (!prev) {
         if (cachedNotifications.length > 0) {
-          setNotifications(cachedNotifications); // ✅ use cached version
+          console.log("✅ Using cached notifications");
+          setNotifications(cachedNotifications);
         } else {
+          console.log("📡 Fetching fresh notifications");
           fetchNotifications();
         }
       }
@@ -88,17 +94,17 @@ function NotificationBell() {
 
   // closes dropdown when clicking outside. 
   const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target) &&
+      isDropdownOpen
+    ) {
       setIsDropdownOpen(false);
     }
   };
-
+  
   useEffect(() => {
-    if (isDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
+    document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen]);
 
@@ -109,18 +115,21 @@ function NotificationBell() {
    * - Optimistically updates the UI first.
    * - Sends an API request to update the server.
    */
-  const markAllAsRead = async () => {
+   const markAllAsRead = async () => {
     try {
-      // Optimistically update UI first
+      // ✅ Optimistically update UI
       setNotifications([]);
       setUnreadCount(0);
-
+  
       const response = await api.put("/notifications/mark-all-read");
-
-      // Ensure the unread count from the server is accurate
-      setUnreadCount(response.data.unreadCount);
+  
+      // ✅ Safely use returned unread count or default to 0
+      const newUnreadCount = response?.data?.unreadCount ?? 0;
+      setUnreadCount(newUnreadCount);
+  
+      console.log("✅ All notifications marked as read.");
     } catch (error) {
-      console.error("Error marking all notifications as read:", error);
+      console.error("❌ Error marking all notifications as read:", error);
     }
   };
 
@@ -130,15 +139,23 @@ function NotificationBell() {
    */
   const markNotificationAsRead = async (id) => {
     try {
-      document.getElementById(`notification-${id}`).classList.add("removed");
-
+      const notifEl = document.getElementById(`notification-${id}`);
+      if (notifEl) notifEl.classList.add("removed");
+  
       setTimeout(async () => {
         const response = await api.put(`/notifications/${id}/read`);
-        setNotifications((prev) => prev.filter((notification) => notification.id !== id));
-        setUnreadCount(response.data.unreadCount); // Set from backend response
+  
+        // ✅ Remove from UI
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+  
+        // ✅ Fallback if unreadCount not returned
+        const newUnreadCount = response?.data?.unreadCount ?? 0;
+        setUnreadCount(newUnreadCount);
+  
+        console.log(`✅ Notification ${id} marked as read.`);
       }, 300);
     } catch (error) {
-      console.error("Error marking notification as read:", error);
+      console.error(`❌ Error marking notification ${id} as read:`, error);
     }
   };
 
@@ -156,6 +173,7 @@ function NotificationBell() {
           </span>
         )}
       </button>
+
       {isDropdownOpen && (
         <div className="notification-dropdown">
           <div className="notification-header">
@@ -173,10 +191,11 @@ function NotificationBell() {
               Mark All as Read
             </button>
           </div>
+
           {notifications.length > 0 ? (
             <ul className="notification-list">
               {notifications
-                .filter((n) => showRead || !n.isRead) // ✅ 3. Toggle visibility of read
+                .filter((n) => showRead || !n.isRead)
                 .map((notification) => (
                   <li
                     key={notification.id}

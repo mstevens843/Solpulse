@@ -60,163 +60,183 @@ const CryptoTip = ({ recipientId, recipientWallet, currentUser, onTipSuccess, co
      * - Notifies the recipient via API.
      */
     const handleSendTip = async (e) => {
-        e.preventDefault();
-
-        if (!wallet.connected || !wallet.publicKey) {
-            toast.error("⚠️ Please connect your wallet first.", {
-                position: "top-right",
-                autoClose: 3000,
-                theme: "dark",
-            });
-            return;
-        }
-
-        const amount = parseFloat(tipAmount);
-        if (amount <= 0 || isNaN(amount)) {
-            toast.error("⚠️ Please enter a valid tip amount.", {
-                position: "top-right",
-                autoClose: 3000,
-                theme: "dark",
-            });
-            return;
-        }
-
-        setIsLoading(true);
-        const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/dhWoE-s3HVNfalBWpWnzRIWfyJIqTamF");
-        const recipientPublicKey = new PublicKey(recipientWallet);
-
-        try {
-            const transaction = new Transaction();
-      
-            if (token === "SOL") {
-              // ✅ SOL transfer
-              transaction.add(
-                SystemProgram.transfer({
-                  fromPubkey: wallet.publicKey,
-                  toPubkey: recipientPublicKey,
-                  lamports: amount * LAMPORTS_PER_SOL,
-                })
-              );
-            } else if (token === "USDC") {
-              // ✅ #3 SPL token transfer (simplified version)
-              toast.error("⚠️ SPL token transfers require associated token program integration.", {
-                position: "top-right",
-                autoClose: 6000,
-                theme: "dark",
-              });
-              setIsLoading(false);
-              return;
-            }
-      
-            const signature = await wallet.sendTransaction(transaction, connection);
-            console.log("Transaction Signature:", signature);
-
-            // ✅ #1 Poll transaction status until confirmed
-            const confirmTx = await connection.confirmTransaction(signature, "confirmed");
-
-            if (confirmTx.value.err) {
-                throw new Error("Transaction failed");
-              }
-
-
-
-
-            // ✅ Notify recipient via API
-            await api.post("/notifications", {
-                type: "transaction",
-                actorId: currentUser.id,
-                userId: recipientId,
-                amount,
-                entityId: signature,
-                message: `🎉 You received a tip of ${amount} ${token}!`,
-            });
-
-            setIsLoading(false);
-            toast.success(`🎉 Successfully sent ${amount} ${token} to ${recipientWallet}!`, {
-                position: "top-right",
-                autoClose: 3000,
-                theme: "dark",
-            });
-
-            setTipAmount("");
-            setTipMessage("");
-            toggleTipModal(false);
-            } catch (error) {
-            console.error("Error sending tip:", error); // ✅ #2
-            let friendlyMsg = "⚠️ Failed to send the tip. Please try again.";
-
-            if (error.message.includes("insufficient")) {
-                friendlyMsg = "❌ Not enough SOL in your wallet.";
-            } else if (error.message.includes("User rejected")) {
-                friendlyMsg = "❌ You rejected the transaction.";
-            }
-
-            toast.error(friendlyMsg, {
-                position: "top-right",
-                autoClose: 4000,
-                theme: "dark",
-            });
-            setIsLoading(false);
-            }
-        };
-
-        return (
-            <div className="crypto-tip-container">
-              <h3 className="crypto-tip-heading">Send a Tip</h3>
-        
-              {wallet.connected && wallet.publicKey ? ( // ✅ #4
-                <p className="wallet-connected-message">
-                  ✅ Connected to: {wallet.publicKey.toBase58()}
-                </p>
-              ) : (
-                <p className="wallet-disconnected-message">
-                  ⚠️ Please connect your wallet in the navbar.
-                </p>
-              )}
-        
-              <form onSubmit={handleSendTip} className="crypto-tip-form">
-                {/* ✅ Tip amount */}
-                <input
-                  type="number"
-                  placeholder="Tip amount"
-                  value={tipAmount}
-                  onChange={(e) => setTipAmount(e.target.value)}
-                  className="crypto-tip-input"
-                  min="0.01"
-                  step="0.01"
-                  required
-                />
-        
-                {/* ✅ Optional message */}
-                <textarea
-                  placeholder="Add a message (optional)"
-                  value={tipMessage}
-                  onChange={(e) => setTipMessage(e.target.value)}
-                  maxLength="255"
-                  className="crypto-tip-message-input"
-                />
-        
-                {/* ✅ #3 Token selector */}
-                <select
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
-                  className="crypto-tip-token-selector"
-                >
-                  <option value="SOL">SOL</option>
-                  <option value="USDC">USDC (Coming Soon)</option>
-                </select>
-        
-                <button
-                  type="submit"
-                  className="crypto-tip-submit-button"
-                  disabled={!tipAmount || isLoading || !wallet.connected}
-                >
-                  {isLoading ? "Sending..." : "Send Tip"}
-                </button>
-              </form>
-            </div>
+      e.preventDefault();
+    
+      if (!wallet.connected || !wallet.publicKey) {
+        toast.error("⚠️ Please connect your wallet first.", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "dark",
+        });
+        return;
+      }
+    
+      const amount = parseFloat(tipAmount);
+      if (amount <= 0 || isNaN(amount)) {
+        toast.error("⚠️ Please enter a valid tip amount.", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "dark",
+        });
+        return;
+      }
+    
+      setIsLoading(true);
+      const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/dhWoE-s3HVNfalBWpWnzRIWfyJIqTamF");
+      const recipientPublicKey = new PublicKey(recipientWallet);
+    
+      try {
+        const transaction = new Transaction();
+    
+        if (token === "SOL") {
+          transaction.add(
+            SystemProgram.transfer({
+              fromPubkey: wallet.publicKey,
+              toPubkey: recipientPublicKey,
+              lamports: amount * LAMPORTS_PER_SOL,
+            })
           );
-        };
+        } else if (token === "USDC") {
+          toast.error("⚠️ SPL token transfers require associated token program integration.", {
+            position: "top-right",
+            autoClose: 6000,
+            theme: "dark",
+          });
+          setIsLoading(false);
+          return;
+        }
+    
+        const signature = await wallet.sendTransaction(transaction, connection);
+        console.log("Transaction Signature:", signature);
+    
+        // ❌ Temporarily disabled while on free-tier RPC
+        // const confirmTx = await connection.confirmTransaction(signature, "confirmed");
+        // if (confirmTx.value.err) {
+        //   throw new Error("Transaction failed");
+        // }
+    
+        // ✅ Notify recipient via API immediately
+        await api.post("/notifications", {
+          type: "transaction",
+          actorId: currentUser.id,
+          userId: recipientId,
+          amount,
+          entityId: signature,
+          message: `🎉 You received a tip of ${amount} ${token}!`,
+          content: tipMessage || null, // ✅ send optional message as content
+
+        });
+    
+        // ✅ Show toast with Solscan link
+        toast.success(
+          <div>
+            ✅ Tip Sent! Confirm on Solana:
+            <br />
+            <a
+              href={`https://solscan.io/tx/${signature}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="toast-link"
+            >
+              View Transaction
+            </a>
+          </div>,
+          { autoClose: 6000, theme: "dark" }
+        );
+    
+        setTipAmount("");
+        setTipMessage("");
+
+        // Slight delay so toast renders before component unmounts
+        setTimeout(() => {
+          toggleTipModal(false);
+        }, 300);
+      } catch (error) {
+        console.error("Error sending tip:", error);
+        let friendlyMsg = "⚠️ Failed to send the tip. Please try again.";
+    
+        if (error.message.includes("insufficient")) {
+          friendlyMsg = "❌ Not enough SOL in your wallet.";
+        } else if (error.message.includes("User rejected")) {
+          friendlyMsg = "❌ You rejected the transaction.";
+        }
+    
+        toast.error(friendlyMsg, {
+          position: "top-right",
+          autoClose: 4000,
+          theme: "dark",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    return (
+      <div className="crypto-tip-container">
+        <h3 className="crypto-tip-heading">Send a Tip</h3>
+    
+       {/* ✅ Wallet display */}
+{wallet.connected && wallet.publicKey ? (
+  <div className="wallet-connection-box">
+    <span className="wallet-status-icon">✅</span>
+    <span className="wallet-status-text">Connected to:</span>
+    <span className="wallet-address">{wallet.publicKey.toBase58()}</span>
+  </div>
+) : (
+  <p className="wallet-disconnected-message">
+    ⚠️ Please connect your wallet in the navbar.
+  </p>
+)}
+
+<form onSubmit={handleSendTip} className="crypto-tip-form">
+  {/* Tip amount */}
+  <input
+    type="number"
+    placeholder="Tip amount"
+    value={tipAmount}
+    onChange={(e) => setTipAmount(e.target.value)}
+    className="crypto-tip-input"
+    min="0.01"
+    step="0.01"
+    required
+  />
+
+  {/* Optional message */}
+  <textarea
+    placeholder="Add a message (optional)"
+    value={tipMessage}
+    onChange={(e) => setTipMessage(e.target.value)}
+    maxLength="255"
+    className="crypto-tip-message-input"
+  />
+
+  {/* Token selector */}
+  <div className="crypto-tip-token-section">
+    <label htmlFor="token" className="crypto-tip-token-label">
+      Choose Token:
+    </label>
+    <select
+      id="token"
+      value={token}
+      onChange={(e) => setToken(e.target.value)}
+      className="crypto-tip-token-selector"
+    >
+      <option value="SOL">SOL</option>
+      <option value="USDC">USDC (Coming Soon)</option>
+    </select>
+  </div>
+
+  <button
+    type="submit"
+    className="crypto-tip-submit-button"
+    disabled={!tipAmount || isLoading || !wallet.connected}
+  >
+    {isLoading ? "Sending..." : "Send Tip"}
+  </button>
+</form>
+      </div>
+    );
+  }
 
 CryptoTip.propTypes = {
     recipientId: PropTypes.number.isRequired,

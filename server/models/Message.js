@@ -95,6 +95,12 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'recipientId',
             onDelete: 'CASCADE',
         });
+         // ✅ Add this line
+        Message.belongsTo(models.Notification, {
+            as: 'notification',
+            foreignKey: 'notificationId',
+            onDelete: 'SET NULL',
+        });
     };
 
     // ✅ Hook: Prevent users from messaging themselves
