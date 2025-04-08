@@ -70,6 +70,42 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
+
+// ✅ Optional auth — no error if token missing
+const optionalAuthMiddleware = (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const xAuthToken = req.headers["x-auth-token"];
+    let token;
+
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    } else if (xAuthToken) {
+      token = xAuthToken;
+    }
+
+    if (token) {
+      try {
+        const decoded = validateToken(req);
+        req.user = decoded;
+        console.log("Optional Auth: user decoded", req.user);
+      } catch (err) {
+        console.warn("Optional Auth: invalid token");
+        // silent fail, don’t attach user
+      }
+    }
+
+    next();
+  } catch (error) {
+    console.error("Optional auth error:", error);
+    next(); // never block request
+  }
+};
+
+// Attach optional version to default export
+authMiddleware.optional = optionalAuthMiddleware;
+
+
 module.exports = authMiddleware;
 
 /**

@@ -10,7 +10,7 @@
 
 
 const express = require('express');
-const { Post, Comment, User, Like, Retweet, Notification } = require('../models/Index');
+const { Post, Comment, User, Like, Retweet, Notification, Follower } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
 const { Op } = require('sequelize');
@@ -159,20 +159,92 @@ router.get('/:id/profile-feed', async (req, res) => {
 /**
  * @route   GET /api/posts
  * @desc    Get all posts with optional user filtering and pagination
+ * Updated /api/posts Route with computeScore
  * @access  Public
  */
-/**
- * @route   GET /api/posts
- * @desc    Get all posts with optional user filtering and pagination
- * @access  Public
- */
-router.get('/', async (req, res) => {
-  const { userId, page = 1, limit = 10 } = req.query;
+router.get('/', authMiddleware.optional, async (req, res) => {
+  const { userId, page = 1, limit = 10, feed } = req.query;
   const offset = (page - 1) * limit;
-  const whereCondition = userId ? { userId } : {};
 
   try {
-    const posts = await Post.findAll({
+    let posts;
+
+    // ✅ "Following" feed — show all original + retweeted posts by followed users
+    if (feed === 'following' && req.user?.id) {
+      const currentUserId = req.user.id;
+
+      const followRecords = await Follower.findAll({
+        where: { followerId: currentUserId },
+        attributes: ['followingId'],
+      });
+      
+      const followingIds = followRecords.map(f => Number(f.followingId));
+      
+      // ✅ Include user's own posts too
+      if (!followingIds.includes(currentUserId)) {
+        followingIds.push(currentUserId);
+      }
+      
+      console.log("🧭 Freshly fetched followingIds:", followingIds);
+      if (!followingIds.length) {
+        return res.status(200).json({ posts: [] });
+      }
+
+      const allFollowingPosts = await Post.findAll({
+        where: {
+          [Op.or]: [
+            { userId: { [Op.in]: followingIds } }, // Their original posts
+            {
+              isRetweet: true,
+              userId: { [Op.in]: followingIds }, // Their retweets
+            },
+          ],
+        },
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'username', 'profilePicture'],
+          },
+          {
+            model: Post,
+            as: 'originalPost',
+            include: [
+              {
+                model: User,
+                as: 'user',
+                attributes: ['id', 'username', 'profilePicture'],
+              },
+            ],
+          },
+        ],
+      });
+
+      const formattedPosts = allFollowingPosts.map((post) => {
+        console.log("🧱 Formatting post from:", post.user?.username, "→", post.content);
+        return formatPost(post);
+      });
+
+      // 🔥 Sort everything first by createdAt DESC
+      const sortedPosts = formattedPosts.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      // ✅ Then paginate AFTER sort
+      const paginatedPosts = sortedPosts.slice(offset, offset + parseInt(limit));
+
+      return res.json({
+        posts: paginatedPosts,
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(sortedPosts.length / limit),
+        totalPosts: sortedPosts.length,
+      });
+    }
+
+    // 🌍 "For You" feed or specific user's posts
+    const whereCondition = userId ? { userId } : {};
+
+    posts = await Post.findAll({
       where: whereCondition,
       limit: parseInt(limit),
       offset,
@@ -199,14 +271,34 @@ router.get('/', async (req, res) => {
 
     const formattedPosts = posts.map(formatPost);
 
-    res.json({
-      posts: formattedPosts,
+    // ✅ Age-weighted score formula
+    const computeScore = (post) => {
+      const hoursOld = Math.floor((Date.now() - new Date(post.createdAt)) / 3600000);
+      const agePenalty = Math.log2(hoursOld + 2); // smooth decay
+
+      return (
+        (post.likes || 0) * 2.5 +
+        (post.retweets || 0) * 3 +
+        (post.commentCount || 0) * 1.5 -
+        agePenalty
+      );
+    };
+
+    const scoredPosts = formattedPosts.map((post) => ({
+      ...post,
+      score: computeScore(post),
+    }));
+
+    scoredPosts.sort((a, b) => b.score - a.score);
+
+    return res.json({
+      posts: scoredPosts,
       currentPage: parseInt(page),
-      totalPages: Math.ceil(posts.length / limit),
-      totalPosts: posts.length,
+      totalPages: Math.ceil(scoredPosts.length / limit),
+      totalPosts: scoredPosts.length,
     });
   } catch (err) {
-    console.error('Error fetching posts:', err);
+    console.error('🚨 Error fetching posts:', err);
     res.status(500).json({ error: 'Failed to fetch posts.' });
   }
 });

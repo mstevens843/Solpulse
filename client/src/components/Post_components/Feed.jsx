@@ -28,12 +28,20 @@ function Feed({ currentUser }) {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [filter, setFilter] = useState("all");
+  // const [filter, setFilter] = useState("foryou");
   const observerRef = useRef(null);
   const debounceTimeout = useRef(null); // ✅ #1 debounce reference
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [filter, setFilter] = useState(() => localStorage.getItem("feedFilter") || "foryou");
 
 
+  const handleFilterChange = (key) => {
+    localStorage.setItem("feedFilter", key);
+    setFilter(key);
+    setPosts([]);
+    setPostIds(new Set());
+    setPage(1);
+  };
 
   const buildCountsMap = (counts) => {
     const map = {};
@@ -56,7 +64,7 @@ function Feed({ currentUser }) {
   
     try {
       console.log("Fetching posts for page:", page);
-      const response = await api.get(`/posts?page=${page}&limit=10&filter=${filter}`); // ✅ Increased batch size
+      const response = await api.get(`/posts?page=${page}&limit=10&feed=${filter}`); // ✅ Increased batch size
   
       if (response.data?.posts) {
         const newPosts = response.data.posts.filter(post => !postIds.has(post.id)); // ✅ Prevent duplicates
@@ -78,8 +86,20 @@ function Feed({ currentUser }) {
         // 🧠 Add commentCount to each post
         const enrichedPosts = newPosts.map((post) => ({
           ...post,
+          user: post.user || null,
+          originalPost: post.originalPost
+            ? {
+                ...post.originalPost,
+                user: post.originalPost.user || null,
+              }
+            : null,
           commentCount: countsMap[post.id] || 0,
+          category: post.category || "General",
         }));
+
+        newPosts.forEach((post) => {
+  if (!post.user) console.warn("⚠️ Post missing user:", post.id);
+});
   
         setPosts((prev) => [...prev, ...enrichedPosts]);
         setPostIds((prev) => new Set([...prev, ...enrichedPosts.map(p => p.id)]));
@@ -132,24 +152,53 @@ function Feed({ currentUser }) {
     fetchPosts();
   };
 
-  
+  console.log("📌 Filter:", selectedCategory);
+  console.log("📌 Displayed posts:", posts.map(p => ({ id: p.id, user: p.user?.username, category: p.category })));
+
 
   return (
     <div className="community-feed-container">
       <h3 className="community-feed-title">Community Feed</h3>
 
-      {/* ✅ Category tab UI */}
-      <div className="category-tabs">
-        {["All", "🔥 Meme", "🎨 NFT", "🪙 Crypto", "🧠 DAO", "💣 On-chain Drama"].map((cat) => (
+      {/* ✅ For you / Following tab UI */}
+      <div className="feed-toggle-tabs">
+        {[
+          { label: "For You", emoji: "✨", key: "foryou" },
+          { label: "Following", emoji: "👥", key: "following" },
+        ].map(({ label, emoji, key }) => (
           <button
-            key={cat}
-            className={`category-tab ${selectedCategory === cat ? "active" : ""}`}
-            onClick={() => setSelectedCategory(cat)}
+            key={key}
+            className={`feed-toggle-tab ${["foryou", "following"].includes(filter) && filter === key ? "active" : ""}`}
+            onClick={() => {
+              setFilter(key);
+              setPosts([]);
+              setPostIds(new Set());
+              setPage(1);
+            }}
           >
-            {cat}
+            <span>{emoji}</span> {label}
           </button>
         ))}
       </div>
+
+
+      {/* ✅ Category tab UI */}
+      <div className="category-tabs">
+      {["All", "🔥 Meme", "🎨 NFT", "🪙 Crypto", "🧠 DAO", "💣 On-chain Drama"].map((cat) => (
+        <button
+          key={cat}
+          className={`category-tab ${selectedCategory === cat ? "active" : ""}`}
+          onClick={() => {
+            setSelectedCategory(cat);
+            setPosts([]);
+            setPostIds(new Set());
+            setPage(1);
+          }}
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
 
       {error && (
         <div className="community-feed-error" role="alert" aria-live="assertive">
@@ -172,15 +221,20 @@ function Feed({ currentUser }) {
         {posts
           .filter((post) => {
             const cleanCategory = selectedCategory.replace(/^[^\w]+/, "").trim(); // Remove emoji
-            return cleanCategory === "All"
-              ? true
-              : (post.category || "General") === cleanCategory;
+            if (cleanCategory === "All") return true;
+            return post.category?.toLowerCase() === cleanCategory.toLowerCase();
           })
-          
           .map((post, index) => (
             <li key={`${post.id}-${index}`} className="community-feed-post">
               <div className="post-container">
                 <Post post={post} currentUser={currentUser} setPosts={setPosts} />
+
+                {/* 🧪 Debug Score (Only visible if .score exists) */}
+                {post.score !== undefined && (
+                  <p className="debug-score" style={{ color: "#999", fontSize: "12px", padding: "0 0.5rem" }}>
+                    Score: {post.score.toFixed(2)}
+                  </p>
+                )}
               </div>
             </li>
           ))}

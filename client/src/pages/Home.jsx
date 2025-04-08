@@ -62,7 +62,8 @@ function Home() {
           // ✅ #2 Basic skeleton loader placeholder
           <div className="feed-skeleton">Loading your feed...</div>
         ) : (
-          <Feed currentUser={user} />
+          <Feed key={location.key} currentUser={user} />
+
         )}
       </main>
 
