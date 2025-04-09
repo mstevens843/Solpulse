@@ -14,7 +14,8 @@ import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
 import "@/css/pages/Settings.css";
 import { FaEnvelope, FaLock, FaUser, FaWallet, FaBell, FaPaintBrush, FaTrash } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 function Settings() {
@@ -34,28 +35,29 @@ function Settings() {
 
   // Apply theme in realtime when user clicks it from dropdown.
   useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [theme]);
-
-  // Local Storage only holds non-sensitive preferences (theme, notifications, privacy, walletAddress)
-  useEffect(() => {
     const applyInitialSettings = async () => {
       const cached = JSON.parse(localStorage.getItem("userSettings"));
+      const localTheme = localStorage.getItem("theme");
+  
       if (cached) {
         setPrivacy(cached.privacy || "public");
         setNotifications(cached.notifications || "enabled");
         setWalletAddress(cached.walletAddress || "");
       }
   
-      await fetchSettings(); // This sets the correct theme and applies it to the DOM
+      // ✅ Apply theme from localStorage first (for instant UI response)
+      if (localTheme) {
+        setTheme(localTheme);
+        document.documentElement.classList.toggle("dark", localTheme === "dark");
+      }
+  
+      // ✅ Then fetch settings from backend (may override local theme)
+      await fetchSettings();
     };
   
     applyInitialSettings();
   }, []);
+
 
   /**
    * Fetch user settings from the backend.
@@ -114,9 +116,20 @@ function Settings() {
         theme,
       }));
   
-      toast.success("Settings updated successfully ✅");
+      toast.success("✅ Settings updated successfully!", {
+        autoClose: 3000,
+        transition: Slide,
+        pauseOnHover: false,
+        pauseOnFocusLoss: false,
+      });
+      
     } catch (error) {
-      toast.error("Failed to update settings ❌");
+      toast.error("❌ Failed to update settings.", {
+        autoClose: 3000,
+        transition: Slide,
+        pauseOnHover: false,
+        pauseOnFocusLoss: false,
+      });
     } finally {
       setLoading(false);
     }
@@ -127,32 +140,48 @@ function Settings() {
    * - Stores themein localStorage for persistence.
    */
   const handleThemeToggle = async (e) => {
-    const newTheme = e.target.checked ? "dark" : "light";
-    setTheme(newTheme); // Update UI immediately
-  
-    try {
-      await api.put(`/users/settings`, {
-        email,
-        walletAddress,
-        privacy,
-        notifications,
-        theme: newTheme,
-      });
-  
-      localStorage.setItem("userSettings", JSON.stringify({
-        email,
-        walletAddress,
-        privacy,
-        notifications,
-        theme: newTheme,
-      }));
-  
-      toast.success(`Switched to ${newTheme} mode ✅`);
-    } catch (err) {
-      toast.error("Failed to save theme preference ❌");
-    }
-  };
+  const newTheme = e.target.checked ? "dark" : "light";
+  setTheme(newTheme); // Update UI immediately
 
+  // ✅ Apply to <html> tag (instant theme change)
+  document.documentElement.classList.toggle("dark", newTheme === "dark");
+
+  try {
+    await api.put(`/users/settings`, {
+      email,
+      walletAddress,
+      privacy,
+      notifications,
+      theme: newTheme,
+    });
+
+    localStorage.setItem(
+      "userSettings",
+      JSON.stringify({
+        email,
+        walletAddress,
+        privacy,
+        notifications,
+        theme: newTheme,
+      })
+    );
+    localStorage.setItem("theme", newTheme); // ✅ Ensure sync
+    toast.success(`✅ Switched to ${newTheme} mode`, {
+      autoClose: 3000,
+      transition: Slide,
+      pauseOnHover: false,
+      pauseOnFocusLoss: false,
+    });
+    
+  } catch (err) {
+    toast.error("❌ Failed to save theme preference", {
+      autoClose: 3000,
+      transition: Slide,
+      pauseOnHover: false,
+      pauseOnFocusLoss: false,
+    });
+  }
+};
   /**
    * Handle account deletion process.
    * - Triggers a confirmation modal before proceeding.
@@ -228,7 +257,22 @@ function Settings() {
             <div className="form-group">
               <label htmlFor="notifications">Notifications:</label>
               <FaBell className="input-icon" />
-              <select id="notifications" value={notifications} onChange={(e) => setNotifications(e.target.value)}>
+              <select
+                  id="notifications"
+                  value={notifications}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    setNotifications(newValue);
+
+                    toast.info("🔨 Notification toggle coming soon!", {
+                      autoClose: 2000,
+                      theme: document.documentElement.classList.contains("dark") ? "dark" : "light",
+                      transition: Slide,
+                      pauseOnHover: false,
+                      pauseOnFocusLoss: false,
+                    });
+                  }}
+                >
                 <option value="enabled">Enabled</option>
                 <option value="disabled">Disabled</option>
               </select>
@@ -280,6 +324,16 @@ function Settings() {
           )}
         </>
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        pauseOnFocusLoss={false}
+        pauseOnHover={false}
+        closeOnClick
+        draggable
+        theme="dark"
+        transition="slide"
+      />
     </div>
   );
 }

@@ -160,11 +160,17 @@ function PostComposer({ onPostCreated }) {
         {/* Emoji toggle button (non-functional for now) */}
         <button
           type="button"
-          onClick={() => toast.info("🛠️ Emoji picker coming soon!", { autoClose: 2000 })}
+          onClick={() =>
+            toast.info("🛠️ Emoji picker coming soon!", {
+              autoClose: 2000,
+              theme: document.documentElement.classList.contains("dark") ? "dark" : "light",
+            })
+          }
           className="emoji-toggle-button"
         >
           😀 Emoji
         </button>
+
 
         <div className="composer-options">
           <button type="submit" disabled={loading} className="submit-button">
@@ -194,16 +200,16 @@ function PostComposer({ onPostCreated }) {
       </form>
 
       <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        pauseOnFocusLoss={false}
-        pauseOnHover={false}
-        closeOnClick
-        draggable
-        transition={Slide}
-        theme="dark"
-        enableMultiContainer
-      />
+  position="top-right"
+  autoClose={3000}
+  pauseOnFocusLoss={false}
+  pauseOnHover={false}
+  closeOnClick
+  draggable
+  transition={Slide}
+  theme={document.documentElement.classList.contains("dark") ? "dark" : "light"}
+  enableMultiContainer
+/>
     </div>
   );
 }
