@@ -1,10 +1,9 @@
 .home-container {
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #121212;
-  color: #fff;
   padding: 2rem;
 }
 
@@ -29,8 +28,8 @@
   background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: bold;font-weight: bold;
-font-size: 3rem;
+  font-weight: bold;
+  font-size: 3rem;
 }
 
 .crypto-info p {
@@ -40,17 +39,16 @@ font-size: 3rem;
 
 /* Crypto Ticker Container */
 .crypto-ticker-container {
+  @apply bg-white dark:bg-[#1f1f1f] text-black dark:text-white;
   width: 100%;
   max-width: 600px;
   max-height: 400px;  
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  background: #1f1f1f;
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
-
 }
 
 .crypto-ticker-container h2 {
@@ -59,7 +57,6 @@ font-size: 3rem;
   color: #00ffcc;
 }
 
-/* Ensure ticker text doesn't overflow */
 .crypto-ticker-container .ticker-content {
   display: flex;
   overflow-x: hidden;
@@ -72,39 +69,38 @@ font-size: 3rem;
 
 /* Auth Section */
 .auth-section {
+  @apply bg-white text-black dark:bg-[#1f1f1f] dark:text-white;
   flex: 0.5;
   max-width: 400px;
   width: 100%;
-  background: #1f1f1f;
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+  text-align: center;
 }
 
 .auth-section h2 {
+  @apply text-black dark:text-[#00ffcc];
   margin-bottom: 1rem;
   font-size: 1.5rem;
   font-weight: bold;
 }
 
 .auth-section input {
-  display: block;
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  border: 1px solid #00ffcc;
-  border-radius: 5px;
-  background: #121212;
-  color: #fff;
+  @apply w-full mb-4 px-3 py-3 border border-[#00ffcc] rounded bg-white text-black dark:bg-[#121212] dark:text-white;
+  outline: none;
+  box-shadow: none;
+}
+
+.auth-section input:focus {
+  border-color: #00ddaa; 
+  box-shadow: 0 0 5px rgba(0, 221, 170, 0.5); 
+  outline: none;
 }
 
 .feed-button, .login-btn {
-  width: 100%;
-  padding: 1rem;
-  background-color: #0da688;
+  @apply w-full p-4 bg-[#0da688] text-white rounded text-lg font-bold;
   border: none;
-  border-radius: 5px;
-  font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.3s ease;
 }
@@ -114,9 +110,7 @@ font-size: 3rem;
 }
 
 .signup-link {
-  color: #00ffcc;
-  font-weight: bold;
-  text-decoration: none;
+  @apply text-[#00ffcc] font-bold no-underline;
 }
 
 .signup-link:hover {
@@ -128,34 +122,23 @@ font-size: 3rem;
   display: flex;
   align-items: center;
   justify-content: flex-start; 
-  color: #ffffff;
+  color: inherit;
   width: 40%;
   margin-top: 0.5rem;
 }
 
-/* Remember Me Label */
 .remember-me-label {
-  font-size: .95rem;;
+  font-size: .95rem;
   font-weight: normal;
   margin-bottom: 16px;
   white-space: nowrap;
-
-
 }
 
 /* Checkbox Styling */
 .remember-me-checkbox {
-  .remember-me-checkbox {
-    width: 0.7rem;
-    height: 0.7rem;
-    cursor: pointer;
-  
-    /* Align to bottom of the screen */
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%); 
-  }
+  width: 0.7rem;
+  height: 0.7rem;
+  cursor: pointer;
 }
 
 input[type="checkbox"]:focus {
@@ -163,12 +146,38 @@ input[type="checkbox"]:focus {
   box-shadow: none !important;
 }
 
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  font-size: 1.8rem;
+  background: #ffffff;
+  border: 2px solid #00ffcc;
+  color: #00ffcc;
+  padding: 0.5rem 0.8rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  z-index: 999;
+}
+
+.theme-toggle-btn:hover {
+  background: #00ffcc;
+  color: #121212;
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.5);
+}
+
+.dark .theme-toggle-btn {
+  background: #1f1f1f;
+  border: 2px solid #00ffcc;
+  color: #00ffcc;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .home-content {
-      flex-direction: column;
-      gap: 2rem;
+    flex-direction: column;
+    gap: 2rem;
   }
 }
-
-

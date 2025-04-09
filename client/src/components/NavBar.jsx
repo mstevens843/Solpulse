@@ -103,31 +103,39 @@ const NavBar = () => {
         <nav className="navbar" aria-label="Main Navigation">
             {/* Left Side Navigation */}
             <ul className="navbar-left">
-                {isAuthenticated && (
-                    <li className="navbar-item" key="home">
-                        <NavLink to="/home" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Go to Home">
-                            Home
-                        </NavLink>
-                    </li>
-                )}
-                <li className="navbar-item" key="trending-crypto">
-                    <NavLink to="/trending-crypto" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Trending Crypto">
-                        Trending Crypto
+            {isAuthenticated && (
+                <li className="navbar-item" key="home">
+                    <NavLink to="/home" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Go to Home">
+                        Home
                     </NavLink>
                 </li>
-                <li className="navbar-item" key="trade">
-                    <NavLink to="/trade" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Trade">
-                        Trade
-                    </NavLink>
-                </li>
-                {/* {isAuthenticated && (
-                    <li className="navbar-item" key="create-post">
-                        <NavLink to="/post/create" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Create Post">
-                            Create Post
-                        </NavLink>
-                    </li>
-                )} */}
-            </ul>
+            )}
+            <li className="navbar-item" key="trending-crypto">
+                <NavLink to="/trending-crypto" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Trending Crypto">
+                    Trending Crypto
+                </NavLink>
+            </li>
+            <li className="navbar-item" key="trade">
+                <NavLink to="/trade" className={({ isActive }) => (isActive ? "active-link" : "")} aria-label="Trade">
+                    Trade
+                </NavLink>
+            </li>
+
+            {/* 🌓 Theme Toggle Button */}
+            <li className="navbar-item" key="theme-toggle">
+                <button
+                    className="theme-nav-toggle"
+                    onClick={() => {
+                        const isDark = document.documentElement.classList.contains("dark");
+                        document.documentElement.classList.toggle("dark", !isDark);
+                        localStorage.setItem("theme", isDark ? "light" : "dark");
+                    }}
+                    aria-label="Toggle Theme"
+                >
+                    🌓
+                </button>
+            </li>
+        </ul>
 
             {/* Right Side Navigation */}
             <ul className="navbar-right">
@@ -201,6 +209,7 @@ const NavBar = () => {
                     </div>
                 )}
                 </li>
+                
             </ul>
         </nav>
     );

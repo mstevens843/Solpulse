@@ -3,15 +3,16 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #121212;
+  /* background: #121212; */
   min-height: 100vh;
   width: 100%;
   padding: 2rem;
-  color: #fff;
+  /* color: #fff; */
   text-align: center;
   overflow-y: auto;
   box-sizing: border-box;
   margin-top: 2rem;
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
 }
 
 svg.input-icon {
@@ -44,19 +45,33 @@ svg.input-icon {
 
 /* Settings Form */
 .settings-form {
-  background: #1f1f1f;
+  /* background: #1f1f1f; */
+  @apply bg-white dark:bg-[#1f1f1f];
   padding: 2rem;
+  border: 1px solid rgba(0, 0, 0, 0.08); /* subtle edge in light */
+  @apply dark:border-none;
   height: auto; 
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
-  max-width: 600px;
+  box-shadow: 0 0 15px rgba(20, 241, 149, 0.2); /* light mode */
+  @apply dark:shadow-[0_0_15px_rgba(0,255,204,0.5)];  max-width: 600px;
   width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center; 
   text-align: center;
+  transition: box-shadow 0.3s ease;
   overflow: hidden; 
   position: relative; 
+}
+
+
+
+
+.settings-form:hover {
+  box-shadow:
+    0 0 15px rgba(20, 241, 149, 0.2),
+    0 0 8px rgba(20, 241, 149, 0.15);
+  @apply dark:shadow-[0_0_15px_rgba(0,255,204,0.5),_0_0_8px_rgba(0,255,204,0.3)];
 }
 
 /* Form Group */
@@ -71,7 +86,8 @@ div.form-group {
 .form-group label {
   font-weight: bold;
   font-size: 1.2rem;
-  color: #ffffff;
+  /* color: #ffffff; */
+  @apply text-black dark:text-white;
   margin-bottom: 0.5rem;
   display: block;
 }
@@ -81,10 +97,12 @@ div.form-group {
 .form-group select {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #00ffcc;
+  border: 1px solid #14F195; /* light mode */
+  @apply dark:border-[#00ffcc];
   border-radius: 5px;
-  background: #121212;
-  color: #fff;
+  /* background: #121212;
+  color: #fff; */
+  @apply bg-white dark:bg-[#121212] text-black dark:text-white;
   font-size: 1rem;
   transition: all 0.3s ease;
   box-sizing: border-box;
@@ -106,6 +124,7 @@ div.form-group {
 .settings-save-btn {
   background-color: #0da688;
   color: #121212;
+  @apply dark:text-white;
   font-size: 1.2rem;
   font-weight: bold;
   padding: 1rem;
@@ -117,10 +136,12 @@ div.form-group {
 }
 
 .settings-save-btn:hover {
-  background-color: #00ddaa;
-  color: #000;
+  background: linear-gradient(to right, #0fd9b6, #00ddaa);
+  color: #fff;
+  @apply dark:text-black; /* 🔥 this is the key */
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.6);
+  @apply dark:shadow-[0_0_12px_rgba(0,255,204,0.6)];
 }
-
 /* Wallet Section */
 .wallet-container {
   background: #1f1f1f;
@@ -144,8 +165,8 @@ div.form-group {
   transition: all 0.3s ease-in-out;
   width: 100%;
   border: none;
-  box-shadow: 0 0 20px rgba(255, 65, 108, 0.8);
-  display: flex;
+  box-shadow: 0 0 10px rgba(255, 65, 108, 0.5);
+  @apply dark:shadow-[0_0_20px_rgba(255,65,108,0.8)];  display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 1rem;
@@ -204,8 +225,9 @@ div.form-group {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #1f1f1f;
-  color: #fff;
+  /* background: #1f1f1f;
+  color: #fff; */
+  @apply bg-white dark:bg-[#1f1f1f] text-black dark:text-white;
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
@@ -258,4 +280,74 @@ div.form-group {
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
   z-index: -1;
+}
+
+
+
+
+/* Toggle Switch Container */
+.form-group.flex {
+  justify-content: space-between;
+  padding: 1rem 0;
+}
+
+.form-group.flex.items-center {
+  justify-content: left;
+  gap: 1rem;
+}
+
+/* Toggle Label */
+#darkModeToggle + span {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #121212; /* Light mode text */
+  @apply dark:text-white;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  width: 3.25rem;
+  height: 1.7rem;
+  appearance: none;
+  background-color: #e5e7eb; /* Light mode: Tailwind gray-200 */
+  @apply dark:bg-[#333];
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  border: 2px solid #00ffcc;
+}
+
+
+.toggle-switch:hover {
+  box-shadow: 0 0 6px rgba(0, 255, 204, 0.5);
+}
+
+.toggle-switch:checked {
+  background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+}
+
+/* Toggle Knob */
+.toggle-switch::before {
+  content: "";
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  background: #121212; /* Default dark knob */
+  @apply dark:bg-white; /* In dark mode: knob becomes white */
+  border-radius: 50%;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-switch:checked::before {
+  transform: translateX(6.1rem);
+}
+
+
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

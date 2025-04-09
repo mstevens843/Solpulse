@@ -272,6 +272,16 @@ const handleChange = (e) => {
           </a>
         </p>
       </div>
+      <button
+        className="theme-toggle-btn"
+        onClick={() => {
+          const isDark = document.documentElement.classList.contains("dark");
+          document.documentElement.classList.toggle("dark", !isDark);
+          localStorage.setItem("theme", isDark ? "light" : "dark");
+        }}
+      >
+        🌓
+      </button>
     </div>
   );
 };

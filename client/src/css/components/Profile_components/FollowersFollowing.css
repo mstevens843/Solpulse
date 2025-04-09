@@ -10,7 +10,7 @@
 
 /* Error Message */
 .followers-error {
-  @apply error-banner;
+  /* @apply error-banner; */
 }
 
 /* Loading Message */

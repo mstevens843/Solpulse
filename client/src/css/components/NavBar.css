@@ -9,7 +9,8 @@
     align-items: center;
     height: var(--navbar-height);
     padding: 1rem 2rem;
-    background: #1f1f1f;
+    background-color: var(--solana-light); /* ✅ updated */
+    color: black;                          /* ✅ updated */
     border-bottom: 2px solid #00ffcc;
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
     position: fixed;
@@ -18,7 +19,13 @@
     width: 100%;
     z-index: 1000;
     transition: all 0.3s ease-in-out;
-}
+  }
+  
+  /* ✅ Dark mode override */
+  .dark .navbar {
+    background-color: var(--solana-dark);
+    color: var(--solana-text-light);
+  }
 
 /* Navbar Left & Right */
 .navbar-left, 
@@ -204,3 +211,49 @@ button.logout-button:hover {
   .navbar-wallet-button.disconnected {
     color: #bbbbbb;
   }
+
+  .theme-nav-toggle {
+    font-size: 1.3rem;
+    margin-left: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #00ffcc;
+    transition: transform 0.2s ease;
+  }
+  
+  .theme-nav-toggle:hover {
+    transform: scale(1.2);
+    color: #19fb9b;
+  }
+
+  /* Theme Toggle Button */
+/* Theme Toggle Button inside NavBar */
+.theme-nav-toggle {
+    bottom: 1rem;
+    right: 3rem;
+    margin-left: -.4rem; /* ⬅️ this is the key */
+    vertical-align: middle;
+    font-size: 1.3rem;
+    background: #ffffff;
+    border: 1.5px solid #00ffcc;
+    color: #00ffcc;
+    padding: 0.35rem 0.6rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    z-index: 999;
+  }
+  
+  .theme-nav-toggle:hover {
+    background: #00ffcc;
+    color: #121212;
+    box-shadow: 0 0 12px rgba(0, 255, 204, 0.5);
+  }
+  
+  .dark .theme-nav-toggle {
+    background: #1f1f1f;
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+  }
+  

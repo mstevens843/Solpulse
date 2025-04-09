@@ -101,7 +101,7 @@ router.get('/me', authMiddleware, async (req, res) => {
     try {
         // Fetch the authenticated user's details. 
         const user = await User.findByPk(req.user.id, {
-            attributes: ['id', 'username', 'email', 'bio', 'walletAddress']
+            attributes: ['id', 'username', 'email', 'bio', 'walletAddress', 'theme', 'privacy', 'notifications' ]
         });
 
         if (!user) {
@@ -113,6 +113,36 @@ router.get('/me', authMiddleware, async (req, res) => {
         console.error("Error fetching user details:", error);
         res.status(500).json({ message: "An error occurred while fetching user details." });
     }
+});
+
+
+
+
+/**
+ * @route   PUT /api/users/settings
+ * @desc    Update user account settings (email, theme, privacy, notifications, wallet)
+ * @access  Private
+ */
+router.put('/settings', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { email, walletAddress, privacy, notifications, theme } = req.body;
+
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (email) user.email = email;
+    if (walletAddress !== undefined) user.walletAddress = walletAddress;
+    if (privacy) user.privacy = privacy;
+    if (notifications) user.notifications = notifications;
+    if (theme) user.theme = theme;
+
+    await user.save();
+    return res.status(200).json({ message: "Settings updated successfully" });
+  } catch (err) {
+    console.error("Error updating settings:", err);
+    return res.status(500).json({ message: "Failed to update settings" });
+  }
 });
 
 

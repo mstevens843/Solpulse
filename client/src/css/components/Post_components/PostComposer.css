@@ -1,121 +1,118 @@
 .post-composer-container {
-    background-color: #1e1e1e;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  }
-  
-  .composer-textarea {
-    width: 100%;
-    padding: 20px;
-    background-color: #2b2b2b;
-    color: #fff;
-    border: 1px solid #444;
-    border-radius: 8px;
-    resize: none;
-    min-height: 10vh;
-    margin-bottom: 0.3rem;
-    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
-    border: 1px solid #00ffcc;
-  }
-  
-  /* Container for the Post Button, Camera, and Crypto Tag */
-  div.composer-options {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Left and right alignment */
-    height: 50px;
-  }
-  
-  /* Post Button (Left Side) */
-  button.submit-button {
-    background-color: #00ffcc;
-    color: black;
-    font-weight: bold;
-    border: none;
-    padding: 6px 20px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  @apply bg-white text-black dark:bg-[#1e1e1e] dark:text-white shadow-sm dark:shadow-[0_2px_4px_rgba(0,0,0,0.5)];
+}
+
+.composer-textarea {
+  width: 100%;
+  padding: 20px;
+  background-color: #2b2b2b;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  resize: none;
+  min-height: 10vh;
+  margin-bottom: 0.3rem;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+  border: 1px solid #00ffcc;
+  @apply bg-white text-black dark:bg-[#2b2b2b] dark:text-white dark:border-[#00ffcc];
+}
+
+/* Container for the Post Button, Camera, and Crypto Tag */
+div.composer-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+}
+
+/* Post Button */
+button.submit-button {
+  background-color: #00ffcc;
+  color: black;
+  font-weight: bold;
+  border: none;
+  padding: 6px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  @apply bg-[#00ffcc] text-black font-bold rounded-lg px-5 py-2 hover:bg-[#0da688];
+}
+
 button.submit-button:hover {
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
-    background-color: #0da688;
-    
-  }
-  
-  /* Right Section (Camera + Crypto Tag) */
-  .right-options {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-  }
-  
-  /* Camera Icon Button */
-  .media-upload button {
-    background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s ease;
-    width: 40px;  /* Fixed size */
-    height: 40px; /* Fixed size */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .media-upload button:hover {
-    background-color: #45a049;
-  }
-  
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  background-color: #0da688;
+}
+
+/* Right Section (Camera + Crypto Tag) */
+.right-options {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Camera Icon Button */
+.media-upload button {
+  background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.media-upload button:hover {
+  background-color: #45a049;
+}
+
 /* Crypto Tag Input */
 input.crypto-tag-input {
   width: 240px;
   border-radius: 8px;
   font-size: 1rem;
-  border: 1px solid #00ffcc; /* Match theme */
-  padding: 8px 12px; /* Improve spacing inside */
-  background-color: #2b2b2b; /* Match textarea */
+  border: 1px solid #00ffcc;
+  padding: 8px 12px;
+  background-color: #2b2b2b;
   color: white;
-  outline: none; /* Remove default focus border */
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3); /* Add glow effect */
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
   transition: box-shadow 0.3s ease-in-out;
+  @apply bg-white text-black dark:bg-[#2b2b2b] dark:text-white dark:border-[#00ffcc];
 }
 
-/* Add a glowing effect on focus */
 input.crypto-tag-input:focus {
   border-color: #0da688;
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
 }
 
-/* Ensure proper spacing within right-options */
-.right-options {
-  display: flex;
-  align-items: center;
-  gap: 1rem; /* Reduce gap slightly */
+/* Drag Active for file drop */
+.post-composer-container.drag-active {
+  border: 2px dashed #888;
+  background-color: rgba(255, 255, 255, 0.05);
+  @apply dark:border-gray-500 dark:bg-[#1f1f1f];
 }
-  
-  .error-message {
-    color: #ff4d4d;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-  
 
-  .post-composer-container.drag-active {
-    border: 2px dashed #888;
-    background-color: rgba(255, 255, 255, 0.05);
-  }
-  
-  .media-preview-message {
-    margin-top: 8px;
-    font-size: 0.85rem;
-    color: #a2facf;
-  }
-  
+.media-preview-message {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #a2facf;
+  @apply text-gray-700 dark:text-[#a2facf];
+}
+
+.error-message {
+  color: #ff4d4d;
+  font-size: 14px;
+  margin-bottom: 10px;
+  @apply text-red-500;
+}

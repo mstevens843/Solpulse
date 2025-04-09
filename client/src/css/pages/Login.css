@@ -1,9 +1,8 @@
-/* Auth Section */
 .auth-section {
+  @apply bg-white text-black dark:bg-[#1f1f1f] dark:text-white;
   flex: 0.5;
   max-width: 400px;
   width: 100%;
-  background: #1f1f1f;
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
@@ -11,21 +10,22 @@
 }
 
 .auth-section h2 {
+  @apply text-black dark:text-[#00ffcc];
   margin-bottom: 1rem;
   font-size: 1.5rem;
   font-weight: bold;
-  color: #00ffcc;
 }
 
 .auth-section input {
-  display: block;
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  border: 1px solid #00ffcc;
-  border-radius: 5px;
-  background: #121212;
-  color: #fff;
+  @apply w-full mb-4 px-3 py-3 border border-[#00ffcc] rounded bg-white text-black dark:bg-[#121212] dark:text-white;
+  outline: none;
+  box-shadow: none;
+}
+
+.auth-section input:focus {
+  border-color: #00ddaa;
+  box-shadow: 0 0 5px rgba(0, 221, 170, 0.5);
+  outline: none;
 }
 
 .password-container {
@@ -38,7 +38,7 @@
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: #00ffcc;
+  @apply text-[#00ffcc];
 }
 
 .toggle-password:hover {
@@ -49,7 +49,7 @@
   display: flex;
   align-items: center;
   font-size: 0.9rem;
-  color: #00ffcc;
+  @apply text-[#00ffcc];
 }
 
 .remember-me input {
@@ -65,16 +65,10 @@
 }
 
 .feed-button, .login-btn {
-  width: 100%;
-  padding: 1rem;
-  background-color: #0da688;
+  @apply w-full p-4 bg-[#0da688] text-white rounded text-lg font-bold;
   border: none;
-  border-radius: 5px;
-  font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.3s ease;
-  font-weight: bold;
-  color: #fff;
 }
 
 .feed-button:hover, .login-btn:hover {
@@ -82,35 +76,13 @@
 }
 
 .signup-link {
-  color: #00ffcc;
-  font-weight: bold;
-  text-decoration: none;
+  @apply text-[#00ffcc] font-bold no-underline;
 }
 
 .signup-link:hover {
   text-decoration: underline;
 }
 
-.auth-section input {
-  display: block;
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  border: 1px solid #00ffcc;
-  border-radius: 5px;
-  background: #121212;
-  color: #fff;
-  outline: none;
-  box-shadow: none;
-}
-
-.auth-section input:focus {
-  border-color: #00ddaa; 
-  box-shadow: 0 0 5px rgba(0, 221, 170, 0.5); 
-  outline: none;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
   .auth-section {
     width: 90%;

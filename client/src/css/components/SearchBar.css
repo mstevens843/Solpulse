@@ -3,13 +3,15 @@
     padding: 0.5rem;
     max-width: 1200px; 
     width: 100%;
-    background: #2f2b2b; 
+    background: #ffffff;
+    color: #000;
     margin: 0 auto;
     display: flex;
     border-radius: 10px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    @apply dark:bg-[#2f2b2b] dark:text-white;
 }
 
 /* Search Bar Form */
@@ -21,19 +23,13 @@
     gap: 1rem;
 }
 
-/* Input Row */
-
-
-/* Longer Search Input */
-
-
+/* Input Focus */
 .search-input:focus {
     border-color: #00ffcc;
     box-shadow: 0 0 10px #00ffcc;
 }
 
 /* Search Button Positioned Below */
-
 .search-button {
     color: #000000;
     margin-top: 15px;
@@ -44,6 +40,8 @@
     transition: all 0.3s ease;
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
     text-align: center;
+    background: rgba(0, 255, 204, 0.5);
+    @apply dark:text-white;
 }
 
 /* Filter and Reset Buttons on the same row */
@@ -74,6 +72,7 @@
     text-align: center;
     max-height: 75px;
     height: 100%;
+    @apply dark:text-white;
 }
 
 button.search-button:hover, 
@@ -122,13 +121,13 @@ select.search-filter:hover {
     padding: 1rem;
     border: 1px solid #00ffcc;
     border-radius: 8px;
-    background-color: #1a1a2e;
-    color: #ffffff;
+    background-color: #f9f9f9;
+    color: #000000;
     font-size: 1rem;
     outline: none;
     transition: all 0.3s ease;
+    @apply dark:bg-[#1a1a2e] dark:text-white;
 }
-
 
 .search-button-container {
     display: flex;
@@ -147,11 +146,14 @@ select.search-filter:hover {
     transition: all 0.3s ease;
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
     text-align: center;
+    background: rgba(0, 255, 204, 0.5);
+    @apply dark:text-white;
 }
 
 .search-input::placeholder {
     font-size: 1.1rem;
-    color: #ffffff;
+    color: #999;
+    @apply dark:text-white;
 }
 
 /* Autocomplete Suggestions */
@@ -161,7 +163,7 @@ select.search-filter:hover {
     max-width: 400px;
     max-height: 250px;
     overflow-y: auto;
-    background-color: #1a1a2e;
+    background-color: #ffffff;
     border: 1px solid #00ffcc;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
@@ -171,6 +173,7 @@ select.search-filter:hover {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    @apply dark:bg-[#1a1a2e];
 }
 
 .autocomplete-suggestions li {
@@ -180,13 +183,13 @@ select.search-filter:hover {
     border-bottom: 1px solid rgba(0, 255, 204, 0.1);
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
-    word-break: break-word; /* Prevents overflow */
+    word-break: break-word;
 }
 
-/* Hover Interaction */
 .autocomplete-suggestions li:hover {
     background-color: #0da688;
     color: #000000;
+    @apply dark:text-black;
 }
 
 /* Custom Scrollbar */

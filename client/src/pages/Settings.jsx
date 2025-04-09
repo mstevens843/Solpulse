@@ -14,6 +14,8 @@ import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
 import "@/css/pages/Settings.css";
 import { FaEnvelope, FaLock, FaUser, FaWallet, FaBell, FaPaintBrush, FaTrash } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+
 
 function Settings() {
   const [email, setEmail] = useState("");
@@ -21,27 +23,38 @@ function Settings() {
   const [privacy, setPrivacy] = useState("public");
   const [walletAddress, setWalletAddress] = useState("");
   const [notifications, setNotifications] = useState("enabled");
-  const [theme, setTheme] = useState("dark");
+  const [themeLoaded, setThemeLoaded] = useState(false);
+  const [theme, setTheme] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  // const [errorMessage, setErrorMessage] = useState("");
+  // const [successMessage, setSuccessMessage] = useState("");
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showPasswordField, setShowPasswordField] = useState(false);
 
 
+  // Apply theme in realtime when user clicks it from dropdown.
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
 
   // Local Storage only holds non-sensitive preferences (theme, notifications, privacy, walletAddress)
   useEffect(() => {
-    const cached = JSON.parse(localStorage.getItem("userSettings"));
-    if (cached) {
-      setPrivacy(cached.privacy || "public");
-      setNotifications(cached.notifications || "enabled");
-      setTheme(cached.theme || "dark");
-      setWalletAddress(cached.walletAddress || "");
-    }
+    const applyInitialSettings = async () => {
+      const cached = JSON.parse(localStorage.getItem("userSettings"));
+      if (cached) {
+        setPrivacy(cached.privacy || "public");
+        setNotifications(cached.notifications || "enabled");
+        setWalletAddress(cached.walletAddress || "");
+      }
   
-    // Always fetch fresh values to ensure consistency
-    fetchSettings();
+      await fetchSettings(); // This sets the correct theme and applies it to the DOM
+    };
+  
+    applyInitialSettings();
   }, []);
 
   /**
@@ -58,21 +71,16 @@ function Settings() {
       setWalletAddress(walletAddress || "");
       setNotifications(notifications || "enabled");
       setTheme(theme || "dark");
+      setThemeLoaded(true); // ✅ after theme is loaded
   
-      // ✅ Store only non-sensitive settings
+      // ✅ Save to localStorage
       localStorage.setItem(
         "userSettings",
-        JSON.stringify({
-          walletAddress,
-          privacy,
-          notifications,
-          theme,
-        })
+        JSON.stringify({ walletAddress, privacy, notifications, theme })
       );
   
-      setErrorMessage("");
     } catch (error) {
-      setErrorMessage("Failed to load settings. Please try again.");
+      toast.error("Failed to load settings. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -87,18 +95,61 @@ function Settings() {
    */
   const handleUpdateSettings = async (e) => {
     e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
     setLoading(true);
-
+  
     try {
-      await api.put(`/users/settings`, { email, walletAddress, privacy, notifications, theme });
-      localStorage.setItem("userSettings", JSON.stringify({ email, walletAddress }));
-      setSuccessMessage("Settings updated successfully!");
+      await api.put(`/users/settings`, {
+        email,
+        walletAddress,
+        privacy,
+        notifications,
+        theme,
+      });
+  
+      localStorage.setItem("userSettings", JSON.stringify({
+        email,
+        walletAddress,
+        privacy,
+        notifications,
+        theme,
+      }));
+  
+      toast.success("Settings updated successfully ✅");
     } catch (error) {
-      setErrorMessage("Failed to update settings. Please try again.");
+      toast.error("Failed to update settings ❌");
     } finally {
       setLoading(false);
+    }
+  };
+  /**
+   * Handle updating user theme.
+   * - Sends updated theme to the backend.
+   * - Stores themein localStorage for persistence.
+   */
+  const handleThemeToggle = async (e) => {
+    const newTheme = e.target.checked ? "dark" : "light";
+    setTheme(newTheme); // Update UI immediately
+  
+    try {
+      await api.put(`/users/settings`, {
+        email,
+        walletAddress,
+        privacy,
+        notifications,
+        theme: newTheme,
+      });
+  
+      localStorage.setItem("userSettings", JSON.stringify({
+        email,
+        walletAddress,
+        privacy,
+        notifications,
+        theme: newTheme,
+      }));
+  
+      toast.success(`Switched to ${newTheme} mode ✅`);
+    } catch (err) {
+      toast.error("Failed to save theme preference ❌");
     }
   };
 
@@ -183,14 +234,22 @@ function Settings() {
               </select>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="theme">Theme:</label>
-              <FaPaintBrush className="input-icon" />
-              <select id="theme" value={theme} onChange={(e) => setTheme(e.target.value)}>
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-              </select>
-            </div>
+            {theme !== null && (
+              <div className="form-group flex items-center gap-3">
+                <FaPaintBrush className="input-icon" />
+                <label htmlFor="darkModeToggle" className="flex items-center gap-2 cursor-pointer">
+                  <span>Dark Mode</span>
+                  <input
+                    id="darkModeToggle"
+                    type="checkbox"
+                    checked={theme === "dark"}
+                    onChange={handleThemeToggle}
+                    className="toggle-switch"
+                    disabled={loading}
+                  />
+                </label>
+              </div>
+            )}
 
             <div className="form-group">
               <label htmlFor="walletAddress">Wallet Address:</label>
@@ -198,8 +257,8 @@ function Settings() {
               <input type="text" id="walletAddress" value={walletAddress} placeholder="Enter your wallet address (optional)" onChange={(e) => setWalletAddress(e.target.value)} />
             </div>
 
-            {errorMessage && <p className="notification notification-error">{errorMessage}</p>}
-            {successMessage && <p className="notification notification-success">{successMessage}</p>}
+            {/* {errorMessage && <p className="notification notification-error">{errorMessage}</p>}
+            {successMessage && <p className="notification notification-success">{successMessage}</p>} */}
 
             <button type="submit" className="settings-save-btn" disabled={loading}>
               {loading ? "Saving..." : "Save Settings"}

@@ -1,23 +1,19 @@
-/* Signup Page - TrendingCrypto Theme */
-
-/* Fullscreen Container */
 .signup-container {
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #121212;
   min-height: 100vh;
   width: 100%;
   padding: 6rem;
-  color: #fff;
 }
 
 /* Signup Header */
 .signup-header h2 {
   font-size: 3rem;
   font-weight: bold;
-  color: #00ffcc; 
+  color: #00ffcc;
   margin-bottom: 2rem;
   text-align: center;
 }
@@ -28,12 +24,12 @@
   color: #00ffcc;
   margin-top: 2rem;
   text-align: center;
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 /* Signup Form */
 .signup-form {
-  background: #1f1f1f;
+  @apply bg-white text-black dark:bg-[#1f1f1f] dark:text-white;
   padding: 3rem;
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
@@ -44,13 +40,7 @@
 
 /* Input Fields */
 .signup-form input {
-  width: 100%;
-  padding: 1.2rem;
-  margin-bottom: 1.5rem;
-  border: 2px solid #00ffcc;
-  border-radius: 12px;
-  background: #121212;
-  color: #fff;
+  @apply w-full mb-6 p-4 border-2 border-[#00ffcc] rounded-xl bg-white text-black dark:bg-[#121212] dark:text-white;
   font-size: 1.4rem;
   transition: all 0.3s ease;
 }
@@ -65,7 +55,7 @@
   box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
 }
 
-/* General Error Messages */
+/* General Error */
 .signup-error {
   color: #ff4d4d;
   background: rgba(255, 0, 0, 0.2);
@@ -76,8 +66,10 @@
   margin-bottom: 1.5rem;
 }
 
-/* Specific Field Error Messages */
-.field-error {
+/* Specific Field Errors */
+.field-error,
+.password-error,
+.wallet-error {
   color: #ff4d4d;
   font-size: 1.2rem;
   text-align: left;
@@ -85,31 +77,14 @@
   margin-bottom: 1.5rem;
 }
 
-/* Input Error Styling */
+/* Error Input Border */
 .input-error {
   border-color: #ff4d4d !important;
   box-shadow: 0 0 10px rgba(255, 77, 77, 0.6);
 }
 
-/* Password Mismatch Error */
-.password-error {
-  color: #ff4d4d;
-  font-size: 1.2rem;
-  margin-top: -1rem;
-  text-align: left;
-}
-
-/* Wallet Address Error */
-.wallet-error {
-  color: #ff4d4d;
-  font-size: 1.2rem;
-  margin-top: -1rem;
-  text-align: left;
-}
-
 /* Submit Button */
 .signup-form button {
-  /* background: linear-gradient(to right, #00ffcc, #ffcc00); */
   background-color: #0da688;
   color: #1a1a2e;
   font-size: 1.4rem;
@@ -123,8 +98,8 @@
 }
 
 .signup-form button:hover {
-  /* background: linear-gradient(to right, #ffcc00, #00ffcc); */
   background: #00ffcc;
+  color: #121212;
 }
 
 /* Footer Links */
@@ -145,7 +120,7 @@
   color: #ffcc00;
 }
 
-/* Password Toggle Visibility */
+/* Password Toggle */
 .password-container {
   position: relative;
 }
@@ -160,17 +135,17 @@
   color: #00ffcc;
 }
 
-/* Toastify Notifications */
+/* Toastify */
 .Toastify__toast-container {
   top: 80px !important;
   right: 20px;
 }
 
 .Toastify__toast {
-  background: #1f4068;
+  @apply dark:bg-[#1f1f1f] dark:text-white;
+  background: #ffffff;
   border-radius: 12px;
   border: 2px solid #00ffcc;
-  color: #ffffff;
   font-size: 1.2rem;
   font-weight: bold;
   padding: 1.5rem;
@@ -191,7 +166,7 @@
   background: #ffcc00;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
   .signup-container {
     padding: 3rem 1.5rem;

@@ -1,6 +1,6 @@
 /* Activity Page Container */
 .activity-page {
-    background: #121212; 
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -42,13 +42,17 @@
   .activity-tabs button {
     padding: 0.8rem 1.5rem;
     font-size: 1.2rem;
-    background: #1f1f1f;
-    border: none;
-    border-radius: 8px;
+    background: #ffffff;
     color: #00ffcc;
+    font-weight: bold;
+    border: 2px solid #00ffcc;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+    @apply dark:bg-[#1f1f1f] dark:text-[#00ffcc] dark:border-[#00ffcc] dark:shadow-md;
   }
+  
   
   .activity-tabs button:hover {
     background: #0f3460;
@@ -59,6 +63,21 @@
     color: #1a1a2e;
     font-weight: bold;
   }
+
+  .activity-tabs button.active {
+    background: #00ffcc !important;
+    color: #1a1a2e !important;
+    font-weight: bold;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .activity-tabs button:hover:not(.active) {
+    background-color: #00ffcc;
+    color: white;
+    box-shadow: 0 0 12px rgba(0, 255, 204, 0.5);
+  }
+  
   
   /* Content Container */
   .activity-content {

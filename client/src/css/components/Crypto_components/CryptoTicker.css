@@ -2,14 +2,16 @@
     flex: 0.5;
     max-width: 400px;
     width: 100%;
-    background: #1f1f1f;
+    background: #ffffff;
+    color: #000000;
     padding: 0rem;
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    box-shadow: 0 0 15px rgba(20, 241, 149, 0.2);
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    @apply dark:bg-[#1f1f1f] dark:text-white dark:shadow-[0_0_15px_rgba(0,255,204,0.5)];
 }
 
 /* Ticker Heading */
@@ -20,32 +22,33 @@
     background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-weight: bold;}
+}
 
 /* Search Bar */
 .crypto-search-input {
     display: block;
     width: 100%;
-    max-width: 80%; 
+    max-width: 80%;
     margin: 0 auto 1rem auto;
-    padding: 0.5rem;  
+    padding: 0.5rem;
     border: 1px solid #00ffcc;
     border-radius: 5px;
-    background: #121212;
-    color: #fff;
-    font-size: 0.9rem; 
-    outline: none;  
-    box-shadow: none;  
+    background: #f9f9f9;
+    color: #000;
+    font-size: 0.9rem;
+    outline: none;
+    box-shadow: none;
+    @apply dark:bg-[#121212] dark:text-white;
 }
 
 /* Price List */
 .crypto-price-list {
     width: 100%;
-    max-height: 70vh; /* ✅ Prevents overflow, scrolls if long */
+    max-height: 70vh;
     overflow-y: auto;
     padding-right: 10px;
     margin-bottom: 1rem;
-  }
+}
 
 /* Individual Coin Price */
 .crypto-price-item {
@@ -53,20 +56,22 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: #1c1c1c;
-    color: #fff;
-    border-bottom: 1px solid #333;
+    background: #f4f4f4;
+    color: #000;
+    border-bottom: 1px solid #ddd;
     border-radius: 5px;
     transition: background 0.3s ease;
+    @apply dark:bg-[#1c1c1c] dark:text-white dark:border-[#333];
 }
 
 .crypto-price-item:hover {
-    background: #292929;
+    background: #eaeaea;
+    @apply dark:bg-[#292929];
 }
 
 /* Coin Image */
 .crypto-coin-image {
-    width: 40px;  
+    width: 40px;
     height: 40px;
     border-radius: 50%;
 }
@@ -76,19 +81,21 @@
     display: flex;
     flex-direction: column;
     text-align: left;
-    font-size: 0.85rem;  
+    font-size: 0.85rem;
 }
 
 /* Coin Name and Symbol */
 .crypto-name {
     font-weight: bold;
-    color: #00ffcc;
+    color: #0da688;
     font-size: 1rem;
+    @apply dark:text-[#00ffcc];
 }
 
 .crypto-symbol {
     font-size: 0.8rem;
-    color: #1cd487;
+    color: #007d5f;
+    @apply dark:text-[#1cd487];
 }
 
 /* Coin Price Inline */
@@ -102,15 +109,27 @@
     text-align: right;
 }
 
-.crypto-marketcap,
 .crypto-change {
     font-size: 1rem;
-    padding: .75rem;
+    padding: 0.75rem;
 }
+
+
+.crypto-marketcap {
+    font-size: 1rem;
+    padding: 0.75rem;
+    color: #000; /* Light mode default */
+  }
+  
+  .dark .crypto-marketcap {
+    color: #fff; /* Dark mode override */
+  }
+
 
 /* Positive & Negative Change Colors */
 .crypto-change-positive {
-    color: #00ddaa;
+    color: #00bb99;
+    @apply dark:text-[#00ddaa];
 }
 
 .crypto-change-negative {
@@ -145,17 +164,30 @@
     .crypto-search-input {
         max-width: 100%;
     }
-
 }
-
 
 .sort-row {
     display: flex;
-    justify-content: center; /* ✅ centers horizontally */
+    justify-content: center;
     align-items: center;
     gap: 0.5rem;
     margin: 1rem 0;
+}
+
+
+.sort-row select {
+    background-color: #f4f4f4;
+    color: #000;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
   }
   
-
-
+  .dark .sort-row select {
+    background-color: #1f1f1f;
+    color: #fff;
+    border: 1px solid #333;
+  }

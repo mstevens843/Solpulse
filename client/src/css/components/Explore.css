@@ -1,11 +1,10 @@
-
-
 /* Container */
 .explore-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem 1rem;
+  @apply dark:text-white;
 }
 
 /* Header */
@@ -34,16 +33,18 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  color: #cccccc;
+  color: #333;
+  @apply dark:text-[#cccccc];
 }
 
 .filter-controls select {
-  background-color: #1f1f1f;
-  color: #00ffcc;
+  background-color: #ffffff;
+  color: #000000;
   border: 1px solid #00ffcc;
   border-radius: 6px;
   padding: 6px 10px;
   font-size: 1rem;
+  @apply dark:bg-[#1f1f1f] dark:text-[#00ffcc];
 }
 
 /* Trending Section Container */
@@ -54,11 +55,12 @@
   height: 715px;
   overflow-y: auto;
   border-radius: 12px;
-  background: #1c1c1e;
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
-  scrollbar-width: thin; /* Firefox */
+  background: #f2f2f2;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+  scrollbar-width: thin;
   scrollbar-color: #00ffcc #121212;
   scroll-behavior: smooth;
+  @apply dark:bg-[#1c1c1e] dark:shadow-[0_0_10px_rgba(0,255,204,0.3)];
 }
 
 /* Custom Scrollbars */
@@ -67,8 +69,8 @@
 }
 
 .trending-section::-webkit-scrollbar-track {
-  background: #121212;
-  border-radius: 10px;
+  background: #f9f9f9;
+  @apply dark:bg-[#121212];
 }
 
 .trending-section::-webkit-scrollbar-thumb {
@@ -100,36 +102,36 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 0rem;
   position: relative;
-  isolation: isolate; /* 🔐 Prevents z-index bleed from children */
+  isolation: isolate;
   margin-top: 0rem;
   padding-left: 1rem;
   margin-right: 12px;
 }
 
 .trending-post {
-  background: #1f1f1f;
+  background: #ffffff;
   max-height: 30rem;
   padding: 1rem;
   border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
   transition: all 0.3s ease;
   text-align: left;
-  position: relative;       /* ✅ Ensures z-index works */
+  position: relative;
   z-index: 1;
-  overflow: hidden; /* 🔐 Force internal content to be clipped */
+  overflow: hidden;
   padding: 0.75rem 1rem;
-
+  @apply dark:bg-[#1f1f1f] dark:shadow-[0_0_20px_rgba(0,255,204,0.3)];
 }
 
 .trending-post:hover {
   outline: 2px solid #00ffcc;
   outline-offset: -4px;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
-  background-color: #262626;
+  background-color: #eaeaea;
   z-index: 2;
+  @apply dark:bg-[#262626];
 }
 
-/* Explore-specific post styles */
 .trending-post .individual-post-container {
   padding: 0.75rem 0.75rem;
   border-radius: 12px;
@@ -146,8 +148,9 @@
   font-size: 1rem;
   margin-left: 0.5rem;
   margin-top: 0.1rem;
-  color: #e0e0e0;
+  color: #444;
   word-wrap: break-word;
+  @apply dark:text-[#e0e0e0];
 }
 
 .trending-post .individual-post-header {
@@ -170,7 +173,6 @@
   line-height: 1.2;
 }
 
-
 .trending-post .individual-post-actions {
   display: flex;
   justify-content: space-evenly;
@@ -183,16 +185,16 @@
 .trending-post h4 {
   font-size: 1rem;
   font-weight: bold;
-  color: #ffffff;
+  color: #000000;
   margin-bottom: 1rem;
+  @apply dark:text-white;
 }
 
 .trending-post p {
   font-size: 1rem;
-  color: #ffffff;
+  color: #222222;
+  @apply dark:text-white;
 }
-
-
 
 /* Error Display */
 .explore-error {
@@ -205,19 +207,20 @@
 
 /* Loading Text */
 .explore-loading {
-  color: #bbbbbb;
+  color: #666;
   font-size: 1.2rem;
   text-align: center;
+  @apply dark:text-[#bbbbbb];
 }
 
 /* Empty State */
 .trending-empty {
   font-size: 1.3rem;
-  color: #bbbbbb;
+  color: #777;
   font-style: italic;
   margin-top: 1.5rem;
+  @apply dark:text-[#bbbbbb];
 }
-
 
 .category-tabs {
   display: flex;
@@ -235,15 +238,15 @@
   cursor: pointer;
   font-size: 0.875rem;
   transition: all 0.2s ease;
+  @apply dark:border-[#00ffcc] dark:text-[#00ffcc];
 }
 
 .category-tab.active,
 .category-tab:hover {
   background-color: #00ffcc;
   color: black;
+  @apply dark:bg-[#00ffcc] dark:text-black;
 }
-
-
 
 /* Responsive Styles */
 @media (max-width: 768px) {
@@ -263,5 +266,3 @@
     width: 100%;
   }
 }
-
-

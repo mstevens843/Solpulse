@@ -1,6 +1,6 @@
 /* Wallet Container */
 .crypto-wallet-container {
-    background: #121212; /* Dark background to match theme */
+    @apply bg-white text-black dark:bg-[#121212] dark:text-white;
     border-radius: 12px;
     padding: 2rem;
     box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);

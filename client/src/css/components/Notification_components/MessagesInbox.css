@@ -1,20 +1,19 @@
 /* Messages Page Container */
 .messages-container {
-  background: #121212;
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 4rem;
   font-family: Arial, sans-serif;
-  color: #fff;
 }
 
 /* Message List */
 .message-list {
+  @apply bg-white dark:bg-[#1f1f1f] text-black dark:text-white;
   width: 100%;
   max-width: 600px;
-  background: #1f1f1f;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
   padding: 1.5rem;
@@ -22,7 +21,7 @@
 
 /* Individual Message Item */
 .message-item {
-  background: #121212;
+  @apply bg-white dark:bg-[#121212] text-black dark:text-white;
   padding: 1rem;
   border-bottom: 1px solid #00ffcc;
   border-radius: 8px;
@@ -32,11 +31,9 @@
 }
 
 .message-item:hover {
-  background: #000000;
-  color: #fff;
+  @apply bg-[#e6fffa] dark:bg-black text-black dark:text-white;
   transform: scale(1.02);
 }
-
 
 
 /* Read and Unread Messages */
@@ -62,15 +59,13 @@
 }
 
 .modal-overlay .modal-content {
-  background: #1f1f1f;
+  @apply bg-white dark:bg-[#1f1f1f] text-black dark:text-white;
 }
 
 
-.modal-overlay .modal-content input  {
-  background: #121212;
-}
+.modal-overlay .modal-content input,
 .modal-overlay .modal-content textarea {
-  background: #121212;
+  @apply bg-white dark:bg-[#121212] text-black dark:text-white;
 }
 
 .modal-overlay .modal-content button {
@@ -94,10 +89,10 @@
 
 
 .messages-success {
-  background: #121212;
-  color: #00ffcc;
+  @apply bg-white dark:bg-[#121212] text-[#00ffcc] dark:text-[#00ffcc];
   border: 2px solid rgba(0, 255, 204, 0.5);
 }
+
 
 /* Pagination */
 .pagination {
@@ -171,7 +166,7 @@
 /* Suggested Users */
 .suggested-users {
   position: absolute;
-  background: #1a1a1a;
+  @apply bg-white dark:bg-[#1a1a1a] text-black dark:text-[#ddd];
   border: 1px solid #00ffcc;
   width: 100%;
   max-height: 150px;
@@ -236,7 +231,10 @@
   }
 }
 
-
+.messages-error {
+  @apply bg-white dark:bg-[#121212] text-red-500;
+  background: rgba(255, 0, 0, 0.2);
+}
 
 /* Error and Success Messages */
 .messages-error,

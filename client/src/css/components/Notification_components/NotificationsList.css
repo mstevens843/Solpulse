@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #121212;
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
   min-height: 100vh;
   padding: 2rem;
   color: #fff;
@@ -20,16 +20,19 @@
 .notifications-tab {
   padding: 0.8rem 1.5rem;
   font-size: 1.2rem;
-  background: #1f1f1f;
-  border: none;
-  border-radius: 8px;
+  font-weight: bold;
+  background: #ffffff;
   color: #00ffcc;
+  border: 2px solid #00ffcc;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+  @apply dark:bg-[#1f1f1f] dark:text-[#00ffcc] dark:border-[#00ffcc] dark:shadow-md;
 }
 
 .notifications-tab:hover {
-  background: #0f3460;
+  @apply dark:bg-[#00ffcc] dark:text-black;
 }
 
 .notifications-tab.active {
@@ -38,6 +41,11 @@
   font-weight: bold;
 }
 
+.notifications-tab:hover:not(.active) {
+  background-color: #00ffcc;
+  color: white;
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.5);
+}
 
 .notifications-controls {
   display: flex;
@@ -67,7 +75,7 @@
 
 
 .notification-sort-dropdown {
-  background-color: #1f1f1f;
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
   color: #00ffcc;
   border: 1px solid #00ffcc;
   border-radius: 6px;
@@ -105,7 +113,7 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  background: #1f1f1f;
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 255, 204, 0.3);

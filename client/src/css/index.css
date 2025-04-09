@@ -19,9 +19,9 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  @apply bg-solana-dark text-solana-light font-sans leading-relaxed;
+
+  /* ✅ Default to "light" theme, then use dark: variant for dark mode */
+  @apply transition-colors duration-300 bg-solana-light text-black dark:bg-solana-dark dark:text-solana-light;
 }
 
 code {
@@ -93,6 +93,58 @@ p {
 
 /* Components */
 @layer components {
+
+    .page-container {
+      @apply flex flex-col justify-center items-center min-h-screen w-full p-8 text-center overflow-y-auto box-border mt-8 bg-white text-black dark:bg-[#121212] dark:text-white;
+      @apply flex justify-center items-center min-h-screen transition-colors duration-300 bg-solana-light text-black dark:bg-solana-dark dark:text-solana-light;
+      padding: 2rem;
+    }
+  
+    .form-card {
+      @apply bg-white dark:bg-[#1f1f1f] p-8 rounded-lg w-[90%] max-w-[600px] text-center flex flex-col items-center transition-shadow relative;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      @apply dark:border-none shadow-[0_0_15px_rgba(20,241,149,0.2)] dark:shadow-[0_0_15px_rgba(0,255,204,0.5)];
+    }
+  
+    .form-card:hover {
+      box-shadow:
+        0 0 15px rgba(20, 241, 149, 0.2),
+        0 0 8px rgba(20, 241, 149, 0.15);
+      @apply dark:shadow-[0_0_15px_rgba(0,255,204,0.5),_0_0_8px_rgba(0,255,204,0.3)];
+    }
+  
+    .page-title {
+      @apply text-4xl font-bold mb-6;
+      background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  
+    .btn-primary {
+      @apply bg-[#0da688] dark:text-white text-[#121212] font-bold py-4 px-6 w-full rounded-md transition-all;
+    }
+  
+    .btn-primary:hover {
+      background: linear-gradient(to right, #0fd9b6, #00ddaa);
+      color: #fff;
+      @apply dark:text-black shadow-[0_0_12px_rgba(0,255,204,0.6)] dark:shadow-[0_0_12px_rgba(0,255,204,0.6)];
+    }
+  
+    .btn-danger {
+      @apply bg-[#FF416C] text-[#121212] font-bold py-3 px-6 rounded-lg w-full flex justify-center items-center gap-2 transition-all shadow-md dark:shadow-[0_0_20px_rgba(255,65,108,0.8)];
+    }
+  
+    .btn-danger:hover {
+      background: linear-gradient(90deg, #FF4B2B, #FF416C);
+      @apply text-white scale-105 shadow-[0_0_20px_rgba(255,65,108,0.8)];
+    }
+  }
+
+  
+
+
+
+
   /* Buttons */
   .button-primary {
     @apply bg-gradient-to-r from-[var(--solana-primary)] to-[var(--solana-secondary)] text-solana-dark font-bold py-3 px-6 rounded-lg hover:bg-solana-secondary transition-all duration-300 shadow-lg;
@@ -113,7 +165,7 @@ p {
 
   /* Input Fields */
   .input-field {
-    @apply w-full p-3 border border-solana-primary bg-solana-dark text-solana-light rounded-md focus:outline-none focus:ring-2 focus:ring-solana-primary transition-all;
+    @apply w-full p-3 border border-solana-primary bg-solana-dark text-solana-light rounded-md focus:outline-none focus:ring-2 focus:ring-solana-primary transition-all dark:bg-solana-dark;
   }
 
   .input-field:focus {
@@ -122,7 +174,7 @@ p {
 
   /* Form Components */
   .form-label {
-    @apply block text-solana-light font-semibold mb-2;
+    @apply block text-solana-light font-semibold mb-2 dark:text-solana-light;
   }
 
   .form-error {
@@ -131,7 +183,7 @@ p {
 
   /* Card Components */
   .card {
-    @apply bg-solana-dark p-6 rounded-lg shadow-lg border border-solana-secondary transition-all transform hover:scale-105;
+    @apply bg-solana-light p-6 rounded-lg shadow-lg border border-solana-secondary transition-all transform hover:scale-105 dark:bg-solana-dark;
   }
 
   /* Header Section */
@@ -150,6 +202,50 @@ p {
   .container {
     @apply max-w-6xl mx-auto px-6 sm:px-10 mt-6 animate-fade-in;
   }
+
+
+/* General Page Content Layout */
+.page-content {
+  @apply flex flex-row items-center justify-between max-w-[1200px] w-full gap-4 text-center;
+}
+
+/* Gradient Text for Headers */
+.text-gradient {
+  background: var(--solana-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+/* Navbar */
+.navbar {
+  @apply flex justify-between items-center h-16 px-4 bg-solana-dark text-solana-light dark:bg-solana-dark dark:text-solana-light;
+  border-bottom: 0.5px solid rgba(0, 255, 204, 0.5);
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar-item {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--solana-secondary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.navbar-item:hover {
+  color: var(--solana-primary);
+}
+
+.navbar-item.active {
+  background: var(--solana-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
   /* Animations */
   @keyframes fadeIn {
@@ -179,7 +275,8 @@ p {
   .navbar {
     @apply fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 shadow-md;
     height: 4rem;
-    background: linear-gradient(to bottom, #1a1a2e, #16213e);
+    /* background: linear-gradient(to bottom, #1a1a2e, #16213e); */
+    background: var(--solana-dark);
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
     border-bottom: 2px solid #00ffcc;
   }
@@ -194,16 +291,16 @@ p {
 
   /* Feed Container */
   .feed-container {
-    @apply flex flex-col items-center justify-center min-h-screen bg-solana-dark p-8;
+    @apply flex flex-col items-center justify-center min-h-screen bg-solana-dark p-8 dark:bg-solana-dark;
   }
 
   .feed-card {
-    @apply bg-solana-light p-6 rounded-lg shadow-md max-w-2xl w-full;
+    @apply bg-solana-light p-6 rounded-lg shadow-md max-w-2xl w-full dark:bg-[#333];
   }
 
   /* Post Styling */
   .post {
-    @apply bg-solana-dark p-4 rounded-lg shadow-md border border-solana-primary;
+    @apply bg-solana-dark p-4 rounded-lg shadow-md border border-solana-primary dark:bg-solana-dark;
   }
 
   .post-header {
@@ -218,7 +315,7 @@ p {
   .footer {
     @apply text-center text-solana-text-light py-4;
   }
-}
+
 
 /* Responsive Design */
 @media (max-width: 1024px) {
@@ -255,73 +352,8 @@ p {
 }
 
 
-/* General Page Container */
-.page-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: var(--solana-dark);
-  color: white;
-  padding: 2rem;
-}
 
-/* General Page Content Layout */
-.page-content {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  width: 100%;
-  gap: 4rem;
-  text-align: center;
-}
 
-/* Gradient Text for Headers */
-.text-gradient {
-  background: var(--solana-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: bold;
-}
-
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 4rem;
-  padding: 1rem 2rem;
-  background: var(--solana-dark);
-  border-bottom: .5px solid rgba(0, 255, 204, 0.5);
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-}
-
-.navbar-item {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--solana-secondary);
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.navbar-item:hover {
-  color: var(--solana-primary);
-}
-
-.navbar-item.active {
-  background: var(--solana-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Responsive Adjustments */
 @media (max-width: 1024px) {
   .page-content {
     flex-direction: column;

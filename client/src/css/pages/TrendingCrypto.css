@@ -1,16 +1,12 @@
 /* TrendingCrypto.css */
-
 .trending-crypto-container {
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* background: linear-gradient(to bottom, #1a1a2e, #16213e); */
-  background: #121212;
   min-height: 100vh;
   padding: 5rem;
-  color: #fff;
 }
-
 .trending-crypto-container h2 {
   font-size: 2.5rem;
   font-weight: bold;
@@ -31,8 +27,7 @@
   padding: 1rem;
   border: 1px solid #00ffcc;
   border-radius: 10px;
-  background: #1f1f1f;
-  color: #ffffff;
+  @apply bg-white text-black dark:bg-[#1f1f1f] dark:text-white;
   font-size: 1.2rem;
 }
 
@@ -108,16 +103,17 @@
 }
 
 .trending-list-container {
-  background: #1f1f1f;
+  @apply bg-white text-black dark:bg-[#1f1f1f] dark:text-white;
   padding: 1rem;
   border-radius: 12px;
-  /* box-shadow: 0 4px 8px rgba(0, 255, 204, 0.3); */
+  @apply shadow-[0_4px_8px_rgba(0,255,204,0.3)] dark:shadow-none;
   width: calc(35% - 1rem);
   max-width: 350px;
   text-align: center;
   height: 35%;
   overflow-y: auto;
 }
+
 
 .trending-list-container h3 {
   font-size: 1.8rem;
@@ -141,7 +137,7 @@ ul {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #16213e;
+  @apply bg-white text-black dark:bg-[#1f1f1f] dark:text-white;
   padding: 0.5rem 0.8rem;
   margin-bottom: 0.5rem;
   border-radius: 8px;
@@ -159,7 +155,7 @@ ul {
 }
 
 /* Coin Image */
-/* Coin Image - Reduce size */
+/* Coin Image - Reduce size */ 
 .crypto-coin-image {
   width: 20px;
   height: 20px;
@@ -369,7 +365,7 @@ button.refresh-button:hover {
   flex: 1 1 48%;
   max-width: 48%;  
   height: 50vh;
-  background: #1f1f1f;
+  @apply bg-white text-black dark:bg-[#1f1f1f] dark:text-white;
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
@@ -402,7 +398,7 @@ button.refresh-button:hover {
   flex: 1 1 48%;
   max-width: 48%;
   height: 50vh;
-  background: #1f1f1f;
+  @apply bg-white text-black dark:bg-[#1f1f1f] dark:text-white;
   padding: 4rem;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);

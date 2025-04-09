@@ -4,24 +4,27 @@
   align-items: stretch;
   padding: 0.2rem 1rem; /* tighter padding */
   border-bottom: 1px solid #2e2e2e;
-  background: #1f1f1f;
   transition: all 0.3s ease;
   cursor: pointer;
   width: 100%;
+  @apply flex flex-col items-stretch w-full cursor-pointer transition-all duration-300 p-2 px-4 pt-2 pb-1 box-border font-sans border-b border-[#2e2e2e] bg-white text-black dark:bg-[#1f1f1f] dark:text-white;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  box-sizing: border-box;
 }
 
+/* .individual-post-container {
+  padding-top: 0.5rem;  
+  padding-bottom: 0.2rem;
+  @apply pt-2 pb-1;
+} */
+
 .individual-post-container:hover {
-  background: #2a2a2a;
+  /* background: #2a2a2a; */
 }
 
 .repost-indicator {
   font-size: 0.75rem;
   font-weight: 500;
-  color: #c8c3c3;
-  margin-left: 3.5rem; /* aligns under profile image */
-  margin-bottom: 0.1rem; /* ⬅️ reduce vertical gap */
+  @apply text-xs font-medium text-gray-400 ml-14 mb-0.5;
 }
 
 .post-content-wrapper {
@@ -37,33 +40,23 @@
   border-radius: 50%;
   margin-right: 0.75rem;
   margin-left: 0.25rem;
-  margin-top: 0rem;
+  @apply w-11 h-11 rounded-full mr-3 ml-1;
 }
-
-.individual-post-container {
-  padding-top: 0.5rem;  /* 🔽 reduce from 0.75rem */
-  padding-bottom: 0.2rem;
-}
-
-/* .individual-post-header,
-.individual-post-content,
-.repost-indicator {
-  outline: 1px dashed red;
-} */
 
 .individual-post-content-wrapper {
   flex-grow: 1;
   width: 100%;
   padding-right: 0.5rem;
+  @apply flex-grow w-full pr-2;
 }
 
 .individual-post-header {
   display: flex;
-  align-items: flex-start; /* ⬅️ change from center to top-align */
+  align-items: flex-start;
   justify-content: space-between;
   width: 100%;
   margin-left: 0.5rem;
-  margin-top: -0.1rem; /* ⬅️ pull it up a bit if needed */
+  margin-top: -0.1rem;
   margin-bottom: -.6rem;
 }
 
@@ -72,39 +65,32 @@
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+  @apply flex items-center gap-2 flex-wrap;
 }
 
 .individual-post-author {
   font-size: 0.5rem;
   font-weight: bold;
-  color: #ffffff;
-  margin: 0;
+  @apply text-xs font-bold text-black dark:text-white m-0;
 }
 
 .individual-post-header .post-author-details .individual-post-date {
   font-size: 0.72rem;
-  color: #c8c3c3;
   white-space: nowrap;
-  margin-bottom: 0rem;
-  padding-top: 0rem;
   font-weight: 400;
-  opacity: 0.8;
+  @apply text-xs text-gray-400 font-normal opacity-80 whitespace-nowrap;
 }
 
 .individual-post-content {
-  margin-top: 0rem; /* ⬅️ add this line */
-  margin-left: .55rem;
-  font-size: 1.12rem;
-  line-height: 1.5;
-  color: #e0e0e0;
+  @apply mt-0 ml-2 text-base leading-6 text-gray-700 dark:text-gray-300 break-words;
   word-wrap: break-word;
 }
 
 .individual-post-crypto-tag {
   font-size: 0.85rem;
-  color: #ffffff;
-  margin-top: 0.5rem;
   line-height: 1.4;
+  margin-top: 0.5rem;
+  @apply text-sm text-black dark:text-white mt-2 leading-[1.4];
 }
 
 .individual-post-media img,
@@ -113,8 +99,7 @@
   max-height: 300px;
   margin-top: 0.5rem;
   border-radius: 12px;
-  border: 2px solid #00ffcc;
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+  @apply w-full max-h-[300px] mt-2 rounded-xl border-2 border-[#00ffcc] shadow-[0_0_10px_rgba(0,255,204,0.3)];
 }
 
 .individual-post-actions {
@@ -123,6 +108,7 @@
   align-items: center;
   margin-top: 1.2rem;
   flex-wrap: wrap;
+  @apply flex gap-6 items-center mt-5 flex-wrap;
 }
 
 .action-button-with-count,
@@ -131,52 +117,35 @@
   flex-direction: column;
   align-items: center;
   font-size: 0.7rem;
-  color: #888;
   cursor: pointer;
+  @apply flex flex-col items-center text-xs text-gray-500 cursor-pointer;
 }
 
 .interaction-count {
-  cursor: pointer;
-  color: #888;
   font-size: 0.85rem;
   margin-top: 0.2rem;
+  @apply cursor-pointer text-gray-500 text-sm mt-1 hover:underline;
 }
-
-.interaction-count:hover {
-  text-decoration: underline;
-}
-
 
 .comment-icon-link {
-  color: #ccc;
   font-size: 1rem;
   text-decoration: none;
   transition: color 0.2s ease;
-}
-
-.comment-icon-link:hover {
-  color: #00ffcc;
+  @apply text-gray-300 text-base no-underline transition-colors duration-200 hover:text-[#00ffcc];
 }
 
 .delete-post-button {
   background: transparent;
-  color: #ff4d4d;
   font-size: 0.9rem;
   font-weight: bold;
   cursor: pointer;
   margin-right: 0.25rem;
-
   border: none;
-  transition: color 0.3s ease;
-}
-
-.delete-post-button:hover {
-  color: #ffcc00;
+  @apply bg-transparent text-[#ff4d4d] text-sm font-bold cursor-pointer mr-1 border-none transition-colors duration-300 hover:text-[#ffcc00];
 }
 
 .explore-post-hint {
   font-size: 0.75rem;
-  color: #00ffcc;
   text-align: right;
   font-style: italic;
   margin-top: 1rem;
@@ -185,13 +154,13 @@
   display: block !important;
   position: relative;
   z-index: 10;
+  @apply text-xs text-[#00ffcc] italic text-right mt-4 mb-2 opacity-100 relative z-10;
 }
 
 /* Fade out when deleting */
 .individual-post-container.fading {
-  opacity: 0;
   transform: translateY(-20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  @apply opacity-0 -translate-y-5 transition-all duration-300;
 }
 
 /* Mobile tweaks */
@@ -199,21 +168,25 @@
   .post-profile-picture {
     width: 36px;
     height: 36px;
+    @apply w-9 h-9;
   }
 
   .individual-post-container {
     flex-direction: column;
     align-items: flex-start;
+    @apply flex-col items-start;
   }
 
   .individual-post-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.25rem;
+    @apply flex-col items-start gap-1;
   }
 
   .individual-post-actions {
     gap: 0.75rem;
     font-size: 0.8rem;
+    @apply gap-3 text-sm;
   }
 }
