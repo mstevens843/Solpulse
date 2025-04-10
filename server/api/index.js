@@ -11,8 +11,8 @@ const notificationRoutes = require('./notifications');
 const trendingCryptoRoutes = require('./trendingCrypto');
 const searchRoutes = require('./search');
 const jupiterRoutes = require('./jupiter'); 
-
-
+const followRequestRoutes = require("./followrequests");
+const messageRequestRoutes = require("./messageRequests")
 const router = express.Router();
 
 /** 
@@ -40,6 +40,8 @@ router.use('/notifications', notificationRoutes);
 router.use('/trendingCrypto', trendingCryptoRoutes);
 console.log('/trendingCrypto route successfully registered');
 router.use('/search', searchRoutes); 
+router.use('/follow-requests', followRequestRoutes);
+router.use('/message-requests', messageRequestRoutes);
 
 
 

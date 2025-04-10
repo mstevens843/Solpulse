@@ -1,0 +1,279 @@
+/* Messages Page Container */
+.messages-container {
+  @apply bg-white text-black dark:bg-[#121212] dark:text-white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem;
+  font-family: Arial, sans-serif;
+}
+
+/* Message List */
+.message-list {
+  @apply bg-white dark:bg-[#1f1f1f] text-black dark:text-white;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+  padding: 1.5rem;
+}
+
+/* Individual Message Item */
+.message-item {
+  @apply bg-white dark:bg-[#121212] text-black dark:text-white;
+  padding: 1rem;
+  border-bottom: 1px solid #00ffcc;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.message-item:hover {
+  @apply bg-[#e6fffa] dark:bg-black text-black dark:text-white;
+  transform: scale(1.02);
+}
+
+
+/* Read and Unread Messages */
+.message-item.read {
+  opacity: 0.7;
+}
+
+.message-item.unread {
+  font-weight: bold;
+}
+
+/* Sender */
+.message-item strong {
+  color: #00ffcc;
+  font-size: 1.2rem;
+}
+
+/* Message Content */
+.message-item p {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #ffffff; 
+}
+
+.modal-overlay .modal-content {
+  @apply bg-white dark:bg-[#1f1f1f] text-black dark:text-white;
+}
+
+
+.modal-overlay .modal-content input,
+.modal-overlay .modal-content textarea {
+  @apply bg-white dark:bg-[#121212] text-black dark:text-white;
+}
+
+.modal-overlay .modal-content button {
+  background: #0da688;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay .modal-content button:hover {
+  background: #00ffcc !important;
+  color: #121212 !important;
+}
+
+
+
+
+
+.messages-success {
+  @apply bg-white dark:bg-[#121212] text-[#00ffcc] dark:text-[#00ffcc];
+  border: 2px solid rgba(0, 255, 204, 0.5);
+}
+
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.pagination button {
+  background: #0da688;
+  border: none;
+  color: #121212;
+  font-weight: bold;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination button:hover {
+  background: #00ffcc;
+  color: #000;
+}
+
+.pagination button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* New Message Button */
+.new-message-btn {
+  position: fixed;
+  bottom: 6rem;
+  right: 4rem;
+  background: #0da688;
+  color: #121212;
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border-radius: 100%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+
+.close-btn {
+  background: #121212;
+}
+
+.new-message-btn:hover {
+  background: #00ffcc;
+
+}
+
+/* Empty Messages */
+.messages-empty {
+  font-size: 1.3rem;
+  color: #ccc;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+/* Loader */
+.messages-loader {
+  margin-top: 2rem;
+}
+
+/* Suggested Users */
+.suggested-users {
+  position: absolute;
+  @apply bg-white dark:bg-[#1a1a1a] text-black dark:text-[#ddd];
+  border: 1px solid #00ffcc;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 10px;
+  margin-top: 5px;
+  z-index: 1000;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.suggested-users li {
+  padding: 12px 15px;
+  cursor: pointer;
+  color: #ddd;
+  font-weight: 500;
+  border-bottom: 1px solid #333;
+}
+
+.suggested-users li:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.suggested-users li:last-child {
+  border-bottom: none;
+}
+
+/* Message User Button */
+.message-user-btn {
+  background: none;
+  border: 2px solid #00ffcc;
+  color: #00ffcc;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.message-user-btn:hover {
+  background: #00ffcc;
+  color: #121212;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .messages-container {
+    padding: 2rem;
+  }
+
+  .message-item {
+    padding: 0.8rem;
+  }
+
+  .pagination button {
+    padding: 0.6rem 1.2rem;
+  }
+}
+
+.messages-error {
+  @apply bg-white dark:bg-[#121212] text-red-500;
+  background: rgba(255, 0, 0, 0.2);
+}
+
+/* Error and Success Messages */
+.messages-error,
+.messages-success {
+  background: rgba(255, 0, 0, 0.2);
+  color: #ff4d4d;
+  font-size: 1.2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 1rem;
+}
+
+.messages-success {
+  background: rgba(0, 255, 0, 0.2);
+  color: #ffffff;
+}
+
+
+.message-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.message-tabs button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #eee;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.message-tabs button.active {
+  background: #4b8df8;
+  color: white;
+}

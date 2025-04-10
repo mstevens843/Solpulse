@@ -12,7 +12,7 @@
 // ActivityPage.js
 
 import React, { useEffect, useState } from "react";
-import MessagesInbox from "@/components/Notification_components/MessagesInbox";
+import Messages from "@/components/Notification_components/Messages";
 import NotificationsList from "@/components/Notification_components/NotificationsList";
 import "@/css/pages/ActivityPage.css";
 
@@ -51,7 +51,7 @@ function ActivityPage() {
 
       {/* 3️⃣ Add basic animation on tab switch */}
       <div className={`activity-content fade-in`}>
-        {activeTab === "notifications" ? <NotificationsList /> : <MessagesInbox /> }
+        {activeTab === "notifications" ? <NotificationsList /> : <Messages /> }
       </div>
     </div>
   );

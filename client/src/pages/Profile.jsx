@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import UserCard from "@/components/Profile_components/UserCard";
 import Post from "@/components/Post_components/Post";
 import CryptoTip from "@/components/Crypto_components/CryptoTip";
+import PrivateProfileNotice from "@/components/Profile_components/PrivateProfileNotice"
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from "@/components/Loader";
@@ -44,6 +45,11 @@ function Profile() {
     const [profilePicture, setProfilePicture] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const isInModal = false; // Default value if it's not already defined
+
+    const isOwner = currentUser.id === profileUser.id;
+    const isFollower = profileUser.isFollowedByCurrentUser; // assuming this is returned from API
+    const isPrivate = profileUser.privacy === 'private';
+    const canViewConnections = isOwner || isFollower || !isPrivate;
 
 
 
@@ -299,35 +305,13 @@ function Profile() {
                         followersCount={followersCount}
                         followingCount={followingCount}
                         isInModal={isInModal} 
-                        currentUser={currentUser}  
+                        currentUser={currentUser}
+                        canViewConnections={canViewConnections}
                         onProfilePictureChange={handleProfilePictureUpdate} 
                     />
-
-                        {/* {user.walletAddress && (
-                            <button
-                                className="crypto-tip-btn"
-                                onClick={() => setShowTipModal(true)}
-                                aria-label="Tip User"
-                            >
-                                💰
-                            </button> */}
-                        {/* )} */}
                     </div>
     
-                    {/* {showTipModal && (
-                        <div className="tip-modal-overlay" onClick={() => setShowTipModal(false)}>
-                            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                                <h3>Send Crypto Tip</h3>
-                                <CryptoTip 
-                                    recipientId={user.id} 
-                                    recipientWallet={user.walletAddress} 
-                                    onTip={handleTip} 
-                                />
-                                <button className="close-btn" onClick={() => setShowTipModal(false)}>Close</button>
-                            </div>
-                        </div>
-                    )}
-     */}
+
                     {showUserCardModal && (
                         <UserCardModal user={user} onClose={() => setShowUserCardModal(false)} />
                     )}
@@ -358,33 +342,34 @@ function Profile() {
                     </div>
     
                     <section className="posts-container">
-                        <h3>Posts</h3>
+                    <h3>Posts</h3>
+
+                    {user.privacy === 'private' && currentUser?.id !== user.id && !user.isFollowedByCurrentUser ? (
+                    <PrivateProfileNotice />
+                    ) : (
                         <div className="posts-list">
-                            {posts.length > 0 ? (
-                                posts.map((post) => (
-                                    <div key={post.id} className="post-container">
-                                        {post.isRetweet && (
-                                            <p className="retweet-indicator">
-                                            </p>
-                                        )}
-                                        <Suspense fallback={<p>Loading posts...</p>}>
-                                        <LazyPost
-                                            post={post}
-                                            commentCount={post.commentCount} // ✅ New
-                                            currentUser={currentUser}
-                                            setPosts={setPosts}
-                                            onCommentAdd={(newComment) => addCommentToPost(post.id, newComment)}
-                                            />
-                                        </Suspense>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="no-posts-message">
-                                    <p>No posts available</p>
-                                </div>
-                            )}
-                        </div>
-                        {/* ✅ Load More Button */}
+                        {posts.length > 0 ? (
+                            posts.map((post) => (
+                            <div key={post.id} className="post-container">
+                                {post.isRetweet && (
+                                <p className="retweet-indicator"></p>
+                                )}
+                                <Suspense fallback={<p>Loading posts...</p>}>
+                                <LazyPost
+                                    post={post}
+                                    commentCount={post.commentCount}
+                                    currentUser={currentUser}
+                                    setPosts={setPosts}
+                                    onCommentAdd={(newComment) => addCommentToPost(post.id, newComment)}
+                                />
+                                </Suspense>
+                            </div>
+                            ))
+                        ) : (
+                            <div className="no-posts-message">
+                            <p>No posts available</p>
+                            </div>
+                        )}
                         {hasMore && !loading && (
                             <div className="load-more-container">
                             <button className="load-more-btn" onClick={loadMore}>
@@ -392,6 +377,8 @@ function Profile() {
                             </button>
                             </div>
                         )}
+                        </div>
+                    )}
                     </section>
                 </>
             )}

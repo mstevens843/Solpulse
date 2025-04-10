@@ -69,9 +69,24 @@ function Explore() {
           ...post,
           commentCount: countsMap[post.id] || 0,
         }));
+
+        // 🔒 Filter out private posts unless viewer is allowed
+        const filteredPosts = enrichedPosts.filter((post) => {
+          const author = post.user;
+          const isPrivate = author?.privacy === "private";
+          const isOwner = author?.id === currentUser?.id;
+          const isFollower = author?.isFollowedByCurrentUser;
+
+          const isRepostOfPrivate =
+            post.originalPost?.user?.privacy === "private" &&
+            post.originalPost?.user?.id !== currentUser?.id &&
+            !post.originalPost?.user?.isFollowedByCurrentUser;
+
+          return (!isPrivate || isOwner || isFollower) && !isRepostOfPrivate;
+        });
   
         setTrendingPosts((prev) =>
-          page === 1 ? enrichedPosts : [...prev, ...enrichedPosts]
+          page === 1 ? filteredPosts : [...prev, ...filteredPosts]
         );
       } catch (err) {
         console.error("Error fetching trending posts:", err);

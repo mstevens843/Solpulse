@@ -105,7 +105,7 @@ router.get('/:id/profile-feed', async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['username', 'profilePicture'],
+          attributes: ['username', 'profilePicture', 'privacy'],
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -121,13 +121,13 @@ router.get('/:id/profile-feed', async (req, res) => {
           model: Post,
           as: 'originalPost',
           include: [
-            { model: User, as: 'user', attributes: ['username', 'profilePicture'] },
+            { model: User, as: 'user', attributes: ['username', 'profilePicture', 'privacy'] },
           ],
         },
         {
           model: User,
           as: 'user',
-          attributes: ['username', 'profilePicture'],
+          attributes: ['username', 'profilePicture', 'privacy'],
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -177,14 +177,14 @@ router.get('/', authMiddleware.optional, async (req, res) => {
         where: { followerId: currentUserId },
         attributes: ['followingId'],
       });
-      
+
       const followingIds = followRecords.map(f => Number(f.followingId));
-      
+
       // ✅ Include user's own posts too
       if (!followingIds.includes(currentUserId)) {
         followingIds.push(currentUserId);
       }
-      
+
       console.log("🧭 Freshly fetched followingIds:", followingIds);
       if (!followingIds.length) {
         return res.status(200).json({ posts: [] });
@@ -204,7 +204,7 @@ router.get('/', authMiddleware.optional, async (req, res) => {
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'username', 'profilePicture'],
+            attributes: ['id', 'username', 'profilePicture', 'privacy'], // ✅ ADDED privacy
           },
           {
             model: Post,
@@ -213,7 +213,7 @@ router.get('/', authMiddleware.optional, async (req, res) => {
               {
                 model: User,
                 as: 'user',
-                attributes: ['id', 'username', 'profilePicture'],
+                attributes: ['id', 'username', 'profilePicture', 'privacy'], // ✅ ADDED privacy
               },
             ],
           },
@@ -253,7 +253,7 @@ router.get('/', authMiddleware.optional, async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username', 'profilePicture'],
+          attributes: ['id', 'username', 'profilePicture', 'privacy'], // ✅ ADDED privacy
         },
         {
           model: Post,
@@ -262,7 +262,7 @@ router.get('/', authMiddleware.optional, async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['id', 'username', 'profilePicture'],
+              attributes: ['id', 'username', 'profilePicture', 'privacy'], // ✅ ADDED privacy
             },
           ],
         },
@@ -339,7 +339,7 @@ router.get('/trending', async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username', 'profilePicture'],
+          attributes: ['id', 'username', 'profilePicture', 'privacy'],
         },
         {
           model: Post,
@@ -348,7 +348,7 @@ router.get('/trending', async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['id', 'username', 'profilePicture'],
+              attributes: ['id', 'username', 'profilePicture', 'privacy'],
             },
           ],
         },
@@ -525,71 +525,78 @@ router.get('/:id/retweet-status', authMiddleware, async (req, res) => {
  * @access  Private
  */
 // ✅ Full route using Retweet model directly
-router.get('/retweets', authMiddleware, async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const currentUserId = req.user?.id;
 
-    // Find all retweets of your posts using Retweet model
-    const retweets = await Retweet.findAll({
+    const post = await Post.findByPk(req.params.id, {
       include: [
+        { model: Comment, as: 'comments' },
         {
-          model: Post,
-          as: 'post',
+          model: User,
+          as: 'user',
+          attributes: ['id', 'username', 'profilePicture', 'privacy'],
           include: [
             {
-              model: Post,
-              as: 'originalPost',
-              where: { userId: userId }, // You're the original author
-              include: [
-                {
-                  model: User,
-                  as: 'user',
-                  attributes: ['username', 'profilePicture'],  
-                },
-              ],
-            },
+              model: Follower,
+              as: 'followers',
+              attributes: ['followerId']
+            }
+          ]
+        },
+        {
+          model: Post,
+          as: 'originalPost',
+          include: [
             {
               model: User,
               as: 'user',
-              attributes: ['username', 'profilePicture'],  
-            },
-          ],
-        },
-        {
-          model: Notification,
-          as: 'notification',
-          attributes: ['id', 'isRead'], // ✅ Include isRead
-          where: {
-            isRead: false, // ✅ Only fetch unread retweet notifications
-          },
-          required: true, // ✅ Ensure the notification exists and is unread
-        },
+              attributes: ['id', 'username', 'profilePicture', 'privacy'],
+              include: [
+                {
+                  model: Follower,
+                  as: 'followers',
+                  attributes: ['followerId']
+                }
+              ]
+            }
+          ]
+        }
       ],
-      order: [['createdAt', 'DESC']],
     });
 
-    if (!retweets.length) {
-      return res.status(200).json({ retweets: [] });
+    if (!post) return res.status(404).json({ message: 'Post not found.' });
+
+    // 🔐 Privacy check: main post
+    const author = post.user;
+    const isOwner = author?.id === currentUserId;
+    const isFollower = author?.followers?.some(f => f.followerId === currentUserId);
+    const isPrivate = author?.privacy === 'private';
+
+    if (isPrivate && !isOwner && !isFollower) {
+      return res.status(403).json({ message: "This post is from a private account." });
     }
 
-    const formatted = retweets.map((retweet) => ({
-      notificationId: retweet.notification?.id || null,
-      postId: retweet.post?.originalPostId,
-      postOwner: retweet.post?.originalPost?.user?.username || 'Unknown',
-      content: retweet.post?.originalPost?.content || 'No content',
-      retweetedBy: retweet.post?.user?.username || 'Unknown',
-      profilePicture: retweet.post?.user?.profilePicture || null,
-      createdAt: retweet.createdAt,
-      isRead: retweet.notification?.isRead ?? false, // ✅ Accurate status
-    }));
+    // 🔐 Privacy check: original post (for reposts)
+    if (post.originalPost) {
+      const originalAuthor = post.originalPost.user;
+      const isOriginalOwner = originalAuthor?.id === currentUserId;
+      const isOriginalFollower = originalAuthor?.followers?.some(f => f.followerId === currentUserId);
+      const isOriginalPrivate = originalAuthor?.privacy === 'private';
 
-    res.status(200).json({ retweets: formatted });
+      if (isOriginalPrivate && !isOriginalOwner && !isOriginalFollower) {
+        return res.status(403).json({ message: "This repost is from a private account." });
+      }
+    }
+
+    const formattedPost = formatPost(post);
+    res.status(200).json({ post: formattedPost, comments: formattedPost.comments || [] });
+
   } catch (error) {
-    console.error('❌ Error fetching retweeted posts:', error);
-    res.status(500).json({ message: 'Failed to fetch retweeted posts.' });
+    console.error('Error fetching post:', error);
+    res.status(500).json({ message: 'An error occurred while fetching the post.' });
   }
 });
-
 
 
 /**
@@ -602,7 +609,7 @@ router.get('/:id', async (req, res) => {
     const post = await Post.findByPk(req.params.id, {
       include: [
         { model: Comment, as: 'comments' },
-        { model: User, as: 'user', attributes: ['id', 'username', 'profilePicture'] },
+        { model: User, as: 'user', attributes: ['id', 'username', 'profilePicture', 'privacy'] },
         {
           model: Post,
           as: 'originalPost',
@@ -610,7 +617,7 @@ router.get('/:id', async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['id', 'username', 'profilePicture'],
+              attributes: ['id', 'username', 'profilePicture', 'privacy'],
             },
           ],
         },
@@ -625,6 +632,9 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ message: 'An error occurred while fetching the post.' });
   }
 });
+
+
+
 /**
  * @route   POST /api/posts
  * @desc    Create a new post with optional media and cryptoTag
@@ -660,11 +670,12 @@ router.post('/', authMiddleware, upload.single('media'), async (req, res) => {
     res.status(500).json({ error: 'Failed to create post.' });
   }
 });
-/**
- * @route   POST /api/posts/:id/like
- * @desc    Like a post
- * @access  Private
- */
+
+
+
+
+
+
 /**
  * @route   POST /api/posts/:id/like
  * @desc    Like a post

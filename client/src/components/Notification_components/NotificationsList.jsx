@@ -80,11 +80,76 @@ function NotificationsList() {
       case "comments":
         endpoint = "/comments/detailed?page=1";
         break;
-      case "follows":
-        endpoint = "/users/followers/notifications?page=1";
-        break;
+        case "follows":
+          try {
+            const [followersRes, requestsRes] = await Promise.all([
+              api.get("/users/followers/notifications?page=1"),
+              api.get("/follow-requests/incoming"),
+            ]);
+        
+            const actualFollows = followersRes.data.followers.map((item) => ({
+              id: item.notificationId || item.id,
+              actor: item.actor || "User unknown",
+              message: item.message || "started following you",
+              profilePicture: item.profilePicture || null,
+              content: null,
+              createdAt: item.createdAt,
+              isRead: item.isRead || false,
+              type: "follow",
+            }));
+        
+            const incomingRequests = requestsRes.data.requests.map((item) => ({
+              id: item.id,
+              actor: item.requesterUser?.username || "Unknown user",
+              profilePicture: item.requesterUser?.profilePicture || null,
+              message: "requested to follow you",
+              createdAt: item.createdAt,
+              isRead: false,
+              type: "follow-request",
+            }));
+        
+            setNotifications([...incomingRequests, ...actualFollows]);
+          } catch (err) {
+            console.error("Error fetching follows + requests:", err);
+            setError("Failed to fetch follow notifications.");
+          }
+          break;
       case "messages":
-        endpoint = "/messages/detailed?page=1&limit=10";
+        try {
+          const [messagesRes, requestsRes] = await Promise.all([
+            api.get("/messages/detailed?page=1&limit=10"),
+            api.get("/message-requests/incoming"), // 👈 new endpoint
+          ]);
+      
+          const realMessages = messagesRes.data.messages
+            .filter((item) => item.notificationId !== null)
+            .map((item) => ({
+              id: item.notificationId,
+              actor: item.sender || `User unknown`,
+              message: `${item.sender} sent you a message`,
+              profilePicture: item.profilePicture || null,
+              content: item.content,
+              createdAt: item.createdAt,
+              isRead: item.isRead || false,
+              type: "message",
+            }));
+      
+          const messageRequests = requestsRes.data.requests.map((item) => ({
+            id: item.id,
+            actor: item.senderUser?.username || "Unknown user",
+            profilePicture: item.senderUser?.profilePicture || null,
+            message: "sent you a message request",
+            content: item.content,
+            createdAt: item.createdAt,
+            isRead: false,
+            type: "message-request",
+          }));
+      
+          setNotifications([...messageRequests, ...realMessages]);
+        } catch (err) {
+          console.error("Error fetching messages + requests:", err);
+          setError("Failed to fetch messages.");
+        }
         break;
       case "tips":
         endpoint = "/notifications/tips";
@@ -365,6 +430,66 @@ function NotificationsList() {
               <span className="notification-time">
                 {new Date(notification.createdAt).toLocaleString()}
               </span>
+              {notification.type === "follow-request" && (
+              <div className="follow-request-actions">
+                <button
+                  className="accept-btn"
+                  onClick={async () => {
+                    try {
+                      await api.put(`/follow-requests/${notification.id}/accept`);
+                      setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
+                    } catch (err) {
+                      console.error("Failed to accept follow request:", err);
+                    }
+                  }}
+                >
+                  Accept
+                </button>
+                <button
+                  className="deny-btn"
+                  onClick={async () => {
+                    try {
+                      await api.delete(`/follow-requests/${notification.id}/deny`);
+                      setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
+                    } catch (err) {
+                      console.error("Failed to deny follow request:", err);
+                    }
+                  }}
+                >
+                  Deny
+                </button>
+              </div>
+            )}
+            {notification.type === "message-request" && (
+            <div className="follow-request-actions">
+              <button
+                className="accept-btn"
+                onClick={async () => {
+                  try {
+                    await api.put(`/message-requests/${notification.id}/accept`);
+                    setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
+                  } catch (err) {
+                    console.error("Failed to accept message request:", err);
+                  }
+                }}
+              >
+                Accept
+              </button>
+              <button
+                className="deny-btn"
+                onClick={async () => {
+                  try {
+                    await api.delete(`/message-requests/${notification.id}/deny`);
+                    setNotifications((prev) => prev.filter((n) => n.id !== notification.id));
+                  } catch (err) {
+                    console.error("Failed to deny message request:", err);
+                  }
+                }}
+              >
+                Deny
+              </button>
+            </div>
+          )}
           </div>
   
               {notification.isRead ? (

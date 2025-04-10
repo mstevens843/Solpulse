@@ -13,6 +13,47 @@ function ExploreModal({ post, onClose, currentUser, setPosts }) {
 
   if (!post) return null;
 
+  // 🔐 Privacy Lock Logic
+  const author = post.user || post.originalPost?.user || {};
+  const isPrivate = author.privacy === "private";
+  const isOwner = author.id === currentUser?.id;
+  const isFollower = author.isFollowedByCurrentUser;
+
+  const isRepostOfPrivate =
+    post.originalPost?.user?.privacy === "private" &&
+    post.originalPost?.user?.id !== currentUser?.id &&
+    !post.originalPost?.user?.isFollowedByCurrentUser;
+
+  const isLocked = (isPrivate && !isOwner && !isFollower) || isRepostOfPrivate;
+
+  if (isLocked) {
+    return (
+      <div className="explore-modal-overlay" onClick={onClose}>
+        <div className="explore-modal-content locked" onClick={(e) => e.stopPropagation()}>
+          <button className="close-modal-btn" onClick={onClose}>✖</button>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="mx-auto mb-3 h-8 w-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 15v2m0-6a2 2 0 00-2 2v2h4v-2a2 2 0 00-2-2zm0-4a4 4 0 00-4 4v2h8v-2a4 4 0 00-4-4z"
+              />
+            </svg>
+            <p className="text-lg font-semibold">This post is from a private account</p>
+            <p className="text-sm">You must follow them to view it.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const postIdToUse = post.isRetweet ? post.originalPostId : post.id;
 
   const resolvedAvatarUrl = post.profilePicture?.startsWith("http")

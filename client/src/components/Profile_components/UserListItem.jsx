@@ -33,8 +33,15 @@ function UserListItem({ user, currentUserId, showBio = false }) {
     user.isFollowedByCurrentUser ?? false
   );
 
+  const [hasRequested, setHasRequested] = useState(false);
+
+
   const handleFollowToggle = (newState) => {
     setIsFollowing(newState);
+  };
+
+  const handleRequestToggle = (newRequestState) => {
+    setHasRequested(newRequestState);
   };
 
   return (
@@ -53,7 +60,8 @@ function UserListItem({ user, currentUserId, showBio = false }) {
       </Link>
 
       <div className="user-list-info">
-        <div className="user-list-username">@{user.username}</div>
+        <div className="user-list-username">@{user.username}
+        {hasRequested && <span className="request-badge">Requested</span>}</div>
         {/* Only show the bio if showBio is true and the user has a bio */}
         {showBio && user.bio && (
           <div className="user-list-bio">{user.bio}</div>
@@ -70,7 +78,9 @@ function UserListItem({ user, currentUserId, showBio = false }) {
             userId={user.id}
             isFollowingYou={user.isFollowingYou}
             onFollowToggle={handleFollowToggle}
+            onRequestToggle={handleRequestToggle}
           />
+
         </div>
       )}
     </div>

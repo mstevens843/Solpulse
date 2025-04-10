@@ -23,72 +23,97 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
   const { user: currentUser } = useAuth(); //  get logged-in user
   const [isFollowing, setIsFollowing] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasRequested, setHasRequested] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   /**
    * Fetch follow status from backend if not cached
    */
   const fetchFollowStatus = useCallback(async () => {
     if (!currentUser?.id) return;
-
-    
-  const userCache = followStatusCache[currentUser.id] || {};
+  
+    const userCache = followStatusCache[currentUser.id] || {};
     if (userCache[userId] !== undefined) {
       setIsFollowing(userCache[userId]);
-      return;
     }
-
+  
     try {
-      const response = await api.get(`/users/${userId}/is-following`);
-      const status = response.data.isFollowing;
-
+      const [followRes, requestRes, userRes] = await Promise.all([
+        api.get(`/users/${userId}/is-following`),
+        api.get(`/users/${userId}/has-requested`),
+        api.get(`/users/${userId}`),
+      ]);
+  
+      const followStatus = followRes.data.isFollowing;
+      const requestStatus = requestRes.data.hasRequested;
+      const userPrivacy = userRes.data.privacy;
+  
+      setIsFollowing(followStatus);
+      setHasRequested(requestStatus);
+      setIsPrivate(userPrivacy === "private");
+  
       followStatusCache[currentUser.id] = {
         ...userCache,
-        [userId]: status,
+        [userId]: followStatus,
       };
-
-      setIsFollowing(status);
     } catch (error) {
-      console.error("Error fetching follow status:", error);
+      console.error("Error fetching follow info:", error);
       toast.error("Failed to load follow status.");
     }
   }, [userId, currentUser?.id]);
 
-  useEffect(() => {
-    fetchFollowStatus();
-  }, [fetchFollowStatus]);
+
+
+
+
 
   /**
    * Toggle follow/unfollow logic (with optimistic UI).
    */
   const handleFollowToggle = async () => {
     if (loading || isFollowing === null || !currentUser?.id) return;
-
-    const newFollowState = !isFollowing;
-    setIsFollowing(newFollowState);
-    followStatusCache[userId] = newFollowState;
-
-    if (onFollowToggle) onFollowToggle(newFollowState);
-    if (updateCounts) updateCounts(newFollowState ? 1 : -1);
-
     setLoading(true);
-
+  
     try {
-      if (newFollowState) {
-        await api.post(`/users/${userId}/follow`);
-      } else {
-        await api.delete(`/users/${userId}/unfollow`);
+      if (isPrivate && !isFollowing) {
+        if (hasRequested) {
+          // ✅ Cancel follow request
+          await api.delete(`/followRequests/${userId}/cancel`);
+          toast.info("Follow request canceled.");
+          setHasRequested(false);
+        } else {
+          // ✅ Send follow request
+          await api.post(`/followRequests/${userId}`);
+          toast.success("Follow request sent.");
+          setHasRequested(true);
+        }
+        return;
       }
+  
+      // ✅ Normal public follow/unfollow flow
+      if (isFollowing) {
+        await api.delete(`/users/${userId}/unfollow`);
+        setIsFollowing(false);
+        followStatusCache[userId] = false;
+        if (updateCounts) updateCounts(-1);
+      } else {
+        await api.post(`/users/${userId}/follow`);
+        setIsFollowing(true);
+        followStatusCache[userId] = true;
+        if (updateCounts) updateCounts(1);
+      }
+  
+      if (onFollowToggle) onFollowToggle(!isFollowing);
     } catch (error) {
       console.error("Error updating follow status:", error);
-      toast.error("Failed to update follow status.");
-      // Revert changes on error
-      setIsFollowing(!newFollowState);
-      followStatusCache[userId] = !newFollowState;
-      if (updateCounts) updateCounts(newFollowState ? -1 : 1);
+      toast.error("Follow action failed.");
     } finally {
       setLoading(false);
     }
   };
+
+
+
 
   /**
    * Button appearance logic
@@ -99,6 +124,9 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
   if (isFollowing) {
     buttonLabel = "Following";
     buttonClass = "following";
+  } else if (hasRequested) {
+    buttonLabel = "Requested";
+    buttonClass = "requested";
   } else if (isFollowingYou) {
     buttonLabel = "Follow Back";
     buttonClass = "follow-back";
@@ -107,14 +135,24 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
   return (
     <div className="follow-button-container">
       <button
-        className={`follow-btn ${buttonClass}`}
-        onClick={handleFollowToggle}
-        disabled={loading || isFollowing === null}
-        aria-label={buttonLabel}
-      >
-        {isFollowing ? <FaUserCheck /> : <FaUserPlus />}
-        {` ${buttonLabel}`}
-      </button>
+      className={`follow-btn ${buttonClass}`}
+      onClick={handleFollowToggle}
+      disabled={loading || isFollowing === null}
+      aria-label={buttonLabel}
+      aria-pressed={isFollowing} // ✅ Add this for accessibilit
+      title={
+        isPrivate && hasRequested
+          ? "Click to cancel follow request"
+          : isPrivate
+          ? "Request to follow private user"
+          : isFollowing
+          ? "Unfollow"
+          : "Follow"
+      }
+    >
+      {isFollowing ? <FaUserCheck /> : <FaUserPlus />}
+      {` ${buttonLabel}`}
+    </button>
     </div>
   );
 };

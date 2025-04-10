@@ -74,3 +74,14 @@
     background-color: rgba(0, 206, 201, 0.1);
   }
   
+  .follow-btn.requested {
+    background-color: #ffd966;
+    color: #333;
+    border: 1px solid #e0c35a;
+    cursor: pointer; /* Let them cancel */
+    transition: background-color 0.2s ease;
+  }
+  
+  .follow-btn.requested:hover {
+    background-color: #f0c940;
+  }

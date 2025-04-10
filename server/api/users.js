@@ -133,7 +133,9 @@ router.put('/settings', authMiddleware, async (req, res) => {
 
     if (email) user.email = email;
     if (walletAddress !== undefined) user.walletAddress = walletAddress;
-    if (privacy) user.privacy = privacy;
+    if (["public", "private"].includes(privacy)) {
+      user.privacy = privacy;
+    }
     if (notifications) user.notifications = notifications;
     if (theme) user.theme = theme;
 
@@ -155,38 +157,75 @@ router.put('/settings', authMiddleware, async (req, res) => {
  * - Fetches the user's follower and following counts.
  * - Retrieves all posts made by the user.
  * - Returns profile details, follower/following count, and user's posts.
+ * - Added Privacy feature: check blocks post/bio unless you're the user or follower 
  */
-router.get('/:id', async (req, res) => {
-    const { id } = req.params;
-  
-    try {
-      const [user, followersCount, followingCount, posts] = await Promise.all([
-        User.findByPk(id, {
-          attributes: ['id', 'username', 'bio', 'walletAddress', 'profilePicture'],
-        }),
-        Follower.count({ where: { followingId: id } }),
-        Follower.count({ where: { followerId: id } }),
-        Post.findAll({
-          where: { userId: id },
-          order: [['createdAt', 'DESC']],
-        }),
-      ]);
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found.' });
-      }
-  
-      res.json({
-        user,
+router.get('/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const currentUserId = req.user?.id;
+
+  try {
+    const profileUser = await User.findByPk(id, {
+      attributes: ['id', 'username', 'bio', 'walletAddress', 'profilePicture', 'privacy'],
+      include: [
+        {
+          model: Follower,
+          as: 'followers',
+          attributes: ['followerId']
+        }
+      ]
+    });
+
+    if (!profileUser) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const isOwner = currentUserId === profileUser.id;
+    const isFollower = profileUser.followers.some(f => f.followerId === currentUserId);
+
+    const followersCount = profileUser.followers.length;
+    const followingCount = await Follower.count({ where: { followerId: id } });
+
+    // 🔒 Handle Private Profile
+    if (profileUser.privacy === 'private' && !isOwner && !isFollower) {
+      return res.status(200).json({
+        user: {
+          id: profileUser.id,
+          username: profileUser.username,
+          bio: profileUser.bio,
+          walletAddress: profileUser.walletAddress,
+          profilePicture: profileUser.profilePicture,
+          privacy: profileUser.privacy,
+        },
         followersCount,
         followingCount,
-        posts: posts || [],
+        posts: [],
+        postsHidden: true
       });
-    } catch (error) {
-      console.error('Error fetching user profile and posts:', error);
-      res.status(500).json({ message: 'An error occurred while fetching the user profile and posts.' });
     }
-  });
+    
+    const posts = await Post.findAll({
+      where: { userId: id },
+      order: [['createdAt', 'DESC']],
+    });
+
+    res.json({
+      user: {
+        id: profileUser.id,
+        username: profileUser.username,
+        bio: profileUser.bio,
+        walletAddress: profileUser.walletAddress,
+        profilePicture: profileUser.profilePicture,
+        privacy: profileUser.privacy,
+      },
+      followersCount,
+      followingCount,
+      posts: posts || [],
+    });
+  } catch (error) {
+    console.error('Error fetching user profile and posts:', error);
+    res.status(500).json({ message: 'An error occurred while fetching the user profile and posts.' });
+  }
+});
   
 
 

@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
           onDelete: 'CASCADE',
         },
         type: {
-          type: DataTypes.ENUM('like', 'comment', 'follow', 'retweet', 'transaction'),
+          type: DataTypes.ENUM('like', 'comment', 'follow', 'retweet', 'transaction', 'message-request', 'follow-request'),
           allowNull: false,
         },
         message: {
@@ -84,6 +84,17 @@ module.exports = (sequelize, DataTypes) => {
         as: 'retweet',
         onDelete: 'SET NULL',
       });
+      Notification.hasOne(models.MessageRequest, {
+        foreignKey: 'notificationId',
+        as: 'messageRequest',
+        onDelete: 'SET NULL',
+      });
+      
+      Notification.hasOne(models.FollowRequest, {
+        foreignKey: 'notificationId',
+        as: 'followRequest',
+        onDelete: 'SET NULL',
+      });
     };
   
     Notification.beforeCreate((notification) => {
@@ -94,6 +105,8 @@ module.exports = (sequelize, DataTypes) => {
           follow: 'You have a new follower.',
           retweet: 'Your post was reposted.',
           transaction: `You received ${parseFloat(notification.amount).toFixed(2)} SOL.`,
+          'message-request': 'You received a new message request.',
+          'follow-request': 'You received a follow request.',
         };
         notification.message = typeMessages[notification.type] || 'You have a new notification.';
       }

@@ -29,7 +29,7 @@ import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function UserCard({ user, followersCount, followingCount, isInModal, onProfilePictureChange, currentUser }) {
+function UserCard({ user, followersCount, followingCount, isInModal, onProfilePictureChange, currentUser, canViewConnections }) {
     const [followerCountState, setFollowerCountState] = useState(followersCount || 0);
     const [followingCountState, setFollowingCountState] = useState(followingCount || 0);
     const [showProfilePicModal, setShowProfilePicModal] = useState(false);
@@ -42,8 +42,13 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
     const [viewingType, setViewingType] = useState(""); 
     const navigate = useNavigate();
     const defaultAvatar = "http://localhost:5001/uploads/default-avatar.png";
+    const [hasRequested, setHasRequested] = useState(false); // ✅ NEW
 
 
+    const handleRequestToggle = (newRequestState) => {
+        setHasRequested(newRequestState);
+        console.log("Follow request status:", newRequestState);
+      };
 
     // Use user.profilePicture directly instead of local state to prevent desync issues
     const displayedProfilePicture = user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png";
@@ -227,13 +232,30 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
 
             <div className="user-info">
             <h4 className="user-username">{user.username}</h4>
+            <h4 className="user-username">
+                {user.username}
+                {hasRequested && <span className="request-badge">Requested</span>}
+            </h4>
 
-            <p onClick={(e) => openModal("followers", e)} className="follow-link">
-            Followers: {followerCountState}
-            </p>
-            <p onClick={(e) => openModal("following", e)} className="follow-link">
+            {canViewConnections ? (
+            <>
+                <p onClick={(e) => openModal("followers", e)} className="follow-link cursor-pointer">
+                Followers: {followerCountState}
+                </p>
+                <p onClick={(e) => openModal("following", e)} className="follow-link cursor-pointer">
                 Following: {followingCountState}
-            </p>
+                </p>
+            </>
+            ) : (
+            <>
+                <p className="follow-link text-gray-400 cursor-not-allowed">
+                Followers: {followerCountState}
+                </p>
+                <p className="follow-link text-gray-400 cursor-not-allowed">
+                Following: {followingCountState}
+                </p>
+            </>
+            )}
             {/* Button Container */}
             <div className="button-group">
                 {/* CryptoTip Button - only for other users */}
@@ -251,9 +273,10 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
                 {user.id !== currentUser?.id && (
                 <>
                     <FollowButton
-                    userId={user.id}
-                    updateCounts={updateCounts}
-                    isFollowingYou={user.isFollowedByCurrentUser} // if available
+                        userId={user.id}
+                        updateCounts={updateCounts}
+                        isFollowingYou={user.isFollowedByCurrentUser}
+                        onRequestToggle={handleRequestToggle}
                     />
                     <MessageButton recipientUsername={user.username} />
                 </>
@@ -328,7 +351,8 @@ UserCard.propTypes = {
     }).isRequired,
     currentUser: PropTypes.object.isRequired,
     onProfilePictureChange: PropTypes.func.isRequired,
-    isInModal: PropTypes.bool
+    isInModal: PropTypes.bool,
+    canViewConnections: PropTypes.bool // ✅ Add this
 };
 
 export default React.memo(UserCard);

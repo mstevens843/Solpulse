@@ -109,29 +109,34 @@ router.get(
         })
       );
 
-      // --- 2) Search Posts with Full Text (to_tsvector) ---
+      // ✅ NEW: Get list of following IDs for current user (needed for filtering private posts)
+      let followingIds = [];
+      if (currentUserId) {
+        const followRecords = await Follower.findAll({
+          where: { followerId: currentUserId },
+          attributes: ['followingId'],
+        });
+        followingIds = followRecords.map(f => f.followingId);
+      }
+
+      // --- 2) Search Posts ---
       const postResults = await Post.findAndCountAll({
         where: {
-          content: {
-            [Op.iLike]: `%${query}%`
-          }
+          content: { [Op.iLike]: `%${query}%` }
         },
         attributes: ['id', 'content', 'createdAt', 'userId'],
         include: [
-          // Must match your Post model's 'as: "user"' association
           { 
             model: User, 
             as: 'user', 
-            attributes: ['id', 'username', 'profilePicture'] 
+            attributes: ['id', 'username', 'profilePicture', 'privacy'] 
           },
-          // Must match Post model's many-to-many as: 'likedByUsers'
           { 
             model: User, 
             as: 'likedByUsers', 
             attributes: ['id'], 
             through: { attributes: [] } 
           },
-          // Must match Post model's many-to-many as: 'retweetedByUsers'
           { 
             model: User, 
             as: 'retweetedByUsers', 
@@ -143,8 +148,21 @@ router.get(
         offset,
       });
 
+      // ✅ NEW: Filter out private posts unless viewer is the author or follows them
+      const filteredPosts = postResults.rows.filter((post) => {
+        const postAuthor = post.user;
+        if (!postAuthor) return false; // No author? Skip it.
+
+        const isPublic = postAuthor.privacy === 'public';
+        const isOwner = postAuthor.id === currentUserId;
+        const isFollower = followingIds.includes(postAuthor.id);
+
+        // Show if public OR owner OR a follower
+        return isPublic || isOwner || isFollower;
+      });
+
       // Format the Post results
-      const postFormatted = postResults.rows.map((post) => ({
+      const postFormatted = filteredPosts.map((post) => ({
         id: post.id,
         content: post.content,
         createdAt: post.createdAt,
@@ -152,12 +170,10 @@ router.get(
         likeCount: post.likedByUsers?.length || 0,
         repostCount: post.retweetedByUsers?.length || 0,
         commentCount: 0,
-        // ↪️ Instead of an object in "author"
         authorName: post.user?.username || null,
         authorAvatar: post.user?.profilePicture || null,
         type: 'post',
       }));
-      
 
       // Combine user + post results
       const results = [...enrichedUsers, ...postFormatted];
@@ -176,6 +192,7 @@ router.get(
       searchCache.set(cacheKey, response);
       console.log("✅ Returning search results successfully.");
       res.json(response);
+
     } catch (error) {
       console.error('🔥 Error fetching search results:', error.message);
       console.error(error.stack);
@@ -183,6 +200,9 @@ router.get(
     }
   }
 );
+
+
+
 
 // -------------------------------------------------------------------
 //           SUGGESTIONS ROUTE (unchanged, except minor rename)
@@ -195,43 +215,72 @@ router.get(
     const query = req.query.query || '';
     if (!query.trim()) return res.json({ results: [] });
 
+    // 1) Get currentUserId + following list
+    const currentUserId = req.user?.id || null;
+    let followingIds = [];
+    if (currentUserId) {
+      const followRecords = await Follower.findAll({
+        where: { followerId: currentUserId },
+        attributes: ['followingId'],
+      });
+      followingIds = followRecords.map(f => f.followingId);
+    }
+
     try {
+      // 2) Fetch users, include `privacy`
       const userResults = await User.findAll({
-        where: {
-          username: {
-            [Op.iLike]: `%${query}%`
-          }
-        },
-        attributes: ['id', 'username', 'email'],
+        where: { username: { [Op.iLike]: `%${query}%` } },
+        attributes: ['id', 'username', 'email', 'privacy'], // ✅ Add `privacy`
         limit: 5
       });
 
+     
+      const visibleUsers = userResults;
+
+      // 3) Fetch posts, include user + privacy if you want
       const postResults = await Post.findAll({
         where: {
-          content: {
-            [Op.iLike]: `%${query}%`
-          }
+          content: { [Op.iLike]: `%${query}%` }
         },
         attributes: ['id', 'content', 'userId', 'createdAt'],
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'username', 'profilePicture', 'privacy']
+          }
+        ],
         limit: 5
       });
 
-      const results = [
-        ...userResults.map(user => ({
-          id: user.id,
-          username: user.username,
-          type: 'user',
-        })),
-        ...postResults.map(post => ({
-          id: post.id,
-          content: post.content,
-          userId: post.userId,
-          createdAt: post.createdAt,
-          type: 'post',
-        }))
-      ];
+      // 🔒 Filter out private posts if not allowed
+      const visiblePosts = postResults.filter(p => {
+        const author = p.user;
+        if (!author) return false;
+        if (author.privacy === 'public') return true;
+        if (author.id === currentUserId) return true;
+        return followingIds.includes(author.id);
+      });
 
+      // 4) Format results
+      const formattedUsers = visibleUsers.map(user => ({
+        id: user.id,
+        username: user.username,
+        type: 'user',
+      }));
+
+      const formattedPosts = visiblePosts.map(post => ({
+        id: post.id,
+        content: post.content,
+        userId: post.userId,
+        createdAt: post.createdAt,
+        type: 'post',
+      }));
+
+      // 5) Combine + return
+      const results = [...formattedUsers, ...formattedPosts];
       res.json({ results });
+
     } catch (error) {
       console.error('Error fetching suggestions:', error);
       res.status(500).json({ error: 'Failed to fetch suggestions' });

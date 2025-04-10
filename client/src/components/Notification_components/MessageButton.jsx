@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
+import { useEffect } from "react";
 import "@/css/components/Notification_components/MessageButton.css";
 import { FaEnvelope } from "react-icons/fa";
 
@@ -20,6 +21,9 @@ const MessageButton = ({ recipientUsername }) => {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [recipient, setRecipient] = useState(null);
+    const [requestStatus, setRequestStatus] = useState(null); // 'pending', 'accepted', null
+
 
 
     /**
@@ -30,6 +34,22 @@ const MessageButton = ({ recipientUsername }) => {
         setIsMessageModalOpen((prev) => !prev);
         setErrorMessage(""); // Clear any previous error
         setSuccessMessage(""); // Clear success message
+    };
+
+
+
+     // Sends a direct message request to the recipient.
+    const handleSendRequest = async () => {
+        try {
+            const res = await api.post(`/message-requests/${recipient.id}`, {
+                message: messageContent.trim(),
+            });
+            setRequestStatus("pending");
+            setSuccessMessage("Request sent!");
+        } catch (err) {
+            console.error("Failed to send message request:", err);
+            setErrorMessage("Failed to send request.");
+        }
     };
 
 
@@ -65,16 +85,48 @@ const MessageButton = ({ recipientUsername }) => {
         }
     };
 
+
+
+    useEffect(() => {
+        const fetchRecipientData = async () => {
+            try {
+                const res = await api.get(`/users/profile/${recipientUsername}`);
+                setRecipient(res.data.user);
+
+                if (res.data.user.privacy === 'private') {
+                    const check = await api.get(`/message-requests/${res.data.user.id}/has-requested`);
+                    setRequestStatus(check.data.hasRequested ? 'pending' : null);
+                }
+            } catch (err) {
+                console.error('Error fetching recipient info:', err);
+            }
+        };
+
+        fetchRecipientData();
+    }, [recipientUsername]);
+
+
+
+
+
     return (
         <div className="message-button-container">
-            {/* Button to open the message modal */}
-            <button
-                className="message-btn"
-                onClick={toggleModal}
-                aria-label="Send Message"
-            >
-                <FaEnvelope /> Message
-            </button>
+            {/* Conditional button based on user privacy + request status */}
+            {recipient?.privacy === 'private' ? (
+                requestStatus === 'pending' ? (
+                    <button className="message-btn disabled" disabled>
+                        Request Pending
+                    </button>
+                ) : (
+                    <button className="message-btn" onClick={handleSendRequest}>
+                        <FaEnvelope /> Send Request
+                    </button>
+                )
+            ) : (
+                <button className="message-btn" onClick={toggleModal}>
+                    <FaEnvelope /> Message
+                </button>
+            )}
 
             {/* Modal for composing the message */}
             {isMessageModalOpen && (

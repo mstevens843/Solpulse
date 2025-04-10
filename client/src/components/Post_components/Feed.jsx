@@ -97,13 +97,29 @@ function Feed({ currentUser }) {
           category: post.category || "General",
         }));
 
+          // 🔒 Filter out private posts unless the viewer is allowed
+        const filteredPosts = enrichedPosts.filter((post) => {
+          const author = post.user;
+          const isPrivate = author?.privacy === 'private';
+          const isOwner = author?.id === currentUser?.id;
+          const isFollower = author?.isFollowedByCurrentUser;
+
+          // 🔁 Also block private original posts if this is a retweet
+          const isRepostOfPrivate =
+            post.originalPost?.user?.privacy === 'private' &&
+            post.originalPost?.user?.id !== currentUser?.id &&
+            !post.originalPost?.user?.isFollowedByCurrentUser;
+
+          return (!isPrivate || isOwner || isFollower) && !isRepostOfPrivate;
+        });
+
         newPosts.forEach((post) => {
   if (!post.user) console.warn("⚠️ Post missing user:", post.id);
 });
   
-        setPosts((prev) => [...prev, ...enrichedPosts]);
-        setPostIds((prev) => new Set([...prev, ...enrichedPosts.map(p => p.id)]));
-        setHasMore(enrichedPosts.length > 0);
+        setPosts((prev) => [...prev, ...filteredPosts]);
+        setPostIds((prev) => new Set([...prev, ...filteredPosts.map(p => p.id)]));
+        setHasMore(filteredPosts.length > 0);
       } else {
         setHasMore(false);
       }
@@ -114,6 +130,8 @@ function Feed({ currentUser }) {
       setLoading(false);
     }
   };
+
+
 
   // Handle initial load by resetting to page 1
   useEffect(() => {

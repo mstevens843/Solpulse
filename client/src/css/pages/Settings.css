@@ -320,6 +320,7 @@ div.form-group {
 }
 
 
+
 .toggle-switch:hover {
   box-shadow: 0 0 6px rgba(0, 255, 204, 0.5);
 }
@@ -345,6 +346,46 @@ div.form-group {
 
 .toggle-switch:checked::before {
   transform: translateX(6.1rem);
+}
+
+.toggle-switch-privacy {
+  width: 3.25rem;
+  height: 1.7rem;
+  appearance: none;
+  background-color: #e5e7eb;
+  @apply dark:bg-[#333];
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  border: 2px solid #00ffcc;
+}
+
+.toggle-switch-privacy:hover {
+  box-shadow: 0 0 6px rgba(0, 255, 204, 0.5);
+}
+
+.toggle-switch-privacy:checked {
+  background: linear-gradient(to right, #9945FF, #14F195, #00FFBD);
+}
+
+.toggle-switch-privacy::before {
+  content: "";
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  background: #121212;
+  @apply dark:bg-white;
+  border-radius: 50%;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-switch-privacy:checked::before {
+  transform: translateX(9rem); /* ✅ exact same as default toggle */
 }
 
 

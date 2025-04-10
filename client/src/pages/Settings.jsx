@@ -182,6 +182,47 @@ function Settings() {
     });
   }
 };
+
+
+const handlePrivacyToggle = async (e) => {
+  const newPrivacy = e.target.checked ? "private" : "public";
+  setPrivacy(newPrivacy);
+
+  try {
+    await api.put(`/users/settings`, {
+      email,
+      walletAddress,
+      privacy: newPrivacy,
+      notifications,
+      theme,
+    });
+
+    // Update localStorage
+    localStorage.setItem(
+      "userSettings",
+      JSON.stringify({
+        email,
+        walletAddress,
+        privacy: newPrivacy,
+        notifications,
+        theme,
+      })
+    );
+
+    toast.success(`🔒 Privacy set to ${newPrivacy}`, {
+      autoClose: 2000,
+      transition: Slide,
+    });
+  } catch (err) {
+    toast.error("❌ Failed to update privacy", {
+      autoClose: 3000,
+      transition: Slide,
+    });
+  }
+};
+
+
+
   /**
    * Handle account deletion process.
    * - Triggers a confirmation modal before proceeding.
@@ -245,15 +286,20 @@ function Settings() {
               )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="privacy">Privacy:</label>
-              <FaUser className="input-icon" />
-              <select id="privacy" value={privacy} onChange={(e) => setPrivacy(e.target.value)}>
-                <option value="public">Public</option>
-                <option value="private">Private</option>
-              </select>
-            </div>
-
+            <div className="form-group flex items-center gap-3">
+  <FaUser className="input-icon" />
+  <label htmlFor="privacyToggle" className="flex items-center gap-2 cursor-pointer">
+    <span>Private Account</span>
+    <input
+      id="privacyToggle"
+      type="checkbox"
+      checked={privacy === "private"}
+      onChange={handlePrivacyToggle}
+      className="toggle-switch-privacy"
+      disabled={loading}
+    />
+  </label>
+</div>
             <div className="form-group">
               <label htmlFor="notifications">Notifications:</label>
               <FaBell className="input-icon" />

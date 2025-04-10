@@ -148,6 +148,28 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'CASCADE',
             hooks: true,
         });
+        User.hasMany(models.FollowRequest, {
+            as: 'sentFollowRequests',
+            foreignKey: 'requesterId',
+            onDelete: 'CASCADE',
+          });
+          
+          User.hasMany(models.FollowRequest, {
+            as: 'receivedFollowRequests',
+            foreignKey: 'targetId',
+            onDelete: 'CASCADE',
+          });
+          User.hasMany(models.MessageRequest, {
+            as: 'sentMessageRequests',
+            foreignKey: 'senderId',
+            onDelete: 'CASCADE',
+          });
+          
+          User.hasMany(models.MessageRequest, {
+            as: 'receivedMessageRequests',
+            foreignKey: 'recipientId',
+            onDelete: 'CASCADE',
+          });
 
         // Many-to-many relationship for retweets
         User.belongsToMany(models.Post, {

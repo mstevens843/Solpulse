@@ -195,6 +195,38 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+
+
+// 📤 GET /api/messages/sent
+router.get('/sent', authMiddleware, async (req, res) => {
+  try {
+    const messages = await Message.findAll({
+      where: { senderId: req.user.id },
+      include: [{ model: User, as: "recipientUser", attributes: ["username"] }],
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.json({
+      messages: messages.map((msg) => ({
+        id: msg.id,
+        content: msg.content,
+        recipient: msg.recipientUser?.username || "Unknown",
+        read: msg.read,
+        readAt: msg.readAt,
+        createdAt: msg.createdAt,
+      })),
+      totalPages: 1,
+      currentPage: 1,
+    });
+  } catch (err) {
+    console.error("Error fetching sent messages:", err);
+    res.status(500).json({ message: "Failed to fetch sent messages." });
+  }
+});
+
+
+
+
 /**
  * PATCH /api/messages/:id/read
  * Mark a message as read
