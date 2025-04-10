@@ -13,6 +13,7 @@ const searchRoutes = require('./search');
 const jupiterRoutes = require('./jupiter'); 
 const followRequestRoutes = require("./followrequests");
 const messageRequestRoutes = require("./messageRequests")
+const blockedMutedRoutes = require('./blocked_muted');
 const router = express.Router();
 
 /** 
@@ -42,6 +43,9 @@ console.log('/trendingCrypto route successfully registered');
 router.use('/search', searchRoutes); 
 router.use('/follow-requests', followRequestRoutes);
 router.use('/message-requests', messageRequestRoutes);
+router.use('/blocked-muted', blockedMutedRoutes);
+
+
 
 
 

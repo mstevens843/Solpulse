@@ -14,7 +14,7 @@
  * - Allowing the current user to change their profile picture.
  */
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import FollowButton from "@/components/Profile_components/FollowButton";
@@ -43,6 +43,13 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
     const navigate = useNavigate();
     const defaultAvatar = "http://localhost:5001/uploads/default-avatar.png";
     const [hasRequested, setHasRequested] = useState(false); // ✅ NEW
+    const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+    const optionsRef = useRef(null);
+    const [isMuted, setIsMuted] = useState(false);
+    const [isBlocked, setIsBlocked] = useState(user?.isBlocked || false);
+    
+
+
 
 
     const handleRequestToggle = (newRequestState) => {
@@ -59,6 +66,40 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
         setFollowingCountState(followingCount || 0);
     }, [followersCount, followingCount]);
 
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+                setShowOptionsMenu(false);
+            }
+        };
+    
+        if (showOptionsMenu) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+    
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showOptionsMenu]);
+    
+
+
+    useEffect(() => {
+        const checkMuteStatus = async () => {
+          try {
+            const res = await api.get(`/users/${user.id}/is-muted`);
+            setIsMuted(res.data.isMuted);
+          } catch (err) {
+            console.error("Failed to fetch mute status");
+          }
+        };
+        checkMuteStatus();
+      }, [user.id]);
+      
 
     /**
      * Updates the followers count dynamically when a user follows or unfollows.
@@ -228,6 +269,40 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
             )} {/* ✅ This closes user.id === currentUser?.id block */}
 
             </div>
+            {user.id !== currentUser?.id && (
+            <div className="user-options-menu" ref={optionsRef}>
+                <button 
+                    className="options-btn" 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setShowOptionsMenu(!showOptionsMenu);
+                    }}
+                >
+                    ⋯
+                </button>
+
+                {showOptionsMenu && (
+                    <div className="options-dropdown" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            className="dropdown-item"
+                            onClick={async () => {
+                                if (isBlocked) {
+                                    await unblockUser(user.id);
+                                    toast.success("User unblocked");
+                                } else {
+                                    await blockUser(user.id);
+                                    toast.success("User blocked");
+                                }
+                                setShowOptionsMenu(false);
+                            }}
+                        >
+                            {isBlocked ? "Unblock User" : "Block User"}
+                        </button>
+                    </div>
+                )}
+            </div>
+        )}
+
         <div className="user-right">
 
             <div className="user-info">
@@ -277,6 +352,8 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
                         updateCounts={updateCounts}
                         isFollowingYou={user.isFollowedByCurrentUser}
                         onRequestToggle={handleRequestToggle}
+                        isMuted={isMuted}
+                        setIsMuted={setIsMuted}
                     />
                     <MessageButton recipientUsername={user.username} />
                 </>

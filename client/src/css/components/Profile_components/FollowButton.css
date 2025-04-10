@@ -85,3 +85,33 @@
   .follow-btn.requested:hover {
     background-color: #f0c940;
   }
+
+
+  .dropdown-arrow {
+    margin-left: 4px;
+    font-size: 0.75rem;
+  }
+  
+  .follow-dropdown {
+    position: absolute;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-top: 6px;
+    z-index: 999;
+  }
+  
+  .dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+  }
+  
+  .dropdown-item:hover {
+    background-color: var(--hover-bg);
+  }
+  

@@ -180,6 +180,39 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'CASCADE',
             hooks: true,
         });
+        // Users this user has blocked
+        User.belongsToMany(models.User, {
+            through: models.BlockedUser,
+            as: 'blockedUsers',
+            foreignKey: 'blockerId',
+            otherKey: 'blockedId',
+            onDelete: 'CASCADE',
+          });
+          // Users who have blocked this user
+            User.belongsToMany(models.User, {
+                through: models.BlockedUser,
+                as: 'blockedByUsers',
+                foreignKey: 'blockedId',
+                otherKey: 'blockerId',
+                onDelete: 'CASCADE',
+            });
+            // Users this user has muted
+            User.belongsToMany(models.User, {
+                through: models.MutedUser,
+                as: 'mutedUsers',
+                foreignKey: 'muterId',
+                otherKey: 'mutedId',
+                onDelete: 'CASCADE',
+            });
+            
+            // Users who muted this user
+            User.belongsToMany(models.User, {
+                through: models.MutedUser,
+                as: 'mutedByUsers',
+                foreignKey: 'mutedId',
+                otherKey: 'muterId',
+                onDelete: 'CASCADE',
+            });
     };
 
     return User;

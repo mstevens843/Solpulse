@@ -281,3 +281,45 @@
   border-radius: 6px;
   margin-left: 8px;
 }
+
+.user-options-menu {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+}
+
+.options-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.options-dropdown {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+  z-index: 99;
+}
+
+.dropdown-item {
+  padding: 6px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.dropdown-item:hover {
+  background-color: var(--hover);
+}

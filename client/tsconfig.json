@@ -14,6 +14,6 @@
       "src/api/userService.jsx",
       "src/api/apiConfig.jsx",
       "src/context/AuthContext.jsx",
-      "src/socket.js",
+      "src/socket.js", "src/api/muteApi.jsx", "src/api/blockApi.jsx",
   ]
 }

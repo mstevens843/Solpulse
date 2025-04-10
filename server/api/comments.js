@@ -11,6 +11,8 @@ const { Comment, Notification, Post, User } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const checkCommentOwnership = require('../middleware/checkCommentOwnership');
+const checkBlockStatus = require('../middleware/checkBlockStatus');
+
 
 const router = express.Router();
 
@@ -69,7 +71,7 @@ const handleValidationErrors = (errors) => {
  * - Supports pagination.
  * - Includes comment author information.
  */
-router.get('/detailed', authMiddleware, async (req, res) => {
+router.get('/detailed', authMiddleware, checkBlockStatus, async (req, res) => {
     const { page = 1 } = req.query;
   
     const limit = 10;
@@ -154,7 +156,7 @@ router.get('/detailed', authMiddleware, async (req, res) => {
  * Fetch total comment count for a post.
  * This needs to come first to ensure `/count` is not overridden by `/comments/:id`.
  */
-router.get('/count', async (req, res) => {
+router.get('/count', checkBlockStatus, async (req, res) => {
     const { postId } = req.query;
 
     if (!postId) {
@@ -191,7 +193,7 @@ Ensures consistent response shape: counts: [{ postId, count }].
 
  * @access  Public
  */
-router.post('/batch-count', async (req, res) => {
+router.post('/batch-count', checkBlockStatus, async (req, res) => {
     const { postIds } = req.body;
 
     // ✅ Improved validation
@@ -240,8 +242,8 @@ router.post('/batch-count', async (req, res) => {
 /**
  * Fetch comments for a specific post with pagination.
  */
-router.get('/', authMiddleware, async (req, res) => {
-  const { postId, page = 1, limit = 20 } = req.query;
+router.get('/', authMiddleware, checkBlockStatus, async (req, res) => {
+    const { postId, page = 1, limit = 20 } = req.query;
 
   // Validate the postId
   if (!postId) {
@@ -294,6 +296,7 @@ router.post(
     '/',
     [
         authMiddleware,
+        checkBlockStatus, // 🛡️ Prevent blocked users from commenting
         check('content', 'Content is required').notEmpty(),
         check('postId', 'Post ID is required').notEmpty(),
     ],

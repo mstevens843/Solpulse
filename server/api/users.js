@@ -16,6 +16,7 @@ const path = require('path');
 const fs = require('fs');
 const { User, Follower, Post, Notification, sequelize } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
+const checkBlockStatus = require('../middleware/checkBlockStatus');
 const { param, validationResult } = require('express-validator');
 const router = express.Router();
 const multer = require('multer');
@@ -159,7 +160,7 @@ router.put('/settings', authMiddleware, async (req, res) => {
  * - Returns profile details, follower/following count, and user's posts.
  * - Added Privacy feature: check blocks post/bio unless you're the user or follower 
  */
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/:id', authMiddleware, checkBlockStatus, async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user?.id;
 
@@ -303,7 +304,7 @@ router.get('/followers/notifications', authMiddleware, async (req, res) => {
  * @desc    Get a user's followers
  * @access  Public
  */
-router.get('/:id/followers', authMiddleware, async (req, res) => {
+router.get('/:id/followers', authMiddleware, checkBlockStatus, async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user?.id;
 
@@ -366,7 +367,7 @@ router.get('/:id/followers', authMiddleware, async (req, res) => {
  * - Includes `id`, `username`, and `profilePicture` of each followed user.
  * - Returns an empty array if the user is not following anyone.
  */
-router.get('/:id/following', authMiddleware, async (req, res) => {
+router.get('/:id/following', authMiddleware, checkBlockStatus, async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user?.id;
 
@@ -429,7 +430,7 @@ router.get('/:id/following', authMiddleware, async (req, res) => {
  * - Returns an error if the user is already following the target user.
  * - Responds with a success message if the follow action is successful.
  */
-router.post('/:id/follow', authMiddleware, param('id').isInt(), async (req, res) => {
+router.post('/:id/follow', authMiddleware, checkBlockStatus, param('id').isInt(), async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 

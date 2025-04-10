@@ -13,6 +13,7 @@ const express = require('express');
 const { Post, Comment, User, Like, Retweet, Notification, Follower } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
+const checkBlockStatus = require('../middleware/checkBlockStatus');
 const { Op } = require('sequelize');
 const multer = require('multer');
 const path = require('path');
@@ -525,78 +526,78 @@ router.get('/:id/retweet-status', authMiddleware, async (req, res) => {
  * @access  Private
  */
 // ✅ Full route using Retweet model directly
-router.get('/:id', authMiddleware, async (req, res) => {
-  try {
-    const currentUserId = req.user?.id;
+// router.get('/:id', authMiddleware, checkBlockStatus, async (req, res) => {
+//   try {
+//     const currentUserId = req.user?.id;
 
-    const post = await Post.findByPk(req.params.id, {
-      include: [
-        { model: Comment, as: 'comments' },
-        {
-          model: User,
-          as: 'user',
-          attributes: ['id', 'username', 'profilePicture', 'privacy'],
-          include: [
-            {
-              model: Follower,
-              as: 'followers',
-              attributes: ['followerId']
-            }
-          ]
-        },
-        {
-          model: Post,
-          as: 'originalPost',
-          include: [
-            {
-              model: User,
-              as: 'user',
-              attributes: ['id', 'username', 'profilePicture', 'privacy'],
-              include: [
-                {
-                  model: Follower,
-                  as: 'followers',
-                  attributes: ['followerId']
-                }
-              ]
-            }
-          ]
-        }
-      ],
-    });
+//     const post = await Post.findByPk(req.params.id, {
+//       include: [
+//         { model: Comment, as: 'comments' },
+//         {
+//           model: User,
+//           as: 'user',
+//           attributes: ['id', 'username', 'profilePicture', 'privacy'],
+//           include: [
+//             {
+//               model: Follower,
+//               as: 'followers',
+//               attributes: ['followerId']
+//             }
+//           ]
+//         },
+//         {
+//           model: Post,
+//           as: 'originalPost',
+//           include: [
+//             {
+//               model: User,
+//               as: 'user',
+//               attributes: ['id', 'username', 'profilePicture', 'privacy'],
+//               include: [
+//                 {
+//                   model: Follower,
+//                   as: 'followers',
+//                   attributes: ['followerId']
+//                 }
+//               ]
+//             }
+//           ]
+//         }
+//       ],
+//     });
 
-    if (!post) return res.status(404).json({ message: 'Post not found.' });
+//     if (!post) return res.status(404).json({ message: 'Post not found.' });
 
-    // 🔐 Privacy check: main post
-    const author = post.user;
-    const isOwner = author?.id === currentUserId;
-    const isFollower = author?.followers?.some(f => f.followerId === currentUserId);
-    const isPrivate = author?.privacy === 'private';
+//     // 🔐 Privacy check: main post
+//     const author = post.user;
+//     const isOwner = author?.id === currentUserId;
+//     const isFollower = author?.followers?.some(f => f.followerId === currentUserId);
+//     const isPrivate = author?.privacy === 'private';
 
-    if (isPrivate && !isOwner && !isFollower) {
-      return res.status(403).json({ message: "This post is from a private account." });
-    }
+//     if (isPrivate && !isOwner && !isFollower) {
+//       return res.status(403).json({ message: "This post is from a private account." });
+//     }
 
-    // 🔐 Privacy check: original post (for reposts)
-    if (post.originalPost) {
-      const originalAuthor = post.originalPost.user;
-      const isOriginalOwner = originalAuthor?.id === currentUserId;
-      const isOriginalFollower = originalAuthor?.followers?.some(f => f.followerId === currentUserId);
-      const isOriginalPrivate = originalAuthor?.privacy === 'private';
+//     // 🔐 Privacy check: original post (for reposts)
+//     if (post.originalPost) {
+//       const originalAuthor = post.originalPost.user;
+//       const isOriginalOwner = originalAuthor?.id === currentUserId;
+//       const isOriginalFollower = originalAuthor?.followers?.some(f => f.followerId === currentUserId);
+//       const isOriginalPrivate = originalAuthor?.privacy === 'private';
 
-      if (isOriginalPrivate && !isOriginalOwner && !isOriginalFollower) {
-        return res.status(403).json({ message: "This repost is from a private account." });
-      }
-    }
+//       if (isOriginalPrivate && !isOriginalOwner && !isOriginalFollower) {
+//         return res.status(403).json({ message: "This repost is from a private account." });
+//       }
+//     }
 
-    const formattedPost = formatPost(post);
-    res.status(200).json({ post: formattedPost, comments: formattedPost.comments || [] });
+//     const formattedPost = formatPost(post);
+//     res.status(200).json({ post: formattedPost, comments: formattedPost.comments || [] });
 
-  } catch (error) {
-    console.error('Error fetching post:', error);
-    res.status(500).json({ message: 'An error occurred while fetching the post.' });
-  }
-});
+//   } catch (error) {
+//     console.error('Error fetching post:', error);
+//     res.status(500).json({ message: 'An error occurred while fetching the post.' });
+//   }
+// });
 
 
 /**
@@ -604,7 +605,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
  * @desc    Fetch a single post with comments and user data
  * @access  Public
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware.optional, checkBlockStatus, async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id, {
       include: [
@@ -681,7 +682,7 @@ router.post('/', authMiddleware, upload.single('media'), async (req, res) => {
  * @desc    Like a post
  * @access  Private
  */
-router.post('/:id/like', authMiddleware, async (req, res) => {
+router.post('/:id/like', authMiddleware, checkBlockStatus, async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
@@ -753,17 +754,13 @@ router.post('/:id/like', authMiddleware, async (req, res) => {
 });
 
 
+
 /**
  * @route   POST /api/posts/:id/retweet
  * @desc    Retweet a post
  * @access  Private
  */
-/**
- * @route   POST /api/posts/:id/retweet
- * @desc    Retweet a post
- * @access  Private
- */
-router.post('/:id/retweet', authMiddleware, async (req, res) => {
+router.post('/:id/retweet', authMiddleware, checkBlockStatus, async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
@@ -848,47 +845,43 @@ router.post('/:id/retweet', authMiddleware, async (req, res) => {
 });
 
 
-/**
- * @route   GET /api/posts/:id/interactions
- * @desc    Get users who liked or reposted a post
- * @access  Public
- */
+
 /**
  * @route   GET /api/posts/:id/interactions
  * @desc    Get users who liked or reposted a post
  * @access  Public (or Private if you prefer)
  */
-router.get('/:id/interactions', async (req, res) => {
+router.get('/:id/interactions', authMiddleware.optional, checkBlockStatus, async (req, res) => {
   try {
-    const { id } = req.params;
-    const currentUserId = req.user?.id || null; // If you want to check who is viewing
+  const { id } = req.params;
+  const currentUserId = req.user?.id || null; // If you want to check who is viewing
 
-    // 1) Get all likes on this post
-    const likes = await Like.findAll({
-      where: { postId: id },
-      include: [
-        {
-          model: User,
-          as: 'user',
-          // Make sure we include what we need:
-          attributes: ['id', 'username', 'profilePicture', 'bio'],
-        },
-      ],
-      order: [['createdAt', 'DESC']],
-    });
+  // 1) Get all likes on this post
+  const likes = await Like.findAll({
+    where: { postId: id },
+    include: [
+      {
+        model: User,
+        as: 'user',
+        // Make sure we include what we need:
+        attributes: ['id', 'username', 'profilePicture', 'bio'],
+      },
+    ],
+    order: [['createdAt', 'DESC']],
+  });
 
-    // 2) Get all reposts (retweets) of this post
-    const reposts = await Post.findAll({
-      where: { originalPostId: id, isRetweet: true },
-      include: [
-        {
-          model: User,
-          as: 'user',
-          attributes: ['id', 'username', 'profilePicture', 'bio'],
-        },
-      ],
-      order: [['createdAt', 'DESC']],
-    });
+  // 2) Get all reposts (retweets) of this post
+  const reposts = await Post.findAll({
+    where: { originalPostId: id, isRetweet: true },
+    include: [
+      {
+        model: User,
+        as: 'user',
+        attributes: ['id', 'username', 'profilePicture', 'bio'],
+      },
+    ],
+    order: [['createdAt', 'DESC']],
+  });
 
     // OPTIONAL: If you also want to add "isFollowedByCurrentUser" or "isFollowingYou":
     //    (You can skip this if you don't need follow logic here)

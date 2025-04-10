@@ -10,6 +10,7 @@ const express = require('express');
 
 const { Message, User, Notification } = require('../models/Index');
 const authMiddleware = require('../middleware/auth');
+const checkBlockStatus = require('../middleware/checkBlockStatus');
 const { check, validationResult } = require('express-validator');
 const { Op } = require('sequelize'); // import sequelize operators
 const multer = require('multer');
@@ -118,7 +119,7 @@ router.get('/detailed', authMiddleware, async (req, res) => {
  * GET /api/messages/search-users
  * Search users based on query input for message recipient suggestions.
  */
-router.get('/search-users', authMiddleware, async (req, res) => {
+router.get('/search-users', authMiddleware, checkBlockStatus, async (req, res) => {
   const { query } = req.query;
 
   if (!query || query.trim() === "") {
@@ -275,6 +276,14 @@ router.post(
     upload.single('attachment'),
     check('recipient', 'Recipient username is required').not().isEmpty(),
     check('message', 'Message content is required').not().isEmpty(),
+    async (req, res, next) => {
+      // 🔁 Dynamically fetch target user ID from username before running checkBlockStatus
+      const recipientUser = await User.findOne({ where: { username: req.body.recipient } });
+      if (!recipientUser) return res.status(404).json({ error: 'Recipient not found.' });
+
+      req.params.userId = recipientUser.id; // 🔌 Inject userId for middleware
+      return checkBlockStatus(req, res, next);
+    },
   ],
   async (req, res) => {
     const errors = validationResult(req);

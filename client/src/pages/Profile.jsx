@@ -20,6 +20,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Loader from "@/components/Loader";
 import { AuthContext } from "@/context/AuthContext";
 import { api } from "@/api/apiConfig";
+import { blockUser, unblockUser, getBlockedUsers } from "@/api/blockApi";
+import { muteUser, unmuteUser, getMutedUsers } from "@/api/muteApi";
 import "@/css/pages/Profile.css";
 
 import { lazy, Suspense } from "react"; // ✅ Added for lazy loading
@@ -51,6 +53,9 @@ function Profile() {
     const isPrivate = profileUser.privacy === 'private';
     const canViewConnections = isOwner || isFollower || !isPrivate;
 
+    const [isBlocked, setIsBlocked] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
+
 
 
     /**
@@ -80,6 +85,20 @@ function Profile() {
                 const { user, followersCount, followingCount } = userResponse.data;
     
                 setUser(user); // keep it clean — no unnecessary overwrite of bio here
+
+                // Fetch block/mute status (if not viewing own profile)
+                if (currentUser?.id !== user.id) {
+                    const [blockedRes, mutedRes] = await Promise.all([
+                    getBlockedUsers(),
+                    getMutedUsers(),
+                    ]);
+                
+                    const isBlocked = blockedRes.data.some((u) => u.id === user.id);
+                    const isMuted = mutedRes.data.some((u) => u.id === user.id);
+                
+                    setIsBlocked(isBlocked);
+                    setIsMuted(isMuted);
+                }
 
     
                 setProfilePicture(user.profilePicture || "http://localhost:5001/uploads/default-avatar.png");
@@ -307,8 +326,39 @@ function Profile() {
                         isInModal={isInModal} 
                         currentUser={currentUser}
                         canViewConnections={canViewConnections}
-                        onProfilePictureChange={handleProfilePictureUpdate} 
+                        onProfilePictureChange={handleProfilePictureUpdate}
+                        isMuted={isMuted}
+                        setIsMuted={setIsMuted}
                     />
+                    {currentUser?.id !== user.id && (
+                    <div className="profile-actions">
+                        <button onClick={async () => {
+                        if (isBlocked) {
+                            await unblockUser(user.id);
+                            toast.success("User unblocked");
+                        } else {
+                            await blockUser(user.id);
+                            toast.success("User blocked");
+                        }
+                        setIsBlocked(!isBlocked);
+                        }}>
+                        {isBlocked ? "Unblock User" : "Block User"}
+                        </button>
+
+                        <button onClick={async () => {
+                        if (isMuted) {
+                            await unmuteUser(user.id);
+                            toast.success("User unmuted");
+                        } else {
+                            await muteUser(user.id);
+                            toast.success("User muted");
+                        }
+                        setIsMuted(!isMuted);
+                        }}>
+                        {isMuted ? "Unmute User" : "Mute User"}
+                        </button>
+                    </div>
+                    )}
                     </div>
     
 

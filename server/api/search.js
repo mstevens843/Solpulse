@@ -22,6 +22,7 @@ const express = require('express');
 const { User, Post, sequelize, Follower } = require('../models/Index');
 const { Op, literal } = require('sequelize');
 const authMiddleware = require('../middleware/auth');
+const checkBlockStatus = require('../middleware/checkBlockStatus');
 const rateLimiter = require('../middleware/rateLimiter');
 const router = express.Router();
 const NodeCache = require('node-cache');
@@ -33,6 +34,7 @@ router.get(
   '/',
   rateLimiter(100, 15 * 60 * 1000),
   authMiddleware,
+  checkBlockStatus, // ✅ ADD THIS HERE
   async (req, res) => {
     const query = req.query.query || '';
     const page = parseInt(req.query.page) || 1;
@@ -211,6 +213,7 @@ router.get(
   '/suggestions',
   rateLimiter(100, 15 * 60 * 1000),
   authMiddleware,
+  checkBlockStatus, // ✅ ADD THIS HERE
   async (req, res) => {
     const query = req.query.query || '';
     if (!query.trim()) return res.json({ results: [] });

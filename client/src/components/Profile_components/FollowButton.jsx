@@ -6,7 +6,7 @@
  * follower counts accordingly.
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig";
 import { toast } from "react-toastify";
@@ -19,12 +19,31 @@ import { useAuth } from "@/context/AuthContext";
 const followStatusCache = {}; // { currentUserId: { [targetUserId]: true/false } }
 // 🔁 In-memory follow status cache
 
-const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowToggle }) => {
+const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowToggle, isMuted, setIsMuted, }) => {
   const { user: currentUser } = useAuth(); //  get logged-in user
   const [isFollowing, setIsFollowing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasRequested, setHasRequested] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+  
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
 
   /**
    * Fetch follow status from backend if not cached
@@ -133,35 +152,63 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
   }
 
   return (
-    <div className="follow-button-container">
+    <div className="follow-button-container" ref={dropdownRef}>
       <button
-      className={`follow-btn ${buttonClass}`}
-      onClick={handleFollowToggle}
-      disabled={loading || isFollowing === null}
-      aria-label={buttonLabel}
-      aria-pressed={isFollowing} // ✅ Add this for accessibilit
-      title={
-        isPrivate && hasRequested
-          ? "Click to cancel follow request"
-          : isPrivate
-          ? "Request to follow private user"
-          : isFollowing
-          ? "Unfollow"
-          : "Follow"
-      }
-    >
-      {isFollowing ? <FaUserCheck /> : <FaUserPlus />}
-      {` ${buttonLabel}`}
-    </button>
+        className={`follow-btn ${buttonClass}`}
+        onClick={(e) => {
+          if (isFollowing) {
+            e.stopPropagation();
+            setShowDropdown((prev) => !prev);
+          } else {
+            handleFollowToggle();
+          }
+        }}
+        disabled={loading || isFollowing === null}
+        aria-label={buttonLabel}
+        aria-pressed={isFollowing}
+      >
+        {isFollowing ? <FaUserCheck /> : <FaUserPlus />}
+        {` ${buttonLabel}`} {isFollowing && <span className="dropdown-arrow">▼</span>}
+      </button>
+  
+      {/* Dropdown options */}
+      {isFollowing && showDropdown && (
+        <div className="follow-dropdown">
+          <button
+            className="dropdown-item"
+            onClick={async () => {
+              try {
+                if (isMuted) {
+                  await api.post(`/users/${userId}/unmute`);
+                  toast.success("User unmuted.");
+                  setIsMuted(false);
+                } else {
+                  await api.post(`/users/${userId}/mute`);
+                  toast.success("User muted.");
+                  setIsMuted(true);
+                }
+              } catch (err) {
+                console.error("Mute/unmute error:", err);
+                toast.error("Failed to update mute status.");
+              }
+              setShowDropdown(false);
+            }}
+          >
+            {isMuted ? "Unmute" : "Mute"}
+          </button>
+        </div>
+      )}
     </div>
   );
-};
+}
 
 FollowButton.propTypes = {
   userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   updateCounts: PropTypes.func,
   isFollowingYou: PropTypes.bool, // 🔁 NEW!
   onFollowToggle: PropTypes.func,
+  isMuted: PropTypes.bool,
+  setIsMuted: PropTypes.func,
 };
 
 export default FollowButton;
