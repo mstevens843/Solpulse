@@ -31,18 +31,25 @@
     opacity: 0.6;
     cursor: not-allowed;
 }
-.follow-btn {
-    font-size: 0.9rem;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 999px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+.follow-btn.follow {
+  background: linear-gradient(135deg, #00ffc3, #00a2ff);
+  color: #000;
+  font-weight: 600;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 0 10px rgba(0, 255, 200, 0.4);
+}
+
+.follow-button-container {
+  position: relative;
+  display: inline-block;
+}
   
   /* Default: Follow */
   .follow-btn.follow {
@@ -50,9 +57,8 @@
   }
   
   .follow-btn.follow:hover {
-    background-color: #019875;
+    filter: brightness(1.1);
   }
-  
   /* Follow Back */
   .follow-btn.follow-back {
     background-color: #6c5ce7;
@@ -94,24 +100,48 @@
   
   .follow-dropdown {
     position: absolute;
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    top: 100%;
+    left: 0;
     margin-top: 6px;
-    z-index: 999;
+    min-width: 140px;
+    background: #1e1e1e;
+    border: 1px solid #00ffcc;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 255, 204, 0.3);
+    z-index: 1000;
+    overflow: hidden;
+    animation: dropdownFade 0.2s ease-out;
   }
+
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
   
-  .dropdown-item {
-    padding: 8px 12px;
-    cursor: pointer;
-    width: 100%;
-    background: none;
-    border: none;
-    text-align: left;
-  }
+.dropdown-item {
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  color: #f1f1f1;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
   
-  .dropdown-item:hover {
-    background-color: var(--hover-bg);
-  }
-  
+.dropdown-item:hover {
+  background: #00ffcc22;
+  color: #00ffcc;
+  transform: scale(1.02);
+  transition: all 0.15s ease;
+}
+.dropdown-item.unfollow {
+  color: #ff6b6b;
+}
+
+.dropdown-item.unfollow:hover {
+  background: #ff6b6b22;
+  color: #ff6b6b;
+}

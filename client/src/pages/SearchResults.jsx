@@ -23,7 +23,8 @@ function SearchResults() {
   const navigate = useNavigate();
   const urlQuery = new URLSearchParams(location.search).get("query") || "";
   const currentFilter = new URLSearchParams(location.search).get("filter") || "all";
-  const { user: currentUser } = useContext(AuthContext);
+  const { user: currentUser, blockedUserIds = [], mutedUserIds = [] } = useContext(AuthContext);
+
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -121,6 +122,18 @@ function SearchResults() {
     return () => clearTimeout(delayDebounce);
   }, [searchTerm, currentFilter, navigate]);
 
+  const visibleResults = results.filter((result) => {
+    const userId = result.user?.id || result.userId || result.originalUserId;
+  
+    // Blocked users: fully hide
+    if (blockedUserIds.includes(userId)) return false;
+  
+    // Muted users: only hide in "users" filter or if result is a user
+    if (mutedUserIds.includes(userId) && result.type === "user") return false;
+  
+    return true;
+  });
+
   return (
     <div className="search-results-container">
       <h2>Search Results for "{searchTerm}"</h2>
@@ -148,7 +161,8 @@ function SearchResults() {
       )}
 
       <div className="results-list">
-        {results.map((result) => (
+        
+      {visibleResults.map((result) => (
           <div key={result.id} className="result-item">
             {result.type === "user" ? (
               // NEW: Use our Twitter-style UserListItem with bio

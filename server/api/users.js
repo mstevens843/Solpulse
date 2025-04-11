@@ -14,7 +14,7 @@
 const express = require('express');
 const path = require('path'); 
 const fs = require('fs');
-const { User, Follower, Post, Notification, sequelize } = require('../models/Index');
+const { User, Follower, Post, Notification, sequelize } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const checkBlockStatus = require('../middleware/checkBlockStatus');
 const { param, validationResult } = require('express-validator');
@@ -150,6 +150,37 @@ router.put('/settings', authMiddleware, async (req, res) => {
 
 
 /**
+ * @route   GET /api/users/profile/:username
+ * @desc    Get a user's profile by username (no posts or followers)
+ * @access  Public
+ *
+ * - Fetches basic profile info using the username.
+ * - Used for message requests and user previews.
+ * - Does not return posts or follower data.
+ */
+
+router.get('/profile/:username', async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const user = await User.findOne({
+      where: { username },
+      attributes: ['id', 'username', 'bio', 'walletAddress', 'profilePicture', 'privacy']
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    res.json({ user });
+  } catch (err) {
+    console.error('Error fetching user by username:', err);
+    res.status(500).json({ message: 'Failed to fetch user.' });
+  }
+});
+
+
+/**
  * @route   GET /api/users/:id
  * @desc    Get a user's profile & posts
  * @access  Public
@@ -201,6 +232,25 @@ router.get('/:id', authMiddleware, checkBlockStatus, async (req, res) => {
         followingCount,
         posts: [],
         postsHidden: true
+      });
+    }
+    
+     // 🚫 Blocked user logic: Allow minimal profile, hide posts/followers
+     if (req.isBlockedUser) {
+      return res.status(200).json({
+        user: {
+          id: profileUser.id,
+          username: profileUser.username,
+          bio: "This user is blocked by you.",
+          walletAddress: null,
+          profilePicture: profileUser.profilePicture,
+          privacy: profileUser.privacy,
+        },
+        followersCount: 0,
+        followingCount: 0,
+        posts: [],
+        postsHidden: true,
+        blocked: true // ✅ optional flag for frontend logic
       });
     }
     

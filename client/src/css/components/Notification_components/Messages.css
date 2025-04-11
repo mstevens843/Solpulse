@@ -277,3 +277,16 @@
   background: #4b8df8;
   color: white;
 }
+
+
+.blocked-tag {
+  color: red;
+  margin-left: 6px;
+  font-size: 0.85rem;
+}
+
+.muted-tag {
+  color: orange;
+  margin-left: 6px;
+  font-size: 0.85rem;
+}

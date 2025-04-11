@@ -8,7 +8,7 @@
 
 const express = require('express');
 
-const { Message, User, Notification } = require('../models/Index');
+const { Message, User, Notification } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const checkBlockStatus = require('../middleware/checkBlockStatus');
 const { check, validationResult } = require('express-validator');
@@ -200,24 +200,37 @@ router.get('/', authMiddleware, async (req, res) => {
 
 // 📤 GET /api/messages/sent
 router.get('/sent', authMiddleware, async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+  const offset = (page - 1) * limit;
+
   try {
-    const messages = await Message.findAll({
+    const { count, rows } = await Message.findAndCountAll({
       where: { senderId: req.user.id },
-      include: [{ model: User, as: "recipientUser", attributes: ["username"] }],
+      include: [
+        {
+          model: User,
+          as: "recipient",
+          attributes: ["username", "profilePicture"],
+        },
+      ],
       order: [["createdAt", "DESC"]],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
     });
 
     res.json({
-      messages: messages.map((msg) => ({
+      messages: rows.map((msg) => ({
         id: msg.id,
         content: msg.content,
-        recipient: msg.recipientUser?.username || "Unknown",
+        recipient: msg.recipient?.username || "Unknown",
+        profilePicture: msg.recipient?.profilePicture || null,
         read: msg.read,
         readAt: msg.readAt,
         createdAt: msg.createdAt,
       })),
-      totalPages: 1,
-      currentPage: 1,
+      totalMessages: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: parseInt(page),
     });
   } catch (err) {
     console.error("Error fetching sent messages:", err);

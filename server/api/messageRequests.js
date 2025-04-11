@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { MessageRequest, Notification, User } = require('../models/Index');
+const { MessageRequest, Notification, User } = require('../models');
 const authMiddleware = require('../middleware/auth');
 
 // 🔍 GET /api/message-requests/:recipientId/has-requested

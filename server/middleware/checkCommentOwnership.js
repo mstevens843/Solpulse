@@ -7,7 +7,7 @@
  */
 
 
-const { Comment } = require('../models/Index');
+const { Comment } = require('../models');
 
 
 /** 

@@ -10,7 +10,7 @@
 
 
 const express = require('express');
-const { Post, Comment, User, Like, Retweet, Notification, Follower } = require('../models/Index');
+const { Post, Comment, User, Like, Retweet, Notification, Follower, BlockedUser } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
 const checkBlockStatus = require('../middleware/checkBlockStatus');
@@ -245,6 +245,21 @@ router.get('/', authMiddleware.optional, async (req, res) => {
     // 🌍 "For You" feed or specific user's posts
     const whereCondition = userId ? { userId } : {};
 
+    // 🧱 Filter out posts from users you've blocked (only if logged in)
+    if (req.user?.id) {
+      const blockedRecords = await BlockedUser.findAll({
+        where: { blockerId: req.user.id },
+        attributes: ['blockedId'],
+      });
+      const blockedIds = blockedRecords.map((b) => b.blockedId);
+
+      if (blockedIds.length > 0) {
+        whereCondition.userId = {
+          [Op.notIn]: blockedIds,
+        };
+      }
+    }
+
     posts = await Post.findAll({
       where: whereCondition,
       limit: parseInt(limit),
@@ -330,10 +345,25 @@ router.get('/', authMiddleware.optional, async (req, res) => {
 // });
 
 
-router.get('/trending', async (req, res) => {
+router.get('/trending', authMiddleware.optional, async (req, res) => {
   try {
+    let blockedIds = [];
+
+    if (req.user?.id) {
+      const blockedRecords = await BlockedUser.findAll({
+        where: { blockerId: req.user.id },
+        attributes: ['blockedId'],
+      });
+      blockedIds = blockedRecords.map(b => b.blockedId);
+    }
+
     const trendingPosts = await Post.findAll({
-      where: { deletedAt: null },
+      where: {
+        deletedAt: null,
+        ...(blockedIds.length > 0 && {
+          userId: { [Op.notIn]: blockedIds },
+        }),
+      },
       order: [['likes', 'DESC']],
       limit: 20,
       include: [
@@ -356,7 +386,17 @@ router.get('/trending', async (req, res) => {
       ],
     });
 
-    const formattedPosts = trendingPosts.map(formatPost);
+    const filtered = trendingPosts.filter(post => {
+      const author = post.user;
+      const originalAuthor = post.originalPost?.user;
+
+      const isBlocked = blockedIds.includes(author?.id);
+      const isRepostFromBlocked = blockedIds.includes(originalAuthor?.id);
+
+      return !isBlocked && !isRepostFromBlocked;
+    });
+
+    const formattedPosts = filtered.map(formatPost);
     res.json({ posts: formattedPosts });
   } catch (err) {
     console.error('Error fetching trending posts:', err);

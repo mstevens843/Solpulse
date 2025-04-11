@@ -104,19 +104,28 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (!user?.id) return;
     
+        // 1. Check the current URL path
+        const path = window.location.pathname.toLowerCase();
+    
+        // 2. List of pages where we SKIP fetching likes/retweets
+        const skipPages = ["/trending-crypto"];
+    
+        // 3. If we're on one of those pages, do nothing and return
+        if (skipPages.some(page => path.startsWith(page))) {
+            console.log("Skipping likes/retweets fetch on path:", path);
+            return;
+        }
+    
+        // 4. Otherwise, do the normal fetch
         const fetchLikesAndRetweets = async () => {
             try {
                 const [likeResponse, retweetResponse] = await Promise.all([
-                    api.get("/posts/likes/batch"),        // ✅ Still uses Like pivot
-                    api.get("/posts/retweets/batch"),     // ✅ Now returns from Posts (not pivot)
+                    api.get("/posts/likes/batch"),
+                    api.get("/posts/retweets/batch"),
                 ]);
     
                 const likedPostIds = new Set(likeResponse.data.likedPosts);
-    
-                // ✅ `retweetResponse.data.retweetedPosts` should now contain `originalPostId`s
-                const retweetedPostIds = new Set(
-                    retweetResponse.data.retweetedPosts.filter(Boolean)
-                );
+                const retweetedPostIds = new Set(retweetResponse.data.retweetedPosts.filter(Boolean));
     
                 setLikedPosts(likedPostIds);
                 setRetweetedPosts(retweetedPostIds);

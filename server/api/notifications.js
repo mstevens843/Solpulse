@@ -9,7 +9,7 @@
 
 
 const express = require('express');
-const { Notification, User, Comment, Message } = require('../models/Index');
+const { Notification, User, Comment, Message } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 

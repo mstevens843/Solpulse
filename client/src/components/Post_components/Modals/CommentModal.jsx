@@ -27,6 +27,8 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
   const [loading, setLoading] = useState(true); // ✅ Loading state added
   const [retweets, setRetweets] = useState(post.retweets || 0);
   const [deletingCommentId, setDeletingCommentId] = useState(null);
+  const [blockedUserIds, setBlockedUserIds] = useState([]);
+
 
   // Use postIdToUse for retweets
   const postIdToUse = post.isRetweet ? post.originalPostId : post.id;
@@ -91,6 +93,20 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
 
 
 
+
+  // Fetch blockedUserIds in CommentModal 
+  useEffect(() => {
+    const fetchBlockedUsers = async () => {
+      try {
+        const res = await api.get("/blocked-muted/block");
+        setBlockedUserIds(res.data?.blockedUserIds || []);
+      } catch (err) {
+        console.error("Failed to fetch blocked users inside CommentModal", err);
+      }
+    };
+  
+    fetchBlockedUsers();
+  }, []);
 
 
 // ✅ Updated delete logic with toastId
@@ -227,13 +243,19 @@ const handleDeleteComment = async (commentId) => {
           />
         </div>
 
-        <CommentSection
-          postId={postIdToUse}
-          originalPostId={post.originalPostId}
-          onNewComment={handleNewComment}
-          setPosts={setPosts}
-          currentUser={currentUser}
-        />
+        {blockedUserIds.includes(post.userId) ? (
+          <div className="blocked-comment-warning">
+            <p className="text-red-500 p-2">You cannot comment on posts from users you've blocked.</p>
+          </div>
+        ) : (
+          <CommentSection
+            postId={postIdToUse}
+            originalPostId={post.originalPostId}
+            onNewComment={handleNewComment}
+            setPosts={setPosts}
+            currentUser={currentUser}
+          />
+        )}
 
         {/* Comments */}
         <div className="post-comments">

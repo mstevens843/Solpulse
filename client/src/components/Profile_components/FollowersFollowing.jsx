@@ -23,6 +23,8 @@ function FollowersFollowing({ userId, type, onClose, currentUserId }) {
   const [error, setError] = useState("");
   const [retryTrigger, setRetryTrigger] = useState(0); // ✅ To refetch on retry
   const [activeTab, setActiveTab] = useState(type); // 'followers' or 'following'
+  const [mutedUserIds, setMutedUserIds] = useState([]);
+  const [blockedUserIds, setBlockedUserIds] = useState([]);
 
   const cacheKey = `${userId}-${activeTab}`;
 
@@ -32,6 +34,19 @@ function FollowersFollowing({ userId, type, onClose, currentUserId }) {
    * ✅ Handles specific error messages.
    */
   useEffect(() => {
+    const fetchMutedAndBlocked = async () => {
+      try {
+        const [mutedRes, blockedRes] = await Promise.all([
+          api.get("/blocked-muted/block"),
+          api.get("/blocked-muted/mute"),
+        ]);
+        setMutedUserIds(mutedRes.data?.mutedUserIds || []);
+        setBlockedUserIds(blockedRes.data?.blockedUserIds || []);
+      } catch (err) {
+        console.error("Failed to fetch muted/blocked users", err);
+      }
+    };
+    fetchMutedAndBlocked();
     async function fetchData() {
       setLoading(true);
       setError("");
@@ -112,13 +127,16 @@ function FollowersFollowing({ userId, type, onClose, currentUserId }) {
         <p className="empty-message">No {activeTab} yet.</p>
       ) : (
         <div className="user-list">
-          {list.map((user) => (
-            <UserListItem
-              key={user.id}
-              user={user}
-              currentUserId={currentUserId}
-              onClose={onClose}
-            />
+          {list
+            .filter((user) => !blockedUserIds.includes(user.id)) // 🔒 Hide blocked users
+            .map((user) => (
+              <UserListItem
+                key={user.id}
+                user={user}
+                isMuted={mutedUserIds.includes(user.id)} // 🔇 Flag muted users
+                currentUserId={currentUserId}
+                onClose={onClose}
+              />
           ))}
         </div>
       )}
@@ -127,6 +145,8 @@ function FollowersFollowing({ userId, type, onClose, currentUserId }) {
 }
 
 export default FollowersFollowing;
+
+
 
 /**
  * Potential Improvements:

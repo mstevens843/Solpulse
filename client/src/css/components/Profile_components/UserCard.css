@@ -290,22 +290,33 @@
 }
 
 .options-btn {
-  background: transparent;
-  border: none;
+  background-color: transparent;
+  border: 2px solid var(--border, #00ffcc);
+  color: #00ffcc; /* ✅ Make sure this is visible in your current theme */
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
   font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
   cursor: pointer;
-  color: var(--text);
+}
+
+.options-btn:hover {
+  background-color: rgba(0, 255, 204, 0.15);
 }
 
 .options-dropdown {
   position: absolute;
-  top: 30px;
+  top: 36px;
   right: 0;
-  background-color: var(--background);
-  border: 1px solid var(--border);
+  background-color: var(--background, #121212);
+  border: 1px solid var(--border, #00ffcc);
   padding: 8px;
   border-radius: 8px;
-  box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0px 2px 10px rgba(0, 255, 204, 0.2);
   z-index: 99;
 }
 
@@ -317,9 +328,41 @@
   width: 100%;
   cursor: pointer;
   font-size: 14px;
-  color: var(--text);
+  color: var(--text, white);
+  white-space: nowrap; /* ✅ prevents line break */
 }
 
 .dropdown-item:hover {
-  background-color: var(--hover);
+  background-color: rgba(0, 255, 204, 0.1);
+}
+
+
+.user-card.blocked {
+  opacity: 0.7;
+  /* pointer-events: none; */
+}
+
+
+/* Blocked Button Styling (Twitter style) */
+.blocked-btn {
+  background-color: #dc2626;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.blocked-btn:hover {
+  background-color: #b91c1c;
+  color: white;
+}
+
+/* Dropdown next to Blocked */
+.blocked-btn + .options-dropdown {
+  top: 40px;
+  right: 0;
 }

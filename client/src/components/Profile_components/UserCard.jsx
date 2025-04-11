@@ -16,6 +16,7 @@
 
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { api } from "@/api/apiConfig";
 import PropTypes from "prop-types";
 import FollowButton from "@/components/Profile_components/FollowButton";
 import MessageButton from "@/components/Notification_components/MessageButton";
@@ -47,6 +48,7 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
     const optionsRef = useRef(null);
     const [isMuted, setIsMuted] = useState(false);
     const [isBlocked, setIsBlocked] = useState(user?.isBlocked || false);
+    const [showBlockedDropdown, setShowBlockedDropdown] = useState(false);
     
 
 
@@ -85,20 +87,51 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [showOptionsMenu]);
+
+
+
+
+    useEffect(() => {
+        let isMounted = true;
+    
+        const checkBlockStatus = async () => {
+            try {
+                const res = await api.get("/blocked-muted/block");
+                const blockedUsers = res.data || [];
+                const isBlockedMatch = blockedUsers.some((u) => u.id === user.id);
+                if (isMounted) setIsBlocked(isBlockedMatch);
+            } catch (err) {
+                console.error("❌ Block status fetch failed:", err.response?.data || err.message);
+            }
+        };
+    
+        checkBlockStatus();
+    
+        return () => {
+            isMounted = false;
+        };
+    }, [user.id]);
     
 
 
     useEffect(() => {
+        let isMounted = true;
+    
         const checkMuteStatus = async () => {
-          try {
-            const res = await api.get(`/users/${user.id}/is-muted`);
-            setIsMuted(res.data.isMuted);
-          } catch (err) {
-            console.error("Failed to fetch mute status");
-          }
+            try {
+                const res = await api.get(`/blocked-muted/mute/${user.id}/status`);
+                if (isMounted) setIsMuted(res.data.isMuted);
+            } catch (err) {
+                console.error("❌ Mute status fetch failed:", err.response?.data || err.message);
+            }
         };
+    
         checkMuteStatus();
-      }, [user.id]);
+    
+        return () => {
+            isMounted = false;
+        };
+    }, [user.id]);
       
 
     /**
@@ -188,10 +221,71 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
           ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${user.profilePicture}`
           : defaultAvatar;
       }, [user?.profilePicture]);
+
+
+
+
+      
+      const blockUser = async (targetId) => {
+        try {
+          await api.post(`/blocked-muted/block/${targetId}`);
+          setIsBlocked(true);
+        } catch (err) {
+          console.error("Block user error:", err);
+          toast.error("Failed to block user.");
+        }
+      };
+      
+      const unblockUser = async (targetId) => {
+        try {
+          await api.delete(`/blocked-muted/block/${targetId}`);
+          setIsBlocked(false);
+        } catch (err) {
+          console.error("Unblock user error:", err);
+          toast.error("Failed to unblock user.");
+        }
+      };
     
 
     return (
-        <div className={isInModal ? "user-card-modal" : "user-card"} onClick={handleProfileClick}>
+        <div
+        className={`${isInModal ? "user-card-modal" : "user-card"} relative ${isBlocked ? "blocked" : ""}`}
+            onClick={handleProfileClick}
+            >
+            {user.id !== currentUser?.id && (
+            <>
+                {/* 3-dot menu only if user is NOT blocked */}
+                {!isBlocked && (
+                <div className="user-options-menu" ref={optionsRef}>
+                    <button 
+                    className="options-btn" 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setShowOptionsMenu(!showOptionsMenu);
+                    }}
+                    >
+                    ⋯
+                    </button>
+
+                    {showOptionsMenu && (
+                    <div className="options-dropdown" onClick={(e) => e.stopPropagation()}>
+                        <button
+                        className="dropdown-item"
+                        onClick={async () => {
+                            await blockUser(user.id);
+                            toast.success("User blocked");
+                            setShowOptionsMenu(false);
+                        }}
+                        >
+                        Block
+                        </button>
+                    </div>
+                    )}
+                </div>
+                )}
+            </>
+            )}
+
             <div className="user-left">
 
                 <img
@@ -269,44 +363,11 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
             )} {/* ✅ This closes user.id === currentUser?.id block */}
 
             </div>
-            {user.id !== currentUser?.id && (
-            <div className="user-options-menu" ref={optionsRef}>
-                <button 
-                    className="options-btn" 
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setShowOptionsMenu(!showOptionsMenu);
-                    }}
-                >
-                    ⋯
-                </button>
-
-                {showOptionsMenu && (
-                    <div className="options-dropdown" onClick={(e) => e.stopPropagation()}>
-                        <button
-                            className="dropdown-item"
-                            onClick={async () => {
-                                if (isBlocked) {
-                                    await unblockUser(user.id);
-                                    toast.success("User unblocked");
-                                } else {
-                                    await blockUser(user.id);
-                                    toast.success("User blocked");
-                                }
-                                setShowOptionsMenu(false);
-                            }}
-                        >
-                            {isBlocked ? "Unblock User" : "Block User"}
-                        </button>
-                    </div>
-                )}
-            </div>
-        )}
+            
 
         <div className="user-right">
 
             <div className="user-info">
-            <h4 className="user-username">{user.username}</h4>
             <h4 className="user-username">
                 {user.username}
                 {hasRequested && <span className="request-badge">Requested</span>}
@@ -331,34 +392,70 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
                 </p>
             </>
             )}
-            {/* Button Container */}
-            <div className="button-group">
-                {/* CryptoTip Button - only for other users */}
-                {user.walletAddress && user.id !== currentUser?.id && (
-                <button
-                    className="crypto-tip-btn"
-                    onClick={toggleTipModal}
-                    aria-label="Tip User"
-                >
-                    💰 Tip
-                </button>
-                )}
 
-                {/* Follow & Message Buttons - only show if not own profile */}
-                {user.id !== currentUser?.id && (
+
+            {/* Button Container */}
+            {user.id !== currentUser?.id && (
+            <div className="button-group">
+                {isBlocked ? (
                 <>
+                <div style={{ position: "relative" }}>
+
+                    <button
+                        className="blocked-btn"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setShowBlockedDropdown(!showBlockedDropdown); // ✅ toggles its own dropdown
+                            setShowOptionsMenu(false); // ✅ ensures the 3-dot one closes
+                        }}
+                    >
+                        Blocked
+                    </button>
+
+                    {showBlockedDropdown && (
+                    <div className="options-dropdown" onClick={(e) => e.stopPropagation()}>
+                        <button
+                        className="dropdown-item"
+                        onClick={async () => {
+                            await unblockUser(user.id);
+                            toast.success("User unblocked");
+                            setShowBlockedDropdown(false);
+                        }}
+                        >
+                        Unblock
+                        </button>
+                    </div>
+                    )}
+                </div>
+                </>
+                ) : (
+                <>
+                    {/* CryptoTip Button */}
+                    {user.walletAddress && (
+                    <button
+                        className="crypto-tip-btn"
+                        onClick={toggleTipModal}
+                        aria-label="Tip User"
+                    >
+                        💰 Tip
+                    </button>
+                    )}
+
+                    {/* Follow + Message Buttons */}
                     <FollowButton
-                        userId={user.id}
-                        updateCounts={updateCounts}
-                        isFollowingYou={user.isFollowedByCurrentUser}
-                        onRequestToggle={handleRequestToggle}
-                        isMuted={isMuted}
-                        setIsMuted={setIsMuted}
+                    userId={user.id}
+                    updateCounts={updateCounts}
+                    isFollowingYou={user.isFollowedByCurrentUser}
+                    onRequestToggle={handleRequestToggle}
+                    isMuted={isMuted}
+                    setIsMuted={setIsMuted}
                     />
                     <MessageButton recipientUsername={user.username} />
                 </>
                 )}
             </div>
+            )}
+
         </div>
         </div>
 

@@ -7,7 +7,7 @@
  */
 
 const express = require('express');
-const { Comment, Notification, Post, User } = require('../models/Index');
+const { Comment, Notification, Post, User, BlockedUser } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const checkCommentOwnership = require('../middleware/checkCommentOwnership');
@@ -73,7 +73,6 @@ const handleValidationErrors = (errors) => {
  */
 router.get('/detailed', authMiddleware, checkBlockStatus, async (req, res) => {
     const { page = 1 } = req.query;
-  
     const limit = 10;
     const offset = (page - 1) * limit;
   
@@ -93,12 +92,32 @@ router.get('/detailed', authMiddleware, checkBlockStatus, async (req, res) => {
   
       const postIds = userPosts.map((post) => post.id);
   
-      // Step 2: Find all unread comment notifications linked to this user's posts
+      // 🧱 Get blocked user IDs (bidirectional)
+      const blockedRecords = await BlockedUser.findAll({
+        where: {
+          [Op.or]: [
+            { blockerId: userId },
+            { blockedId: userId },
+          ],
+        },
+        attributes: ['blockerId', 'blockedId'],
+      });
+  
+      const blockedIds = blockedRecords.flatMap((record) => {
+        if (record.blockerId === userId) return record.blockedId;
+        if (record.blockedId === userId) return record.blockerId;
+        return [];
+      });
+  
+      // Step 2: Fetch unread comment notifications, excluding blocked actors
       const unreadNotifications = await Notification.findAll({
         where: {
           userId,
           type: 'comment',
           isRead: false,
+          ...(blockedIds.length > 0 && {
+            actorId: { [Op.notIn]: blockedIds },
+          }),
         },
         order: [['createdAt', 'DESC']],
         limit,
@@ -107,8 +126,8 @@ router.get('/detailed', authMiddleware, checkBlockStatus, async (req, res) => {
           {
             model: User,
             as: 'actor',
-            attributes: ['username', 'profilePicture'],            
-        },
+            attributes: ['username', 'profilePicture'],
+          },
         ],
       });
   
@@ -121,7 +140,7 @@ router.get('/detailed', authMiddleware, checkBlockStatus, async (req, res) => {
         });
       }
   
-      // Step 3: Format the response to match existing shape
+      // Step 3: Format the response
       const formatted = unreadNotifications.map((notif) => ({
         id: notif.id,
         actor: notif.actor?.username || 'Unknown',
@@ -129,15 +148,18 @@ router.get('/detailed', authMiddleware, checkBlockStatus, async (req, res) => {
         content: notif.content || null,
         createdAt: notif.createdAt,
         isRead: notif.isRead ?? false,
-        profilePicture: notif.actor?.profilePicture || null, // ✅ ADD THIS
+        profilePicture: notif.actor?.profilePicture || null,
       }));
   
-      // Step 4: Count all unread comment notifs for this user for pagination
+      // Step 4: Count all matching notifications (respecting block filter)
       const total = await Notification.count({
         where: {
           userId,
           type: 'comment',
           isRead: false,
+          ...(blockedIds.length > 0 && {
+            actorId: { [Op.notIn]: blockedIds },
+          }),
         },
       });
   
@@ -152,6 +174,11 @@ router.get('/detailed', authMiddleware, checkBlockStatus, async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch comment notifications.' });
     }
   });
+
+
+
+
+  
 /**
  * Fetch total comment count for a post.
  * This needs to come first to ensure `/count` is not overridden by `/comments/:id`.
@@ -245,50 +272,64 @@ router.post('/batch-count', checkBlockStatus, async (req, res) => {
 router.get('/', authMiddleware, checkBlockStatus, async (req, res) => {
     const { postId, page = 1, limit = 20 } = req.query;
 
-  // Validate the postId
-  if (!postId) {
-      return res.status(400).json({ error: 'Post ID is required' });
-  }
+    if (!postId) {
+        return res.status(400).json({ error: 'Post ID is required' });
+    }
 
-  try {
-      // Find the post to ensure it exists
-      const post = await Post.findByPk(postId);
+    try {
+        const userId = req.user.id;
+        const offset = (parseInt(page, 10) - 1) * parseInt(limit, 10);
 
-      if (!post) {
-          return res.status(404).json({ error: 'Post not found' });
-      }
+        // 🧱 Filter out comments from users you've blocked or who blocked you
+        let blockedIds = [];
 
-      // Calculate offset for pagination
-      const offset = (parseInt(page, 10) - 1) * parseInt(limit, 10);
+        const blockedRecords = await BlockedUser.findAll({
+            where: {
+                [Op.or]: [
+                    { blockerId: userId },
+                    { blockedId: userId },
+                ],
+            },
+            attributes: ['blockerId', 'blockedId'],
+        });
 
-      // Fetch comments with pagination
-      const comments = await Comment.findAndCountAll({
-        where: { postId },
-        order: [['createdAt', 'DESC']],
-        limit: parseInt(limit, 10),
-        offset,
-        attributes: ['id', 'content', 'userId', 'postId', 'createdAt'], // ✅ here
-        include: [
-          {
-            model: User,
-            as: 'commentAuthor',
-            attributes: ['username', 'profilePicture'],
-          },
-        ],
-      });
+        blockedIds = blockedRecords.flatMap((record) => {
+            // If user blocked someone, exclude blockedId
+            if (record.blockerId === userId) return record.blockedId;
+            // If user was blocked, exclude blockerId
+            if (record.blockedId === userId) return record.blockerId;
+            return [];
+        });
 
-      res.status(200).json({
-          comments: comments.rows, // Paginated comments
-          totalComments: comments.count, // Total number of comments
-          page: parseInt(page, 10), // Current page
-          pages: Math.ceil(comments.count / limit), // Total pages
-      });
-  } catch (error) {
-      console.error('Error fetching comments:', error);
-      res.status(500).json({ error: 'Failed to fetch comments' });
-  }
+        const comments = await Comment.findAndCountAll({
+            where: {
+                postId,
+                userId: blockedIds.length > 0 ? { [Op.notIn]: blockedIds } : undefined,
+            },
+            order: [['createdAt', 'DESC']],
+            limit: parseInt(limit, 10),
+            offset,
+            attributes: ['id', 'content', 'userId', 'postId', 'createdAt'],
+            include: [
+                {
+                    model: User,
+                    as: 'commentAuthor',
+                    attributes: ['username', 'profilePicture'],
+                },
+            ],
+        });
+
+        res.status(200).json({
+            comments: comments.rows,
+            totalComments: comments.count,
+            page: parseInt(page, 10),
+            pages: Math.ceil(comments.count / limit),
+        });
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+        res.status(500).json({ error: 'Failed to fetch comments' });
+    }
 });
-
 /*
  * Add a new comment to a post.
  */

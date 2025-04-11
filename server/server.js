@@ -14,7 +14,7 @@ console.log(`🛢️ Using DB host: ${process.env.DB_HOST}`);
 
 const http = require('http');
 const { Server } = require('socket.io');
-const sequelize = require('./models/Index'); // Sequelize connection
+const sequelize = require('./models'); // Sequelize connection
 const app = require('./app'); // Express app configuration
 const commentRoutes = require('./api/comments'); // Comment routes for WebSocket setup
 const { setSocket } = require('./api/comments');
@@ -81,21 +81,28 @@ sequelize.sequelize
  */
 const shutdown = async () => {
   try {
-    // Close database connection
-    await sequelize.sequelize.close();
-    console.log(`[${new Date().toISOString()}] Database connection closed gracefully`);
+    const isDev = process.env.NODE_ENV !== 'production';
 
-    // close HTTP server
+    // ⚠️ Only close DB connection in production (or manual dev shutdown)
+    if (!isDev) {
+      await sequelize.sequelize.close();
+      console.log(`[${new Date().toISOString()}] Database connection closed gracefully`);
+    } else {
+      console.log(`[${new Date().toISOString()}] Skipped DB close (dev mode)`);
+    }
+
+    // Close HTTP server
     await new Promise((resolve, reject) => {
       server.close((err) => (err ? reject(err) : resolve()));
     });
     console.log(`[${new Date().toISOString()}] HTTP server closed`);
 
-    // Close Websocket Server
+    // Close WebSocket server
     await new Promise((resolve, reject) => {
       io.close((err) => (err ? reject(err) : resolve()));
     });
     console.log(`[${new Date().toISOString()}] WebSocket server closed`);
+
     process.exit(0);
   } catch (err) {
     console.error('Error during shutdown:', err);

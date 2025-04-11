@@ -33,6 +33,8 @@ function Feed({ currentUser }) {
   const debounceTimeout = useRef(null); // ✅ #1 debounce reference
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [filter, setFilter] = useState(() => localStorage.getItem("feedFilter") || "foryou");
+  const [blockedUserIds, setBlockedUserIds] = useState([]);
+  const [mutedUserIds, setMutedUserIds] = useState([]);
 
 
   const handleFilterChange = (key) => {
@@ -98,24 +100,33 @@ function Feed({ currentUser }) {
         }));
 
           // 🔒 Filter out private posts unless the viewer is allowed
-        const filteredPosts = enrichedPosts.filter((post) => {
-          const author = post.user;
-          const isPrivate = author?.privacy === 'private';
-          const isOwner = author?.id === currentUser?.id;
-          const isFollower = author?.isFollowedByCurrentUser;
-
-          // 🔁 Also block private original posts if this is a retweet
-          const isRepostOfPrivate =
-            post.originalPost?.user?.privacy === 'private' &&
-            post.originalPost?.user?.id !== currentUser?.id &&
-            !post.originalPost?.user?.isFollowedByCurrentUser;
-
-          return (!isPrivate || isOwner || isFollower) && !isRepostOfPrivate;
-        });
-
-        newPosts.forEach((post) => {
-  if (!post.user) console.warn("⚠️ Post missing user:", post.id);
-});
+          const filteredPosts = enrichedPosts.filter((post) => {
+            const author = post.user;
+            const isPrivate = author?.privacy === 'private';
+            const isOwner = author?.id === currentUser?.id;
+            const isFollower = author?.isFollowedByCurrentUser;
+            const isBlocked = blockedUserIds.includes(author?.id);
+            const isMuted = mutedUserIds.includes(author?.id);
+          
+            // 🔁 Also block private original posts if this is a retweet
+            const isRepostOfPrivate =
+              post.originalPost?.user?.privacy === 'private' &&
+              post.originalPost?.user?.id !== currentUser?.id &&
+              !post.originalPost?.user?.isFollowedByCurrentUser;
+          
+            const isRepostFromBlocked = blockedUserIds.includes(post.originalPost?.user?.id);
+            const isRepostFromMuted = mutedUserIds.includes(post.originalPost?.user?.id);
+          
+            return (
+              (!isPrivate || isOwner || isFollower) &&
+              !isRepostOfPrivate &&
+              !isBlocked &&
+              !isMuted &&
+              !isRepostFromBlocked &&
+              !isRepostFromMuted
+            );
+          });
+          
   
         setPosts((prev) => [...prev, ...filteredPosts]);
         setPostIds((prev) => new Set([...prev, ...filteredPosts.map(p => p.id)]));
@@ -124,7 +135,15 @@ function Feed({ currentUser }) {
         setHasMore(false);
       }
     } catch (err) {
-      console.error("Error fetching posts:", err.response?.data || err.message);
+      console.error("❌ Error fetching posts:", err.response?.data || err.message);
+  
+      if (err.message?.includes("ConnectionManager.getConnection was called after the connection manager was closed")) {
+        console.warn("⛔ Sequelize connection closed — halting feed loop");
+        setError("We're experiencing server issues. Please try again later.");
+        setHasMore(false);
+        return;
+      }
+  
       setError("Failed to load posts. Please try again.");
     } finally {
       setLoading(false);
@@ -145,6 +164,28 @@ function Feed({ currentUser }) {
       fetchPosts();
     }, 300);
   }, [page, filter]);
+
+
+
+  // Fetch blocked and muted users on mount. 
+  useEffect(() => {
+    const fetchBlockedAndMuted = async () => {
+      try {
+        const [blockedRes, mutedRes] = await Promise.all([
+          api.get("/blocked-muted/block"),
+          api.get("/blocked-muted/mute")
+        ]);
+        setBlockedUserIds(blockedRes.data?.map(user => user.id) || []);
+        setMutedUserIds(mutedRes.data?.map(user => user.id) || []);
+      } catch (err) {
+        console.error("Failed to fetch blocked/muted users", err);
+      }
+    };
+  
+    fetchBlockedAndMuted();
+  }, []);
+
+
 
 
   useEffect(() => {

@@ -39,6 +39,8 @@ function NotificationsList() {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("likes");
   const [sortOption, setSortOption] = useState("newest"); // ✅ #2 Custom Sorting: track selected sort
+  const [mutedUserIds, setMutedUserIds] = useState([]);
+
 
 
   // useEffect(() => {
@@ -49,6 +51,17 @@ function NotificationsList() {
     const storedTab = localStorage.getItem("activeNotificationTab") || "likes";
     setActiveTab(storedTab);
     fetchNotifications(storedTab);
+
+    const fetchMutedUsers = async () => {
+      try {
+        const res = await api.get("//blocked-muted/mute");
+        setMutedUserIds(res.data?.mutedUserIds || []);
+      } catch (err) {
+        console.error("Failed to fetch muted users", err);
+      }
+    };
+    
+    fetchMutedUsers();
   }, []);
   
   const handleTabClick = (type) => {
@@ -318,7 +331,8 @@ function NotificationsList() {
    * Refactored Sorting to make it expandable for the future. 
    */
   const sortedNotifications = [...notifications]
-  .filter((n) => (sortOption === "unread" ? !n.isRead : true)) // Optional filter
+  .filter((n) => !mutedUserIds.includes(n.actor)) // ⬅️ 🔇 Filter muted users
+  .filter((n) => (sortOption === "unread" ? !n.isRead : true))
   .sort((a, b) => {
     switch (sortOption) {
       case "newest":
@@ -326,7 +340,7 @@ function NotificationsList() {
       case "oldest":
         return new Date(a.createdAt) - new Date(b.createdAt);
       case "unread":
-        return new Date(b.createdAt) - new Date(a.createdAt); // Keep newest order after filter
+        return new Date(b.createdAt) - new Date(a.createdAt);
       default:
         return 0;
     }

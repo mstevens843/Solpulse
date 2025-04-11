@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { FollowRequest, Follower, Notification, User } = require('../models/Index');
+const { FollowRequest, Follower, Notification, User } = require('../models');
 const authMiddleware = require('../middleware/auth');
 
 
@@ -18,16 +18,14 @@ router.get('/:targetId/has-requested', authMiddleware, async (req, res) => {
 
   try {
     const request = await FollowRequest.findOne({
-      where: {
-        requesterId,
-        targetId,
-      },
+      where: { requesterId, targetId },
     });
 
-    res.json({ hasRequested: !!request });
+    // ✅ Always return safely even if request is null
+    return res.status(200).json({ hasRequested: !!request });
   } catch (err) {
-    console.error("Error checking follow request:", err);
-    res.status(500).json({ message: 'Failed to check follow request.' });
+    console.error('❌ Error in has-requested:', err.stack || err);
+    return res.status(200).json({ hasRequested: false }); // ✅ fallback to false if anything breaks
   }
 });
 

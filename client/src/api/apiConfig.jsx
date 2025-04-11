@@ -27,8 +27,16 @@ const excludedRoutes = [
     "/auth/login",
     "/auth/register",
     "/trendingCrypto",
+    "/api/trendingCrypto",
+    "/api/trendingCrypto/chart",
+    "/api/trendingCrypto/global",
+    "/api/trendingCrypto/nfts",
+    "/api/trendingCrypto/top-gainers-losers",
+    "/api/trendingCrypto/search",
     "/trade",
 ];
+
+
 
 /** 
  * Axios request interceptor:
@@ -38,8 +46,10 @@ const excludedRoutes = [
 api.interceptors.request.use(
     (config) => {
         // Check if the request URL matches any excluded routes
-        const shouldSkip = excludedRoutes.some(route => config.url.includes(route));
-        if (shouldSkip) {
+        const shouldSkip = excludedRoutes.some(route =>
+            config.url.toLowerCase().startsWith(route.toLowerCase())
+          );        
+          if (shouldSkip) {
             console.log(`Skipping token attachment for: ${config.url}`);
             return config;
         }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig";
 import UserListItem from "@/components/Profile_components/UserListItem";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
 import "@/css/components/Post_components/Modals/PostInteractionsModal.css";
 
 function PostInteractionsModal({ postId, isOpen, onClose, defaultTab = "likes", currentUserId }) {
@@ -12,6 +14,7 @@ function PostInteractionsModal({ postId, isOpen, onClose, defaultTab = "likes", 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [retryTrigger, setRetryTrigger] = useState(0);
+  const { blockedUserIds = [], mutedUserIds = [] } = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchData() {
@@ -79,7 +82,9 @@ function PostInteractionsModal({ postId, isOpen, onClose, defaultTab = "likes", 
         <p className="empty-message">No {activeTab} yet.</p>
       ) : (
         <div className="user-list">
-          {list.map((user) => (
+          {list
+          .filter((user) => !blockedUserIds.includes(user.id) && !mutedUserIds.includes(user.id))
+          .map((user) => (
             <UserListItem
               key={user.id}
               user={user}

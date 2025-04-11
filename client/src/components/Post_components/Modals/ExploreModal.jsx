@@ -1,17 +1,38 @@
 // src/components/Post_components/Modals/ExploreModal.jsx
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import LikeButton from "@/components/Post_components/Actions/LikeButton";
 import RetweetButton from "@/components/Post_components/Actions/RetweetButton";
 import CommentModal from "@/components/Post_components/Modals/CommentModal";
+import { AuthContext } from "@/context/AuthContext";
 import "@/css/components/Post_components/Modals/ExploreModal.css";
 
 function ExploreModal({ post, onClose, currentUser, setPosts }) {
   const [isCommentModalOpen, setCommentModalOpen] = useState(false);
+  const { blockedUserIds = [], mutedUserIds = [] } = useContext(AuthContext);
 
   if (!post) return null;
+
+  const postUserId = post?.user?.id || post?.userId || post?.originalUserId;
+
+if (blockedUserIds.includes(postUserId)) {
+  return (
+    <div className="explore-modal-overlay" onClick={onClose}>
+      <div className="explore-modal-content locked" onClick={(e) => e.stopPropagation()}>
+        <button className="close-modal-btn" onClick={onClose}>✖</button>
+        <div className="text-center py-8 text-red-500 dark:text-red-400">
+          🚫 You have blocked this user. Post hidden.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+if (mutedUserIds.includes(postUserId)) {
+  return null; // Silently ignore muted posts
+}
 
   // 🔐 Privacy Lock Logic
   const author = post.user || post.originalPost?.user || {};

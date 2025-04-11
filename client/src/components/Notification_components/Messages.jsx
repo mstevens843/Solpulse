@@ -38,6 +38,9 @@ function Messages() {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); // ✅ Toggle for emoji picker
   const [activeTab, setActiveTab] = useState("inbox");
+  const [blockedUserIds, setBlockedUserIds] = useState([]);
+  const [mutedUserIds, setMutedUserIds] = useState([]);
+
 
 
 
@@ -45,7 +48,22 @@ function Messages() {
 
   useEffect(() => {
     document.title = "Messages | Solrise";
-    fetchMessages(currentPage, activeTab); // ✅ include activeTab
+  
+    const fetchBlockedAndMuted = async () => {
+      try {
+        const [blockedRes, mutedRes] = await Promise.all([
+          api.get("/blocked-muted/block"),
+          api.get("/blocked-muted/mute"),
+        ]);
+        setBlockedUserIds(blockedRes.data?.blockedUserIds || []);
+        setMutedUserIds(mutedRes.data?.mutedUserIds || []);
+      } catch (err) {
+        console.error("Failed to fetch blocked/muted users", err);
+      }
+    };
+  
+    fetchBlockedAndMuted();         // ✅ Fetch on mount/tab/page change
+    fetchMessages(currentPage, activeTab); // ✅ Fetch inbox/sent messages
   }, [currentPage, activeTab]);
 
   useEffect(() => {
@@ -135,6 +153,11 @@ const handleSendMessage = async (e) => {
   setIsSendingMessage(true);
 
   if (!recipient.trim() || !newMessage.trim()) {
+    if (blockedUserIds.includes(recipient.trim())) {
+      setError("You’ve blocked this user. Messaging is disabled.");
+      setIsSendingMessage(false);
+      return;
+    }
     setError("Recipient and message are required.");
     setIsSendingMessage(false);
     return;
@@ -322,8 +345,22 @@ const handleSendMessage = async (e) => {
               {suggestedUsers.length > 0 && (
                 <ul className="suggested-users">
                   {suggestedUsers.map((user) => (
-                    <li key={user.username} onClick={() => selectRecipient(user.username)}>
+                    <li
+                      key={user.username}
+                      onClick={() => {
+                        if (!blockedUserIds.includes(user.id)) {
+                          selectRecipient(user.username);
+                        }
+                      }}
+                      className={blockedUserIds.includes(user.id) ? "muted-or-blocked" : ""}
+                    >
                       {user.username}
+                      {blockedUserIds.includes(user.id) && (
+                        <span className="blocked-tag">Blocked</span>
+                      )}
+                      {mutedUserIds.includes(user.id) && !blockedUserIds.includes(user.id) && (
+                        <span className="muted-tag">Muted</span>
+                      )}
                     </li>
                   ))}
                 </ul>

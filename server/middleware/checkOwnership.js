@@ -7,7 +7,7 @@
  */
 
 
-const { Post, Comment } = require('../models/Index');
+const { Post, Comment } = require('../models');
 
 
 const checkOwnership = async (req, res, next) => {

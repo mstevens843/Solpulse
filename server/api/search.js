@@ -19,7 +19,7 @@
  */
 
 const express = require('express');
-const { User, Post, sequelize, Follower } = require('../models/Index');
+const { User, Post, sequelize, Follower } = require('../models');
 const { Op, literal } = require('sequelize');
 const authMiddleware = require('../middleware/auth');
 const checkBlockStatus = require('../middleware/checkBlockStatus');

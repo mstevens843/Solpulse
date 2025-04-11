@@ -16,7 +16,7 @@ import { useNavigate, Link } from "react-router-dom";
 import FollowButton from "@/components/Profile_components/FollowButton";
 import "@/css/components/Profile_components/UserListItem.css";
 
-function UserListItem({ user, currentUserId, showBio = false }) {
+function UserListItem({ user, currentUserId, showBio = false, isMuted = false }) {
   const navigate = useNavigate();
   const defaultAvatar = "http://localhost:5001/uploads/default-avatar.png";
 
@@ -45,7 +45,10 @@ function UserListItem({ user, currentUserId, showBio = false }) {
   };
 
   return (
-    <div className="user-list-item" onClick={handleClick}>
+    <div
+      className={`user-list-item ${isMuted ? "muted-user" : ""}`}
+      onClick={!isMuted ? handleClick : undefined} // disable click if muted
+    >
       {/* ✅ Profile picture links to user profile */}
       <Link
         to={`/profile/${user.id}`}
@@ -98,6 +101,7 @@ UserListItem.propTypes = {
   }).isRequired,
   currentUserId: PropTypes.number,
   showBio: PropTypes.bool, // <-- new optional prop
+  isMuted: PropTypes.bool,
 };
 
 export default UserListItem;

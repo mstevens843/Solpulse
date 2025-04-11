@@ -31,7 +31,7 @@ import PostInteractionsModal from "@/components/Post_components/Modals/PostInter
 
 function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore = false }) {
     const [postComments, setPostComments] = useState(post.comments || []);
-    const { likedPosts, retweetedPosts } = useContext(AuthContext); // Get batch data from context
+    const { likedPosts, retweetedPosts, blockedUserIds = [], mutedUserIds = [] } = useContext(AuthContext);  // Get batch data from context
     const [commentCount, setCommentCount] = useState(post.commentCount || 0);
     const [isOverlayVisible, setOverlayVisible] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -296,6 +296,16 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
     
     
     if (!post) return null;
+
+    const postUserId = post?.user?.id || post?.userId || post?.originalUserId;
+
+    if (blockedUserIds.includes(postUserId)) {
+    return <div className="text-red-500 p-4">🚫 You have blocked this user. Post hidden.</div>;
+    }
+
+    if (mutedUserIds.includes(postUserId)) {
+    return null; // Silently hide muted user's post
+    }
 
 
 return (

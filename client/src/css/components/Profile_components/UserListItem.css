@@ -74,3 +74,17 @@
     margin-left: 6px;
     vertical-align: middle;
   }
+
+
+
+  .muted-user {
+    opacity: 0.5;
+    pointer-events: none; /* disables all interactions */
+    cursor: default;
+  }
+  
+  .muted-user .user-list-username,
+  .muted-user .user-list-bio {
+    color: gray;
+  }
+  

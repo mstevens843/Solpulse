@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { BlockedUser, MutedUser, User } = require('../models');
-const authMiddleware = require('../middleware/authMiddleware');
+const { BlockedUser, MutedUser, User, Follower } = require('../models');
+const { Op } = require('sequelize'); // ← THIS is required for the Follower destroy block
+const authMiddleware = require('../middleware/auth');
 
 // 🔒 BLOCK ROUTES
 
@@ -13,8 +14,16 @@ router.post('/block/:userId', authMiddleware, async (req, res) => {
 
     if (blockerId === blockedId) return res.status(400).json({ error: "You can't block yourself" });
 
-    await BlockedUser.findOrCreate({
-      where: { blockerId, blockedId }
+    await BlockedUser.findOrCreate({ where: { blockerId, blockedId } });
+
+    // ✅ Remove follow relationships (both directions)
+    await Follower.destroy({
+      where: {
+        [Op.or]: [
+          { followerId: blockerId, followingId: blockedId },
+          { followerId: blockedId, followingId: blockerId }
+        ]
+      }
     });
 
     res.status(200).json({ message: 'User blocked successfully' });
@@ -113,6 +122,7 @@ router.delete('/mute/:userId', authMiddleware, async (req, res) => {
   }
 });
 
+
 // Get list of users you've muted
 router.get('/mute', authMiddleware, async (req, res) => {
   try {
@@ -129,5 +139,38 @@ router.get('/mute', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch muted users' });
   }
 });
+
+/**
+ * @route   GET /api/blocked-muted/mute/:userId/status
+ * @desc    Check if the authenticated user has muted the given user
+ * @access  Private
+ */
+router.get('/mute/:userId/status', authMiddleware, async (req, res) => {
+  try {
+    const muterId = req.user?.id;
+    const mutedId = parseInt(req.params.userId);
+
+    console.log('🧠 Mute check incoming:', {
+      path: req.originalUrl,
+      muterId,
+      mutedId,
+    });
+
+    if (!muterId || isNaN(mutedId)) {
+      console.warn('⚠️ Invalid IDs during mute status check');
+      return res.status(400).json({ error: 'Invalid user IDs' });
+    }
+
+    const isMuted = await MutedUser.findOne({ where: { muterId, mutedId } });
+
+    console.log('✅ Mute result:', !!isMuted);
+
+    res.status(200).json({ isMuted: !!isMuted });
+  } catch (err) {
+    console.error('❌ Mute status check error:', err);
+    res.status(500).json({ error: 'Failed to check mute status' });
+  }
+});
+
 
 module.exports = router;

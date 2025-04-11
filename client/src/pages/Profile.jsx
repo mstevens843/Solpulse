@@ -21,7 +21,6 @@ import Loader from "@/components/Loader";
 import { AuthContext } from "@/context/AuthContext";
 import { api } from "@/api/apiConfig";
 import { blockUser, unblockUser, getBlockedUsers } from "@/api/blockApi";
-import { muteUser, unmuteUser, getMutedUsers } from "@/api/muteApi";
 import "@/css/pages/Profile.css";
 
 import { lazy, Suspense } from "react"; // ✅ Added for lazy loading
@@ -48,13 +47,12 @@ function Profile() {
     const [successMessage, setSuccessMessage] = useState("");
     const isInModal = false; // Default value if it's not already defined
 
-    const isOwner = currentUser.id === profileUser.id;
-    const isFollower = profileUser.isFollowedByCurrentUser; // assuming this is returned from API
-    const isPrivate = profileUser.privacy === 'private';
+    const isOwner = currentUser.id === user?.id;
+    const isFollower = user?.isFollowedByCurrentUser;
+    const isPrivate = user?.privacy === 'private';
     const canViewConnections = isOwner || isFollower || !isPrivate;
 
     const [isBlocked, setIsBlocked] = useState(false);
-    const [isMuted, setIsMuted] = useState(false);
 
 
 
@@ -88,16 +86,9 @@ function Profile() {
 
                 // Fetch block/mute status (if not viewing own profile)
                 if (currentUser?.id !== user.id) {
-                    const [blockedRes, mutedRes] = await Promise.all([
-                    getBlockedUsers(),
-                    getMutedUsers(),
-                    ]);
-                
+                    const blockedRes = await getBlockedUsers();
                     const isBlocked = blockedRes.data.some((u) => u.id === user.id);
-                    const isMuted = mutedRes.data.some((u) => u.id === user.id);
-                
                     setIsBlocked(isBlocked);
-                    setIsMuted(isMuted);
                 }
 
     
@@ -327,38 +318,7 @@ function Profile() {
                         currentUser={currentUser}
                         canViewConnections={canViewConnections}
                         onProfilePictureChange={handleProfilePictureUpdate}
-                        isMuted={isMuted}
-                        setIsMuted={setIsMuted}
                     />
-                    {currentUser?.id !== user.id && (
-                    <div className="profile-actions">
-                        <button onClick={async () => {
-                        if (isBlocked) {
-                            await unblockUser(user.id);
-                            toast.success("User unblocked");
-                        } else {
-                            await blockUser(user.id);
-                            toast.success("User blocked");
-                        }
-                        setIsBlocked(!isBlocked);
-                        }}>
-                        {isBlocked ? "Unblock User" : "Block User"}
-                        </button>
-
-                        <button onClick={async () => {
-                        if (isMuted) {
-                            await unmuteUser(user.id);
-                            toast.success("User unmuted");
-                        } else {
-                            await muteUser(user.id);
-                            toast.success("User muted");
-                        }
-                        setIsMuted(!isMuted);
-                        }}>
-                        {isMuted ? "Unmute User" : "Mute User"}
-                        </button>
-                    </div>
-                    )}
                     </div>
     
 
@@ -391,45 +351,49 @@ function Profile() {
                         )}
                     </div>
     
-                    <section className="posts-container">
-                    <h3>Posts</h3>
-
-                    {user.privacy === 'private' && currentUser?.id !== user.id && !user.isFollowedByCurrentUser ? (
-                    <PrivateProfileNotice />
+                    {isBlocked ? (
+                    <div className="blocked-message">
+                        <p className="text-red-500 font-semibold text-center mt-6">
+                        You blocked this user. Unblock them to view their posts.
+                        </p>
+                    </div>
                     ) : (
+                    <section className="posts-container">
+                        <h3>Posts</h3>
+                        {user.privacy === 'private' && currentUser?.id !== user.id && !user.isFollowedByCurrentUser ? (
+                        <PrivateProfileNotice />
+                        ) : (
                         <div className="posts-list">
-                        {posts.length > 0 ? (
+                            {posts.length > 0 ? (
                             posts.map((post) => (
-                            <div key={post.id} className="post-container">
-                                {post.isRetweet && (
-                                <p className="retweet-indicator"></p>
-                                )}
+                                <div key={post.id} className="post-container">
                                 <Suspense fallback={<p>Loading posts...</p>}>
-                                <LazyPost
+                                    <LazyPost
                                     post={post}
                                     commentCount={post.commentCount}
                                     currentUser={currentUser}
                                     setPosts={setPosts}
                                     onCommentAdd={(newComment) => addCommentToPost(post.id, newComment)}
-                                />
+                                    />
                                 </Suspense>
-                            </div>
+                                </div>
                             ))
-                        ) : (
+                            ) : (
                             <div className="no-posts-message">
-                            <p>No posts available</p>
+                                <p>No posts available</p>
                             </div>
-                        )}
-                        {hasMore && !loading && (
+                            )}
+                            {hasMore && !loading && (
                             <div className="load-more-container">
-                            <button className="load-more-btn" onClick={loadMore}>
+                                <button className="load-more-btn" onClick={loadMore}>
                                 Load More
-                            </button>
+                                </button>
                             </div>
-                        )}
+                            )}
                         </div>
-                    )}
+                        )}
                     </section>
+                    )}
                 </>
             )}
         </div>

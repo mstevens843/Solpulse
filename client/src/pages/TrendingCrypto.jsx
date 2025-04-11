@@ -246,7 +246,9 @@ function TrendingCrypto() {
 
     useEffect(() => {
         // Fetch market chart for Solana only once when the page loads
-        fetchMarketChartData("solana");
+        if (selectedCoin && selectedCoin !== "solana") {
+            fetchMarketChartData("solana");
+        }
     }, []);  // Empty dependency array ensures it runs only once
     
     useEffect(() => {

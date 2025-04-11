@@ -45,6 +45,20 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
     };
   }, [showDropdown]);
 
+
+  useEffect(() => {
+    const fetchMuteStatus = async () => {
+      try {
+        const res = await api.get(`/blocked-muted/mute/${userId}/status`);
+        setIsMuted?.(res.data.isMuted);
+      } catch (err) {
+        console.error("Failed to fetch mute status:", err);
+      }
+    };
+  
+    fetchMuteStatus();
+  }, [userId]);
+
   /**
    * Fetch follow status from backend if not cached
    */
@@ -59,7 +73,7 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
     try {
       const [followRes, requestRes, userRes] = await Promise.all([
         api.get(`/users/${userId}/is-following`),
-        api.get(`/users/${userId}/has-requested`),
+        api.get(`/follow-requests/${userId}/has-requested`), // ✅ FIXED ROUTE
         api.get(`/users/${userId}`),
       ]);
   
@@ -83,7 +97,10 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
 
 
 
-
+  useEffect(() => {
+    fetchFollowStatus();
+  }, [fetchFollowStatus]);
+  
 
 
   /**
@@ -175,17 +192,38 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
       {isFollowing && showDropdown && (
         <div className="follow-dropdown">
           <button
+            className="dropdown-item unfollow"
+            onClick={async () => {
+              try {
+                await api.delete(`/users/${userId}/unfollow`);
+                setIsFollowing(false);
+                followStatusCache[userId] = false;
+                if (updateCounts) updateCounts(-1);
+                if (onFollowToggle) onFollowToggle(false);
+                toast.success("Unfollowed successfully.");
+              } catch (err) {
+                console.error("Unfollow error:", err);
+                toast.error("Failed to unfollow.");
+              }
+              setShowDropdown(false);
+            }}
+          >
+            Unfollow
+          </button>
+
+          <button
             className="dropdown-item"
             onClick={async () => {
               try {
+                console.log("📡 Mute request sent to:", isMuted ? "DELETE" : "POST");
                 if (isMuted) {
-                  await api.post(`/users/${userId}/unmute`);
+                  await api.delete(`/blocked-muted/mute/${userId}`); // ✅ Corrected DELETE
                   toast.success("User unmuted.");
-                  setIsMuted(false);
+                  setIsMuted?.(false); // ✅ only calls if defined
                 } else {
-                  await api.post(`/users/${userId}/mute`);
+                  await api.post(`/blocked-muted/mute/${userId}`); // ✅ Corrected POST
                   toast.success("User muted.");
-                  setIsMuted(true);
+                  setIsMuted?.(true);  // ✅ safe and clean
                 }
               } catch (err) {
                 console.error("Mute/unmute error:", err);
