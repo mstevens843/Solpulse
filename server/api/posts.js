@@ -10,7 +10,7 @@
 
 
 const express = require('express');
-const { Post, Comment, User, Like, Retweet, Notification, Follower, BlockedUser } = require('../models');
+const { Post, Comment, User, Like, Retweet, Notification, Follower, BlockedUser, MutedUser } = require('../models');
 const authMiddleware = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
 const checkBlockStatus = require('../middleware/checkBlockStatus');
@@ -168,36 +168,65 @@ router.get('/', authMiddleware.optional, async (req, res) => {
   const offset = (page - 1) * limit;
 
   try {
+    // ----------------------------------------------------
+    // 1) If logged in, get your blocked + muted user IDs
+    // ----------------------------------------------------
+    let blockedIds = [];
+    let mutedIds = [];
+    let currentUserId = null;
+
+    if (req.user?.id) {
+      currentUserId = req.user.id;
+
+      // Blocked
+      const blockedRecords = await BlockedUser.findAll({
+        where: { blockerId: currentUserId },
+        attributes: ['blockedId'],
+      });
+      blockedIds = blockedRecords.map(b => b.blockedId);
+
+      // Muted
+      const mutedRecords = await MutedUser.findAll({
+        where: { muterId: currentUserId },
+        attributes: ['mutedId'],
+      });
+      mutedIds = mutedRecords.map(m => m.mutedId);
+    }
+
+    // Combine them if you want to exclude both sets:
+    const allExcludedIds = [...new Set([...blockedIds, ...mutedIds])];
+
     let posts;
 
-    // ✅ "Following" feed — show all original + retweeted posts by followed users
-    if (feed === 'following' && req.user?.id) {
-      const currentUserId = req.user.id;
-
+    // ----------------------------------------------------
+    // 2) If feed=following + user is logged in
+    // ----------------------------------------------------
+    if (feed === 'following' && currentUserId) {
+      // (a) Fetch all the users you follow
       const followRecords = await Follower.findAll({
         where: { followerId: currentUserId },
         attributes: ['followingId'],
       });
-
       const followingIds = followRecords.map(f => Number(f.followingId));
 
-      // ✅ Include user's own posts too
+      // (b) Include user's own posts too
       if (!followingIds.includes(currentUserId)) {
         followingIds.push(currentUserId);
       }
 
-      console.log("🧭 Freshly fetched followingIds:", followingIds);
+      // (c) If you follow nobody, return empty
       if (!followingIds.length) {
         return res.status(200).json({ posts: [] });
       }
 
+      // (d) Fetch posts from followed users (original + retweets)
       const allFollowingPosts = await Post.findAll({
         where: {
           [Op.or]: [
-            { userId: { [Op.in]: followingIds } }, // Their original posts
+            { userId: { [Op.in]: followingIds } },
             {
               isRetweet: true,
-              userId: { [Op.in]: followingIds }, // Their retweets
+              userId: { [Op.in]: followingIds },
             },
           ],
         },
@@ -205,7 +234,7 @@ router.get('/', authMiddleware.optional, async (req, res) => {
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'username', 'profilePicture', 'privacy'], // ✅ ADDED privacy
+            attributes: ['id', 'username', 'profilePicture', 'privacy'],
           },
           {
             model: Post,
@@ -214,24 +243,29 @@ router.get('/', authMiddleware.optional, async (req, res) => {
               {
                 model: User,
                 as: 'user',
-                attributes: ['id', 'username', 'profilePicture', 'privacy'], // ✅ ADDED privacy
+                attributes: ['id', 'username', 'profilePicture', 'privacy'],
               },
             ],
           },
         ],
       });
 
-      const formattedPosts = allFollowingPosts.map((post) => {
-        console.log("🧱 Formatting post from:", post.user?.username, "→", post.content);
+      // (e) Exclude posts by blocked or muted users
+      const visibleFollowingPosts = allFollowingPosts.filter((post) => {
+        return !allExcludedIds.includes(post.userId);
+      });
+
+      // (f) Format them
+      const formattedPosts = visibleFollowingPosts.map((post) => {
         return formatPost(post);
       });
 
-      // 🔥 Sort everything first by createdAt DESC
+      // (g) Sort by createdAt DESC
       const sortedPosts = formattedPosts.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
 
-      // ✅ Then paginate AFTER sort
+      // (h) Paginate after sorting
       const paginatedPosts = sortedPosts.slice(offset, offset + parseInt(limit));
 
       return res.json({
@@ -242,24 +276,28 @@ router.get('/', authMiddleware.optional, async (req, res) => {
       });
     }
 
-    // 🌍 "For You" feed or specific user's posts
-    const whereCondition = userId ? { userId } : {};
+    // ----------------------------------------------------
+    // 3) Otherwise: "For You" feed or userId feed
+    // ----------------------------------------------------
+    const whereCondition = {};
 
-    // 🧱 Filter out posts from users you've blocked (only if logged in)
-    if (req.user?.id) {
-      const blockedRecords = await BlockedUser.findAll({
-        where: { blockerId: req.user.id },
-        attributes: ['blockedId'],
-      });
-      const blockedIds = blockedRecords.map((b) => b.blockedId);
-
-      if (blockedIds.length > 0) {
-        whereCondition.userId = {
-          [Op.notIn]: blockedIds,
-        };
+    // If a specific userId is provided, we only fetch that user’s posts
+    if (userId) {
+      // If that user is blocked or muted, we can return empty
+      if (allExcludedIds.includes(parseInt(userId))) {
+        return res.json({ posts: [] });
       }
+      whereCondition.userId = userId;
     }
 
+    // If no specific user ID, we’ll exclude blocked+muted from the entire feed
+    else if (allExcludedIds.length > 0) {
+      whereCondition.userId = {
+        [Op.notIn]: allExcludedIds,
+      };
+    }
+
+    // (a) Fetch the posts
     posts = await Post.findAll({
       where: whereCondition,
       limit: parseInt(limit),
@@ -269,7 +307,7 @@ router.get('/', authMiddleware.optional, async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'username', 'profilePicture', 'privacy'], // ✅ ADDED privacy
+          attributes: ['id', 'username', 'profilePicture', 'privacy'],
         },
         {
           model: Post,
@@ -278,20 +316,20 @@ router.get('/', authMiddleware.optional, async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['id', 'username', 'profilePicture', 'privacy'], // ✅ ADDED privacy
+              attributes: ['id', 'username', 'profilePicture', 'privacy'],
             },
           ],
         },
       ],
     });
 
+    // (b) Format them
     const formattedPosts = posts.map(formatPost);
 
-    // ✅ Age-weighted score formula
+    // (c) Age-weighted score (For "For You" sorting)
     const computeScore = (post) => {
       const hoursOld = Math.floor((Date.now() - new Date(post.createdAt)) / 3600000);
       const agePenalty = Math.log2(hoursOld + 2); // smooth decay
-
       return (
         (post.likes || 0) * 2.5 +
         (post.retweets || 0) * 3 +
@@ -305,19 +343,23 @@ router.get('/', authMiddleware.optional, async (req, res) => {
       score: computeScore(post),
     }));
 
+    // (d) Sort by descending score
     scoredPosts.sort((a, b) => b.score - a.score);
 
+    // (e) Return final
     return res.json({
       posts: scoredPosts,
       currentPage: parseInt(page),
       totalPages: Math.ceil(scoredPosts.length / limit),
       totalPosts: scoredPosts.length,
     });
+
   } catch (err) {
     console.error('🚨 Error fetching posts:', err);
     res.status(500).json({ error: 'Failed to fetch posts.' });
   }
 });
+
 
 
 
@@ -348,20 +390,37 @@ router.get('/', authMiddleware.optional, async (req, res) => {
 router.get('/trending', authMiddleware.optional, async (req, res) => {
   try {
     let blockedIds = [];
+    let mutedIds = [];
 
+    // If user is logged in, fetch blocked & muted user IDs
     if (req.user?.id) {
+      const currentUserId = req.user.id;
+
+      // Blocked
       const blockedRecords = await BlockedUser.findAll({
-        where: { blockerId: req.user.id },
+        where: { blockerId: currentUserId },
         attributes: ['blockedId'],
       });
       blockedIds = blockedRecords.map(b => b.blockedId);
+
+      // Muted
+      const mutedRecords = await MutedUser.findAll({
+        where: { muterId: currentUserId },
+        attributes: ['mutedId'],
+      });
+      mutedIds = mutedRecords.map(m => m.mutedId);
     }
 
+    // Combine them into a single set of excluded IDs
+    const allExcludedIds = [...new Set([...blockedIds, ...mutedIds])];
+
+    // Fetch top posts (by likes desc)
     const trendingPosts = await Post.findAll({
       where: {
         deletedAt: null,
-        ...(blockedIds.length > 0 && {
-          userId: { [Op.notIn]: blockedIds },
+        // If we have excluded IDs, skip those authors
+        ...(allExcludedIds.length > 0 && {
+          userId: { [Op.notIn]: allExcludedIds },
         }),
       },
       order: [['likes', 'DESC']],
@@ -386,14 +445,15 @@ router.get('/trending', authMiddleware.optional, async (req, res) => {
       ],
     });
 
+    // We also filter out reposts from excluded authors or original authors 
     const filtered = trendingPosts.filter(post => {
       const author = post.user;
       const originalAuthor = post.originalPost?.user;
 
-      const isBlocked = blockedIds.includes(author?.id);
-      const isRepostFromBlocked = blockedIds.includes(originalAuthor?.id);
+      const isBlockedOrMuted = allExcludedIds.includes(author?.id);
+      const isRepostFromExcluded = allExcludedIds.includes(originalAuthor?.id);
 
-      return !isBlocked && !isRepostFromBlocked;
+      return !isBlockedOrMuted && !isRepostFromExcluded;
     });
 
     const formattedPosts = filtered.map(formatPost);
@@ -403,7 +463,6 @@ router.get('/trending', authMiddleware.optional, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch trending posts.' });
   }
 });
-
 
 /**
  * @route   GET /api/posts/likes
@@ -730,6 +789,20 @@ router.post('/:id/like', authMiddleware, checkBlockStatus, async (req, res) => {
     const post = await Post.findByPk(id);
     if (!post) return res.status(404).json({ message: 'Post not found.' });
 
+    // ✅ BLOCK PROTECTION — prevents liking posts if either party blocked the other
+    const hasBlocked = await BlockedUser.findOne({
+      where: {
+        [Op.or]: [
+          { blockerId: userId, blockedId: post.userId },
+          { blockerId: post.userId, blockedId: userId },
+        ],
+      },
+    });
+
+    if (hasBlocked) {
+      return res.status(403).json({ message: 'You cannot like posts from this user.' });
+    }
+
     const existingLike = await Like.findOne({ where: { postId: id, userId } });
 
     if (existingLike) {
@@ -806,13 +879,27 @@ router.post('/:id/retweet', authMiddleware, checkBlockStatus, async (req, res) =
     const userId = req.user.id;
     const retweeterName = req.user.username;
 
-    // Step 1: Fetch the original post
+    // Step 1: Fetch the original post with author
     const originalPost = await Post.findByPk(id, {
       include: [{ model: User, as: "user", attributes: ["id", "username", "profilePicture"] }],
     });
 
     if (!originalPost) {
       return res.status(404).json({ message: "Post not found." });
+    }
+
+    // ✅ Step 1.5: Block check — prevent retweet if either side blocked the other
+    const hasBlocked = await BlockedUser.findOne({
+      where: {
+        [Op.or]: [
+          { blockerId: userId, blockedId: originalPost.userId },
+          { blockerId: originalPost.userId, blockedId: userId },
+        ],
+      },
+    });
+
+    if (hasBlocked) {
+      return res.status(403).json({ message: "You cannot retweet posts from this user." });
     }
 
     // Step 2: Prevent duplicate retweet
@@ -855,7 +942,7 @@ router.post('/:id/retweet', authMiddleware, checkBlockStatus, async (req, res) =
     await Retweet.create({
       postId: retweetedPost.id,
       userId,
-      notificationId: newNotification?.id || null, // ✅ Link notification
+      notificationId: newNotification?.id || null,
     });
 
     // Step 6: Update retweet count
@@ -883,6 +970,7 @@ router.post('/:id/retweet', authMiddleware, checkBlockStatus, async (req, res) =
     res.status(500).json({ message: "An error occurred while retweeting the post." });
   }
 });
+
 
 
 

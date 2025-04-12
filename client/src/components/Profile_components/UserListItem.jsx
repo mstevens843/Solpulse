@@ -16,7 +16,7 @@ import { useNavigate, Link } from "react-router-dom";
 import FollowButton from "@/components/Profile_components/FollowButton";
 import "@/css/components/Profile_components/UserListItem.css";
 
-function UserListItem({ user, currentUserId, showBio = false, isMuted = false }) {
+function UserListItem({ user, currentUserId, showBio = false, isMuted = false, customAction = null }) {
   const navigate = useNavigate();
   const defaultAvatar = "http://localhost:5001/uploads/default-avatar.png";
 
@@ -77,13 +77,16 @@ function UserListItem({ user, currentUserId, showBio = false, isMuted = false })
           className="user-list-follow-btn"
           onClick={(e) => e.stopPropagation()}
         >
-          <FollowButton
-            userId={user.id}
-            isFollowingYou={user.isFollowingYou}
-            onFollowToggle={handleFollowToggle}
-            onRequestToggle={handleRequestToggle}
-          />
-
+          {customAction ? (
+            customAction
+          ) : (
+            <FollowButton
+              userId={user.id}
+              isFollowingYou={user.isFollowingYou}
+              onFollowToggle={handleFollowToggle}
+              onRequestToggle={handleRequestToggle}
+            />
+          )}
         </div>
       )}
     </div>
@@ -102,6 +105,7 @@ UserListItem.propTypes = {
   currentUserId: PropTypes.number,
   showBio: PropTypes.bool, // <-- new optional prop
   isMuted: PropTypes.bool,
+  customAction: PropTypes.node,
 };
 
 export default UserListItem;

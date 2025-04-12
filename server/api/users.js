@@ -180,6 +180,45 @@ router.get('/profile/:username', async (req, res) => {
 });
 
 
+
+/**
+ * @route   GET /api/users/profile-auth/:username
+ * @desc    Get a user's profile with "isFollowing" flag
+ * @access  Private (auth required)
+ */
+router.get('/profile-auth/:username', authMiddleware, async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const user = await User.findOne({
+      where: { username },
+      attributes: ['id', 'username', 'bio', 'walletAddress', 'profilePicture', 'privacy'],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Check if current user (req.user.id) follows the found user
+    const isFollowing = await Follower.findOne({
+      where: {
+        followerId: req.user.id,    // the logged-in user
+        followingId: user.id,       // the profile being viewed
+      },
+    });
+
+    // Return the user plus isFollowing
+    res.json({
+      user,
+      isFollowing: !!isFollowing, // true if found, else false
+    });
+  } catch (err) {
+    console.error('Error fetching user by username:', err);
+    res.status(500).json({ message: 'Failed to fetch user.' });
+  }
+});
+
+
 /**
  * @route   GET /api/users/:id
  * @desc    Get a user's profile & posts
@@ -319,10 +358,7 @@ router.get('/followers/notifications', authMiddleware, async (req, res) => {
       offset,
     });
 
-    if (!rows.length) {
-      return res.status(404).json({ error: 'No new followers found.' });
-    }
-
+    // No need to return 404 if no rows; just return an empty list with 200
     const followers = rows.map((follow) => ({
       id: follow.notification?.id || follow.followerUser.id,
       notificationId: follow.notification?.id || null,
@@ -331,19 +367,20 @@ router.get('/followers/notifications', authMiddleware, async (req, res) => {
       message: `${follow.followerUser.username} started following you`,
       createdAt: follow.createdAt,
       isRead: follow.notification?.isRead ?? false,
+      type: 'follow', // required by frontend to render correctly
     }));
 
-    res.json({
+    return res.json({
       followers,
       totalFollowers: count,
       totalPages: Math.ceil(count / limit),
-      currentPage: parseInt(page),
+      currentPage: parseInt(page, 10),
     });
   } catch (error) {
     console.error('Error fetching follower notifications:', error);
     res.status(500).json({ error: 'Failed to fetch follower notifications.' });
   }
-});;
+});
 
 
 
@@ -480,46 +517,62 @@ router.get('/:id/following', authMiddleware, checkBlockStatus, async (req, res) 
  * - Returns an error if the user is already following the target user.
  * - Responds with a success message if the follow action is successful.
  */
-router.post('/:id/follow', authMiddleware, checkBlockStatus, param('id').isInt(), async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+router.post(
+  '/:id/follow',
+  authMiddleware,
+  checkBlockStatus,
+  param('id').isInt(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const { id: followingId } = req.params;
-  const followerId = req.user.id;
+    const { id: followingId } = req.params;
+    const followerId = req.user.id;
 
-  try {
-    if (followerId === parseInt(followingId)) {
-      return res.status(400).json({ message: 'You cannot follow yourself.' });
+    try {
+      if (followerId === parseInt(followingId)) {
+        return res.status(400).json({ message: 'You cannot follow yourself.' });
+      }
+
+      // 🔐 Check privacy of target user
+      const targetUser = await User.findByPk(followingId);
+      if (!targetUser) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+
+      if (targetUser.privacy === 'private') {
+        return res.status(403).json({ message: 'This user is private. Please send a follow request.' });
+      }
+
+      // ❌ Prevent duplicates
+      const existing = await Follower.findOne({ where: { followerId, followingId } });
+      if (existing) {
+        return res.status(400).json({ message: 'You are already following this user.' });
+      }
+
+      // 🔔 Create notification
+      const notification = await Notification.create({
+        userId: followingId,
+        actorId: followerId,
+        type: 'follow',
+        message: `User ${req.user.username} started following you`,
+        isRead: false,
+      });
+
+      // ✅ Create follower record with notification
+      await Follower.create({
+        followerId,
+        followingId,
+        notificationId: notification.id,
+      });
+
+      res.status(201).json({ message: 'User followed successfully.' });
+    } catch (error) {
+      console.error('❌ Error following user:', error);
+      res.status(500).json({ message: 'An error occurred while following the user.' });
     }
-
-    // Prevent duplicates
-    const existing = await Follower.findOne({ where: { followerId, followingId } });
-    if (existing) {
-      return res.status(400).json({ message: 'You are already following this user.' });
-    }
-
-    // ✅ Create notification for the followed user
-    const notification = await Notification.create({
-      userId: followingId,
-      actorId: followerId,
-      type: 'follow',
-      message: `User ${req.user.username} started following you`,
-      isRead: false,
-    });
-
-    // ✅ Create follow + attach notificationId
-    await Follower.create({
-      followerId,
-      followingId,
-      notificationId: notification.id,
-    });
-
-    res.status(201).json({ message: 'User followed successfully.' });
-  } catch (error) {
-    console.error('❌ Error following user:', error);
-    res.status(500).json({ message: 'An error occurred while following the user.' });
   }
-});
+);
 
 
 

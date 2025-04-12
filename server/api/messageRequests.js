@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { MessageRequest, Notification, User } = require('../models');
 const authMiddleware = require('../middleware/auth');
+const { MessageRequest, Notification, User, Message } = require('../models'); 
+// ^^^ Make sure you have a "Message" model or rename to match your actual model.
 
 // 🔍 GET /api/message-requests/:recipientId/has-requested
 router.get('/:recipientId/has-requested', authMiddleware, async (req, res) => {
@@ -10,7 +11,7 @@ router.get('/:recipientId/has-requested', authMiddleware, async (req, res) => {
 
   try {
     const existing = await MessageRequest.findOne({
-      where: { senderId, recipientId },
+      where: { senderId, recipientId, status: 'pending' },
     });
 
     res.json({ hasRequested: !!existing });
@@ -24,7 +25,7 @@ router.get('/:recipientId/has-requested', authMiddleware, async (req, res) => {
 router.get('/incoming', authMiddleware, async (req, res) => {
   try {
     const requests = await MessageRequest.findAll({
-      where: { recipientId: req.user.id },
+      where: { recipientId: req.user.id, status: 'pending'},
       include: [
         {
           model: User,
@@ -53,13 +54,15 @@ router.post('/:recipientId', authMiddleware, async (req, res) => {
   }
 
   try {
-    const existing = await MessageRequest.findOne({ where: { senderId, recipientId } });
+    const existing = await MessageRequest.findOne({ where: { senderId, recipientId, status: 'pending' } });
     if (existing) {
       return res.status(409).json({ message: 'Message request already sent.' });
     }
 
+    // Create the pending message request
     const newRequest = await MessageRequest.create({ senderId, recipientId, message });
 
+    // Also create a notification for the recipient
     const notification = await Notification.create({
       type: 'message-request',
       userId: recipientId,
@@ -84,23 +87,37 @@ router.put('/:id/accept', authMiddleware, async (req, res) => {
 
   try {
     const request = await MessageRequest.findByPk(id);
-    if (!request) return res.status(404).json({ message: 'Request not found.' });
+    if (!request) {
+      return res.status(404).json({ message: 'Request not found.' });
+    }
     if (request.recipientId !== currentUserId) {
       return res.status(403).json({ message: 'Not authorized to accept this request.' });
     }
 
+    // Mark as accepted
     request.status = 'accepted';
     await request.save();
 
-    // Optional: notify sender
+    // Create an actual message in your main "Messages" table
+    // so the conversation shows up in the private user's inbox
+    const newMessage = await Message.create({
+      senderId: request.senderId,
+      recipientId: request.recipientId,
+      content: request.message,  // the text from the request
+    });
+
+    // (Optional) create a new notification for the sender that it was accepted
     await Notification.create({
       type: 'message',
-      userId: request.senderId,
-      actorId: currentUserId,
+      userId: request.senderId,     // the original sender
+      actorId: currentUserId,       // the private user (who accepted)
       content: 'accepted your message request.',
     });
 
-    res.json({ message: 'Message request accepted.' });
+    return res.json({
+      message: 'Message request accepted.',
+      newMessage,
+    });
   } catch (err) {
     console.error('Error accepting message request:', err);
     res.status(500).json({ message: 'Failed to accept request.' });
@@ -109,24 +126,25 @@ router.put('/:id/accept', authMiddleware, async (req, res) => {
 
 // ❌ DELETE /api/message-requests/:recipientId/cancel — Sender cancels request
 router.delete('/:recipientId/cancel', authMiddleware, async (req, res) => {
-    const { recipientId } = req.params;
-    const senderId = req.user.id;
-  
-    try {
-      const request = await MessageRequest.findOne({
-        where: { senderId, recipientId },
-      });
-  
-      if (!request) return res.status(404).json({ message: 'No message request to cancel.' });
-  
-      await request.destroy();
-      res.json({ message: 'Message request canceled.' });
-    } catch (err) {
-      console.error('Error canceling message request:', err);
-      res.status(500).json({ message: 'Failed to cancel request.' });
+  const { recipientId } = req.params;
+  const senderId = req.user.id;
+
+  try {
+    const request = await MessageRequest.findOne({
+      where: { senderId, recipientId },
+    });
+
+    if (!request) {
+      return res.status(404).json({ message: 'No message request to cancel.' });
     }
-  });
-  
+
+    await request.destroy();
+    res.json({ message: 'Message request canceled.' });
+  } catch (err) {
+    console.error('Error canceling message request:', err);
+    res.status(500).json({ message: 'Failed to cancel request.' });
+  }
+});
 
 // ❌ DELETE /api/message-requests/:id/deny — Deny request
 router.delete('/:id/deny', authMiddleware, async (req, res) => {
@@ -135,7 +153,9 @@ router.delete('/:id/deny', authMiddleware, async (req, res) => {
 
   try {
     const request = await MessageRequest.findByPk(id);
-    if (!request) return res.status(404).json({ message: 'Request not found.' });
+    if (!request) {
+      return res.status(404).json({ message: 'Request not found.' });
+    }
     if (request.recipientId !== currentUserId) {
       return res.status(403).json({ message: 'Not authorized to deny this request.' });
     }

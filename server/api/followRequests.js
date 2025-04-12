@@ -5,6 +5,7 @@ const authMiddleware = require('../middleware/auth');
 
 
 
+
 // 🔍 GET /api/follow-requests/:targetId/has-requested
 // This checks if the current user has already sent a follow request to another user.
 // Only checks one specific relationship: current user ➡️ target user.
@@ -33,6 +34,7 @@ router.get('/:targetId/has-requested', authMiddleware, async (req, res) => {
 // 📥 GET /api/follow-requests/incoming — Get all pending requests for the current user
 // This fetches all incoming follow requests sent to the current user.
 // Used in your Notifications page or Follow Requests tab.
+// 📥 GET /api/follow-requests/incoming — Get all incoming follow requests
 router.get('/incoming', authMiddleware, async (req, res) => {
   const currentUserId = req.user.id;
 
@@ -42,16 +44,28 @@ router.get('/incoming', authMiddleware, async (req, res) => {
       include: [
         {
           model: User,
-          as: 'requesterUser', // You must have this alias set in the model
+          as: 'requester', // ✅ Must match your model alias
           attributes: ['id', 'username', 'profilePicture'],
         },
       ],
       order: [['createdAt', 'DESC']],
     });
 
-    res.json({ requests });
+    // ✅ Format requests as notification-like payloads
+    res.json({
+      requests: requests.map((r) => ({
+        id: r.id, // follow request ID
+        notificationId: r.notificationId || null,
+        actor: r.requester?.username || 'Unknown',
+        profilePicture: r.requester?.profilePicture || null,
+        message: 'requested to follow you',
+        createdAt: r.createdAt,
+        isRead: false,
+        type: 'follow-request',
+      })),
+    });
   } catch (err) {
-    console.error("Error fetching incoming follow requests:", err);
+    console.error("❌ Error fetching incoming follow requests:", err);
     res.status(500).json({ message: 'Failed to fetch follow requests.' });
   }
 });
@@ -69,7 +83,7 @@ router.post('/:targetId', authMiddleware, async (req, res) => {
   }
 
   try {
-    // Check if already following
+    // ✅ Check if already following
     const isFollowing = await Follower.findOne({
       where: { followerId: requesterId, followingId: targetId },
     });
@@ -77,7 +91,7 @@ router.post('/:targetId', authMiddleware, async (req, res) => {
       return res.status(409).json({ message: 'You already follow this user.' });
     }
 
-    // Check if request already exists
+    // ✅ Check if request already exists
     const existingRequest = await FollowRequest.findOne({
       where: { requesterId, targetId },
     });
@@ -85,19 +99,34 @@ router.post('/:targetId', authMiddleware, async (req, res) => {
       return res.status(409).json({ message: 'Follow request already sent.' });
     }
 
-    const newRequest = await FollowRequest.create({ requesterId, targetId });
-
-    // 🔔 Optional: Create a notification for the private user
-    await Notification.create({
+    // ✅ Create a follow-request notification
+    const notification = await Notification.create({
       type: 'follow-request',
-      userId: targetId,
-      actorId: requesterId,
-      content: 'requested to follow you.',
+      userId: targetId,             // Receiver
+      actorId: requesterId,         // Sender
+      message: 'requested to follow you',
+      isRead: false,
     });
 
-    res.status(201).json({ message: 'Follow request sent.', request: newRequest });
+    // ✅ Create the follow request with notificationId attached
+    const newRequest = await FollowRequest.create({
+      requesterId,
+      targetId,
+      notificationId: notification.id,
+    });
+
+    res.status(201).json({
+      message: 'Follow request sent.',
+      request: {
+        id: newRequest.id,
+        requesterId: newRequest.requesterId,
+        targetId: newRequest.targetId,
+        notificationId: newRequest.notificationId,
+        createdAt: newRequest.createdAt,
+      },
+    });
   } catch (err) {
-    console.error('Error creating follow request:', err);
+    console.error('❌ Error creating follow request:', err);
     res.status(500).json({ message: 'Failed to send follow request.' });
   }
 });
@@ -118,35 +147,39 @@ router.put('/:id/accept', authMiddleware, async (req, res) => {
   try {
     const request = await FollowRequest.findByPk(id);
 
-    if (!request) return res.status(404).json({ message: 'Request not found.' });
+    if (!request) {
+      return res.status(404).json({ message: 'Request not found.' });
+    }
+
     if (request.targetId !== currentUserId) {
       return res.status(403).json({ message: 'You are not authorized to accept this request.' });
     }
 
-    // Create follower entry
+    // ✅ Create follow notification for the requester
+    const followNotification = await Notification.create({
+      type: 'follow',
+      userId: currentUserId,        // Receiver
+      actorId: request.requesterId, // Who followed
+      message: `User started following you`, // Clean default message
+      isRead: false,
+    });
+
+    // ✅ Create actual follower record with notification
     await Follower.create({
       followerId: request.requesterId,
       followingId: currentUserId,
+      notificationId: followNotification.id,
     });
 
-    // Optionally notify user they were accepted
-    await Notification.create({
-      type: 'follow-accepted',
-      userId: request.requesterId,
-      actorId: currentUserId,
-      content: 'accepted your follow request.',
-    });
-
-    // Delete the request
+    // ✅ Delete follow request
     await request.destroy();
 
-    res.json({ message: 'Follow request accepted.' });
+    res.json({ message: 'Follow request accepted and follower added.' });
   } catch (err) {
-    console.error('Error accepting follow request:', err);
+    console.error('❌ Error accepting follow request:', err);
     res.status(500).json({ message: 'Failed to accept follow request.' });
   }
 });
-
 
 
 

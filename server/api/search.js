@@ -19,7 +19,7 @@
  */
 
 const express = require('express');
-const { User, Post, sequelize, Follower } = require('../models');
+const { User, Post, sequelize, Follower, BlockedUser } = require('../models');
 const { Op, literal } = require('sequelize');
 const authMiddleware = require('../middleware/auth');
 const checkBlockStatus = require('../middleware/checkBlockStatus');
@@ -34,7 +34,7 @@ router.get(
   '/',
   rateLimiter(100, 15 * 60 * 1000),
   authMiddleware,
-  checkBlockStatus, // ✅ ADD THIS HERE
+  checkBlockStatus, // ✅ Already present
   async (req, res) => {
     const query = req.query.query || '';
     const page = parseInt(req.query.page) || 1;
@@ -61,11 +61,35 @@ router.get(
     }
 
     try {
+      // -------------------------------
+      //     BLOCKED USER FILTERS
+      // -------------------------------
+      let blockedUserIds = [];
+      let blockedByUserIds = [];
+      if (currentUserId) {
+        const blocked = await BlockedUser.findAll({
+          where: { blockerId: currentUserId },
+          attributes: ['blockedId'],
+        });
+        blockedUserIds = blocked.map(b => b.blockedId);
+
+        const blockedBy = await BlockedUser.findAll({
+          where: { blockedId: currentUserId },
+          attributes: ['blockerId'],
+        });
+        blockedByUserIds = blockedBy.map(b => b.blockerId);
+      }
+      const allBlockedIds = [...new Set([...blockedUserIds, ...blockedByUserIds])];
+
       // --- 1) Search Users ---
       const users = await User.findAndCountAll({
         where: {
           username: {
             [Op.iLike]: `%${query}%`
+          },
+          // 🚫 Filter out blocked or blocking users:
+          id: {
+            [Op.notIn]: allBlockedIds
           }
         },
         attributes: ['id', 'username', 'profilePicture', 'bio'],
@@ -94,7 +118,6 @@ router.get(
                 },
               }),
             ]);
-
             isFollowedByCurrentUser = !!followed;
             isFollowingYou = !!followsYou;
           }
@@ -124,37 +147,42 @@ router.get(
       // --- 2) Search Posts ---
       const postResults = await Post.findAndCountAll({
         where: {
-          content: { [Op.iLike]: `%${query}%` }
+          content: { [Op.iLike]: `%${query}%` },
         },
         attributes: ['id', 'content', 'createdAt', 'userId'],
         include: [
-          { 
-            model: User, 
-            as: 'user', 
-            attributes: ['id', 'username', 'profilePicture', 'privacy'] 
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'username', 'profilePicture', 'privacy']
           },
-          { 
-            model: User, 
-            as: 'likedByUsers', 
-            attributes: ['id'], 
-            through: { attributes: [] } 
+          {
+            model: User,
+            as: 'likedByUsers',
+            attributes: ['id'],
+            through: { attributes: [] }
           },
-          { 
-            model: User, 
-            as: 'retweetedByUsers', 
-            attributes: ['id'], 
-            through: { attributes: [] } 
+          {
+            model: User,
+            as: 'retweetedByUsers',
+            attributes: ['id'],
+            through: { attributes: [] }
           },
         ],
         limit,
         offset,
       });
 
-      // ✅ NEW: Filter out private posts unless viewer is the author or follows them
-      const filteredPosts = postResults.rows.filter((post) => {
-        const postAuthor = post.user;
-        if (!postAuthor) return false; // No author? Skip it.
+      // 1) Filter out any posts by blocked or blocking users
+      const unblockedPosts = postResults.rows.filter((post) => {
+        if (!post.user) return false;
+        return !allBlockedIds.includes(post.user.id);
+      });
 
+      // 2) Then filter private posts unless viewer is the author or a follower
+      const filteredPosts = unblockedPosts.filter((post) => {
+        const postAuthor = post.user;
+        if (!postAuthor) return false; // No author? Skip.
         const isPublic = postAuthor.privacy === 'public';
         const isOwner = postAuthor.id === currentUserId;
         const isFollower = followingIds.includes(postAuthor.id);
@@ -206,6 +234,13 @@ router.get(
 
 
 
+
+
+
+
+
+
+
 // -------------------------------------------------------------------
 //           SUGGESTIONS ROUTE (unchanged, except minor rename)
 // -------------------------------------------------------------------
@@ -213,7 +248,7 @@ router.get(
   '/suggestions',
   rateLimiter(100, 15 * 60 * 1000),
   authMiddleware,
-  checkBlockStatus, // ✅ ADD THIS HERE
+  checkBlockStatus, // ✅ Already present
   async (req, res) => {
     const query = req.query.query || '';
     if (!query.trim()) return res.json({ results: [] });
@@ -229,18 +264,39 @@ router.get(
       followingIds = followRecords.map(f => f.followingId);
     }
 
+    // 🔒 Block filter: which users are blocked or blocking me?
+    let blockedUserIds = [];
+    let blockedByUserIds = [];
+
+    if (currentUserId) {
+      const blocked = await BlockedUser.findAll({
+        where: { blockerId: currentUserId },
+        attributes: ['blockedId'],
+      });
+      blockedUserIds = blocked.map(b => b.blockedId);
+
+      const blockedBy = await BlockedUser.findAll({
+        where: { blockedId: currentUserId },
+        attributes: ['blockerId'],
+      });
+      blockedByUserIds = blockedBy.map(b => b.blockerId);
+    }
+
+    const allBlockedIds = [...new Set([...blockedUserIds, ...blockedByUserIds])];
+
     try {
       // 2) Fetch users, include `privacy`
       const userResults = await User.findAll({
-        where: { username: { [Op.iLike]: `%${query}%` } },
-        attributes: ['id', 'username', 'email', 'privacy'], // ✅ Add `privacy`
+        where: {
+          username: { [Op.iLike]: `%${query}%` },
+          // ❌ Exclude blocked
+          id: { [Op.notIn]: allBlockedIds },
+        },
+        attributes: ['id', 'username', 'email', 'privacy'],
         limit: 5
       });
 
-     
-      const visibleUsers = userResults;
-
-      // 3) Fetch posts, include user + privacy if you want
+      // 3) Fetch posts, include user + privacy
       const postResults = await Post.findAll({
         where: {
           content: { [Op.iLike]: `%${query}%` }
@@ -256,8 +312,14 @@ router.get(
         limit: 5
       });
 
-      // 🔒 Filter out private posts if not allowed
-      const visiblePosts = postResults.filter(p => {
+      // 🛡 Filter out posts by blocked or blocking users
+      const unblockedPosts = postResults.filter(p => {
+        if (!p.user) return false;
+        return !allBlockedIds.includes(p.user.id);
+      });
+
+      // 🔒 Then filter out private posts if not allowed
+      const visiblePosts = unblockedPosts.filter(p => {
         const author = p.user;
         if (!author) return false;
         if (author.privacy === 'public') return true;
@@ -266,7 +328,7 @@ router.get(
       });
 
       // 4) Format results
-      const formattedUsers = visibleUsers.map(user => ({
+      const formattedUsers = userResults.map(user => ({
         id: user.id,
         username: user.username,
         type: 'user',

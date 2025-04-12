@@ -12,9 +12,12 @@
 import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
+import BlockedMutedModal from "@/components/Settings_components/BlockedMutedModal";
 import "@/css/pages/Settings.css";
-import { FaEnvelope, FaLock, FaUser, FaWallet, FaBell, FaPaintBrush, FaTrash } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaUser, FaWallet, FaBell, FaPaintBrush, FaTrash, FaUserSlash } from "react-icons/fa";
 import { toast, ToastContainer, Slide } from "react-toastify";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
 import "react-toastify/dist/ReactToastify.css";
 
 
@@ -31,6 +34,9 @@ function Settings() {
   // const [successMessage, setSuccessMessage] = useState("");
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showPasswordField, setShowPasswordField] = useState(false);
+  const [showBlockedMutedModal, setShowBlockedMutedModal] = useState(false);
+  const { currentUser } = useContext(AuthContext);
+
 
 
   // Apply theme in realtime when user clicks it from dropdown.
@@ -354,6 +360,14 @@ const handlePrivacyToggle = async (e) => {
               {loading ? "Saving..." : "Save Settings"}
             </button>
           </form>
+          
+          <div className="settings-blocked-muted">
+            <button
+              className="settings-subsection-button"
+              onClick={() => setShowBlockedMutedModal(true)}>
+            <FaUserSlash className="input-icon" /> Manage Blocked & Muted Users
+            </button>
+          </div>
 
           <div className="settings-delete">
             <button onClick={handleDeleteAccount} className="delete-account-btn">
@@ -380,6 +394,12 @@ const handlePrivacyToggle = async (e) => {
         theme="dark"
         transition="slide"
       />
+      {showBlockedMutedModal && (
+        <BlockedMutedModal
+          currentUserId={currentUser?.id}
+          onClose={() => setShowBlockedMutedModal(false)}
+        />
+      )}
     </div>
   );
 }

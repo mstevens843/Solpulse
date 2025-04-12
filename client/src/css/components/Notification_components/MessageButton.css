@@ -84,3 +84,37 @@
     color: green;
     font-size: 12px;
 }
+
+.request-dropdown {
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    min-width: 140px;
+    background: #1e1e1e;
+    border: 1px solid #00ffcc;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 255, 204, 0.3);
+    z-index: 1000;
+    overflow: hidden;
+    animation: dropdownFade 0.2s ease-out;
+}
+
+div.request-dropdown {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    color: #f1f1f1;
+    background: none;
+    border: none;
+    width: 100%;
+    border: 1px solid #00ffcc;
+    text-align: left;
+    transition: background 0.2s ease;
+  }
+  
+    
+  div.request-dropdown:hover {
+    background: #00ffcc22;
+    color: #00ffcc;
+    transform: scale(1.02);
+    transition: all 0.15s ease;
+  }

@@ -12,6 +12,7 @@ const authMiddleware = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const checkCommentOwnership = require('../middleware/checkCommentOwnership');
 const checkBlockStatus = require('../middleware/checkBlockStatus');
+const { Op } = require('sequelize'); // import sequelize operators
 
 
 const router = express.Router();

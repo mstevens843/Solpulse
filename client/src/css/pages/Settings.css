@@ -392,3 +392,33 @@ div.form-group {
 html {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+
+
+.settings-subsection-button {
+  background-color: #14f195;
+  color: #000;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+
+  /* 👇 Add this */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.settings-subsection-button:hover {
+  background-color: #0fd686;
+}
+
+.settings-blocked-muted {
+  margin-top: 1.2rem;
+  margin-bottom: 0rem;
+  display: flex;
+  justify-content: center;
+}

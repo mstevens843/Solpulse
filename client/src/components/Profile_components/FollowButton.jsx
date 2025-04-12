@@ -114,12 +114,12 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
       if (isPrivate && !isFollowing) {
         if (hasRequested) {
           // ✅ Cancel follow request
-          await api.delete(`/followRequests/${userId}/cancel`);
+          await api.delete(`/follow-requests/${userId}/cancel`);
           toast.info("Follow request canceled.");
           setHasRequested(false);
         } else {
           // ✅ Send follow request
-          await api.post(`/followRequests/${userId}`);
+          await api.post(`/follow-requests/${userId}`);
           toast.success("Follow request sent.");
           setHasRequested(true);
         }
@@ -133,10 +133,26 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
         followStatusCache[userId] = false;
         if (updateCounts) updateCounts(-1);
       } else {
-        await api.post(`/users/${userId}/follow`);
-        setIsFollowing(true);
-        followStatusCache[userId] = true;
-        if (updateCounts) updateCounts(1);
+        try {
+          await api.post(`/users/${userId}/follow`);
+          setIsFollowing(true);
+          followStatusCache[userId] = true;
+          if (updateCounts) updateCounts(1);
+        } catch (followErr) {
+          if (followErr.response?.status === 403) {
+            // 🚨 User is private, fallback to follow request
+            try {
+              await api.post(`/follow-requests/${userId}`);
+              setHasRequested(true);
+              toast.success("Follow request sent.");
+            } catch (requestErr) {
+              console.error("❌ Failed to send follow request fallback:", requestErr);
+              toast.error("User is private. Request could not be sent.");
+            }
+          } else {
+            throw followErr;
+          }
+        }
       }
   
       if (onFollowToggle) onFollowToggle(!isFollowing);
@@ -161,8 +177,8 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
     buttonLabel = "Following";
     buttonClass = "following";
   } else if (hasRequested) {
-    buttonLabel = "Requested";
-    buttonClass = "requested";
+    buttonLabel = "Requested ▼";
+    buttonClass = "requested pending-dropdown";
   } else if (isFollowingYou) {
     buttonLabel = "Follow Back";
     buttonClass = "follow-back";
@@ -173,7 +189,7 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
       <button
         className={`follow-btn ${buttonClass}`}
         onClick={(e) => {
-          if (isFollowing) {
+          if ((isFollowing || hasRequested) && !loading) {
             e.stopPropagation();
             setShowDropdown((prev) => !prev);
           } else {
@@ -185,45 +201,68 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
         aria-pressed={isFollowing}
       >
         {isFollowing ? <FaUserCheck /> : <FaUserPlus />}
-        {` ${buttonLabel}`} {isFollowing && <span className="dropdown-arrow">▼</span>}
+        {` ${buttonLabel}`} 
+        {(isFollowing || hasRequested) && <span className="dropdown-arrow"></span>}
       </button>
   
-      {/* Dropdown options */}
-      {isFollowing && showDropdown && (
+      {/* Dropdown appears if we have either isFollowing or hasRequested (and showDropdown=true) */}
+      {(isFollowing || hasRequested) && showDropdown && (
         <div className="follow-dropdown">
-          <button
-            className="dropdown-item unfollow"
-            onClick={async () => {
-              try {
-                await api.delete(`/users/${userId}/unfollow`);
-                setIsFollowing(false);
-                followStatusCache[userId] = false;
-                if (updateCounts) updateCounts(-1);
-                if (onFollowToggle) onFollowToggle(false);
-                toast.success("Unfollowed successfully.");
-              } catch (err) {
-                console.error("Unfollow error:", err);
-                toast.error("Failed to unfollow.");
-              }
-              setShowDropdown(false);
-            }}
-          >
-            Unfollow
-          </button>
-
+          {isFollowing ? (
+            /* If user is truly following => show Unfollow button */
+            <button
+              className="dropdown-item unfollow"
+              onClick={async () => {
+                try {
+                  await api.delete(`/users/${userId}/unfollow`);
+                  setIsFollowing(false);
+                  followStatusCache[userId] = false;
+                  if (updateCounts) updateCounts(-1);
+                  if (onFollowToggle) onFollowToggle(false);
+                  toast.success("Unfollowed successfully.");
+                } catch (err) {
+                  console.error("Unfollow error:", err);
+                  toast.error("Failed to unfollow.");
+                }
+                setShowDropdown(false);
+              }}
+            >
+              Unfollow
+            </button>
+          ) : (
+            /* Otherwise, user hasRequested => show Cancel Request button */
+            <button
+              className="dropdown-item cancel-request"
+              onClick={async () => {
+                try {
+                  await api.delete(`/follow-requests/${userId}/cancel`);
+                  toast.info("Follow request canceled.");
+                  setHasRequested(false);
+                } catch (error) {
+                  console.error("Error canceling follow request:", error);
+                  toast.error("Failed to cancel follow request.");
+                }
+                setShowDropdown(false);
+              }}
+            >
+              Cancel Request
+            </button>
+          )}
+  
+          {/* Mute/Unmute always visible in dropdown, if you want it in both states */}
           <button
             className="dropdown-item"
             onClick={async () => {
               try {
                 console.log("📡 Mute request sent to:", isMuted ? "DELETE" : "POST");
                 if (isMuted) {
-                  await api.delete(`/blocked-muted/mute/${userId}`); // ✅ Corrected DELETE
+                  await api.delete(`/blocked-muted/mute/${userId}`);
                   toast.success("User unmuted.");
-                  setIsMuted?.(false); // ✅ only calls if defined
+                  setIsMuted?.(false);
                 } else {
-                  await api.post(`/blocked-muted/mute/${userId}`); // ✅ Corrected POST
+                  await api.post(`/blocked-muted/mute/${userId}`);
                   toast.success("User muted.");
-                  setIsMuted?.(true);  // ✅ safe and clean
+                  setIsMuted?.(true);
                 }
               } catch (err) {
                 console.error("Mute/unmute error:", err);

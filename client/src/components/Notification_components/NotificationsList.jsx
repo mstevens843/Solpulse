@@ -54,7 +54,7 @@ function NotificationsList() {
 
     const fetchMutedUsers = async () => {
       try {
-        const res = await api.get("//blocked-muted/mute");
+        const res = await api.get("/blocked-muted/mute");
         setMutedUserIds(res.data?.mutedUserIds || []);
       } catch (err) {
         console.error("Failed to fetch muted users", err);
@@ -113,12 +113,13 @@ function NotificationsList() {
         
             const incomingRequests = requestsRes.data.requests.map((item) => ({
               id: item.id,
-              actor: item.requesterUser?.username || "Unknown user",
-              profilePicture: item.requesterUser?.profilePicture || null,
-              message: "requested to follow you",
+              notificationId: item.notificationId || null, // ✅ keep this for marking as read
+              actor: item.actor || "Unknown user",
+              profilePicture: item.profilePicture || null,
+              message: item.message || "requested to follow you",
               createdAt: item.createdAt,
-              isRead: false,
-              type: "follow-request",
+              isRead: item.isRead || false,
+              type: item.type || "follow-request",
             }));
         
             setNotifications([...incomingRequests, ...actualFollows]);
@@ -506,16 +507,19 @@ function NotificationsList() {
           )}
           </div>
   
-              {notification.isRead ? (
-                <span className="notification-read-indicator">✓ Read</span>
-              ) : (
-                <button
-                  className="notification-mark-read-btn"
-                  onClick={() => markNotificationAsRead(notification.id)}
-                >
-                  Mark as Read
-                </button>
-              )}
+          {notification.type !== "follow-request" &&
+          notification.type !== "message-request" && (
+            notification.isRead ? (
+              <span className="notification-read-indicator">✓ Read</span>
+            ) : (
+              <button
+                className="notification-mark-read-btn"
+                onClick={() => markNotificationAsRead(notification.id)}
+              >
+                Mark as Read
+              </button>
+            )
+          )}
             </li>
           ))}
         </ul>

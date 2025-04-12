@@ -1,0 +1,127 @@
+.blocked-muted-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .blocked-muted-modal {
+    background: #111;
+    border: 2px solid #14f195;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 1.5rem;
+    box-shadow: 0 0 30px rgba(20, 241, 149, 0.3);
+    animation: fadeIn 0.2s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.4rem;
+    color: #14f195;
+  }
+  
+  .close-btn {
+    background: transparent;
+    color: #999;
+    font-size: 1.5rem;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  .close-btn:hover {
+    color: #fff;
+  }
+  
+  .tab-selector {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tab-selector button {
+    padding: 0.4rem 1rem;
+    background: transparent;
+    border: 2px solid #14f195;
+    border-radius: 999px;
+    color: #14f195;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .tab-selector .active {
+    background: #14f195;
+    color: #000;
+  }
+  
+  .tab-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+  
+  .empty-state {
+    color: #777;
+    text-align: center;
+    font-size: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .un-block-btn,
+  .un-mute-btn {
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    background: #ff4d4d;
+    color: #fff;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .un-mute-btn {
+    background: #ffa500 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  
+  .un-block-btn:hover {
+    background: #cc0000;
+  }
+  
+  .un-mute-btn:hover {
+    background: #e68a00;
+  }
+
+  /* fix faded out unmute tab */
+  .tab-content,
+.tab-content * {
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto !important;
+}
+  
