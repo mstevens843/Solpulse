@@ -65,7 +65,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
     // If the originalProfilePicture doesn't start with http, prefix the base path
     postProfilePicture = post.originalProfilePicture.startsWith("http")
       ? post.originalProfilePicture
-      : `http://localhost:5001${post.originalProfilePicture.startsWith("/uploads")
+      : `https://solpulse.onrender.com${post.originalProfilePicture.startsWith("/uploads")
           ? post.originalProfilePicture
           : `/uploads/${post.originalProfilePicture}`
         }`;
@@ -73,7 +73,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
     const pic = post.authorAvatar || post.profilePicture;
     postProfilePicture = pic.startsWith("http")
       ? pic
-      : `http://localhost:5001${pic.startsWith("/uploads")
+      : `https://solpulse.onrender.com${pic.startsWith("/uploads")
           ? pic
           : `/uploads/${pic}`
         }`;
