@@ -12,12 +12,12 @@ const authMiddleware = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const checkCommentOwnership = require('../middleware/checkCommentOwnership');
 const checkBlockStatus = require('../middleware/checkBlockStatus');
-const { Op } = require('sequelize'); // import sequelize operators
+const { Op } = require('sequelize'); 
 
 
 const router = express.Router();
 
-const defaultAvatarUrl = process.env.DEFAULT_AVATAR_URL || 'https://your-fallback-url.com/default.png';
+const defaultAvatarUrl = process.env.DEFAULT_AVATAR_URL || 'https://www.solpulse.net/uploads/default-avatar.png';
 
 
 /**
