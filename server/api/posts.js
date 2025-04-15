@@ -50,8 +50,8 @@ const formatPost = (post, currentUserId = null) => ({
     : post.user?.username || post.author || 'Unknown',
 
   profilePicture: post.isRetweet
-    ? post.originalPost?.user?.profilePicture || post.originalProfilePicture || "https://solpulse.onrender.com/uploads/default-avatar.png"
-    : post.user?.profilePicture || "https://solpulse.onrender.com/uploads/default-avatar.png",
+    ? post.originalPost?.user?.profilePicture || post.originalProfilePicture || "https://www.solpulse.net/uploads/default-avatar.png"
+    : post.user?.profilePicture || "https://www.solpulse.net/uploads/default-avatar.png",
 
     content: post.content || '',
     mediaUrl: post.mediaUrl || null,
@@ -935,7 +935,7 @@ router.post('/:id/retweet', authMiddleware, checkBlockStatus, async (req, res) =
       originalPostId: originalPost.id,
       originalUserId: originalPost.userId,
       originalAuthor: originalPost.user?.username || "Unknown",
-      originalProfilePicture: originalPost.user?.profilePicture || "https://solpulse.onrender.com/uploads/default-avatar.png",
+      originalProfilePicture: originalPost.user?.profilePicture || "https://www.solpulse.net/uploads/default-avatar.png",
     });
 
     // Step 5: Save it in the Retweets table with notificationId

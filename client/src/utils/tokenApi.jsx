@@ -79,7 +79,7 @@ let lastFetched = 0; // Throttling timestamp
 const fetchTokenInfo = async (mintAddress) => {
     try {
         console.log(` Fetching token with mint address: ${mintAddress}`);
-        const response = await fetch(`https://solpulse.onrender.com/api/jupiter/token/${mintAddress}`);
+        const response = await fetch(`https://www.solpulse.net/api/jupiter/token/${mintAddress}`);
         if (!response.ok) throw new Error("Token not found");
 
         const tokenInfo = await response.json();
@@ -101,7 +101,7 @@ const fetchTokenInfoByMint = async (mintAddress) => {
     try {
         console.log(` Searching for token with mint address: ${mintAddress}`);
 
-        const response = await fetch(`https://solpulse.onrender.com/jupiter/token/${mintAddress}`);
+        const response = await fetch(`https://www.solpulse.net/jupiter/token/${mintAddress}`);
         if (!response.ok) throw new Error("Token not found");
 
         const tokenInfo = await response.json();
@@ -167,7 +167,7 @@ export { fetchWalletTokens, fetchTokenInfo, fetchTokenInfoByMint, fetchTokenPric
 
 
 /**
- * 🔹 **Potential Improvements:**
+ *  **Potential Improvements:**
  * 1. **Performance Optimization**:
  *    - Implement caching for token metadata to reduce redundant API calls.
  *    - Use a token metadata list to prefill common tokens instead of always fetching.

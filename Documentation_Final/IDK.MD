@@ -4,7 +4,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 🏠 Home Page (`Home.js`)
+## Home Page (`Home.js`)
 - Displays the user's main feed using the `Feed` component.
 - Integrates `CryptoTicker` for real-time Solana ecosystem prices.
 - Uses `Explore` in the sidebar for discovery.
@@ -13,7 +13,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 🔔 Activity Page (`ActivityPage.js`)
+## Activity Page (`ActivityPage.js`)
 - Tabbed interface for:
   - Messages
   - Notifications
@@ -22,7 +22,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 🧾 Notifications System (`NotificationsList.js`)
+## Notifications System (`NotificationsList.js`)
 - Displays grouped notification types:
   - Likes, Retweets, Comments, Follows, Messages, Tips
 - Supports:
@@ -36,7 +36,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 💬 Messaging System
+## Messaging System
 **Components**:
 - `MessagesInbox.js`
 - `MessageModal.js`
@@ -52,7 +52,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 🪙 Wallet Integration
+## Wallet Integration
 **Libraries**:
 - `@solana/web3.js`
 - `@solana/wallet-adapter`
@@ -65,7 +65,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 📝 Post System
+## Post System
 
 ### `Post.js`
 - Displays post content, likes, retweets, comments.
@@ -94,7 +94,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 🧪 Feed System
+## Feed System
 
 ### `Feed.js`
 - Infinite scroll with `IntersectionObserver`.
@@ -110,7 +110,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 🔎 Search System
+## Search System
 
 ### `SearchResults.js`
 - Debounced query updates.
@@ -126,7 +126,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 👤 Profile System
+## Profile System
 
 ### `Profile.js`
 - Lazy loads posts and profile info.
@@ -154,7 +154,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## ⚙️ Settings Page (`Settings.js`)
+## Settings Page (`Settings.js`)
 - Update user preferences:
   - Email, Privacy, Wallet Address, Theme, Notifications
 - Optional password change field.
@@ -163,7 +163,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 👥 Auth Pages
+## Auth Pages
 
 ### `Login.js`
 - Email/password login.
@@ -179,7 +179,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 📈 Crypto Components
+## Crypto Components
 
 ### `CryptoTicker.js`
 - Displays top Solana coins.
@@ -221,7 +221,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 📦 Media Handling
+## Media Handling
 
 ### `MediaUpload.js`
 - Accepts images/videos.
@@ -231,7 +231,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 🔍 Explore Page (`Explore.js`)
+## Explore Page (`Explore.js`)
 - Shows trending posts.
 - Infinite scroll for hot content.
 - Filter by 24h/week/month.
@@ -239,7 +239,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 💱 Trade Page (`Trade.js`)
+## Trade Page (`Trade.js`)
 - Jupiter API integration for token swaps.
 - On-demand token selection via `TokenModal`.
 - Quote fetching and transaction execution.
@@ -248,7 +248,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 📈 Trending Page (`TrendingCrypto.js`)
+## Trending Page (`TrendingCrypto.js`)
 - Real-time charts for:
   - Top coins
   - Gainers/Losers
@@ -259,7 +259,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## ✅ Utilities
+## Utilities
 
 | Utility | Purpose |
 |--------|---------|
@@ -271,7 +271,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## 🔒 Authentication
+## Authentication
 
 - JWT token stored in `localStorage`.
 - `/auth/me` hit on refresh to restore session.
@@ -280,7 +280,7 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 
 ---
 
-## ✅ Additional Features
+## Additional Features
 
 - Lazy loading via `loading="lazy"` for images.
 - Accessibility labels across form inputs and buttons.
@@ -291,11 +291,10 @@ SolPulse delivers a seamless Solana-based social media experience by combining c
 ---
 
 Let me know if you want a **backend README** to pair with this, or an **index table of contents** at the top.
-✅ Next Steps (Optional):
-Add top-level table of contents with anchors ([🏠 Home Page](#🏠-home-page-homejs))
+ Next Steps (Optional):
+Add top-level table of contents with anchors ([ Home Page](#-home-page-homejs))
 
 Break this README into per-feature files for massive projects
 
 Link this README from your main README.md under “Frontend Features”
 
-Would you like this exact output as a downloadable .md file in your repo structure once the file tool is back? Or want a version for Notion or Google Docs too?

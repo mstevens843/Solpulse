@@ -1,7 +1,7 @@
 
-# 📄 API_DOCUMENTATION.md — SolPulse REST API (Detailed)
+# API_DOCUMENTATION.md — SolPulse REST API (Detailed)
 
-## 🧠 Overview
+## Overview
 
 The SolPulse API powers a decentralized, Solana-themed crypto social network with:
 - User authentication
@@ -19,16 +19,16 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 🛠️ Jupiter API Trading (trade.js)
+## Jupiter API Trading (trade.js)
 
-### 🔁 Swap Tokens on Solana
+### Swap Tokens on Solana
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/trade/tokens` | Fetch all Solana tokens from Jupiter |
 | GET | `/trade/tradable` | Fetch only tradable tokens |
 | GET | `/trade/token/:mintAddress` | Get token metadata by mint address |
 
-### 📉 Quote + Execute Swaps
+### Quote + Execute Swaps
 | Function | Description |
 |----------|-------------|
 | `fetchSwapQuote()` | Get best quote for token swap |
@@ -44,7 +44,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 📊 CoinGecko Market Data (trendingCrypto.js)
+## CoinGecko Market Data (trendingCrypto.js)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -62,7 +62,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 🔐 Authentication Routes
+## Authentication Routes
 
 | Method | Endpoint           | Description                          |
 |--------|--------------------|--------------------------------------|
@@ -74,7 +74,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 👤 User Routes
+## User Routes
 
 ### Profile
 | Method | Endpoint | Description |
@@ -96,7 +96,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 📝 Post Routes
+## Post Routes
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -121,7 +121,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 💬 Comment Routes
+## Comment Routes
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -133,7 +133,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## ✉️ Messaging Routes
+## Messaging Routes
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -146,7 +146,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 🔔 Notification Routes
+## Notification Routes
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -168,7 +168,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 🔍 Search Route
+## Search Route
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -180,7 +180,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 📁 File Upload Rules
+## File Upload Rules
 
 - All uploads: `multipart/form-data`
 - Profile pics max size: 5MB
@@ -188,7 +188,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 🔑 Authentication Notes
+## Authentication Notes
 
 - All protected routes require:
   `Authorization: Bearer <JWT>`
@@ -197,14 +197,14 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 🧪 Testing Notes
+## Testing Notes
 
 - `/auth/delete`: enabled only in test environments
 - Used to create/delete test accounts during integration tests
 
 ---
 
-## 📦 Pagination
+## Pagination
 
 - All list endpoints support:
   - `page`: default 1
@@ -212,7 +212,7 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 🛡️ Rate Limiting
+## Rate Limiting
 
 | Route | Limit |
 |-------|-------|
@@ -221,8 +221,8 @@ The SolPulse API powers a decentralized, Solana-themed crypto social network wit
 
 ---
 
-## 📬 Contact
+## Contact
 
 For issues or API onboarding:
 **Mathew Stevens**  
-📧 `mathewstevens7457@gmail.com`
+`mathewstevens7457@gmail.com`

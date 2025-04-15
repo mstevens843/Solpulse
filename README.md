@@ -1,6 +1,6 @@
 # SolPulse — Main Project Overview
 
-**Live App:** [Visit SolPulse](https://solpulse-client.onrender.com)
+**Live App:** [Visit SolPulse](https://www.solpulse.net)
 
 # Back-end deployment URL: 
 https://solpulse.onrender.com
@@ -65,6 +65,22 @@ Ultimately, **SolPulse** aims to be a community hub for crypto enthusiasts, prov
    - Environment variable configurations for easy deployment in different environments (development, production)
 
 ---
+
+
+## Current API Rate Limitations
+
+**SolPulse currently utilizes free-tier access to several key APIs and services:** 
+- CoinGecko API – for live cryptocurrency prices, trending coins, and market data
+- Jupiter API – for token swap quotes and transaction routing on Solana
+- Solana RPC (via Alchemy) – for wallet connections, transaction confirmations, and on-chain data
+
+**These service enforce rate limits on free plans, which may be temporarily impact:
+- Real-time price updates and trending feed responsiveness
+- Swap failures due to Jupiter API throttling API (429 errors) 
+- Wallet/token balance refresh issues during periods of high activity
+
+--- 
+
 
 ## Tech Stack
 

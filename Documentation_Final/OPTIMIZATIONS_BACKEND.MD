@@ -1,26 +1,26 @@
-# 🛠️ Backend Optimizations — SolPulse
+#  Backend Optimizations — SolPulse
 
 This document outlines all major backend optimizations implemented in the SolPulse project. These improvements focus on **performance**, **security**, **scalability**, and **maintainability** across the server, middleware, utilities, database models, logging, and APIs.
 
 
 | Category           | Description                                                             |
 |--------------------|-------------------------------------------------------------------------|
-| 🛡 Security         | JWT validation, rate limiting, password hashing, token handling         |
-| 🚀 Performance      | Indexing, optimized queries, caching, logging response times            |
-| 🧹 Maintainability | Refactored hooks, renamed associations, modular error handling          |
-| 📦 Scalability      | CORS config, rate limit tiers, graceful shutdown, retry logic           |
-| 🔎 Debuggability    | Structured logging, colored logs, log persistence                       |
-| ✅ Data Integrity   | ENUM constraints, unique validation, CASCADE deletes     
+|  Security         | JWT validation, rate limiting, password hashing, token handling         |
+|  Performance      | Indexing, optimized queries, caching, logging response times            |
+|  Maintainability | Refactored hooks, renamed associations, modular error handling          |
+|  Scalability      | CORS config, rate limit tiers, graceful shutdown, retry logic           |
+|  Debuggability    | Structured logging, colored logs, log persistence                       |
+|  Data Integrity   | ENUM constraints, unique validation, CASCADE deletes     
 
 
 
-## 🧠 Why These Optimizations Matter
+##  Why These Optimizations Matter
 
 These backend optimizations improve real-world app reliability by preventing abuse (rate limiting, JWT expiration), reducing server load (indexing, caching), and enabling better developer experience (structured error logging, scoped middlewares). Together, they make the API scalable, secure, and production-ready.
 
 ---
 
-## 📦 server.js
+##  server.js
 - **Dynamic CORS Origins**  
   Replaced hardcoded localhost with `allowedOrigins` from `config.js`.
 - **WebSocket Stability**  
@@ -30,7 +30,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 📦 app.js
+## app.js
 -  **Centralized CORS Configuration**  
 -  **Helmet Security by Environment**  
 -  **Scoped Rate Limiting** (login vs general usage)  
@@ -39,7 +39,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 🧰 utils/solana.js
+## utils/solana.js
 -  **Configurable Commitment Level** via ENV  
 -  **RPC Retry Logic** for getBalance  
 -  **Safe lamportsToSol Conversion**  
@@ -47,27 +47,27 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 🧰 utils/token.js
+## utils/token.js
 -  **Token Expiry Set to 7 Days**  
 -  **Planned Refresh Token Support**  
 -  **Error Logging for Verification Failures**
 
 ---
 
-## 🧰 utils/validateToken.js
+## utils/validateToken.js
 -  **JWT_SECRET Validation**  
 -  **Granular Error Responses** (expired, malformed)  
 -  **Logged Token Errors**
 
 ---
 
-## ⚙️ websocket.js
+## websocket.js
 - **Prevents Re-initializing WebSocket**  
 - **Ping/Pong Keep-Alive Mechanism**  
 
 ---
 
-## 🔐 api/auth.js
+## api/auth.js
 - **Password Hashing with bcrypt**  
 - **Refresh Token Implementation (Planned)**  
 - **Login Rate Limiting** (Stricter window)  
@@ -75,38 +75,38 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 💬 api/comment.js
+## api/comment.js
 - **Default Avatar Path Configured via ENV/DB**
 
 ---
 
-## 🚀 api/jupiter.js
+## api/jupiter.js
 - **Added Rate Limiting to Prevent Abuse**  
 - **Improved Error Handling for API Response Changes**
 
 ---
 
-## 📎 api/messages.js
+## api/messages.js
 - **Multer Integration for Attachments**  
 - **Database Migration: `attachmentPath` Column**
 
 ---
 
-## 📈 api/trendingCrypto.js
+## api/trendingCrypto.js
 - **In-Memory Caching** for CoinGecko API  
 - **Rate Limiting**  
 -  **Structured Error Handling**
 
 ---
 
-## 👤 api/users.js
+## api/users.js
 - **Reduced Query Load in `GET /api/users/:id`**  
 - **Follower Notification Optimization**  
 -  **Skipped:** Cloudinary integration & Follow aggregations
 
 ---
 
-## 🧬 models/User.js
+## models/User.js
 - **Indexed Fields**: `username`, `email`, `walletAddress`  
 - **Efficient Password Hashing (Only on Change)**  
 - **UTF8MB4 Charset for Emojis**  
@@ -115,7 +115,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 🧬 models/Post.js
+## models/Post.js
 - **Indexes** on `cryptoTag`, `likes`, `retweets`  
 - **Media URL Validation** (images, video, audio only)  
 - **Regex Validation for `cryptoTag`**  
@@ -124,21 +124,21 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 🧬 models/Comment.js
+## models/Comment.js
 - **Indexes on `postId`, `userId`, `createdAt`**  
 - **500 Character Limit & Empty Validation**  
 - **Refactored Associations & `getCommentDetails()`**
 
 ---
 
-## 🧬 models/Follower.js
+## models/Follower.js
 - **Compound Index: (`followingId`, `createdAt`)**  
 - **Self-Follow Prevention**  
 - **Enforced Uniqueness & Cascade Handling**
 
 ---
 
-## 🧬 models/Like.js
+## models/Like.js
 - **Unique Constraint** on (`userId`, `postId`)  
 - **Indexes** on `userId`, `postId`, `createdAt`  
 - **beforeCreate Hook to Prevent Duplicate Likes**  
@@ -146,7 +146,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 🧬 models/Messages.js
+## models/Messages.js
 - **Indexed `senderId`, `recipientId`, `read`**  
 - **Self-Messaging Blocked**  
 - **Auto `readAt` Timestamp**  
@@ -154,7 +154,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 🧬 models/Notification.js
+## models/Notification.js
 - **No Self-Notification Enforcement**  
 - **Indexes on `userId`, `isRead`, `type`**  
 - **Cascade Deletion for Users**  
@@ -163,7 +163,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 🧬 models/Retweet.js
+## models/Retweet.js
 - **Unique Retweet Constraint (`userId`, `postId`)**  
 - **Cascade Deletes**  
 - **Indexes on `userId`, `postId`**  
@@ -171,19 +171,19 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 🧬 Migrations: Users
+## Migrations: Users
 - **Added Fields**: `privacy`, `notifications`, `theme`  
 - **ENUM Drop in `down()` to Prevent Leftovers**
 
 ---
 
-## ⚙️ middlewares/errorHandler.js
+## middlewares/errorHandler.js
 - **Structured Error Logging with Stack Trace Toggle**  
 - **Standardized Status Codes and Error Keys**
 
 ---
 
-## 📋 middlewares/logger.js
+## middlewares/logger.js
 - **File-Based Logging with Stream Support**  
 - **Color-Coded Console Output (Dev Only)**  
 - **Response Time Logging**  
@@ -191,7 +191,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## ❌ middlewares/notFoundHandler.js
+## middlewares/notFoundHandler.js
 - **Serves 404 HTML for React Frontend**  
 - **404 Logs Throttled Using `Set()`**  
 - **API vs Frontend 404 Routing**  
@@ -199,7 +199,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 📈 middlewares/rateLimiter.js
+## middlewares/rateLimiter.js
 - **Differentiates Guests & Logged-In Users**  
 - **Custom Rate Limits Per Route**  
 - **Admin/Trusted User Exemptions**  
@@ -208,7 +208,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
-## 🔒 middlewares/auth.js
+## middlewares/auth.js
 - **Avoids Redundant Header Wrapping in `validateToken()`**  
 - **Attaches Full Decoded Token to `req.user`**  
 - **Granular Error Responses for Token Expiry, Invalid Tokens**  
@@ -217,7 +217,7 @@ These backend optimizations improve real-world app reliability by preventing abu
 
 ---
 
->  All changes were made with production scalability and developer clarity in mind.  
->  Frontend optimizations will be documented in a separate section.
+  All changes were made with production scalability and developer clarity in mind.  
+  Frontend optimizations will be documented in a separate section.
 
 ---

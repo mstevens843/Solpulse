@@ -5,7 +5,7 @@ The SolPulse API provides **secure and efficient endpoints** to support user aut
 
 ### Base URL
 
-*[(https://solpulse.onrender.com/api)](https://solpulse.onrender.com/api)*
+*[(https://solpulse.net/api)](https://www.solpulse.net/api)*
 
 ---
 

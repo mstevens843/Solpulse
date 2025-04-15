@@ -1,99 +1,98 @@
-# 🔧 SolPulse: Codebase Enhancements & Refactors Summary
+# SolPulse: Codebase Enhancements & Refactors Summary
 
-> **Updated:** 2025-03-23
+**Updated:** 2025-03-23
 
 This document outlines all the **code improvements**, **optimizations**, and **refactors** implemented across the SolPulse project so far. It includes both frontend and backend progress, feature additions, and foundational improvements that enhance scalability, maintainability, and user experience.
 
 ---
 
-## 📦 Project Scope
+## Project Scope
 
 SolPulse is a full-stack social crypto dashboard for the Solana ecosystem. It features wallet integration, user-to-user tipping, real-time market data, and social functionality — all while staying performance-optimized and visually polished with Tailwind CSS.
+---
+
+## Summary of Enhancements
+
+### Global Improvements
+- Replaced all `process.env.REACT_APP_API_URL` with `import.meta.env.VITE_API_BASE_URL` (Vite compatibility)
+- Consolidated Tailwind styles into dedicated `.css` files (no inline styles)
+- Added reusable `FallbackImage` component for handling failed image loads across pages
+- Added global error handling consistency across API fetch logic
+- Created and migrated 2 new database migration files for additional backend support
+- Improved accessibility: `aria-label`, better tab indexes, form semantics
+- Refined page/component structure: clearly separated pages from reusable components
 
 ---
 
-## ✅ Summary of Enhancements
+## Backend Optimizations
 
-### 🔄 Global Improvements
-- ✅ Replaced all `process.env.REACT_APP_API_URL` with `import.meta.env.VITE_API_BASE_URL` (Vite compatibility)
-- ✅ Consolidated Tailwind styles into dedicated `.css` files (no inline styles)
-- ✅ Added reusable `FallbackImage` component for handling failed image loads across pages
-- ✅ Added global error handling consistency across API fetch logic
-- ✅ Created and migrated 2 new database migration files for additional backend support
-- ✅ Improved accessibility: `aria-label`, better tab indexes, form semantics
-- ✅ Refined page/component structure: clearly separated pages from reusable components
+### Authentication & Routes
+- Refactored `AuthProvider` to avoid using `useContext` directly across components
+- Simplified and cleaned up `/users` and `/auth` routes
+- Separated token logic, added clearer prop types and input validation
+- Implemented reusable middleware across authenticated endpoints
 
----
+### Models
+- Ensured all Sequelize models (`User`, `Post`, etc.) follow singular naming convention
+- Cleaned up associations and ensured cascade deletion works properly
+- Added timestamp support to key models where relevant (e.g., tips, messages)
 
-## ⚙️ Backend Optimizations
-
-### 🧠 Authentication & Routes
-- ✅ Refactored `AuthProvider` to avoid using `useContext` directly across components
-- ✅ Simplified and cleaned up `/users` and `/auth` routes
-- ✅ Separated token logic, added clearer prop types and input validation
-- ✅ Implemented reusable middleware across authenticated endpoints
-
-### 🗃️ Models
-- ✅ Ensured all Sequelize models (`User`, `Post`, etc.) follow singular naming convention
-- ✅ Cleaned up associations and ensured cascade deletion works properly
-- ✅ Added timestamp support to key models where relevant (e.g., tips, messages)
-
-### 🧪 Testing
-- ✅ Setup full test suite (Jest, Supertest)
-- ✅ All routes tested: auth, user, tip, feed, notifications, messages
-- ✅ Cypress tests for critical user flows (signup, login, tip)
+### Testing
+- Setup full test suite (Jest, Supertest)
+- All routes tested: auth, user, tip, feed, notifications, messages
+- Cypress tests for critical user flows (signup, login, tip)
 
 ---
 
-## 🖥️ Frontend Improvements
+## Frontend Improvements
 
-### 🏠 Home Page
-- ✅ Implemented infinite scrolling on the `Feed` using Intersection Observer API
-- ✅ Optimized scroll performance using `requestIdleCallback` fallback
-- ✅ Refactored feed API calls to prevent duplicates
-- ✅ Added loading/error/fallback states for Feed items
-- ✅ Consolidated ticker, explore, and feed layout in a grid system
+### Home Page
+- Implemented infinite scrolling on the `Feed` using Intersection Observer API
+- Optimized scroll performance using `requestIdleCallback` fallback
+- Refactored feed API calls to prevent duplicates
+- Added loading/error/fallback states for Feed items
+- Consolidated ticker, explore, and feed layout in a grid system
 
-### 👤 Profile Page
-- ✅ Lazy loaded user posts
-- ✅ Implemented better profile picture error handling
-- ✅ Optimized fetch strategy with caching
-- ✅ Confirm-on-save for editing bio
-- ✅ Set up optional image cropping UI for avatars (TBD)
+### Profile Page
+- Lazy loaded user posts
+- Implemented better profile picture error handling
+- Optimized fetch strategy with caching
+- Confirm-on-save for editing bio
+- Set up optional image cropping UI for avatars (TBD)
 
-### 📊 TrendingCrypto Page
-- ✅ Real-time top gainers/losers
-- ✅ NFT activity & market dominance support
-- ✅ Added reusable image error fallback
-- ✅ Optimized rendering with conditional loading
+### TrendingCrypto Page
+- Real-time top gainers/losers
+- NFT activity & market dominance support
+- Added reusable image error fallback
+- Optimized rendering with conditional loading
 
-### 💸 CryptoTip Component
+### CryptoTip Component
 **All 4 improvements implemented:**
-1. ✅ Live Transaction Tracking using `confirmTransaction`
-2. ✅ Improved error messaging based on actual blockchain response
-3. ✅ Token Selector dropdown added (SOL, USDC placeholder)
-4. ✅ Auto-detect wallet connection on mount (uses `useEffect`)
+1. Live Transaction Tracking using `confirmTransaction`
+2. Improved error messaging based on actual blockchain response
+3. Token Selector dropdown added (SOL, USDC placeholder)
+4. Auto-detect wallet connection on mount (uses `useEffect`)
 
-- ✅ Switched from `setTimeout` to transaction polling
-- ✅ Future-proofed for SPL token support via `SPL_TOKENS` object
+- Switched from `setTimeout` to transaction polling
+- Future-proofed for SPL token support via `SPL_TOKENS` object
 
-### 📈 CryptoTicker Component
-- ✅ Sorting by market cap, price, and 24h %
-- ✅ Debounced search and API calls
-- ✅ Modal popup for individual coin chart
-- ✅ Chart shows timeframe (1D, 7D, 30D, 90D) — fetches data on demand
-- ✅ Data fetch optimization and reduced redundant requests
-
----
-
-## 📁 Folder Structure Cleanup
-- ✅ Separated `pages/` and `components/`
-- ✅ CSS organized per component for Tailwind override clarity
-- ✅ All modals moved to `/components/modals` for reuse
+### CryptoTicker Component
+- Sorting by market cap, price, and 24h %
+- Debounced search and API calls
+- Modal popup for individual coin chart
+- Chart shows timeframe (1D, 7D, 30D, 90D) — fetches data on demand
+- Data fetch optimization and reduced redundant requests
 
 ---
 
-## 🧩 Components Created So Far
+## Folder Structure Cleanup
+- Separated `pages/` and `components/`
+- CSS organized per component for Tailwind override clarity
+- All modals moved to `/components/modals` for reuse
+
+---
+
+## Components Created So Far
 - `CryptoTip`
 - `CryptoTicker`
 - `FallbackImage`
@@ -105,21 +104,21 @@ SolPulse is a full-stack social crypto dashboard for the Solana ecosystem. It fe
 
 ---
 
-## 🚧 In Progress
-- ✅ Token support (SOL done, SPL tokens WIP)
-- 🚀 Wallet auto-detection improving UX
-- 📊 Chart modal (next: caching, close animation, historical zoom)
-- ✉️ Messaging: read receipts & file attachment support coming
+## In Progress
+- Token support (SOL done, SPL tokens WIP)
+- Wallet auto-detection improving UX
+- Chart modal (next: caching, close animation, historical zoom)
+- Messaging: read receipts & file attachment support coming
 
 ---
 
-## 📜 Migration History
+## Migration History
 - `20250320_add_tip_token_column.js`
 - `20250320_add_notification_types.js`
 
 ---
 
-## 🧠 Next Steps
+## Next Steps
 - WebSocket integration for real-time tipping and price updates
 - Advanced filter by NFT activity, domains, market segments
 - Enhanced dashboard stats (Karma, earned SOL, etc)
@@ -131,15 +130,15 @@ Built with ❤️ by Matt.
 
 
 
-# 📦 SolPulse UI Improvements & Refactors
+# SolPulse UI Improvements & Refactors
 
 This changelog documents all improvements, refactors, and optimizations made across several key components in the SolPulse app during this development session.
 
 ---
 
-## 🔐 `CryptoWalletIntegration.js`
+## `CryptoWalletIntegration.js`
 
-### ✅ Enhancements Implemented
+### Enhancements Implemented
 
 1. **Improved Error Handling:**
    - Introduced a `getFriendlyError()` utility to show more descriptive Solana RPC error messages.
@@ -152,9 +151,9 @@ This changelog documents all improvements, refactors, and optimizations made acr
 
 ---
 
-## 🪙 `TokenModal.js`
+## `TokenModal.js`
 
-### ✅ Enhancements Implemented
+### Enhancements Implemented
 
 1. **Token Info Fallbacks:**
    - Added fallback logic for missing token `name`, `symbol`, and `logoURI`.
@@ -169,9 +168,9 @@ This changelog documents all improvements, refactors, and optimizations made acr
 
 ---
 
-## 💬 `MessageModal.js`
+## `MessageModal.js`
 
-### ✅ Enhancements Implemented
+### Enhancements Implemented
 
 1. **Emoji Picker Integration:**
    - Integrated `emoji-mart` to support emojis in replies.
@@ -187,9 +186,9 @@ This changelog documents all improvements, refactors, and optimizations made acr
 
 ---
 
-## 📩 `MessagesInbox.js`
+## `MessagesInbox.js`
 
-### ✅ Enhancements Implemented
+### Enhancements Implemented
 
 1. **Emoji Support for New Messages:**
    - Added emoji picker (`emoji-mart`) with toggle button.
@@ -205,9 +204,9 @@ This changelog documents all improvements, refactors, and optimizations made acr
 
 ---
 
-## 📤 `MessageButton.js`
+## `MessageButton.js`
 
-### ✅ Enhancements Implemented
+### Enhancements Implemented
 
 1. **Robust Form Validation:**
    - Prevents sending empty messages.
@@ -219,7 +218,7 @@ This changelog documents all improvements, refactors, and optimizations made acr
 
 ---
 
-## 📝 Summary
+## Summary
 
 These changes focused on:
 - Improving **error resilience** across wallet and messaging components.
