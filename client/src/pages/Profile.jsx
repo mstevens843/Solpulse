@@ -92,7 +92,7 @@ function Profile() {
                 }
 
     
-                setProfilePicture(user.profilePicture || "http://localhost:5001/uploads/default-avatar.png");
+                setProfilePicture(user.profilePicture || "https://solpulse.onrender.com/uploads/default-avatar.png");
                 setBio(user.bio || "");
                 setFollowersCount(followersCount ?? 0);
                 setFollowingCount(followingCount ?? 0);
@@ -179,7 +179,7 @@ function Profile() {
                 // Update local user state to remove profile picture
                 setUser((prevUser) => ({
                     ...prevUser,
-                    profilePicture: "http://localhost:5001/uploads/default-avatar.png",
+                    profilePicture: "https://solpulse.onrender.com/uploads/default-avatar.png",
                 }));
     
                 toast.success("Profile picture removed.");

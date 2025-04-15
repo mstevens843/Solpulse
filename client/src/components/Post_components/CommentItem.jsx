@@ -7,7 +7,7 @@ function CommentItem({ author, avatarUrl, content, createdAt }) {
   return (
     <li className="comment-item">
       <img
-        src={avatarUrl || "http://localhost:5001/uploads/default-avatar.png"}
+        src={avatarUrl || "https://solpulse.onrender.com/uploads/default-avatar.png"}
         alt={`${author}'s avatar`}
         className="comment-avatar"
       />

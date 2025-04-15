@@ -16,7 +16,7 @@ import "@/css/components/Profile_components/UserListItem.css";
 
 function UserListItem({ user, currentUserId, showBio = false, isMuted = false, customAction = null }) {
   const navigate = useNavigate();
-  const defaultAvatar = "http://localhost:5001/uploads/default-avatar.png";
+  const defaultAvatar = "https://solpulse.onrender.com/uploads/default-avatar.png";
 
   const profilePicUrl = user.profilePicture
     ? `${import.meta.env.VITE_API_BASE_URL.replace("/api", "")}${user.profilePicture}`

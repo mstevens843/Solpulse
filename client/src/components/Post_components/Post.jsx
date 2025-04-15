@@ -60,7 +60,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
    *   2) Otherwise, try post.authorAvatar or post.profilePicture.
    *   3) If none, fallback to default.
    */
-  let postProfilePicture = "http://localhost:5001/uploads/default-avatar.png";
+  let postProfilePicture = "https://solpulse.onrender.com/uploads/default-avatar.png";
   if (isRetweet && post.originalProfilePicture) {
     // If the originalProfilePicture doesn't start with http, prefix the base path
     postProfilePicture = post.originalProfilePicture.startsWith("http")
@@ -91,7 +91,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
                     setProfilePicture(
                         response.data.user.profilePicture
                             ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}/uploads/${response.data.user.profilePicture}`
-                            : "http://localhost:5001/uploads/default-avatar.png"
+                            : "https://solpulse.onrender.com/uploads/default-avatar.png"
                     );
                 } catch (error) {
                     console.error("Error fetching user:", error);

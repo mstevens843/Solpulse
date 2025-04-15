@@ -42,7 +42,7 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
     const [showCropModal, setShowCropModal] = useState(false);
     const [viewingType, setViewingType] = useState(""); 
     const navigate = useNavigate();
-    const defaultAvatar = "http://localhost:5001/uploads/default-avatar.png";
+    const defaultAvatar = "https://solpulse.onrender.com/uploads/default-avatar.png";
     const [hasRequested, setHasRequested] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
     const optionsRef = useRef(null);
@@ -60,7 +60,7 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
       };
 
     // Use user.profilePicture directly instead of local state to prevent desync issues
-    const displayedProfilePicture = user?.profilePicture || "http://localhost:5001/uploads/default-avatar.png";
+    const displayedProfilePicture = user?.profilePicture || "https://solpulse.onrender.com/uploads/default-avatar.png";
 
     // Sync followers/following count when user prop updates
     useEffect(() => {
