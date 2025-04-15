@@ -18,7 +18,7 @@ import { useAuth } from "@/context/AuthContext";
 import "@/css/components/Explore.css";
 
 function Explore() {
-  const { currentUser } = useAuth(); /
+  const { currentUser } = useAuth(); 
   const [trendingPosts, setTrendingPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
