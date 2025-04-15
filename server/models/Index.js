@@ -8,20 +8,16 @@ const db = {};
 
 let sequelize;
 
-(async () => {
-  try {
-    sequelize = new Sequelize(config.database, config.username, config.password, {
-      ...config,
-      logging: env === 'development' ? console.log : false,
-    });
-
-    await sequelize.authenticate();
-    console.log(`Connected to ${env} database successfully!`);
-  } catch (err) {
-    console.error('Unable to connect to the database:', err.message);
-    process.exit(1);
+sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  {
+    ...config,
+    logging: env === 'development' ? console.log : false,
   }
-})();
+);
+
 
 
 try {
