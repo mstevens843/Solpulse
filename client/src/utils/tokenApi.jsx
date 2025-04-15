@@ -79,7 +79,7 @@ let lastFetched = 0; // Throttling timestamp
 const fetchTokenInfo = async (mintAddress) => {
     try {
         console.log(` Fetching token with mint address: ${mintAddress}`);
-        const response = await fetch(`https://www.solpulse.net/api/jupiter/token/${mintAddress}`);
+        const response = await fetch(`https://solpulse.onrender.com/uploads/default-avatar.png/api/jupiter/token/${mintAddress}`);
         if (!response.ok) throw new Error("Token not found");
 
         const tokenInfo = await response.json();
@@ -101,7 +101,7 @@ const fetchTokenInfoByMint = async (mintAddress) => {
     try {
         console.log(` Searching for token with mint address: ${mintAddress}`);
 
-        const response = await fetch(`https://www.solpulse.net/jupiter/token/${mintAddress}`);
+        const response = await fetch(`https://solpulse.onrender.com/uploads/default-avatar.png/jupiter/token/${mintAddress}`);
         if (!response.ok) throw new Error("Token not found");
 
         const tokenInfo = await response.json();
