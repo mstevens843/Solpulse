@@ -48,11 +48,8 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
 
     
 
-
-
-
     //  Ensure likes & retweets sync between the original post and retweets
-    // 🛡️ Fallbacks to prevent null-related crashes
+    //  Fallbacks to prevent null-related crashes
     // Instead of:
     const postAuthor = isRetweet && post.originalAuthor
     ? post.originalAuthor
@@ -84,31 +81,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
 
 
 
-
-    // Fetch batch like/retweet statuses ONCE per user
-    // useEffect(() => {
-    //     if (!currentUser?.id) return;
-
-    //     const fetchLikesAndRetweets = async () => {
-    //         try {
-    //             const [likeResponse, retweetResponse] = await Promise.all([
-    //                 api.get("/posts/likes/batch"),
-    //                 api.get("/posts/retweets/batch")
-    //             ]);
-
-    //             setLikedPosts(new Set(likeResponse.data.likedPosts));
-    //             setRetweetedPosts(new Set(retweetResponse.data.retweetedPosts));
-    //         } catch (err) {
-    //             console.error("Error fetching batch data:", err);
-    //         }
-    //     };
-
-    //     fetchLikesAndRetweets();
-    // }, [currentUser]);
-
-
-
-     // 🔹 Ensure the correct author and profile picture are displayed
+     // Ensure the correct author and profile picture are displayed
      useEffect(() => {
         if (post.userId && (!author || !post.profilePicture)) {
             const fetchUser = async () => {
@@ -143,7 +116,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
             setPostComments((prev) => [comment, ...prev]);
             onNewComment(comment);
       
-            // ✅ Update comment count globally
+            // Update comment count globally
             setPosts((prevPosts) =>
               prevPosts.map((p) =>
                 p.id === postIdToUse || p.originalPostId === postIdToUse
@@ -155,7 +128,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
               )
             );
       
-            // ✅ Sync local counter if you're viewing this post
+            // Sync local counter if you're viewing this post
             if (post.id === postIdToUse) {
               setCommentCount((prev) => prev + 1);
             }
@@ -197,7 +170,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
             const { data } = await api.post("/comments", { postId: postIdToUse, content: newComment.trim() }); // Fixed postId reference
     
             // Ensure comment list updates correctly
-            onNewComment(data.comment); // 👈 ensures avatar + author included
+            onNewComment(data.comment); // ensures avatar + author included
             setNewComment("");
             setShowCommentOverlay(false);
         } catch (error) {
@@ -239,7 +212,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
                     }
                 }
         
-                // 🔥 Add the new retweet to top of feed (if it exists and isn't already in list)
+                // Add the new retweet to top of feed (if it exists and isn't already in list)
                 if (isReposting && newRetweetData && !seenIds.has(newRetweetData.id)) {
                     updatedPosts = [newRetweetData, ...updatedPosts];
                 }
@@ -311,7 +284,7 @@ function Post({ post, currentUser, onNewComment, setPosts, onClick, fromExplore 
 return (
         <div
         className={`individual-post-container ${post.fading ? "fading" : ""}`}
-        onClick={onClick} // ✅ Makes the entire post clickable (for Explore)
+        onClick={onClick} // Makes the entire post clickable (for Explore)
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
@@ -386,7 +359,7 @@ return (
                         </div>
                     )}
     
-                    {/* ✅ Updated Like & Retweet Buttons to sync with batch data */}
+                    {/* Updated Like & Retweet Buttons to sync with batch data */}
                     <div className="individual-post-actions">
                     <div className="action-button-with-count">
                         <LikeButton
@@ -459,7 +432,7 @@ return (
                    
 
 
-                    {/* ✅ Add hint for explore */}
+                    {/* Add hint for explore */}
                 {fromExplore && (
                     <div className="explore-post-hint">
                     <span>Click to view full post →</span>
@@ -472,7 +445,7 @@ return (
                         onClose={() => setModalOpen(false)} 
                         likedPosts={likedPosts}
                         retweetedPosts={retweetedPosts}
-                        currentUser={currentUser}   // ✅ MUST BE HERE
+                        currentUser={currentUser}
                         setPosts={setPosts}
                       />
                     )}
@@ -520,11 +493,3 @@ Post.propTypes = {
 };
 
 export default Post;
-
-
-/**
- * Potential Improvements:
- * 1. **Lazy Loading for Images/Videos** - Improve performance for large media files.
- * 2. **Better Error Handling** - Show detailed error messages on UI.
- * 3. **Enhance WebSocket Handling** - Add animations when new comments arrive.
- */

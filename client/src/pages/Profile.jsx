@@ -23,8 +23,8 @@ import { api } from "@/api/apiConfig";
 import { blockUser, unblockUser, getBlockedUsers } from "@/api/blockApi";
 import "@/css/pages/Profile.css";
 
-import { lazy, Suspense } from "react"; // ✅ Added for lazy loading
-const LazyPost = lazy(() => import("@/components/Post_components/Post")); // ✅ Lazy load Post
+import { lazy, Suspense } from "react"; // Added for lazy loading
+const LazyPost = lazy(() => import("@/components/Post_components/Post")); // Lazy load Post
 
 
 function Profile() {
@@ -41,11 +41,11 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [showTipModal, setShowTipModal] = useState(false);
-    const fetchingRef = useRef(false); // ⬅️ Prevent overlapping fetches
+    const fetchingRef = useRef(false);
     const [showUserCardModal, setShowUserCardModal] = useState(false); 
     const [profilePicture, setProfilePicture] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-    const isInModal = false; // Default value if it's not already defined
+    const isInModal = false;
 
     const isOwner = currentUser.id === user?.id;
     const isFollower = user?.isFollowedByCurrentUser;
@@ -65,7 +65,7 @@ function Profile() {
         setLoading(true);
         setErrorMessage("");
     
-        // ✅ Cache check - skip re-fetch if the same profile is already loaded
+        // Cache check - skip re-fetch if the same profile is already loaded
         if (user && user.id === userId) {
             console.log("✅ Using cached profile.");
             setLoading(false);
@@ -103,14 +103,14 @@ function Profile() {
 
                 if (postsData.length < 10) setHasMore(false);
 
-                // 🧠 Fetch comment counts for all posts (batch)
+                // Fetch comment counts for all posts (batch)
                 const postIds = postsData.map((p) => p.id);
 
                 let countsMap = {};
                 if (postIds.length > 0) {
                 const commentCountRes = await api.post("/comments/batch-count", { postIds });
 
-                // 🧠 Create a map of counts for fast access
+                // Create a map of counts for fast access
                 const commentCounts = commentCountRes.data?.counts || [];
 
                 commentCounts.forEach(({ postId, count }) => {
@@ -118,7 +118,7 @@ function Profile() {
                 });
                 }
 
-                // 🧠 Add counts to each post object
+                // Add counts to each post object
                 const postsWithCounts = postsData.map((post) => ({
                 ...post,
                 commentCount: countsMap[post.id] || 0,
@@ -142,7 +142,7 @@ function Profile() {
                 }
             }
         }
-    }, [userId, user, page]); // ✅ Include `page` so data updates as page changes
+    }, [userId, user, page]); // Include `page` so data updates as page changes
 
 
     useEffect(() => {
@@ -156,7 +156,7 @@ function Profile() {
     
     useEffect(() => {
         fetchProfile();
-    }, [fetchProfile, page]); // ✅ Include `page` to fetch new pages
+    }, [fetchProfile, page]); // Include `page` to fetch new pages
     
     const loadMore = () => {
         if (hasMore && !fetchingRef.current) {
@@ -176,7 +176,7 @@ function Profile() {
                     },
                 });
     
-                // ✅ Update local user state to remove profile picture
+                // Update local user state to remove profile picture
                 setUser((prevUser) => ({
                     ...prevUser,
                     profilePicture: "http://localhost:5001/uploads/default-avatar.png",
@@ -211,7 +211,7 @@ function Profile() {
     
             const updatedPictureUrl = response.data.profilePicture;
     
-            // ✅ Update local user state with new picture
+            // Update local user state with new picture
             setUser((prevUser) => ({
                 ...prevUser,
                 profilePicture: updatedPictureUrl,
@@ -248,7 +248,7 @@ function Profile() {
             );
             setEditMode(false);
     
-            // ✅ Update local user state with new bio (prevents refetch + rerender loop)
+            // Update local user state with new bio (prevents refetch + rerender loop)
             setUser((prevUser) => ({ ...prevUser, bio }));
     
             toast.success("Bio updated successfully!", {
@@ -309,7 +309,7 @@ function Profile() {
             ) : (
                 <>
                     <div className="user-card-container">
-                    {/* ✅ [Future]: Integrate image cropper before upload (currently placeholder only) */}
+                    {/*[Future]: Integrate image cropper before upload (currently placeholder only) */}
                     <UserCard 
                         user={memoizedUser}
                         followersCount={followersCount}
@@ -401,24 +401,3 @@ function Profile() {
 }
 
 export default Profile;
-
-
-/**
- * 🔹 Potential Improvements:
- * - Optimize profile fetch with better caching or state management.
- * - Implement lazy loading for posts to improve performance.
- * - Improve error handling for profile picture uploads.
- * - Add a confirmation prompt before saving bio edits.
- * - Allow image cropping before uploading profile pictures.
- */
-
-
-
-/**
- * 🔹 Implemented Improvements:
- * ✅ Optimized profile fetch with caching.
- * ✅ Lazy loaded Post component.
- * ✅ Improved error handling for profile picture uploads.
- * ✅ Added confirmation before saving bio edits.
- * ✅ Placeholder for future image cropping integration.
- */

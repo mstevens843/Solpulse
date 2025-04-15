@@ -31,7 +31,7 @@ function PostComposer({ onPostCreated }) {
   const [dragActive, setDragActive] = useState(false);
   const dropRef = useRef(null);
 
-  /** ✅ #1 Improved Error Handling */
+  /** #1 Improved Error Handling */
   const validateMedia = (file) => {
     const allowedTypes = ["image/jpeg", "image/png", "video/mp4"];
     const maxSize = 5 * 1024 * 1024;
@@ -111,7 +111,7 @@ function PostComposer({ onPostCreated }) {
     }
   };
 
-  /** ✅ #4 Drag & Drop Upload Handler */
+  /** #4 Drag & Drop Upload Handler */
   const handleDrop = (e) => {
     e.preventDefault();
     setDragActive(false);
@@ -215,12 +215,3 @@ function PostComposer({ onPostCreated }) {
 }
 
 export default PostComposer;
-
-
-/**
- * 🔹 **Potential Improvements:**
- * 1. **Improve Error Handling**: Display more detailed errors for failed uploads.
- * 2. **Show Media Preview**: Display selected media before posting. - SKIPPED
- * 3. **Auto-Suggest Crypto Tags**: Fetch trending crypto tags and suggest them. - SKIPPED
- * 4. **Support Drag & Drop Upload**: Allow users to drag and drop files.
- */

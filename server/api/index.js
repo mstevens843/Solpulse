@@ -16,10 +16,7 @@ const messageRequestRoutes = require("./messageRequests")
 const blockedMutedRoutes = require('./blocked_muted');
 const router = express.Router();
 
-/** 
- * Centralized Route Registration
- * Each route is mounted on a specific base path.
- */
+
 
 // Log to confirm that routes are being registered
 console.log("Registering routes...");

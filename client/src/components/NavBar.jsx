@@ -33,14 +33,14 @@ const NavBar = () => {
               const response = await api.get("/auth/me");
               setFetchedUser(response.data);
               setUser(response.data);
-              return; // ✅ Success — exit the retry loop
+              return;
             } catch (error) {
               retryCount++;
               console.error(`Attempt ${retryCount} - Error fetching user:`, error);
               if (retryCount >= maxRetries) {
                 console.warn("Max retries reached. Giving up on fetching user.");
               } else {
-                await new Promise((res) => setTimeout(res, 1000)); // Wait before retry
+                await new Promise((res) => setTimeout(res, 1000));
               }
             }
           }
@@ -61,8 +61,8 @@ const NavBar = () => {
      */
     const handleLogout = async () => {
         try {
-            await api.post("/auth/logout"); // Call the backend to blacklist the token and clear cookies
-            localStorage.removeItem("token"); // Clear token from local storage
+            await api.post("/auth/logout");
+            localStorage.removeItem("token");
             localStorage.removeItem("user"); 
             setUser(null);
             setIsAuthenticated(false);
@@ -216,11 +216,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
-
-/**
- * Potential Improvements:
- * - Consider adding a loading indicator while fetching user data to prevent flickering. - SKIPPED
- * - Improve error handling for failed API calls (e.g., retry logic for `/auth/me`). 
- * - Optimize wallet connection UX by displaying connection status dynamically.
- */

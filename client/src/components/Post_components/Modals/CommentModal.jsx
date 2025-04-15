@@ -18,13 +18,13 @@ import RetweetButton from "@/components/Post_components/Actions/RetweetButton";
 import CommentSection from "@/components/Post_components/Actions/CommentSection";
 import CommentItem from "@/components/Post_components/CommentItem";
 import socket from "@/socket";
-import { toast } from "react-toastify"; // ✅ Make sure this is already at the top
+import { toast } from "react-toastify";
 import "@/css/components/Post_components/Modals/PostModal.css";
 
-function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, setPosts }) { // Ensure setPosts is passed
+function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, setPosts }) {
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState(post.likes || 0);
-  const [loading, setLoading] = useState(true); // ✅ Loading state added
+  const [loading, setLoading] = useState(true);
   const [retweets, setRetweets] = useState(post.retweets || 0);
   const [deletingCommentId, setDeletingCommentId] = useState(null);
   const [blockedUserIds, setBlockedUserIds] = useState([]);
@@ -37,7 +37,7 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
      * Fetch comments for original posts & retweets.
      * Ensures proper loading of all relevant comments.
      */
-  /** ✅ Fetch comments and show loading until done */
+  /**  Fetch comments and show loading until done */
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -46,7 +46,7 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
       } catch (error) {
         console.error("Failed to fetch comments:", error);
       } finally {
-        setLoading(false); // ✅ Stop loading once request finishes
+        setLoading(false); //  Stop loading once request finishes
       }
     };
 
@@ -58,7 +58,7 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
      * - Listens for new comments in real time.
      * - Ensures comments update live without refreshing.
      */
-  // ✅ Move this ABOVE useEffect so it's accessible
+  //  Move this ABOVE useEffect so it's accessible
   const handleNewComment = (newComment) => {
     if (newComment.postId !== postIdToUse) return;
 
@@ -68,7 +68,7 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
       return [newComment, ...prev];
     });
 
-    // ✅ Also increment the global commentCount
+    // Also increment the global commentCount
     setPosts((prevPosts) =>
       prevPosts.map((p) =>
         p.id === postIdToUse || p.originalPostId === postIdToUse
@@ -109,7 +109,7 @@ function CommentModal({ post, onClose, likedPosts, retweetedPosts, currentUser, 
   }, []);
 
 
-// ✅ Updated delete logic with toastId
+// Updated delete logic with toastId
 const handleDeleteComment = async (commentId) => {
   setDeletingCommentId(commentId);
 
@@ -119,7 +119,7 @@ const handleDeleteComment = async (commentId) => {
     // Remove locally
     setComments((prev) => prev.filter((c) => c.id !== commentId));
 
-    // ✅ Decrement global commentCount (not increment!)
+    // Decrement global commentCount (not increment!)
     setPosts((prevPosts) =>
       prevPosts.map((p) =>
         p.id === postIdToUse || p.originalPostId === postIdToUse
@@ -196,7 +196,7 @@ const handleDeleteComment = async (commentId) => {
           <div className="post-modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="close-modal-btn" onClick={onClose}>✖</button>
     
-            {/* ✅ Post Header */}
+            {/* Post Header */}
             <div className="post-modal-header">
               <Link to={`/profile/${post.userId}`}>
                 <img
@@ -318,20 +318,7 @@ CommentModal.propTypes = {
   currentUser: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   }),
-  setPosts: PropTypes.func.isRequired, // Ensures updates propagate across state
+  setPosts: PropTypes.func.isRequired,
 };
 
 export default CommentModal;
-
-/**
- * 🔹 **Potential Improvements:**
- * 1. **Optimize WebSocket Handling**: Ensure listeners don’t persist across multiple modals. - SKIPPED
- * 2. **Add Loading States**: Show a loading indicator while fetching comments.
- * 3. **Support Video Previews**: Improve handling of video media. - SKIPPED
- * 4. **Enable Live Likes/Retweets**: Use WebSockets to update likes/retweets in real time. - SKIPPED 
- */
-
-/**
- * Future Polish Ideas:
- * Replace Loading comments... with a spinner or animation for smoother UX.
- */

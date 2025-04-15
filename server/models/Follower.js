@@ -65,7 +65,6 @@ module.exports = (sequelize, DataTypes) => {
             onUpdate: 'CASCADE',
         });
 
-        // ✅ Add association
         Follower.belongsTo(models.Notification, {
             foreignKey: 'notificationId',
             as: 'notification',
@@ -91,17 +90,3 @@ module.exports = (sequelize, DataTypes) => {
     return Follower;
 };
 
-
-/**
- * Key Improvements & Fixes
-1️⃣ Performance Enhancements
-✅ Added compound index on (followingId, createdAt) → Faster lookups for notifications.
-✅ Explicitly specify foreign key constraints for better query planning.
-✅ Optimize onDelete: CASCADE handling to prevent orphaned relationships.
-2️⃣ Data Integrity & Security
-✅ Enforce unique followers → Prevent duplicate follow records.
-✅ Add validation to prevent self-following at the model level.
-3️⃣ Maintainability & Readability
-✅ Refactored association names (followedUser and followerUser) to improve clarity.
-✅ Added beforeCreate hook to prevent self-following.
- */

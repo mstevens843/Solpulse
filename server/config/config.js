@@ -45,7 +45,7 @@ module.exports = {
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false, // ✅ required for Render's SSL
+        rejectUnauthorized: false, // required for Render's SSL
       },
     },
     pool: {

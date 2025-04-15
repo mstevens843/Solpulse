@@ -97,21 +97,3 @@ router.use('*', (req, res) => {
 });
 
 module.exports = router;
-
-
-/**
- * Potential Issues & Optimizations
-✅ 🚀 Real API Integration (Instead of Mock Response)
-
-Problem: Currently, all trades return a static mock response.
-Solution: Integrate an actual API like Coinbase, Binance, or Jupiter to execute real trades.
-✅ 🔐 Security Concern
-
-Problem: This endpoint does not require authentication, allowing anyone to trigger trades.
-Solution: Add authMiddleware to require users to be logged in.
-✅ 📉 Input Validation Improvement
-
-Problem: cryptoType isn't validated against a list of valid cryptocurrencies.
-Solution: Add an allowed list (BTC, SOL, ETH, etc.) to avoid invalid inputs.
-
- */

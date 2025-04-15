@@ -1,4 +1,5 @@
-// utils/cropImage.js
+
+
 export default function getCroppedImg(imageSrc, pixelCrop, format = "image/jpeg") {
     const canvas = document.createElement("canvas");
     canvas.width = pixelCrop.width;

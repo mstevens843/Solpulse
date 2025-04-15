@@ -39,14 +39,14 @@ const Signup = () => {
   const { username, email, password, confirmPassword, walletAddress } = formData;
 
 
-  // ✅ Scroll to top when component mounts
+  // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" }); // Smooth UX for fresh form view
   }, []);
 
 
 
-  // ✅ Validate form before submission
+  // Validate form before submission
   const validateInputs = () => {
     const newErrors = {};
 
@@ -79,7 +79,7 @@ const Signup = () => {
   };
 
 
-  // ✅ Handles input changes for all fields
+  // Handles input changes for all fields
 const handleChange = (e) => {
   const { name, value } = e.target;
   setFormData((prev) => ({
@@ -95,7 +95,7 @@ const handleChange = (e) => {
    * - Sends registration data to the backend.
    * - Stores user information in local storage upon successful registration.
    */
-  // ✅ Submits signup form after validation
+  // Submits signup form after validation
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
@@ -119,10 +119,10 @@ const handleChange = (e) => {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
 
-        setIsAuthenticated(true); // ✅ Add this
-        setUser(response.data.user); // ✅ And this
+        setIsAuthenticated(true); 
+        setUser(response.data.user); 
 
-        setLoading(false); // ✅ Reset loading regardless of outcome
+        setLoading(false); //  Reset loading regardless of outcome
 
         navigate("/home", { state: { signupSuccess: true } });
 
@@ -133,13 +133,13 @@ const handleChange = (e) => {
       console.error("Signup Error:", err);
 
       if (!err.response) {
-        setErrors({ form: "Network error. Please check your connection." }); // ✅ User-friendly message
-        toast.error("No response from server. Check your internet or try again later."); // ✅ Improves UX for connection failures
+        setErrors({ form: "Network error. Please check your connection." });
+        toast.error("No response from server. Check your internet or try again later.");
       } else if (err.response.status >= 500) {
-        setErrors({ form: "Server error. Please try again later." }); // ✅ Avoids exposing backend info
-        toast.error("Internal server error. Our team is on it."); // ✅ Reassures user
+        setErrors({ form: "Server error. Please try again later." });
+        toast.error("Internal server error. Our team is on it.");
       } else if (err.response?.data?.errors) {
-        // ✅ Express-validator validation errors
+        // Express-validator validation errors
         const formattedErrors = {};
         err.response.data.errors.forEach((error) => {
           if (error.path) {
@@ -151,7 +151,7 @@ const handleChange = (e) => {
       } else if (err.response?.data?.error) {
         const errorMessage = err.response.data.error;
       
-        // ✅ Handle specific backend messages more cleanly
+        // Handle specific backend messages more cleanly
         if (errorMessage.toLowerCase().includes("wallet")) {
           setErrors({ walletAddress: errorMessage });
         } else if (errorMessage.toLowerCase().includes("email")) {
@@ -202,7 +202,7 @@ const handleChange = (e) => {
             onChange={handleChange}
             className={errors.email ? "input-error" : ""}
             required
-            autoComplete="off"  // 🔥 Prevents autofill
+            autoComplete="off"  // Prevents autofill
           />
           {errors.email && <p className="field-error">{errors.email}</p>}
         </div>
@@ -253,7 +253,7 @@ const handleChange = (e) => {
             onChange={handleChange}
             className={errors.walletAddress ? "input-error" : ""}
             required
-            autoComplete="off"  // 🔥 Prevents autofill
+            autoComplete="off"  // Prevents autofill
           />
           {errors.walletAddress && <p className="field-error">{errors.walletAddress}</p>}
         </div>
@@ -286,62 +286,8 @@ const handleChange = (e) => {
   );
 };
 
-export default Signup;
 
 
 
-/**
- * 🔹 Potential Improvements:
- * - Implement reCAPTCHA for additional security against bots.
- * - Add email verification step before account activation.
- * - Store authentication tokens securely using HTTP-only cookies instead of localStorage.
- * - Improve error handling for network-related issues.
- */
 
-
-
-/**
- * ✅ Field validation: Strong validation on all form fields
- * ✅ UX enhancements:
-
-window.scrollTo on mount.
-
-Autofill prevention where appropriate.
-
-Password visibility toggle.
-
-✅ Robust error handling:
-
-Gracefully handles:
-
-Network/CORS issues
-
-Server-side errors (5xx)
-
-Sequelize validation errors
-
-Fallback unknown errors
-
-✅ Loading state: Prevents double submissions.
-
-✅ Feedback:
-
-react-toastify gives real-time status updates.
-
-Inline field error messages are descriptive.
-
-✅ LocalStorage: Only non-sensitive data stored.
-
-✅ Layout and semantic HTML: Clean and accessible.
-
-What’s Next? (Optional but 🔥)
-You could bookmark these for later:
-
-🧠 Add Google reCAPTCHA or hCaptcha.
-
-✅ Switch to HTTP-only cookies for auth token.
-
-📧 Integrate email verification flow.
-
-🪪 Add "Terms of Use" or "Accept Privacy Policy" checkbox.
- */
+  export default Signup;

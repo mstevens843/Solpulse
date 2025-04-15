@@ -6,9 +6,9 @@ const authMiddleware = require('../middleware/auth');
 
 
 
-// 🔍 GET /api/follow-requests/:targetId/has-requested
+// GET /api/follow-requests/:targetId/has-requested
 // This checks if the current user has already sent a follow request to another user.
-// Only checks one specific relationship: current user ➡️ target user.
+// Only checks one specific relationship: current user target user.
 router.get('/:targetId/has-requested', authMiddleware, async (req, res) => {
   const { targetId } = req.params;
   const requesterId = req.user.id;
@@ -22,19 +22,19 @@ router.get('/:targetId/has-requested', authMiddleware, async (req, res) => {
       where: { requesterId, targetId },
     });
 
-    // ✅ Always return safely even if request is null
+    //  Always return safely even if request is null
     return res.status(200).json({ hasRequested: !!request });
   } catch (err) {
-    console.error('❌ Error in has-requested:', err.stack || err);
-    return res.status(200).json({ hasRequested: false }); // ✅ fallback to false if anything breaks
+    console.error(' Error in has-requested:', err.stack || err);
+    return res.status(200).json({ hasRequested: false }); //  fallback to false if anything breaks
   }
 });
 
 
-// 📥 GET /api/follow-requests/incoming — Get all pending requests for the current user
+//  GET /api/follow-requests/incoming — Get all pending requests for the current user
 // This fetches all incoming follow requests sent to the current user.
 // Used in your Notifications page or Follow Requests tab.
-// 📥 GET /api/follow-requests/incoming — Get all incoming follow requests
+//  GET /api/follow-requests/incoming — Get all incoming follow requests
 router.get('/incoming', authMiddleware, async (req, res) => {
   const currentUserId = req.user.id;
 
@@ -44,14 +44,14 @@ router.get('/incoming', authMiddleware, async (req, res) => {
       include: [
         {
           model: User,
-          as: 'requester', // ✅ Must match your model alias
+          as: 'requester', //  Must match your model alias
           attributes: ['id', 'username', 'profilePicture'],
         },
       ],
       order: [['createdAt', 'DESC']],
     });
 
-    // ✅ Format requests as notification-like payloads
+    //  Format requests as notification-like payloads
     res.json({
       requests: requests.map((r) => ({
         id: r.id, // follow request ID
@@ -65,7 +65,7 @@ router.get('/incoming', authMiddleware, async (req, res) => {
       })),
     });
   } catch (err) {
-    console.error("❌ Error fetching incoming follow requests:", err);
+    console.error(" Error fetching incoming follow requests:", err);
     res.status(500).json({ message: 'Failed to fetch follow requests.' });
   }
 });
@@ -73,7 +73,7 @@ router.get('/incoming', authMiddleware, async (req, res) => {
 
 
 
-// 📩 POST /api/follow-requests/:targetId — Send request
+//  POST /api/follow-requests/:targetId — Send request
 router.post('/:targetId', authMiddleware, async (req, res) => {
   const { targetId } = req.params;
   const requesterId = req.user.id;
@@ -83,7 +83,7 @@ router.post('/:targetId', authMiddleware, async (req, res) => {
   }
 
   try {
-    // ✅ Check if already following
+    //  Check if already following
     const isFollowing = await Follower.findOne({
       where: { followerId: requesterId, followingId: targetId },
     });
@@ -91,7 +91,7 @@ router.post('/:targetId', authMiddleware, async (req, res) => {
       return res.status(409).json({ message: 'You already follow this user.' });
     }
 
-    // ✅ Check if request already exists
+    //  Check if request already exists
     const existingRequest = await FollowRequest.findOne({
       where: { requesterId, targetId },
     });
@@ -99,7 +99,7 @@ router.post('/:targetId', authMiddleware, async (req, res) => {
       return res.status(409).json({ message: 'Follow request already sent.' });
     }
 
-    // ✅ Create a follow-request notification
+    //  Create a follow-request notification
     const notification = await Notification.create({
       type: 'follow-request',
       userId: targetId,             // Receiver
@@ -108,7 +108,7 @@ router.post('/:targetId', authMiddleware, async (req, res) => {
       isRead: false,
     });
 
-    // ✅ Create the follow request with notificationId attached
+    //  Create the follow request with notificationId attached
     const newRequest = await FollowRequest.create({
       requesterId,
       targetId,
@@ -139,7 +139,7 @@ router.post('/:targetId', authMiddleware, async (req, res) => {
 
 
 
-// ✅ PUT /api/follow-requests/:id/accept — Accept request
+//  PUT /api/follow-requests/:id/accept — Accept request
 router.put('/:id/accept', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user.id;
@@ -155,7 +155,7 @@ router.put('/:id/accept', authMiddleware, async (req, res) => {
       return res.status(403).json({ message: 'You are not authorized to accept this request.' });
     }
 
-    // ✅ Create follow notification for the requester
+    //  Create follow notification for the requester
     const followNotification = await Notification.create({
       type: 'follow',
       userId: currentUserId,        // Receiver
@@ -164,19 +164,19 @@ router.put('/:id/accept', authMiddleware, async (req, res) => {
       isRead: false,
     });
 
-    // ✅ Create actual follower record with notification
+    //  Create actual follower record with notification
     await Follower.create({
       followerId: request.requesterId,
       followingId: currentUserId,
       notificationId: followNotification.id,
     });
 
-    // ✅ Delete follow request
+    //  Delete follow request
     await request.destroy();
 
     res.json({ message: 'Follow request accepted and follower added.' });
   } catch (err) {
-    console.error('❌ Error accepting follow request:', err);
+    console.error(' Error accepting follow request:', err);
     res.status(500).json({ message: 'Failed to accept follow request.' });
   }
 });
@@ -184,7 +184,7 @@ router.put('/:id/accept', authMiddleware, async (req, res) => {
 
 
 
-// ❌ DELETE /api/follow-requests/:targetId/cancel
+//  DELETE /api/follow-requests/:targetId/cancel
 router.delete('/:targetId/cancel', authMiddleware, async (req, res) => {
   const { targetId } = req.params;
   const requesterId = req.user.id;
@@ -208,7 +208,7 @@ router.delete('/:targetId/cancel', authMiddleware, async (req, res) => {
 
 
 
-// ❌ DELETE /api/follow-requests/:id/deny — Deny request
+//  DELETE /api/follow-requests/:id/deny — Deny request
 router.delete('/:id/deny', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user.id;

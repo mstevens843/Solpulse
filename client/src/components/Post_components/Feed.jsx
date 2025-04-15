@@ -10,9 +10,6 @@
  * - Handles loading and error states gracefully.
  */
 
-
-
-
 import React, { useState, useEffect, useRef, useContext } from "react";
 import PropTypes from "prop-types";
 import Post from "@/components/Post_components/Post";
@@ -23,14 +20,14 @@ import "@/css/components/Post_components/Feed.css";
 
 function Feed({ currentUser }) {
   const [posts, setPosts] = useState([]);
-  const [postIds, setPostIds] = useState(new Set()); // ✅ #2 Track unique post IDs
+  const [postIds, setPostIds] = useState(new Set());
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   // const [filter, setFilter] = useState("foryou");
   const observerRef = useRef(null);
-  const debounceTimeout = useRef(null); // ✅ #1 debounce reference
+  const debounceTimeout = useRef(null); 
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [filter, setFilter] = useState(() => localStorage.getItem("feedFilter") || "foryou");
   const [blockedUserIds, setBlockedUserIds] = useState([]);
@@ -54,7 +51,7 @@ function Feed({ currentUser }) {
         map[parseInt(postId)] = count;
       });
     } else {
-      console.warn("⚠️ Warning: Missing or invalid counts in response", counts);
+      console.warn("Warning: Missing or invalid counts in response", counts);
     }
     return map;
   };
@@ -66,26 +63,26 @@ function Feed({ currentUser }) {
   
     try {
       console.log("Fetching posts for page:", page);
-      const response = await api.get(`/posts?page=${page}&limit=10&feed=${filter}`); // ✅ Increased batch size
+      const response = await api.get(`/posts?page=${page}&limit=10&feed=${filter}`); 
   
       if (response.data?.posts) {
-        const newPosts = response.data.posts.filter(post => !postIds.has(post.id)); // ✅ Prevent duplicates
+        const newPosts = response.data.posts.filter(post => !postIds.has(post.id));
   
-        // 🧠 Fetch comment counts in batch for new posts
+        //  Fetch comment counts in batch for new posts
         const postIdsToCheck = newPosts.map((p) => p.id);
 
         if (postIdsToCheck.length === 0) {
-          setHasMore(false); // ⛔ No more posts, stop fetching
+          setHasMore(false); 
           return;
         }
 
         const countRes = await api.post("/comments/batch-count", { postIds: postIdsToCheck });
-        const counts = countRes.data?.counts; // ✅ define counts first
+        const counts = countRes.data?.counts; 
         const countsMap = buildCountsMap(counts);
 
 
   
-        // 🧠 Add commentCount to each post
+        // Add commentCount to each post
         const enrichedPosts = newPosts.map((post) => ({
           ...post,
           user: post.user || null,
@@ -99,7 +96,7 @@ function Feed({ currentUser }) {
           category: post.category || "General",
         }));
 
-          // 🔒 Filter out private posts unless the viewer is allowed
+          // Filter out private posts unless the viewer is allowed
           const filteredPosts = enrichedPosts.filter((post) => {
             const author = post.user;
             const isPrivate = author?.privacy === 'private';
@@ -108,7 +105,7 @@ function Feed({ currentUser }) {
             const isBlocked = blockedUserIds.includes(author?.id);
             const isMuted = mutedUserIds.includes(author?.id);
           
-            // 🔁 Also block private original posts if this is a retweet
+            // Also block private original posts if this is a retweet
             const isRepostOfPrivate =
               post.originalPost?.user?.privacy === 'private' &&
               post.originalPost?.user?.id !== currentUser?.id &&
@@ -135,10 +132,10 @@ function Feed({ currentUser }) {
         setHasMore(false);
       }
     } catch (err) {
-      console.error("❌ Error fetching posts:", err.response?.data || err.message);
+      console.error("Error fetching posts:", err.response?.data || err.message);
   
       if (err.message?.includes("ConnectionManager.getConnection was called after the connection manager was closed")) {
-        console.warn("⛔ Sequelize connection closed — halting feed loop");
+        console.warn("Sequelize connection closed — halting feed loop");
         setError("We're experiencing server issues. Please try again later.");
         setHasMore(false);
         return;
@@ -189,7 +186,7 @@ function Feed({ currentUser }) {
 
 
   useEffect(() => {
-    if (!hasMore || loading) return; // ✅ Fix: Allow observer setup on all pages
+    if (!hasMore || loading) return;
   
     observerRef.current = new IntersectionObserver(
       (entries) => {
@@ -211,15 +208,15 @@ function Feed({ currentUser }) {
     fetchPosts();
   };
 
-  console.log("📌 Filter:", selectedCategory);
-  console.log("📌 Displayed posts:", posts.map(p => ({ id: p.id, user: p.user?.username, category: p.category })));
+  console.log("Filter:", selectedCategory);
+  console.log("Displayed posts:", posts.map(p => ({ id: p.id, user: p.user?.username, category: p.category })));
 
 
   return (
     <div className="community-feed-container">
       <h3 className="community-feed-title">Community Feed</h3>
 
-      {/* ✅ For you / Following tab UI */}
+      {/* For you / Following tab UI */}
       <div className="feed-toggle-tabs">
         {[
           { label: "For You", emoji: "✨", key: "foryou" },
@@ -241,7 +238,7 @@ function Feed({ currentUser }) {
       </div>
 
 
-      {/* ✅ Category tab UI */}
+      {/* Category tab UI */}
       <div className="category-tabs">
       {["All", "🔥 Meme", "🎨 NFT", "🪙 Crypto", "🧠 DAO", "💣 On-chain Drama"].map((cat) => (
         <button
@@ -262,13 +259,13 @@ function Feed({ currentUser }) {
       {error && (
         <div className="community-feed-error" role="alert" aria-live="assertive">
           <p>{error}</p>
-          <button onClick={handleRetry} className="retry-button">Retry</button> {/* ✅ #4 Retry */}
+          <button onClick={handleRetry} className="retry-button">Retry</button> {/* #4 Retry */}
         </div>
       )}
 
       <PostComposer
         onPostCreated={(newPost) => {
-          if (!postIds.has(newPost.id)) { // ✅ #2 avoid prepending duplicate
+          if (!postIds.has(newPost.id)) {
             setPosts((prevPosts) => [newPost, ...prevPosts]);
             setPostIds((prevIds) => new Set([newPost.id, ...prevIds]));
           }
@@ -288,7 +285,7 @@ function Feed({ currentUser }) {
               <div className="post-container">
                 <Post post={post} currentUser={currentUser} setPosts={setPosts} />
 
-                {/* 🧪 Debug Score (Only visible if .score exists) */}
+                {/* Debug Score (Only visible if .score exists) */}
                 {post.score !== undefined && (
                   <p className="debug-score" style={{ color: "#999", fontSize: "12px", padding: "0 0.5rem" }}>
                     Score: {post.score.toFixed(2)}
@@ -320,28 +317,3 @@ Feed.propTypes = {
 };
 
 export default Feed;
-
-
-/**
- * Potential Improvements:
- * 1. **Optimize API Requests**
- *    - Debounce API calls when changing filters to prevent excessive requests.
- *    - Fetch multiple pages at once to reduce frequent requests.
- *
- * 2. **Prevent Duplicate Posts**
- *    - Implement a check to avoid adding duplicate posts when new posts arrive.
- *    - Use a `Set` or a map with post IDs to track unique posts.
- *
- * 3. **Enhance Scroll Performance**
- *    - Batch fetches instead of requesting new posts on each scroll event.
- *    - Use a buffer so the next set of posts loads slightly before reaching the end.
- *
- * 4. **Improve Error Handling**
- *    - Add a retry button for failed API requests instead of just showing an error.
- *    - Show an offline mode message if the API is unreachable.
- * 
- * ✅ Improvement #1: Debounced API + batch fetch (5 → 10 posts)
- * ✅ Improvement #2: Duplicate prevention using a Set
- * ✅ Improvement #3: Scroll buffer using rootMargin
- * ✅ Improvement #4: Retry button for errors
- */

@@ -197,20 +197,3 @@ router.get("/global", async (req, res) => {
 
 
 module.exports = router;
-
-/**
- * 🚀 Potential Issues & Optimizations
-✅ 📌 Implement Caching for API Calls
-
-Problem: CoinGecko API has rate limits, and every request fetches fresh data.
-Solution: Use in-memory caching (e.g., node-cache or Redis) to store results for a few minutes.
-✅ 🔐 Add API Rate Limiting
-
-Problem: Multiple requests can overwhelm the API and lead to IP bans.
-Solution: Use express-rate-limit to limit requests per user.
-✅ 📡 Improve Error Handling
-
-Problem: If CoinGecko API changes its response format, errors may go unnoticed.
-Solution: Implement structured error responses with specific failure reasons.
-
- */

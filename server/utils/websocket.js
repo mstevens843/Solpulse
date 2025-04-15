@@ -18,7 +18,7 @@ let io; // WebSocket instance
  */
 const setSocket = (socketInstance) => {
   if (io) {
-    // ✅ Prevent unintended reinitialization
+    //  Prevent unintended reinitialization
     throw new Error("WebSocket server is already initialized.");
   } else {
     io = socketInstance;
@@ -32,7 +32,7 @@ const setSocket = (socketInstance) => {
  * 
  * - Validates the event name before emitting. 
  * - Ensures the WebSocket instance is initialized. 
- * - Validates the payload format before broadcasting. ✅
+ * - Validates the payload format before broadcasting. 
  * 
  * @param {string} event - The event name (e.g., 'new-comment', 'update-comment', 'delete-comment').
  * @param {Object} payload - The data to emit with the event.
@@ -47,11 +47,11 @@ const handleCommentEvent = (event, payload) => {
     return;
   }
   if (!payload || typeof payload !== "object") {
-    console.error("Invalid payload format."); // ✅ Extra validation
+    console.error("Invalid payload format."); //  Extra validation
     return;
   }
 
-  io.to("comment-room").emit(event, payload); // ✅ Namespace support
+  io.to("comment-room").emit(event, payload); //  Namespace support
   console.log(`Event '${event}' broadcasted with payload:`, payload);
 };
 
@@ -61,7 +61,7 @@ const handleCommentEvent = (event, payload) => {
  * - Listens for new client connections. 
  * - Handles WebSocket errors on a per-client basis. 
  * - Cleans up when a client disconnects. 
- * - Implements ping/pong heartbeat to detect inactive clients. ✅
+ * - Implements ping/pong heartbeat to detect inactive clients. 
  */
 const setupConnectionHandlers = () => {
   if (!io) {
@@ -72,7 +72,7 @@ const setupConnectionHandlers = () => {
   io.on("connection", (socket) => {
     console.log(`Client connected: ${socket.id}`);
 
-    // ✅ Join room for scoped broadcasting
+    //  Join room for scoped broadcasting
     socket.join("comment-room");
 
     // Handle WebSocket errors for individual clients
@@ -85,7 +85,7 @@ const setupConnectionHandlers = () => {
       console.log(`Client ${socket.id} disconnected. Reason: ${reason}`);
     });
 
-    // ✅ Ping/pong heartbeat to detect stale connections
+    //  Ping/pong heartbeat to detect stale connections
     socket.on("ping", () => {
       socket.emit("pong");
     });
@@ -98,43 +98,3 @@ module.exports = {
   setSocket,
   handleCommentEvent,
 };
-
-
-/**
- * 🔍 Potential Issues & Optimizations
-1️⃣ WebSocket Instance Already Initialized Warning
-Issue: If setSocket() is called multiple times, it just logs a warning but doesn’t prevent reinitialization.
-✅ Fix: Throw an error instead of logging a warning to avoid unintended behavior:
-if (io) {
-  throw new Error("WebSocket server is already initialized.");
-}
-
-
-2️⃣ Lack of Namespace Support for Events
-Issue: The current implementation broadcasts all events to every connected client, even if they don’t need them.
-✅ Fix: Implement namespaces or rooms for targeted event emissions:
-
-socket.join("comment-room"); 
-io.to("comment-room").emit(event, payload);
-
-
-3️⃣ Error Handling for handleCommentEvent()
-Issue: If payload is null or improperly formatted, the event still broadcasts without validation.
-✅ Fix: Validate payload structure before emitting:
-
-if (!payload || typeof payload !== "object") {
-  console.error("Invalid payload format.");
-  return;
-}
-
-
-4️⃣ Lack of WebSocket Heartbeat (Keep-Alive)
-Issue: There is no mechanism to detect inactive clients, which can cause stale connections.
-✅ Fix: Implement ping/pong heartbeat messages to remove dead connections:
-
-io.on("connection", (socket) => {
-  socket.on("ping", () => {
-    socket.emit("pong");
-  });
-});
- */

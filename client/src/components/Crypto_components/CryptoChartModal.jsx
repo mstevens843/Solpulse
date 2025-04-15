@@ -1,4 +1,3 @@
-// src/components/Crypto_components/CryptoChartModal.js
 import React from 'react';
 import Modal from 'react-modal';
 import { Line } from 'react-chartjs-2';

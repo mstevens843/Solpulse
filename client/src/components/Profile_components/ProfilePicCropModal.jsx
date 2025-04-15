@@ -1,5 +1,3 @@
-// components/Profile_components/ProfilePicCropModal.js
-
 import React, { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import PropTypes from "prop-types";

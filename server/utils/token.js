@@ -15,9 +15,8 @@ const jwt = require("jsonwebtoken");
  * 
  * - Signs a payload with `JWT_SECRET` to create a token.
  * - Ensures payload is a valid object before signing.
- * - Default expiration is set to 7 days ✅ (was previously too long)
- */
-const generateToken = (payload, expiresIn = "7d") => { // ✅ reduced expiration
+ * */
+const generateToken = (payload, expiresIn = "7d") => { //  reduced expiration
     if (!process.env.JWT_SECRET) {
         throw new Error("JWT_SECRET is not defined in the environment variables");
     }
@@ -43,7 +42,7 @@ const verifyToken = (token) => {
     try {
         return jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
-        console.error(`Token verification failed: ${error.message}`); // ✅ Added logging
+        console.error(`Token verification failed: ${error.message}`);
         if (error.name === "TokenExpiredError") {
             throw new Error("Token has expired");
         }
@@ -87,25 +86,3 @@ module.exports = {
     decodeToken,
     validateToken,
 };
-
-
-
-/**
- * 🔍 Potential Issues & Optimizations
-1️⃣ Extremely Long Token Expiration (500,000 hours ≈ 57 years)
-Issue: Setting an expiration this long defeats the purpose of expiring tokens for security.
-✅ Fix: Reduce the default expiration to something reasonable, like 1 day (24h) or 7 days (7d):
-const generateToken = (payload, expiresIn = "7d");
-
-
-2️⃣ No Refresh Token Implementation
-Issue: Once a token expires, users must log in again.
-✅ Fix: Implement a refresh token system where a secondary token is issued with a longer expiration, allowing users to request a new access token without re-login.
-
-
-3️⃣ Missing Error Logging
-Issue: When token verification fails, it throws an error but does not log details for debugging.
-✅ Fix: Add logging to verifyToken() for better error tracing:
-console.error(`Token verification failed: ${error.message}`);
- */
-

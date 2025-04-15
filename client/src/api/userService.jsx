@@ -74,11 +74,3 @@ export const fetchUserData = async () => {
         throw error; // Re-throw the error to allow calling functions to handle it.
     }
 };
-
-/**
- * Potential Improvements:
- * - **Token Expiry Handling:** If the token is expired, trigger a logout or refresh flow.
- * - **Enhanced Retry Logic:** Introduce exponential backoff for retrying requests.
- * - **Caching User Data:** Store user data in a global state (e.g., Redux, Context API) to avoid redundant API calls.
- * - **Custom Error Handling:** Return specific error messages based on the error response code.
- */

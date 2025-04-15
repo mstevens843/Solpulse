@@ -1,9 +1,9 @@
-/* ✅ Expandable state visual cue */
+/* Expandable state visual cue */
 .crypto-transaction-item {
     @apply cursor-pointer relative;
 }
 
-/* ✅ Click indicator for expanded details */
+/* Click indicator for expanded details */
 .crypto-transaction-item::after {
     content: "Click to expand";
     @apply absolute top-2 right-4 text-xs text-solana-primary opacity-60;
@@ -13,17 +13,17 @@
     @apply opacity-100;
 }
 
-/* ✅ Expanded details */
+/* Expanded details */
 .crypto-transaction-details {
     @apply mt-4 pl-2 border-l-2 border-solana-primary space-y-1 text-sm text-solana-dark;
 }
 
-/* ✅ Explorer link hover */
+/*  Explorer link hover */
 .tx-link:hover {
     @apply underline text-solana-primary;
 }
 
-/* ✅ Address style */
+/*  Address style */
 .tx-address {
     @apply font-mono break-all text-solana-secondary;
 }

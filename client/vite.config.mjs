@@ -19,13 +19,13 @@ export default defineConfig({
   },
   envPrefix: 'VITE_',
   optimizeDeps: {
-    include: ['emoji-mart', '@emoji-mart/data'], // ✅ Required for emoji-mart to work in Vite
+    include: ['emoji-mart', '@emoji-mart/data'], // Required for emoji-mart to work in Vite
   },
   build: {
     outDir: 'dist',
     sourcemap: true,
     commonjsOptions: {
-      transformMixedEsModules: true, // ✅ Fixes Class constructor error
+      transformMixedEsModules: true, // Fixes Class constructor error
     },
   },
 });

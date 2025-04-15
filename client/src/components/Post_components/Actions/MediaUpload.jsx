@@ -18,14 +18,14 @@ import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig";
 import "@/css/components/Post_components/Actions/MediaUpload.css";
 
-const MAX_FILE_SIZE_MB = 10; // ✅ Max size
-const VALID_TYPES = ["image/jpeg", "image/png", "video/mp4"]; // ✅ Supported formats
+const MAX_FILE_SIZE_MB = 10; 
+const VALID_TYPES = ["image/jpeg", "image/png", "video/mp4"]; 
 
 function MediaUpload({ onMediaUpload }) {
     const [media, setMedia] = useState(null);
     const [error, setError] = useState("");
     const [uploading, setUploading] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0); // ✅ Progress state
+    const [uploadProgress, setUploadProgress] = useState(0); //  Progress state
     const fileInputRef = useRef(null);
 
     const handleButtonClick = () => {
@@ -112,7 +112,7 @@ function MediaUpload({ onMediaUpload }) {
                         {uploading ? "..." : "⬆️"}
                     </button>
 
-                    {/* ✅ Progress bar */}
+                    {/*  Progress bar */}
                     {uploading && (
                         <div className="upload-progress-bar">
                             <div
@@ -135,18 +135,3 @@ MediaUpload.propTypes = {
 };
 
 export default MediaUpload;
-
-/**
- * Potential Improvements:
- * 1. **File Validation:**
- *    - Add size restriction (e.g., reject files > 10MB).
- *    - Ensure valid MIME types before allowing upload.
- *
- * 2. **Progress Indicator:**
- *    - Show a progress bar or percentage during upload.
- *    - Display thumbnail preview before upload.
- *
- * 3. **Error Handling:**
- *    - Provide better error messages (e.g., "File too large", "Invalid format").
- *    - Implement retry logic for network failures.
- */

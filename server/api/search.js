@@ -8,16 +8,6 @@
  * - Rate limiting to prevent abuse.
  */
 
-/**
- *  Search API - SolPulse
- *
- * Handles:
- * - Searching users by username or email.
- * - Searching posts by content (full-text search).
- * - Pagination + caching for performance.
- * - Rate limiting to prevent abuse.
- */
-
 const express = require('express');
 const { User, Post, sequelize, Follower, BlockedUser } = require('../models');
 const { Op, literal } = require('sequelize');
@@ -34,7 +24,7 @@ router.get(
   '/',
   rateLimiter(100, 15 * 60 * 1000),
   authMiddleware,
-  checkBlockStatus, // ✅ Already present
+  checkBlockStatus, // Already present
   async (req, res) => {
     const query = req.query.query || '';
     const page = parseInt(req.query.page) || 1;
@@ -43,14 +33,14 @@ router.get(
     const cacheKey = `search:${query}:${page}:${limit}`;
 
     // Debugging logs
-    console.log("🧠 Incoming search request...");
-    console.log("🧠 Authorization Header:", req.headers.authorization || "None");
-    console.log("🧠 Decoded req.user:", req.user || "MISSING");
-    console.log("🧠 Query:", query, "| Page:", page, "| Limit:", limit);
+    console.log(" Incoming search request...");
+    console.log(" Authorization Header:", req.headers.authorization || "None");
+    console.log(" Decoded req.user:", req.user || "MISSING");
+    console.log(" Query:", query, "| Page:", page, "| Limit:", limit);
 
     const currentUserId = req.user?.id || null;
     if (!currentUserId) {
-      console.warn("⚠️ WARNING: req.user.id is missing in /search route!");
+      console.warn("WARNING: req.user.id is missing in /search route!");
     }
 
     // Check cache first
@@ -61,9 +51,7 @@ router.get(
     }
 
     try {
-      // -------------------------------
       //     BLOCKED USER FILTERS
-      // -------------------------------
       let blockedUserIds = [];
       let blockedByUserIds = [];
       if (currentUserId) {
@@ -87,7 +75,7 @@ router.get(
           username: {
             [Op.iLike]: `%${query}%`
           },
-          // 🚫 Filter out blocked or blocking users:
+          // Filter out blocked or blocking users:
           id: {
             [Op.notIn]: allBlockedIds
           }
@@ -134,7 +122,7 @@ router.get(
         })
       );
 
-      // ✅ NEW: Get list of following IDs for current user (needed for filtering private posts)
+      // NEW: Get list of following IDs for current user (needed for filtering private posts)
       let followingIds = [];
       if (currentUserId) {
         const followRecords = await Follower.findAll({
@@ -220,11 +208,11 @@ router.get(
 
       // Cache it and return
       searchCache.set(cacheKey, response);
-      console.log("✅ Returning search results successfully.");
+      console.log("Returning search results successfully.");
       res.json(response);
 
     } catch (error) {
-      console.error('🔥 Error fetching search results:', error.message);
+      console.error('Error fetching search results:', error.message);
       console.error(error.stack);
       res.status(500).json({ error: 'Failed to fetch search results' });
     }
@@ -241,14 +229,13 @@ router.get(
 
 
 
-// -------------------------------------------------------------------
-//           SUGGESTIONS ROUTE (unchanged, except minor rename)
-// -------------------------------------------------------------------
+
+//SUGGESTIONS ROUTE (unchanged, except minor rename)
 router.get(
   '/suggestions',
   rateLimiter(100, 15 * 60 * 1000),
   authMiddleware,
-  checkBlockStatus, // ✅ Already present
+  checkBlockStatus, // Already present
   async (req, res) => {
     const query = req.query.query || '';
     if (!query.trim()) return res.json({ results: [] });
@@ -264,7 +251,7 @@ router.get(
       followingIds = followRecords.map(f => f.followingId);
     }
 
-    // 🔒 Block filter: which users are blocked or blocking me?
+    // Block filter: which users are blocked or blocking me?
     let blockedUserIds = [];
     let blockedByUserIds = [];
 
@@ -289,7 +276,7 @@ router.get(
       const userResults = await User.findAll({
         where: {
           username: { [Op.iLike]: `%${query}%` },
-          // ❌ Exclude blocked
+          // Exclude blocked
           id: { [Op.notIn]: allBlockedIds },
         },
         attributes: ['id', 'username', 'email', 'privacy'],
@@ -312,13 +299,13 @@ router.get(
         limit: 5
       });
 
-      // 🛡 Filter out posts by blocked or blocking users
+      // Filter out posts by blocked or blocking users
       const unblockedPosts = postResults.filter(p => {
         if (!p.user) return false;
         return !allBlockedIds.includes(p.user.id);
       });
 
-      // 🔒 Then filter out private posts if not allowed
+      // Then filter out private posts if not allowed
       const visiblePosts = unblockedPosts.filter(p => {
         const author = p.user;
         if (!author) return false;
@@ -354,17 +341,3 @@ router.get(
 );
 
 module.exports = router;
-
-
-/**
- * Potential Issues & Optimizations
-Performance Optimization:
-Using LIKE for text search can be slow on large datasets. PostgreSQL’s tsvector Full-Text Search would improve speed.
-
-Security Concern:
-Right now, unauthenticated users can search all users and posts. Consider restricting visibility for private profiles.
-
-Reduce Database Load:
-Since searches query both users and posts separately, adding caching (Redis) for frequent search terms could improve performance.
-
- */

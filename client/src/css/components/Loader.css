@@ -1,4 +1,3 @@
-/* Loader Container */
 .loader-container {
     @apply flex justify-center items-center mt-6 mb-6;
     background: var(--solana-gradient);

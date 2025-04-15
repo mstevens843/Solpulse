@@ -16,12 +16,12 @@
 
 
 
-import React, { useState } from "react"; // ✅ Added state for expand/collapse
+import React, { useState } from "react"; 
 import PropTypes from "prop-types";
 import "@/css/components/Crypto_components/CryptoTransaction.css";
 
 const CryptoTransaction = React.memo(({ transaction, usdPerSol }) => {
-    const [expanded, setExpanded] = useState(false); // ✅ Expandable toggle state
+    const [expanded, setExpanded] = useState(false); 
 
     /**
      * Converts transaction type to a user-friendly label.
@@ -64,12 +64,12 @@ const CryptoTransaction = React.memo(({ transaction, usdPerSol }) => {
 
     const usdValue = usdPerSol && transaction?.amount
         ? (transaction.amount * usdPerSol).toFixed(2)
-        : null; // ✅ USD Calculation (if available)
+        : null; 
 
     return (
         <li
             className={`crypto-transaction-item transaction-${transaction?.type?.toLowerCase() || "unknown"}`}
-            onClick={() => setExpanded(!expanded)} // ✅ Toggle on click
+            onClick={() => setExpanded(!expanded)} 
             aria-label={`Transaction: ${transactionType}, Amount: ${transactionAmount} SOL, Date: ${transactionDate}`}
         >
             <p className="crypto-transaction-type">
@@ -79,7 +79,7 @@ const CryptoTransaction = React.memo(({ transaction, usdPerSol }) => {
                 <strong>Amount:</strong> {transactionAmount} SOL{" "}
                 {usdValue && (
                     <span className="usd-amount text-xs text-solana-text-light ml-1">
-                        (${usdValue} USD) {/* ✅ Improvement #1 */}
+                        (${usdValue} USD) 
                     </span>
                 )}
             </p>
@@ -90,17 +90,17 @@ const CryptoTransaction = React.memo(({ transaction, usdPerSol }) => {
 
             {expanded && (
                 <div className="crypto-transaction-details">
-                    <p><strong>Token:</strong> {transaction?.token || "N/A"}</p> {/* ✅ Optimization #2 */}
-                    <p><strong>Slot:</strong> {transaction?.slot || "N/A"}</p> {/* ✅ Optimization #4 */}
-                    <p><strong>Fee:</strong> {transaction?.fee?.toFixed(6) || "0.000000"} SOL</p> {/* ✅ Optimization #6 */}
+                    <p><strong>Token:</strong> {transaction?.token || "N/A"}</p> 
+                    <p><strong>Slot:</strong> {transaction?.slot || "N/A"}</p>
+                    <p><strong>Fee:</strong> {transaction?.fee?.toFixed(6) || "0.000000"} SOL</p>
                     <p>
                         <strong>From:</strong>{" "}
                         <span className="tx-address">{transaction?.from || "Unknown"}</span>
-                    </p> {/* ✅ Optimization #5 */}
+                    </p> 
                     <p>
                         <strong>To:</strong>{" "}
                         <span className="tx-address">{transaction?.to || "Unknown"}</span>
-                    </p> {/* ✅ Optimization #5 */}
+                    </p>
                     <p>
                         <strong>Tx Hash:</strong>{" "}
                         <a
@@ -111,7 +111,7 @@ const CryptoTransaction = React.memo(({ transaction, usdPerSol }) => {
                         >
                             View on Solscan
                         </a>
-                    </p> {/* ✅ Optimization #1 */}
+                    </p> 
                 </div>
             )}
         </li>
@@ -131,7 +131,7 @@ CryptoTransaction.propTypes = {
         from: PropTypes.string,
         to: PropTypes.string,
     }),
-    usdPerSol: PropTypes.number, // ✅ Improvement #1 - optional prop
+    usdPerSol: PropTypes.number, 
 };
 
 CryptoTransaction.defaultProps = {
@@ -147,15 +147,7 @@ CryptoTransaction.defaultProps = {
         from: "Unknown",
         to: "Unknown",
     },
-    usdPerSol: null, // ✅ Default for USD conversion
+    usdPerSol: null,
 };
 
 export default CryptoTransaction;
-
-/**
- * 🔹 **Potential Improvements:**
- * - **Add Support for Fiat Values:** ✅ Implemented — Convert and display transaction amounts in USD.
- * - **Transaction Status:** Show pending/completed transaction statuses.
- * - **Expandable Details:** ✅ Already implemented.
- * - **Filter Transactions:** ✅ Already implemented in parent.
- */

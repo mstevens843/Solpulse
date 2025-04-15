@@ -53,7 +53,7 @@ function TrendingCrypto() {
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     /**
-     * ✅ 1. Retry Logic Utility Function (Place near top, before component)
+     * 1. Retry Logic Utility Function (Place near top, before component)
      */
     const retryRequest = async (fn, retries = 3, delay = 1000) => {
         try {
@@ -142,7 +142,7 @@ function TrendingCrypto() {
 
     /**
      * Fetches top gainers and losers with a delay to prevent rate limiting.
-     * ✅ 2. Toasts and Retry Integrated into fetchTrendingCoins
+     * 2. Toasts and Retry Integrated into fetchTrendingCoins
      */
     const fetchTrendingCoins = async () => {
         try {
@@ -478,13 +478,4 @@ function TrendingCrypto() {
 }
 
 export default TrendingCrypto;
-
-
-/**
- * 🔹 Potential Improvements:
- * - Implement caching for fetched data to reduce API calls.
- * - Improve error handling with retry mechanisms.
- * - Add more UI elements like coin details and live price updates.
- */
-
 

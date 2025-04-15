@@ -8,8 +8,8 @@
 
 
 require('dotenv').config();
-console.log(`✅ Server running in ${process.env.NODE_ENV || 'development'} mode`);
-console.log(`🛢️ Using DB host: ${process.env.DB_HOST}`);
+console.log(` Server running in ${process.env.NODE_ENV || 'development'} mode`);
+console.log(`Using DB host: ${process.env.DB_HOST}`);
 
 
 const http = require('http');
@@ -31,7 +31,7 @@ const server = http.createServer(app);
  */
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins, // ✅ Centralized configuration from config.js
+    origin: allowedOrigins, // Centralized configuration from config.js
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // Allowed methods
     credentials: true, // Allow credentials for WebSocket connections
   },
@@ -42,7 +42,7 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log(`Client connected: ${socket.id}`);
 
-  // ✅ Enhancement: Add error and reconnect listeners
+  // Enhancement: Add error and reconnect listeners
   socket.on('error', (err) => {
     console.error(`WebSocket error for client ${socket.id}:`, err);
   });
@@ -83,7 +83,7 @@ const shutdown = async () => {
   try {
     const isDev = process.env.NODE_ENV !== 'production';
 
-    // ⚠️ Only close DB connection in production (or manual dev shutdown)
+    //  Only close DB connection in production (or manual dev shutdown)
     if (!isDev) {
       await sequelize.sequelize.close();
       console.log(`[${new Date().toISOString()}] Database connection closed gracefully`);
@@ -114,7 +114,7 @@ const shutdown = async () => {
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown); // Handle termination signals
 
-// ✅ Ensure graceful shutdown on uncaught exceptions
+// Ensure graceful shutdown on uncaught exceptions
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
   shutdown();
@@ -123,21 +123,3 @@ process.on('uncaughtException', (err) => {
 // Start the server
 const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-/**
- *  Potential Issues & Optimizations
-Hardcoded Default CORS Origin (localhost:3000)
-
-✅ Fix: Use allowedOrigins from config.js instead of environment variables to centralize CORS rules.
-WebSocket Connection Handling
-
-✅ Enhancement: Consider adding event listeners for error and reconnect to improve stability.
-Graceful Shutdown on Crashes
-
-✅ Potential Fix: Ensure that shutdown() is also triggered on uncaught exceptions:
-
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-  shutdown();
-});
- */

@@ -42,10 +42,10 @@ const notificationIcons = {
 
 function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
-  const [cachedNotifications, setCachedNotifications] = useState([]); // ✅ 4. Cache notifications
+  const [cachedNotifications, setCachedNotifications] = useState([]); 
   const [unreadCount, setUnreadCount] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [showRead, setShowRead] = useState(false); // ✅ 3. Show/hide read toggle
+  const [showRead, setShowRead] = useState(false); 
   const dropdownRef = useRef(null);
 
   /**
@@ -63,8 +63,8 @@ function NotificationBell() {
         console.log("📥 Notifications Fetched:", fetched);
   
         setNotifications(fetched);
-        setCachedNotifications(fetched); // ✅ Cache it
-        setUnreadCount(data.unreadCount ?? fetched.length); // ✅ Fallback to count
+        setCachedNotifications(fetched); 
+        setUnreadCount(data.unreadCount ?? fetched.length); 
       } catch (error) {
         if (error.response?.status === 429) {
           console.warn("⚠️ Rate limit hit. Retry later.");
@@ -117,13 +117,13 @@ function NotificationBell() {
    */
    const markAllAsRead = async () => {
     try {
-      // ✅ Optimistically update UI
+      // Optimistically update UI
       setNotifications([]);
       setUnreadCount(0);
   
       const response = await api.put("/notifications/mark-all-read");
   
-      // ✅ Safely use returned unread count or default to 0
+      // Safely use returned unread count or default to 0
       const newUnreadCount = response?.data?.unreadCount ?? 0;
       setUnreadCount(newUnreadCount);
   
@@ -145,10 +145,10 @@ function NotificationBell() {
       setTimeout(async () => {
         const response = await api.put(`/notifications/${id}/read`);
   
-        // ✅ Remove from UI
+        //  Remove from UI
         setNotifications((prev) => prev.filter((n) => n.id !== id));
   
-        // ✅ Fallback if unreadCount not returned
+        // Fallback if unreadCount not returned
         const newUnreadCount = response?.data?.unreadCount ?? 0;
         setUnreadCount(newUnreadCount);
   
@@ -235,34 +235,3 @@ function NotificationBell() {
 }
 
 export default NotificationBell;
-
-
-/**
- * 🔹 **Potential Improvements:** 
- * - **WebSocket Integration**: - SKIPPED
- *   - Implement real-time notifications instead of requiring a fetch when opening the dropdown.
- *
- * - **Notification Type Icons**:
- *   - Add small icons next to each notification type (e.g., ❤️ for likes, 🔄 for retweets).
- *
- * - **Better Read/Unread UI**:
- *   - Instead of removing notifications immediately, add a "Show Read" toggle.
- *
- * - **Improve Performance**:
- *   - Cache notifications in state to avoid re-fetching if the dropdown is closed and reopened.
- */
-
-
-/**
-2. Notification Type Icons
-
-Added emoji icons per notification type via getNotificationIcon() helper.
-
-3. Better Read/Unread UI
-
-Introduced a Show Read / Hide Read toggle to optionally display previously read notifications.
-
-4. Performance Optimization (Client Caching)
-
-Cached notifications in cachedNotifications so reopening the dropdown doesn’t re-fetch unnecessarily.
- */

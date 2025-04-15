@@ -19,19 +19,19 @@ const socket = io(import.meta.env.VITE_WEBSOCKET_URL || "http://localhost:5001",
 });
 
 
-// ✅ Handle WebSocket connection event
+// Handle WebSocket connection event
 socket.on("connect", () => {
   console.log("WebSocket connected:", socket.id);
 });
 
 
-// ✅ Handle WebSocket disconnection event
+// Handle WebSocket disconnection event
 socket.on("disconnect", () => {
   console.log("WebSocket disconnected");
 });
 
 
-// ✅ Listen for new messages
+// Listen for new messages
 socket.on("new_message", (data) => {
   console.log("New message received:", data);
 });

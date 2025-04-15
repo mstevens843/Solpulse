@@ -19,7 +19,7 @@
  */
 
 
-import React, { useState, useEffect, memo } from "react"; // ✅ #4
+import React, { useState, useEffect, memo } from "react"; 
 import PropTypes from "prop-types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { api } from "@/api/apiConfig";
@@ -31,7 +31,7 @@ import "@/css/components/Crypto_components/CryptoTip.css";
 
 const SPL_TOKENS = {
     USDC: {
-      mint: "Es9vMFrzaCERJbBjwGtW2zNnrSdZ4gtaGWgJbznVJWZk", // ✅ #3
+      mint: "Es9vMFrzaCERJbBjwGtW2zNnrSdZ4gtaGWgJbznVJWZk",
       decimals: 6,
     },
   };
@@ -41,10 +41,9 @@ const CryptoTip = ({ recipientId, recipientWallet, currentUser, onTipSuccess, co
     const [tipAmount, setTipAmount] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [tipMessage, setTipMessage] = useState("");
-    const [token, setToken] = useState("SOL"); // ✅ #3
+    const [token, setToken] = useState("SOL");
 
 
-    // ✅ #4 Auto-detect wallet connection
   useEffect(() => {
     if (wallet?.connected && wallet?.publicKey) {
       console.log("✅ Wallet auto-connected:", wallet.publicKey.toString());
@@ -109,13 +108,13 @@ const CryptoTip = ({ recipientId, recipientWallet, currentUser, onTipSuccess, co
         const signature = await wallet.sendTransaction(transaction, connection);
         console.log("Transaction Signature:", signature);
     
-        // ❌ Temporarily disabled while on free-tier RPC
+        //  Temporarily disabled while on free-tier RPC
         // const confirmTx = await connection.confirmTransaction(signature, "confirmed");
         // if (confirmTx.value.err) {
         //   throw new Error("Transaction failed");
         // }
     
-        // ✅ Notify recipient via API immediately
+        // Notify recipient via API immediately
         await api.post("/notifications", {
           type: "transaction",
           actorId: currentUser.id,
@@ -123,11 +122,10 @@ const CryptoTip = ({ recipientId, recipientWallet, currentUser, onTipSuccess, co
           amount,
           entityId: signature,
           message: `🎉 You received a tip of ${amount} ${token}!`,
-          content: tipMessage || null, // ✅ send optional message as content
+          content: tipMessage || null, // send optional message as content
 
         });
     
-        // ✅ Show toast with Solscan link
         toast.success(
           <div>
             ✅ Tip Sent! Confirm on Solana:
@@ -175,7 +173,7 @@ const CryptoTip = ({ recipientId, recipientWallet, currentUser, onTipSuccess, co
       <div className="crypto-tip-container">
         <h3 className="crypto-tip-heading">Send a Tip</h3>
     
-       {/* ✅ Wallet display */}
+       {/* Wallet display */}
 {wallet.connected && wallet.publicKey ? (
   <div className="wallet-connection-box">
     <span className="wallet-status-icon">✅</span>
@@ -249,12 +247,3 @@ CryptoTip.propTypes = {
 };
 
 export default memo(CryptoTip);
-
-
-/**
- * 🔹 **Potential Improvements:**
- * - **Live Transaction Tracking:** Poll Solana blockchain for transaction status updates.
- * - **Better Error Handling:** Show specific error messages based on Solana API responses.
- * - **Alternative Currencies:** Allow users to send SPL tokens instead of just SOL.
- * - **Auto-Detect Wallet Connection:** Improve UX by auto-detecting when the user connects their wallet.
- */

@@ -1,7 +1,7 @@
 .interactions-tabs {
     display: flex;
-    gap: 1rem; /* ✅ Adds spacing between Likes and Reposts */
-    margin-left: 1rem; /* ✅ Adds spacing after the ← back arrow */
+    gap: 1rem; /* Adds spacing between Likes and Reposts */
+    margin-left: 1rem; /* Adds spacing after the ← back arrow */
   }
 
 
@@ -29,7 +29,7 @@
     transform: translate(-50%, -50%);
     width: 90%;
     max-width: 500px;
-    height: 500px; /* 🔥 FIXED HEIGHT - prevents vertical shifting */
+    height: 500px; /* FIXED HEIGHT - prevents vertical shifting */
     background-color: #1a1a1a;
     border-radius: 12px;
     box-shadow: 0 0 8px #00f2ff;
@@ -45,7 +45,7 @@
     max-height: calc(70vh - 60px); /* subtract header height */
     overflow-y: auto;
     padding: 0.5rem 1rem;
-    max-height: 50vh; /* 🔥 Scroll only this section */
+    max-height: 50vh; /* Scroll only this section */
 
   }
   
@@ -64,6 +64,6 @@
     font-size: 1.2rem;
     color: #fff;
     cursor: pointer;
-    padding: 0.5rem 1rem; /* ✅ Adds space around the button */
+    padding: 0.5rem 1rem; /* Adds space around the button */
     margin-right: 0.5rem;  /* Optional: space between back arrow & tabs */
   }

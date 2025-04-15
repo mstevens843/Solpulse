@@ -1,4 +1,3 @@
-/* Hashtag Link */
 .hashtag {
     @apply text-solana-primary font-semibold hover:text-solana-secondary transition-colors duration-300;
     text-decoration: none;

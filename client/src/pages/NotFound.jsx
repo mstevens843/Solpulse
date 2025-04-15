@@ -6,7 +6,6 @@
  * - Providing a link back to the homepage for easy navigation.
  */
 
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '@/css/pages/NotFound.css';
@@ -24,11 +23,3 @@ function NotFound() {
 }
 
 export default NotFound;
-
-
-/**
- * 🔹 Potential Improvements:
- * - Add a search bar to help users find relevant content.
- * - Include recommended pages based on recent activity or trending topics.
- * - Improve visual design with an engaging illustration or animation.
- */

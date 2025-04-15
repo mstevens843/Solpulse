@@ -57,14 +57,14 @@ const getWalletTransactions = async (walletAddress) => {
                 let amount = 0;
                 let type = "Unknown";
 
-                // ✅ Get from/to addresses using account keys
+                // Get from/to addresses using account keys
                 const accountKeys = transactionDetails.transaction?.message?.accountKeys || [];
-                const fromAddress = accountKeys[0]?.toBase58?.() || "Unknown"; // ✅ Sender
-                const toAddress = accountKeys[1]?.toBase58?.() || "Unknown";   // ✅ Receiver
+                const fromAddress = accountKeys[0]?.toBase58?.() || "Unknown"; //  Sender
+                const toAddress = accountKeys[1]?.toBase58?.() || "Unknown";   //  Receiver
 
-                // ✅ Get fee and slot
-                const fee = lamportsToSol(transactionDetails.meta?.fee || 0); // ✅ Fee in SOL
-                const slot = transactionDetails.slot; // ✅ Solana slot
+                // Get fee and slot
+                const fee = lamportsToSol(transactionDetails.meta?.fee || 0); // Fee in SOL
+                const slot = transactionDetails.slot; // Solana slot
 
                 // Check SPL token transfers (non-SOL tokens)
                 if (preBalances.length > 0 && postBalances.length > 0) {
@@ -102,11 +102,11 @@ const getWalletTransactions = async (walletAddress) => {
                     date: transactionDetails.blockTime
                         ? new Date(transactionDetails.blockTime * 1000).toISOString()
                         : "Unknown",
-                    slot, // ✅ Optimization #4
-                    fee,  // ✅ Optimization #6
-                    explorerUrl: `https://solscan.io/tx/${tx.signature}`, // ✅ Optimization #1
-                    from: fromAddress, // ✅ Optimization #5
-                    to: toAddress      // ✅ Optimization #5
+                    slot,
+                    fee, 
+                    explorerUrl: `https://solscan.io/tx/${tx.signature}`,
+                    from: fromAddress,
+                    to: toAddress  
                 };
             })
         );
@@ -129,7 +129,7 @@ function CryptoWallet({ walletConnected }) {
     const [error, setError] = useState("");
     const [filter, setFilter] = useState("all");
     const [sortOrder, setSortOrder] = useState("latest");
-    const [usdPerSol, setUsdPerSol] = useState(null); // ✅ Store SOL to USD rate
+    const [usdPerSol, setUsdPerSol] = useState(null); // Store SOL to USD rate
 
     const wallet = useWallet();
 
@@ -149,7 +149,7 @@ function CryptoWallet({ walletConnected }) {
                     const publicKey = wallet.publicKey.toBase58();
                     console.log("Fetching wallet data for:", publicKey);
 
-                    // ✅ Optimization 1: Check local cache first
+                    // Optimization 1: Check local cache first
                     const cached = localStorage.getItem(`walletCache:${publicKey}`);
                     if (cached) {
                         const { balance: cachedBalance, transactions: cachedTxs, timestamp } = JSON.parse(cached);
@@ -169,7 +169,7 @@ function CryptoWallet({ walletConnected }) {
                     const onChainTxs = await getWalletTransactions(publicKey);
                     setTransactions(onChainTxs);
 
-                    // ✅ Store in localStorage
+                    // Store in localStorage
                     localStorage.setItem(
                         `walletCache:${publicKey}`,
                         JSON.stringify({
@@ -210,7 +210,6 @@ function CryptoWallet({ walletConnected }) {
 
 
     const handleTransactionClick = (tx) => {
-        // ✅ Optimization 2: Placeholder for modal/detail view
         console.log("Transaction clicked:", tx);
     };
 
@@ -229,7 +228,7 @@ function CryptoWallet({ walletConnected }) {
     
         fetchSolPrice();
     
-        const interval = setInterval(fetchSolPrice, 60_000); // ✅ Refresh every 1 min
+        const interval = setInterval(fetchSolPrice, 60_000); // Refresh every 1 min
         return () => clearInterval(interval);
     }, []);
 
@@ -296,7 +295,7 @@ function CryptoWallet({ walletConnected }) {
                                 {filteredTransactions.length > 0 ? (
                                     filteredTransactions.map((tx) => (
                                         <li key={tx.id} onClick={() => handleTransactionClick(tx)} className="transaction-item">
-                                            <CryptoTransaction transaction={tx} usdPerSol={usdPerSol} /> {/* ✅ Pass USD value */}
+                                            <CryptoTransaction transaction={tx} usdPerSol={usdPerSol} /> {/* Pass USD value */}
                                         </li>
                                     ))
                                 ) : (
@@ -312,12 +311,3 @@ function CryptoWallet({ walletConnected }) {
 }
 
 export default CryptoWallet;
-
-
-/**
- * 🔹 **Potential Improvements:**
- * - **Cache Data:** Store wallet balance and transactions in localStorage for faster loading.
- * - **Transaction Details:** Allow users to view full transaction metadata.
- * - **Real-time Updates:** Implement WebSocket-based updates instead of polling. - SKIPPED
- * - Added USD to SOL converison 
- */

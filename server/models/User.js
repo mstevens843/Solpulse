@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             },
             password: {
-                type: DataTypes.STRING(128), // ✅  Store hashed password (not plaintext)
+                type: DataTypes.STRING(128), //  Store hashed password (not plaintext)
                 allowNull: false,
                 validate: {
                     notEmpty: true,
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             },
             walletAddress: {
-                type: DataTypes.STRING(44), // ✅ Solana wallet addresses are between 32-44 characters
+                type: DataTypes.STRING(44), // Solana wallet addresses are between 32-44 characters
                 allowNull: false,
                 unique: true,
                 validate: {
@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
                     },
                 },
             },
-            // ✅ Added settings-related defaults
+            // Added settings-related defaults
             privacy: {
                 type: DataTypes.ENUM("public", "private"),
                 allowNull: false,
@@ -67,19 +67,19 @@ module.exports = (sequelize, DataTypes) => {
             },
             profilePicture: {
                 type: DataTypes.STRING,
-                allowNull: true, // ✅ Allow null instead of enforcing `notEmpty`
+                allowNull: true, // Allow null instead of enforcing `notEmpty`
             },
         },
         {
             tableName: 'Users',
             timestamps: true,
-            paranoid: true, // ✅ Enables soft deletes
-            charset: 'utf8mb4', // ✅ Allows Unicode characters (emojis, special characters)
+            paranoid: true, // Enables soft deletes
+            charset: 'utf8mb4', // Allows Unicode characters (emojis, special characters)
             collate: 'utf8mb4_unicode_ci',
             indexes: [
-                { unique: true, fields: ['username'] }, // ✅ Fast lookups
-                { unique: true, fields: ['email'] }, // ✅ Fast lookups
-                { unique: true, fields: ['walletAddress'] }, // ✅ Fast lookups
+                { unique: true, fields: ['username'] }, // Fast lookups
+                { unique: true, fields: ['email'] }, // Fast lookups
+                { unique: true, fields: ['walletAddress'] }, // Fast lookups
             ],
             defaultScope: {
                 attributes: { exclude: ['password'] }, // Always exclude password unless explicitly requested
@@ -93,14 +93,13 @@ module.exports = (sequelize, DataTypes) => {
     );
 
 
-    // ✅ Rehash password only if it's changed
+    //  Rehash password only if it's changed
     User.addHook('beforeSave', async (user) => {
         if (user.changed('password')) {
             user.password = await bcrypt.hash(user.password, 10);
         }
     });
 
-    // ✅ All associations declared cleanly and logically
     User.associate = (models) => {
         User.hasMany(models.Post, {
             foreignKey: 'userId',
@@ -126,13 +125,13 @@ module.exports = (sequelize, DataTypes) => {
         });
         User.hasMany(models.Notification, {
             foreignKey: 'userId',
-            as: 'userNotifications', // ✅ renamed to avoid conflict
+            as: 'userNotifications', //  renamed to avoid conflict
             onDelete: 'CASCADE',
           });
         User.hasMany(models.Transaction, {
             foreignKey: 'userId',
             as: 'transactions',
-            onDelete: 'SET NULL', // ✅ Important: don't lose financial records
+            onDelete: 'SET NULL', //  Important: don't lose financial records
         });
         User.hasMany(models.Wallet, {
             foreignKey: 'userId',
@@ -218,18 +217,3 @@ module.exports = (sequelize, DataTypes) => {
     return User;
 };
 
-
-/**
- * ✅ Key Improvements & Fixes
-1️⃣ Performance Enhancements
-✅ Add Indexes for frequently queried fields (username, email, walletAddress) to speed up lookups.
-✅ Optimize Associations by setting onDelete: SET NULL where appropriate to avoid accidental deletion of dependent records.
-✅ Use Efficient Password Hashing by checking if the password has changed before re-hashing in beforeUpdate.
-2️⃣ Security Fixes
-✅ Ensure Unique Wallet Addresses Are Checked in a Case-Insensitive Manner (if relevant for your use case).
-✅ Avoid Empty Strings in profilePicture: Instead of notEmpty, allow null values for better validation.
-3️⃣ Maintainability & Readability
-✅ Use beforeSave Instead of Separate Hooks for beforeCreate and beforeUpdate.
-✅ Improve Default Scopes: withPassword should explicitly include password instead of an empty attribute list.
-✅ Set charset: 'utf8mb4' in model options for compatibility with emojis in bio and username.
- */

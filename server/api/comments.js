@@ -93,7 +93,7 @@ router.get('/detailed', authMiddleware, checkBlockStatus, async (req, res) => {
   
       const postIds = userPosts.map((post) => post.id);
   
-      // 🧱 Get blocked user IDs (bidirectional)
+      // Get blocked user IDs (bidirectional)
       const blockedRecords = await BlockedUser.findAll({
         where: {
           [Op.or]: [
@@ -205,7 +205,7 @@ router.get('/count', checkBlockStatus, async (req, res) => {
 
 
 /**
- * Optimization Route 🚀
+ * Optimization Route
  *
  * @route   POST /api/comments/batch-count
  * @desc    Returns comment counts for multiple postIds in a single request.
@@ -224,12 +224,12 @@ Ensures consistent response shape: counts: [{ postId, count }].
 router.post('/batch-count', checkBlockStatus, async (req, res) => {
     const { postIds } = req.body;
 
-    // ✅ Improved validation
+    //  Improved validation
     if (!Array.isArray(postIds)) {
         return res.status(400).json({ error: 'postIds must be an array' });
     }
 
-    // ✅ Allow empty arrays and return empty counts instead of 400
+    // Allow empty arrays and return empty counts instead of 400
     if (postIds.length === 0) {
         return res.status(200).json({ counts: [] });
     }
@@ -253,7 +253,7 @@ router.post('/batch-count', checkBlockStatus, async (req, res) => {
             countMap[postId] = parseInt(dataValues.count, 10);
         });
 
-        // ✅ Format returned as expected by frontend
+        // Format returned as expected by frontend
         const formatted = Object.entries(countMap).map(([postId, count]) => ({
             postId: parseInt(postId, 10),
             count,
@@ -281,7 +281,7 @@ router.get('/', authMiddleware, checkBlockStatus, async (req, res) => {
         const userId = req.user.id;
         const offset = (parseInt(page, 10) - 1) * parseInt(limit, 10);
 
-        // 🧱 Filter out comments from users you've blocked or who blocked you
+        // Filter out comments from users you've blocked or who blocked you
         let blockedIds = [];
 
         const blockedRecords = await BlockedUser.findAll({
@@ -338,7 +338,7 @@ router.post(
     '/',
     [
         authMiddleware,
-        checkBlockStatus, // 🛡️ Prevent blocked users from commenting
+        checkBlockStatus, // Prevent blocked users from commenting
         check('content', 'Content is required').notEmpty(),
         check('postId', 'Post ID is required').notEmpty(),
     ],
@@ -416,22 +416,3 @@ router.delete('/:id', authMiddleware, checkCommentOwnership, async (req, res) =>
 });
 
 module.exports = { router, setSocket };
-
-
-
-/**
- * 🔍 Potential Issues & Optimizations
-1️⃣ No WebSocket Authentication
-
-Issue: Any client can receive WebSocket events.
-✅ Fix: Implement WebSocket authentication using JWT before broadcasting messages.
-2️⃣ Default Avatar URLs Should Be Dynamic
-
-Issue: Hardcoded /default-avatar.png may not work if deployed.
-✅ Fix: Store the URL in environment variables or database settings.
-3️⃣ No Soft Delete for Comments
-
-Issue: Deleted comments are permanently removed.
-✅ Fix: Implement a soft delete mechanism (e.g., isDeleted: true).
-
- */

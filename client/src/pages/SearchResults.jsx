@@ -11,7 +11,7 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SearchBar from "@/components/SearchBar";
-import UserListItem from "@/components/Profile_components/UserListItem"; // <-- NEW
+import UserListItem from "@/components/Profile_components/UserListItem";
 import Post from "@/components/Post_components/Post";
 import Loader from "@/components/Loader";
 import { api } from "@/api/apiConfig"; 
@@ -194,12 +194,3 @@ function SearchResults() {
 }
 
 export default SearchResults;
-
-/**
- * 🔹 Potential Improvements:
- * - Implement debounced search to avoid unnecessary API calls while typing.
- * - Add error handling for network failures or API rate limits.
- * - Display user-specific recommendations when no results are found. - SKIPPED
- * - Implement infinite scrolling instead of a "Load More" button. - SKIPPED
- * - Optimize backend queries for better search performance on large datasets. - SKIPPED
- */

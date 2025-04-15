@@ -210,24 +210,3 @@ function TrendingCrypto() {
 }
 
 export default TrendingCrypto;
-
-
-
-/**
- * 🔹 **Potential Improvements:**
- * 1. **Performance Optimization**:
- *    - Implement caching strategies to reduce API load.
- *    - Use WebSockets for real-time price updates.
- *
- * 2. **Expanded Data**:
- *    - Display trading volume, liquidity, and other relevant data.
- *    - Show historical performance trends.
- *
- * 3. **User Experience Enhancements**:
- *    - Add a sorting feature for trending coins.
- *    - Implement a dark/light mode toggle.
- *
- * 4. **Error Handling & Recovery**:
- *    - Improve UI feedback when the API is unreachable.
- *    - Implement an automatic retry mechanism for failed API calls.
- */

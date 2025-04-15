@@ -1,14 +1,3 @@
-/**
- * Jupiter API Routes - SolPulse
- * 
- * Handles:
- * - Fetching the complete token list from Jupiter API.
- * - Fetching tradable tokens.
- * - Fetching details for a specific token by its mint address.
- * - Implements caching to reduce API load and improve performance.
- */
-
-
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
@@ -117,19 +106,3 @@ router.get('/token/:mintAddress', async (req, res) => {
 module.exports = router;
 
 
-/**
- * 🚀 Potential Issues & Optimizations
-✅ 📌 Improve Cache Implementation
-
-Problem: The current cache stores the entire token list in memory. - skipped 
-Solution: Consider using Redis for more scalable caching, especially if multiple API instances are used.
-✅ 🔐 API Rate Limiting
-
-Problem: This API could be spammed with requests.
-Solution: Add rate limiting middleware (e.g., express-rate-limit) to prevent abuse.
-✅ 📡 Improve Error Handling
-
-Problem: If Jupiter API changes its endpoint format, responses might break.
-Solution: Wrap API responses in a try-catch and handle unexpected formats.
-
- */

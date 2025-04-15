@@ -72,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
       });
   
-      // ✅ These allow reverse lookups (optional but recommended)
+      // These allow reverse lookups 
       Notification.hasOne(models.Like, {
         foreignKey: 'notificationId',
         as: 'like',
@@ -120,23 +120,3 @@ module.exports = (sequelize, DataTypes) => {
   };
   
 
-/**
- * Potential Improvements and Optimizations for Notification Model
-Ensure Actor and Receiver are Different
-
-A user shouldn't receive a notification for their own actions (e.g., liking their own post).
-Add a constraint to prevent userId === actorId.
-Optimize Indexing for Query Performance
-
-Add indexes for userId and isRead to speed up notification queries.
-Index type for filtering different notification types efficiently.
-Cascade Deletion for Data Integrity
-
-If a user is deleted, their notifications should be deleted to prevent orphaned records.
-Default Sorting for Notifications
-
-Set a default order to return the most recent notifications first.
-Message Formatting for Transactions
-
-Ensure the transaction amount is formatted to two decimal places.
- */

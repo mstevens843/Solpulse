@@ -1,4 +1,4 @@
-/* ✅ Wallet display refinements */
+/* Wallet display refinements */
 .wallet-connection-box {
     display: flex;
     flex-direction: column;
@@ -32,7 +32,7 @@
     word-break: break-all;
   }
   
-  /* ✅ Token selector updated style */
+  /* Token selector updated style */
   .crypto-tip-token-selector {
     width: 100%;
     padding: 10px 12px;
@@ -50,7 +50,7 @@
     color: #e5e7eb;
   }
   
-  /* ✅ Label style tweak */
+  /* Label style tweak */
   .crypto-tip-token-label {
     font-size: 14px;
     font-weight: 600;
@@ -61,11 +61,11 @@
   .crypto-tip-token-section {
     display: flex;
     flex-direction: column;
-    margin-bottom: 16px; /* 🔥 Creates spacing between dropdown and Send Tip */
+    margin-bottom: 16px;
   }
   
 
-  /* 🔥 Toast link override */
+  /* Toast link override */
 .Toastify__toast-body a,
 .Toastify__toast-body a.toast-link {
   color: black !important;

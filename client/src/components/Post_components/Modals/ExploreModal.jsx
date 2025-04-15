@@ -1,5 +1,3 @@
-// src/components/Post_components/Modals/ExploreModal.jsx
-
 import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
@@ -34,7 +32,7 @@ if (mutedUserIds.includes(postUserId)) {
   return null; // Silently ignore muted posts
 }
 
-  // 🔐 Privacy Lock Logic
+  // Privacy Lock Logic
   const author = post.user || post.originalPost?.user || {};
   const isPrivate = author.privacy === "private";
   const isOwner = author.id === currentUser?.id;
@@ -156,7 +154,7 @@ if (mutedUserIds.includes(postUserId)) {
           </a>
         </div>
 
-        {/* 🔥 Reuse CommentModal */}
+        {/* Reuse CommentModal */}
         {isCommentModalOpen && (
           <CommentModal
             post={post}

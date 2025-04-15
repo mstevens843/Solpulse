@@ -11,30 +11,30 @@
 import React, { useContext, useEffect, useState, Suspense } from "react";
 import Feed from "@/components/Post_components/Feed";
 import { AuthContext } from "@/context/AuthContext";
-import { useLocation, useNavigate } from "react-router-dom"; // ✅ Also import navigate
+import { useLocation, useNavigate } from "react-router-dom"; // Also import navigate
 
 import "@/css/pages/Home.css";
 
-// ✅ #1 Lazy Load: Defer loading of sidebars until needed
+// #1 Lazy Load: Defer loading of sidebars until needed
 const Explore = React.lazy(() => import("@/components/Post_components/Explore"));
 const CryptoTicker = React.lazy(() => import("@/components/Crypto_components/CryptoTicker"));
 
 function Home() {
   const { user } = useContext(AuthContext);  // Get user from context
   const location = useLocation();
-  const navigate = useNavigate(); // ✅ Add this below your other hooks
+  const navigate = useNavigate(); // Add this below your other hooks
 
   const [showWelcome, setShowWelcome] = useState(false); // Fixed here
 
   useEffect(() => {
     if (location.state?.signupSuccess) {
-      setShowWelcome(true); // ✅ Show banner
-      navigate(location.pathname, { replace: true, state: {} }); // ✅ Clear state on first mount only
+      setShowWelcome(true); // Show banner
+      navigate(location.pathname, { replace: true, state: {} }); // Clear state on first mount only
     }
   }, [location, navigate]);
 
 
-  // ✅ #2 Skeleton Loader state for Feed loading experience
+  // Skeleton Loader state for Feed loading experience
   const [feedLoading, setFeedLoading] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => setFeedLoading(false), 500); // Simulate short delay
@@ -51,7 +51,7 @@ function Home() {
       )}
 
       <aside className="home-left">
-        {/* ✅ #1 Lazy load with fallback */}
+        {/* #1 Lazy load with fallback */}
         <Suspense fallback={<div className="sidebar-loader">Loading Ticker...</div>}>
           <CryptoTicker />
         </Suspense>
@@ -59,7 +59,7 @@ function Home() {
 
       <main className="home-middle">
         {feedLoading ? (
-          // ✅ #2 Basic skeleton loader placeholder
+          // #2 Basic skeleton loader placeholder
           <div className="feed-skeleton">Loading your feed...</div>
         ) : (
           <Feed key={location.key} currentUser={user} />
@@ -68,13 +68,12 @@ function Home() {
       </main>
 
       <aside className="home-right">
-        {/* ✅ #1 Lazy load with fallback */}
+        {/* #1 Lazy load with fallback */}
         <Suspense fallback={<div className="sidebar-loader">Loading Explore...</div>}>
           <Explore />
         </Suspense>
       </aside>
 
-      {/* ✅ #3 User Customization Placeholder: ready for toggles or rearrange */}
       {/* Future: Add buttons or drag/drop to customize sidebars */}
     </div>
   );

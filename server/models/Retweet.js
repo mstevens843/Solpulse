@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         indexes: [
           {
             unique: true,
-            fields: ['userId', 'postId'], // ✅ Prevent duplicate retweets
+            fields: ['userId', 'postId'], // Prevent duplicate retweets
           },
           {
             fields: ['postId'],
@@ -77,20 +77,3 @@ module.exports = (sequelize, DataTypes) => {
   };
   
 
-
-/**
- * Improvements & Optimizations:
-Ensure Unique Retweets:
-
-A user should not be able to retweet the same post multiple times. Add a unique constraint on userId and postId to prevent duplicate retweets.
-Cascade Deletes:
-
-If a post is deleted, all associated retweets should also be deleted.
-If a user is deleted, their retweets should also be removed.
-Add Indexing for Performance:
-
-Since users will frequently query retweets, add indexes on userId and postId to improve query performance.
-Define defaultScope for Optimized Queries:
-
-By default, exclude unnecessary attributes in queries.
- */

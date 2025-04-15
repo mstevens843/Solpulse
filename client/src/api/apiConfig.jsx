@@ -94,11 +94,3 @@ export const getHeaders = (contentType = "application/json", useBearer = true) =
     }
     return headers;
 };
-
-/**
- * Potential Improvements:
- * - **Error Handling:** Add a response interceptor to handle failed requests (e.g., auto-logout on 401 Unauthorized).
- * - **Token Expiration Handling:** Check JWT expiration before attaching it to requests.
- * - **Improved Exclusion Logic:** Use regex matching or a more efficient lookup method for excluded routes.
- * - **Refresh Token Handling:** If the token is expired, attempt to refresh it before retrying the request.
- */

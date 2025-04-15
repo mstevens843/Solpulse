@@ -9,13 +9,6 @@
  * - Search for specific coins using a debounce-filtered input.
  * - Click on a coin to view its 7-day price trend in a modal.
  * - Refresh prices automatically every 60 seconds.
- *
- * Features:
- * - **Optimized API Calls:** Uses `debounce` to limit unnecessary API calls.
- * - **Excludes Stablecoins & Non-Solana Tokens:** Filters out unwanted coins.
- * - **Error Handling:** Displays retry button on failed fetch attempts.
- * - **Accessible Search:** Uses aria-label for improved accessibility.
- * - **Live Updates:** Fetches new prices every minute.
  */
 
 
@@ -248,20 +241,20 @@ function CryptoTicker({ isCompact = false }) {
           a.price_change_percentage_24h - b.price_change_percentage_24h
         );
       case "market_cap_asc":
-        return a.market_cap - b.market_cap; // ✅ Added: Market Cap Low → High
+        return a.market_cap - b.market_cap; // Added: Market Cap Low → High
       case "market_cap_desc":
       default:
         return b.market_cap - a.market_cap;
     }
   });
 
-  const tickerHeight = isCompact ? "200px" : "450px"; // 🧠 dynamic height
+  const tickerHeight = isCompact ? "200px" : "450px"; // dynamic height
 
     return (
         <div className="crypto-ticker-container">
           <h3>Explore Solana Ecosystem</h3>
       
-          {/* 🔍 Search input */}
+          {/* Search input */}
           <input
             type="text"
             placeholder="Search coins..."
@@ -270,7 +263,7 @@ function CryptoTicker({ isCompact = false }) {
             aria-label="Search for a specific cryptocurrency"
           />
       
-          {/* 🔽 Sort dropdown */}
+          {/* Sort dropdown */}
           <div className="sort-row">
             <label htmlFor="sort" className="text-sm font-medium text-white">
               Sort by:
@@ -290,7 +283,7 @@ function CryptoTicker({ isCompact = false }) {
             </select>
           </div>
       
-          {/* ⏳ Loading, ❌ Error, ✅ Coin List */}
+          {/* Loading, Error, Coin List */}
           {loading ? (
             <div className="crypto-spinner" role="alert" aria-busy="true">
               Loading prices...
@@ -352,7 +345,7 @@ function CryptoTicker({ isCompact = false }) {
             </ul>
           )}
       
-          {/* 📈 Chart Modal */}
+          {/* Chart Modal */}
           {showModal && selectedCoin && (
             <ModalComponent
               onClose={closeModal}
@@ -369,20 +362,3 @@ function CryptoTicker({ isCompact = false }) {
 }
 
 export default CryptoTicker;
-
-
-/**
- * ✅ Recent Additions:
- *
- * ✅ Sorting Dropdown:
- *   - Allows sorting by Market Cap, Price (High/Low), and % Change (High/Low)
- *   - Controlled by `sortCriteria` state and applied via `sortedCoins`
-
- * ✅ Chart Modal:
- *   - Clicking a coin opens a modal with a 7D price chart
- *   - Uses `CryptoChartModal` with Chart.js
-
- * ✅ Timeframe Selector in Modal:
- *   - Users can switch between 1D, 7D, 30D, and 90D timeframes
- *   - Fetches chart data on demand for selected coin/timeframe
- */

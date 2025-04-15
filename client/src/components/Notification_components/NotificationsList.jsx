@@ -34,11 +34,11 @@ const notificationTypes = ["likes", "retweets", "comments", "follows", "messages
 
 function NotificationsList() {
   const [notifications, setNotifications] = useState([]);
-  const [selectedNotifications, setSelectedNotifications] = useState([]); // ✅ #3 Bulk Actions: track selected notifications
+  const [selectedNotifications, setSelectedNotifications] = useState([]); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("likes");
-  const [sortOption, setSortOption] = useState("newest"); // ✅ #2 Custom Sorting: track selected sort
+  const [sortOption, setSortOption] = useState("newest"); 
   const [mutedUserIds, setMutedUserIds] = useState([]);
 
 
@@ -79,7 +79,7 @@ function NotificationsList() {
   const fetchNotifications = async (type) => {
     setLoading(true);
     setError("");
-    setNotifications([]); // Clear notifications before fetching new ones
+    setNotifications([]); 
 
     let endpoint;
     switch (type) {
@@ -113,7 +113,7 @@ function NotificationsList() {
         
             const incomingRequests = requestsRes.data.requests.map((item) => ({
               id: item.id,
-              notificationId: item.notificationId || null, // ✅ keep this for marking as read
+              notificationId: item.notificationId || null,
               actor: item.actor || "Unknown user",
               profilePicture: item.profilePicture || null,
               message: item.message || "requested to follow you",
@@ -176,7 +176,7 @@ function NotificationsList() {
       const response = await api.get(endpoint);
       console.log("Notifications fetched:", response.data);
 
-       // ✅ Add debug log only for retweets
+    
     if (type === "retweets") {
       console.log("🔥 Retweet data raw:", response.data.retweets);
     }
@@ -184,30 +184,30 @@ function NotificationsList() {
       setNotifications(
         type === "likes"
           ? response.data.likes.map((item) => ({
-              id: item.notificationId || item.id, // ✅ Use real notification ID
+              id: item.notificationId || item.id, 
               actor: item.likedBy || `User unknown`,
               message: `${item.likedBy} liked your post`,
-              profilePicture: item.profilePicture || null, // ✅ frontend can now use this
+              profilePicture: item.profilePicture || null, 
               content: item.content,
               createdAt: item.createdAt,
-              isRead: item.isRead || false, // ✅ ← Use real isRead if it exists
+              isRead: item.isRead || false, 
             }))
           : type === "retweets"
             ? response.data.retweets.map((item) => ({
-                id: item.notificationId || item.id, // ✅ Use real notification ID
-                actor: item.retweetedBy || "Unknown",  // Use correct actor field
-                message: `${item.retweetedBy} reposted your post`,  // Ensure correct message
-                profilePicture: item.profilePicture || null, // ✅ frontend can now use this
+                id: item.notificationId || item.id, 
+                actor: item.retweetedBy || "Unknown", 
+                message: `${item.retweetedBy} reposted your post`,  
+                profilePicture: item.profilePicture || null, 
                 content: item.content || "No content", 
                 createdAt: item.createdAt,
-                isRead: false,  // No isRead field in retweets, default to false
+                isRead: false,  
               }))
               : type === "comments"
               ? response.data.comments.map((item) => ({
-                  id: item.notificationId || item.id, // Match likes/retweets
+                  id: item.notificationId || item.id, 
                   actor: item.actor || `User unknown`,
                   message: item.message || "commented on your post",
-                  profilePicture: item.profilePicture || null, // ✅ frontend can now use this
+                  profilePicture: item.profilePicture || null, 
                   content: item.content || null,
                   createdAt: item.createdAt,
                   isRead: item.isRead || false,
@@ -215,23 +215,23 @@ function NotificationsList() {
             
                 : type === "follows"
                 ? response.data.followers.map((item) => ({
-                    id: item.notificationId || item.id,  // Use real notification ID
-                    actor: item.actor || "User unknown",  // Ensure correct actor
-                    message: item.message || "started following you",  // Default follow message
-                    profilePicture: item.profilePicture || null, // ✅ frontend can now use this
-                    content: null,  // Follows don't need extra content
+                    id: item.notificationId || item.id, 
+                    actor: item.actor || "User unknown",  
+                    message: item.message || "started following you",  
+                    profilePicture: item.profilePicture || null, 
+                    content: null, 
                     createdAt: item.createdAt,
-                    isRead: item.isRead || false,  // Use real isRead field if it exists
+                    isRead: item.isRead || false,  
                 }))
                             
                 : type === "messages"
                 ? response.data.messages
-                    .filter((item) => item.notificationId !== null) // ✅ Only include ones with notificationId
+                    .filter((item) => item.notificationId !== null) 
                     .map((item) => ({
                       id: item.notificationId,
                       actor: item.sender || `User unknown`,
                       message: `${item.sender} sent you a message`,
-                      profilePicture: item.profilePicture || null, // ✅ frontend can now use this
+                      profilePicture: item.profilePicture || null, 
                       content: item.content,
                       createdAt: item.createdAt,
                       isRead: item.isRead || false,
@@ -241,11 +241,11 @@ function NotificationsList() {
                         id: item.id,
                         actor: item.actor || `User unknown`,
                         message: notificationMessages.transaction(item.amount),
-                        profilePicture: item.profilePicture || null, // ✅ frontend can now use this
+                        profilePicture: item.profilePicture || null, 
 
                         content: item.content,
                         createdAt: item.createdAt,
-                        isRead: false, // ✅ Always false now
+                        isRead: false, //  Always false now
                       }))
                   : response.data.notifications.map((item) => ({
                     id: item.id,
@@ -254,7 +254,7 @@ function NotificationsList() {
                     message: item.message,
                     content: item.content || null,
                     createdAt: item.createdAt,
-                    isRead: false, // ✅ always false because backend filters only unread
+                    isRead: false, 
                   }))
       );
     } catch (err) {
@@ -275,7 +275,7 @@ function NotificationsList() {
   
       setTimeout(async () => {
         await api.put(`/notifications/${id}/read`);
-        setNotifications((prev) => prev.filter((n) => n.id !== id)); // ✅ remove from UI
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
       }, 300);
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -317,7 +317,7 @@ function NotificationsList() {
   const markSelectedAsRead = async () => {
     try {
       await Promise.all(
-        selectedNotifications.map((id) => api.put(`/notifications/${id}/read`)) // ✅ #3 Bulk Actions: batch read
+        selectedNotifications.map((id) => api.put(`/notifications/${id}/read`)) 
       );
       setNotifications((prev) => prev.filter((n) => !selectedNotifications.includes(n.id)));
       setSelectedNotifications([]);
@@ -332,7 +332,7 @@ function NotificationsList() {
    * Refactored Sorting to make it expandable for the future. 
    */
   const sortedNotifications = [...notifications]
-  .filter((n) => !mutedUserIds.includes(n.actor)) // ⬅️ 🔇 Filter muted users
+  .filter((n) => !mutedUserIds.includes(n.actor)) 
   .filter((n) => (sortOption === "unread" ? !n.isRead : true))
   .sort((a, b) => {
     switch (sortOption) {
@@ -531,11 +531,3 @@ function NotificationsList() {
 }
 
 export default NotificationsList;
-
-
-/**
- * 🔹 **Potential Improvements:**
- * - **WebSocket Integration**: Implement real-time notifications instead of relying on API fetch. - SKIPPED
- * - **Custom Sorting**: Allow users to sort notifications by date, type, or read status.
- * - **Bulk Actions**: Enable users to delete or archive multiple notifications at once.
- */

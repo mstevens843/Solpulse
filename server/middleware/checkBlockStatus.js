@@ -14,7 +14,7 @@ const checkBlockStatus = async (req, res, next) => {
     const targetUserId = parseInt(paramId, 10);
 
     if (!currentUserId || isNaN(targetUserId)) {
-      console.warn("⚠️ Block check skipped: Missing or invalid user IDs.", {
+      console.warn("Block check skipped: Missing or invalid user IDs.", {
         currentUserId,
         targetUserId,
       });
@@ -33,18 +33,18 @@ const checkBlockStatus = async (req, res, next) => {
     });
 
     if (block) {
-      // ✅ Blocked user should not access
+      // Blocked user should not access
       if (block.blockerId === targetUserId) {
         return res.status(403).json({ message: "You are blocked by this user." });
       }
 
-      // ✅ If requester is the blocker, allow but flag
+      // If requester is the blocker, allow but flag
       req.isBlockedUser = true;
     }
 
     return next();
   } catch (err) {
-    console.error("❌ Error checking block status:", err);
+    console.error("Error checking block status:", err);
     return next(); // Fail open
   }
 };

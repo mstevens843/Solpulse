@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import { WalletProvider } from '@solana/wallet-adapter-react';
 import { MemoryRouter } from 'react-router-dom';
-import Messages from '../../pages/Messages';
+import Messages from '../../pages/Archive/Messages';
 
 jest.mock('axios');
 

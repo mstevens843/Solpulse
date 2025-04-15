@@ -14,7 +14,7 @@ import data from "@emoji-mart/data";
 
 const MessageModal = ({ message, onClose, onReply }) => {
   const [newMessage, setNewMessage] = useState("");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // ✅ Toggle state
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   
   /**
@@ -62,11 +62,11 @@ const MessageModal = ({ message, onClose, onReply }) => {
               data={data} // required
               onEmojiSelect={(emoji) => {
                 setNewMessage((prev) => prev + emoji.native);
-                setShowEmojiPicker(false); // ✅ Auto-close after emoji selection
+                setShowEmojiPicker(false); 
               }}
               title="Pick an emoji"
               emoji="point_up"
-              style={{ width: "100%", marginTop: "0.5rem" }} // ✅ Clean spacing
+              style={{ width: "100%", marginTop: "0.5rem" }} 
             />
           )}
 
@@ -87,35 +87,3 @@ const MessageModal = ({ message, onClose, onReply }) => {
 };
 
 export default MessageModal;
-
-/**
- * 🔹 **Potential Improvements:**
- * 1. **Add Emoji Support**:
- *    - Integrate an emoji picker for richer message replies.
- *
- * 2. **Enable Multi-Line Replies**:
- *    - Allow `Shift + Enter` for new lines without submitting the reply.
- *
- * 3. **WebSocket Support**:
- *    - Auto-update UI with real-time replies without requiring a manual refresh.
- *
- * 4. **Message Encryption**:
- *    - Implement end-to-end encryption for private messages.
- *
- * 5. **Improved UI/UX**:
- *    - Add animations for opening and closing the modal.
- *    - Display timestamps for messages.
- */
-
-
-//* -----------------------------------------------------------------------------
-//* 🆕 Emoji Picker Support (Reply to Message Modal)
-//* -----------------------------------------------------------------------------
-//* 1. Imported `Picker` from `emoji-mart` and its required CSS.
-//* 2. Added `showEmojiPicker` state to control emoji picker visibility.
-//* 3. Added a toggle button (😊) under the reply textarea.
-//* 4. When opened, the emoji picker allows emoji selection.
-//* 5. Selected emojis are appended to the `newMessage` input.
-//* 6. Picker conditionally renders only when toggled on.
-//* 7. All other modal functionality (reply, close, validations) is preserved.
-//* -----------------------------------------------------------------------------

@@ -23,7 +23,7 @@ const {
     logger,
     errorLogger,
 } = require("./middleware");
-const { allowedOrigins } = require("./config/config"); // ✅ Centralized allowed origins
+const { allowedOrigins } = require("./config/config"); // Centralized allowed origins
 
 const app = express();
 
@@ -35,7 +35,7 @@ const app = express();
  */
 app.use(
     cors({
-        origin: allowedOrigins, // ✅ Use centralized allowed origins config
+        origin: allowedOrigins, // Use centralized allowed origins config
         methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
         credentials: true,
     })
@@ -50,11 +50,11 @@ app.use(
 app.use(
     helmet({
         crossOriginResourcePolicy:
-            process.env.NODE_ENV === "production" ? "same-origin" : false, // ✅ More secure in production
+            process.env.NODE_ENV === "production" ? "same-origin" : false, // More secure in production
     })
 );
 
-// ✅ Added request body size limit to prevent abuse
+// Added request body size limit to prevent abuse
 app.use(express.json({ limit: "1mb" })); 
 app.use(express.urlencoded({ extended: true }));
 
@@ -62,7 +62,7 @@ if (process.env.NODE_ENV !== "production") app.use(morgan("dev"));
 
 
 
-app.use(logger); // ✅ logs to file and console
+app.use(logger); // logs to file and console
 
 /**
  * 
@@ -77,7 +77,7 @@ app.use(
     })
 );
 
-// ✅ Example of applying stricter rate limit to auth routes (can expand this later)
+// Example of applying stricter rate limit to auth routes (can expand this later)
 app.use(
     "/api/auth",
     rateLimiter({
@@ -103,7 +103,7 @@ app.use("/api", apiRoutes);
  * - Uses _dirname for absolute path. 
  */
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); 
-// ✅ Removed duplicate static route
+// Removed duplicate static route
 
 /**
  * Root Route
@@ -128,36 +128,9 @@ app.get("/favicon.ico", (req, res) => {
  * 
  * - Handles validation errors, 404 errors, and general errors. 
  */
-app.use(errorLogger); // ✅ logs uncaught errors to error.log
+app.use(errorLogger); // logs uncaught errors to error.log
 app.use(validationErrorHandler);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
 module.exports = app;
-
-/**
- * 🔍 Potential Issues & Optimizations
-1️⃣ CORS Origin Handling
-
-✅ Fix: Use allowedOrigins from a config file instead of hardcoding the environment variable.
-2️⃣ Helmet Security Configuration
-
-✅ Fix: Restrict this setting based on the environment to be more secure in production.
-3️⃣ Rate Limiting Scope
-
-✅ Fix: Apply different rate limits for login endpoints vs. general API usage.
-4️⃣ Duplicate Static File Serving
-
-✅ Fix: Remove the second static file serving line unless it serves a different purpose.
-5️⃣ Missing Request Size Limit
-
-✅ Fix: Set a reasonable limit (express.json({ limit: "1mb" })) to prevent abuse.
-
-
-
-
-✅ Why this order matters:
-logger: Needs to come before your routes to measure requests accurately.
-
-errorLogger: Needs to come after your routes so it only captures uncaught errors in the chain.
- */

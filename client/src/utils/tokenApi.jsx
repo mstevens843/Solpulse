@@ -26,7 +26,7 @@ let lastFetched = 0; // Throttling timestamp
  * - Retrieves token mint addresses and balances.
  */const fetchWalletTokens = async (walletPublicKey, setWalletTokens, walletTokensFetched, setWalletTokensFetched) => {
     const now = Date.now();
-    if (now - lastFetched < 3000) {  // ✅ Throttle requests to every 3 seconds
+    if (now - lastFetched < 3000) {  // Throttle requests to every 3 seconds
         console.log("⚠️ Fetching too frequently. Skipping this request.");
         return;
     }
@@ -37,7 +37,7 @@ let lastFetched = 0; // Throttling timestamp
         return;
     }
 
-    if (walletTokensFetched) {  // ✅ Prevent duplicate fetches
+    if (walletTokensFetched) {  // Prevent duplicate fetches
         console.log("⚠️ Wallet tokens already fetched.");
         return;
     }

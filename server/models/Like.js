@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
   
       Like.belongsTo(models.Notification, {
         foreignKey: 'notificationId',
-        as: 'notification', // ✅ Notification associated with this like
+        as: 'notification', //  Notification associated with this like
         onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       });
@@ -99,15 +99,3 @@ module.exports = (sequelize, DataTypes) => {
 
 
 
-  /**
-   * ✅ Key Improvements & Fixes
-1️⃣ Performance Enhancements
-✅ Added unique constraint on userId + postId → Prevents duplicate likes.
-✅ Added indexes on userId, postId, and createdAt → Faster lookups and filtering.
-2️⃣ Data Integrity & Security
-✅ Added onDelete: CASCADE → Ensures likes are deleted when a user or post is deleted.
-✅ Prevent duplicate likes using a beforeCreate hook.
-3️⃣ Maintainability & Readability
-✅ Renamed association aliases (likedByUser, likedPost) for better clarity.
-✅ Added a toggleLike instance method → Simplifies like/unlike logic.
-   */

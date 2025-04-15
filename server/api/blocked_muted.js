@@ -16,7 +16,7 @@ router.post('/block/:userId', authMiddleware, async (req, res) => {
 
     await BlockedUser.findOrCreate({ where: { blockerId, blockedId } });
 
-    // ✅ Remove follow relationships (both directions)
+    // Remove follow relationships (both directions)
     await Follower.destroy({
       where: {
         [Op.or]: [

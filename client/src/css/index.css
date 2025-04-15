@@ -20,7 +20,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 
-  /* ✅ Default to "light" theme, then use dark: variant for dark mode */
+  /* Default to "light" theme, then use dark: variant for dark mode */
   @apply transition-colors duration-300 bg-solana-light text-black dark:bg-solana-dark dark:text-solana-light;
 }
 

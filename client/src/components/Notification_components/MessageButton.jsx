@@ -271,22 +271,3 @@ MessageButton.propTypes = {
 };
 
 export default MessageButton;
-
-
-/**
- * 🔹 **Potential Improvements:**
- * 1. **WebSocket Integration**: - SKIPPED
- *    - Use WebSockets for real-time messaging instead of relying solely on API requests.
- *
- * 2. **Enhanced Error Handling**:
- *    - Display backend validation errors more clearly.
- *    - Retry failed message sends instead of showing an error.
- *
- * 3. **Improve Crypto Tip Feature**:
- *    - Allow users to send tips with Solana transactions.
- *    - Include a dropdown for selecting different cryptocurrencies.
- *
- * 4. **UI/UX Enhancements**: - SKIPPED
- *    - Add a character counter for message input.
- *    - Animate modal opening and closing for a smoother experience.
- */

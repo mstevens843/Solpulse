@@ -9,7 +9,7 @@ const checkCommentOwnership = require('./checkCommentOwnership')
 
 module.exports = {
   logger,
-  errorLogger, // ✅ now properly exported
+  errorLogger,
   errorHandler,
   notFoundHandler,
   validationErrorHandler,

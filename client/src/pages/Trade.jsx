@@ -151,7 +151,7 @@ function Trade() {
             return result; // This should be the signature
         } catch (error) {
             if (retries > 0) {
-                console.warn(`Retrying... (${retries} attempts left)`); // ✅ Retry logic improves swap success rate during congestion
+                console.warn(`Retrying... (${retries} attempts left)`); // Retry logic improves swap success rate during congestion
                 await new Promise(res => setTimeout(res, delay));
                 return fetchWithBackoff(fn, args, retries - 1, delay * 2); // Exponential backoff
                 
@@ -175,7 +175,7 @@ function Trade() {
 
 
     /**
-     * Fetches a swap quote using Jupiter's API.
+     * 1. Fetches a swap quote using Jupiter's API.
      */
     const fetchSwapQuote = debounce(async () => {
         if (!wallet.publicKey || !selectedCoin || !buyingCoin || !sellAmount) {
@@ -234,7 +234,7 @@ function Trade() {
 
 
     
-    // 2️ Fetch Swap Instructions from Jupiter
+    // 2. Fetch Swap Instructions from Jupiter
     const fetchSwapInstructions = async () => {
         if (!wallet.publicKey || !quote) {
             console.warn("Missing required parameters for swap instructions.");
@@ -311,7 +311,7 @@ function Trade() {
 
 
 
-// 3️ Execute Swap Transaction
+// 3. Execute Swap Transaction
 const executeSwap = async () => {
     if (!wallet.publicKey || !quote) {
         alert("Invalid swap details. Please check your selections.");
@@ -581,7 +581,7 @@ export default Trade;
 
 
 /**
- * 🔹 Potential Improvements:
+ * Potential Improvements:
  * - Implement error-handling for failed swaps with retry logic.
  * - Add real-time price updates for token pairs.
  * - Improve UI/UX with better loading indicators and success confirmations.

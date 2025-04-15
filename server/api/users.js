@@ -256,7 +256,7 @@ router.get('/:id', authMiddleware, checkBlockStatus, async (req, res) => {
     const followersCount = profileUser.followers.length;
     const followingCount = await Follower.count({ where: { followerId: id } });
 
-    // 🔒 Handle Private Profile
+    // Handle Private Profile
     if (profileUser.privacy === 'private' && !isOwner && !isFollower) {
       return res.status(200).json({
         user: {
@@ -274,7 +274,7 @@ router.get('/:id', authMiddleware, checkBlockStatus, async (req, res) => {
       });
     }
     
-     // 🚫 Blocked user logic: Allow minimal profile, hide posts/followers
+     // Blocked user logic: Allow minimal profile, hide posts/followers
      if (req.isBlockedUser) {
       return res.status(200).json({
         user: {
@@ -289,7 +289,7 @@ router.get('/:id', authMiddleware, checkBlockStatus, async (req, res) => {
         followingCount: 0,
         posts: [],
         postsHidden: true,
-        blocked: true // ✅ optional flag for frontend logic
+        blocked: true // optional flag for frontend logic
       });
     }
     
@@ -534,7 +534,7 @@ router.post(
         return res.status(400).json({ message: 'You cannot follow yourself.' });
       }
 
-      // 🔐 Check privacy of target user
+      // Check privacy of target user
       const targetUser = await User.findByPk(followingId);
       if (!targetUser) {
         return res.status(404).json({ message: 'User not found.' });
@@ -544,13 +544,13 @@ router.post(
         return res.status(403).json({ message: 'This user is private. Please send a follow request.' });
       }
 
-      // ❌ Prevent duplicates
+      // Prevent duplicates
       const existing = await Follower.findOne({ where: { followerId, followingId } });
       if (existing) {
         return res.status(400).json({ message: 'You are already following this user.' });
       }
 
-      // 🔔 Create notification
+      // Create notification
       const notification = await Notification.create({
         userId: followingId,
         actorId: followerId,
@@ -559,7 +559,7 @@ router.post(
         isRead: false,
       });
 
-      // ✅ Create follower record with notification
+      // Create follower record with notification
       await Follower.create({
         followerId,
         followingId,
@@ -568,7 +568,7 @@ router.post(
 
       res.status(201).json({ message: 'User followed successfully.' });
     } catch (error) {
-      console.error('❌ Error following user:', error);
+      console.error('Error following user:', error);
       res.status(500).json({ message: 'An error occurred while following the user.' });
     }
   }
@@ -701,6 +701,35 @@ router.delete('/remove-profile-picture', authMiddleware, async (req, res) => {
   }
 });
 
+
+
+
+/**
+ * @route   DELETE /api/users/delete
+ * @desc    Delete authenticated user's account
+ * @access  Private
+ */
+router.delete('/delete', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Delete the user account
+    await user.destroy();
+
+    // Optional: You could also delete associated data here (e.g. posts, followers, messages)
+
+    res.status(200).json({ message: "Account deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting user account:", error);
+    res.status(500).json({ message: "Failed to delete account." });
+  }
+});
+
+
 // router.delete('/:id', authMiddleware, checkOwnership(Post), async (req, res) => {
 //     try {
 //       const post = await Post.findByPk(req.params.id);
@@ -716,12 +745,3 @@ router.delete('/remove-profile-picture', authMiddleware, async (req, res) => {
 
 
 module.exports = router;
-
-
-/**
- * 📌 Summary of Optimizations
-✅ Reduce queries in GET /api/users/:id – Fetch everything in one call
-✅ Optimize follower notifications – Use aggregations instead of extra queries
-✅ Optimize follow/unfollow actions – Use single query with RETURNING and WebSockets - skipped
-✅ Use Cloudinary for profile pictures – Faster, global scalability - skipped 
- */

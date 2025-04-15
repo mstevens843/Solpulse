@@ -17,7 +17,7 @@ const checkBlockStatus = require('../middleware/checkBlockStatus');
 const { Op } = require('sequelize');
 const multer = require('multer');
 const path = require('path');
-const { categorizePost } = require("../utils/categorizePost"); // ✅ now exists in backend
+const { categorizePost } = require("../utils/categorizePost"); //  now exists in backend
 const router = express.Router();
 
 // Multer configuration for media uploads
@@ -76,7 +76,7 @@ const formatPost = (post, currentUserId = null) => ({
   updatedAt: post.updatedAt || new Date(),
   category: post.category || 'General',
 
-  commentCount: post.comments?.length || 0  // ✅ ADDED: comment count as number
+  commentCount: post.comments?.length || 0  //  ADDED: comment count as number
 
 });
 
@@ -508,9 +508,9 @@ router.get('/likes', authMiddleware, async (req, res) => {
           as: 'notification',
           attributes: ['id', 'isRead'],
           where: {
-            isRead: false, // ✅ show only unread
+            isRead: false, // show only unread
           },
-          required: true, // ✅ exclude likes with no matching unread notif
+          required: true, // exclude likes with no matching unread notif
         }
       ],
       order: [['createdAt', 'DESC']],
@@ -527,14 +527,14 @@ router.get('/likes', authMiddleware, async (req, res) => {
       postOwner: like.likedPost?.user?.username || 'Unknown',
       content: like.likedPost?.content || '',
       likedBy: like.user?.username || 'Unknown',
-      profilePicture: like.user?.profilePicture || null, // ✅ include in response
+      profilePicture: like.user?.profilePicture || null, // include in response
       createdAt: like.createdAt,
-      isRead: like.notification?.isRead ?? false, // ✅ Pull actual status
+      isRead: like.notification?.isRead ?? false, // Pull actual status
     }));
 
     res.status(200).json({ likes: formatted });
   } catch (error) {
-    console.error('❌ Error fetching liked posts:', error);
+    console.error('Error fetching liked posts:', error);
     res.status(500).json({ message: 'Failed to fetch liked posts.' });
   }
 });
@@ -624,7 +624,7 @@ router.get('/:id/retweet-status', authMiddleware, async (req, res) => {
  * @desc    Get posts retweeted by the authenticated user
  * @access  Private
  */
-// ✅ Full route using Retweet model directly
+//  Full route using Retweet model directly
 // router.get('/:id', authMiddleware, checkBlockStatus, async (req, res) => {
 //   try {
 //     const currentUserId = req.user?.id;
@@ -667,7 +667,7 @@ router.get('/:id/retweet-status', authMiddleware, async (req, res) => {
 
 //     if (!post) return res.status(404).json({ message: 'Post not found.' });
 
-//     // 🔐 Privacy check: main post
+//     // Privacy check: main post
 //     const author = post.user;
 //     const isOwner = author?.id === currentUserId;
 //     const isFollower = author?.followers?.some(f => f.followerId === currentUserId);
@@ -677,7 +677,7 @@ router.get('/:id/retweet-status', authMiddleware, async (req, res) => {
 //       return res.status(403).json({ message: "This post is from a private account." });
 //     }
 
-//     // 🔐 Privacy check: original post (for reposts)
+//     // Privacy check: original post (for reposts)
 //     if (post.originalPost) {
 //       const originalAuthor = post.originalPost.user;
 //       const isOriginalOwner = originalAuthor?.id === currentUserId;
@@ -789,7 +789,7 @@ router.post('/:id/like', authMiddleware, checkBlockStatus, async (req, res) => {
     const post = await Post.findByPk(id);
     if (!post) return res.status(404).json({ message: 'Post not found.' });
 
-    // ✅ BLOCK PROTECTION — prevents liking posts if either party blocked the other
+    //  BLOCK PROTECTION — prevents liking posts if either party blocked the other
     const hasBlocked = await BlockedUser.findOne({
       where: {
         [Op.or]: [
@@ -806,7 +806,7 @@ router.post('/:id/like', authMiddleware, checkBlockStatus, async (req, res) => {
     const existingLike = await Like.findOne({ where: { postId: id, userId } });
 
     if (existingLike) {
-      // 👎 Unlike
+      //  Unlike
       await existingLike.destroy();
       post.likes = Math.max(0, post.likes - 1);
       await post.save();
@@ -822,7 +822,7 @@ router.post('/:id/like', authMiddleware, checkBlockStatus, async (req, res) => {
         message: 'Like removed',
       });
     } else {
-      // 👍 Like
+      //  Like
       let newNotification = null;
 
       if (post.userId !== userId) {
@@ -834,16 +834,16 @@ router.post('/:id/like', authMiddleware, checkBlockStatus, async (req, res) => {
           entityType: 'Post',
         });
 
-        console.log('✅ Notification created with ID:', newNotification.id);
+        console.log(' Notification created with ID:', newNotification.id);
       }
 
       const newLike = await Like.create({
         postId: id,
         userId,
-        notificationId: newNotification?.id || null, // ✅ Attach it if created
+        notificationId: newNotification?.id || null, //  Attach it if created
       });
 
-      console.log('✅ Like created with notification ID:', newLike.notificationId);
+      console.log(' Like created with notification ID:', newLike.notificationId);
 
       post.likes += 1;
       await post.save();
@@ -888,7 +888,7 @@ router.post('/:id/retweet', authMiddleware, checkBlockStatus, async (req, res) =
       return res.status(404).json({ message: "Post not found." });
     }
 
-    // ✅ Step 1.5: Block check — prevent retweet if either side blocked the other
+    // Step 1.5: Block check — prevent retweet if either side blocked the other
     const hasBlocked = await BlockedUser.findOne({
       where: {
         [Op.or]: [
@@ -922,7 +922,7 @@ router.post('/:id/retweet', authMiddleware, checkBlockStatus, async (req, res) =
         message: `${retweeterName} retweeted your post`,
       });
 
-      console.log("✅ Notification created:", newNotification.id);
+      console.log("Notification created:", newNotification.id);
     }
 
     // Step 4: Create the retweet post
@@ -966,7 +966,7 @@ router.post('/:id/retweet', authMiddleware, checkBlockStatus, async (req, res) =
       comments: 0,
     });
   } catch (error) {
-    console.error("❌ Error retweeting post:", error);
+    console.error("Error retweeting post:", error);
     res.status(500).json({ message: "An error occurred while retweeting the post." });
   }
 });
@@ -1156,10 +1156,3 @@ router.delete('/:id/retweet', authMiddleware, async (req, res) => {
 
 module.exports = router;
 
-
-/**
- * 🔍 Potential Issues & Optimizations
-✅ Optimize Retweet & Like Queries
-✅ Use WebSockets for Real-Time Likes & Retweets
-✅ Batch Fetch Likes & Retweets Instead of Individual Requests
- */

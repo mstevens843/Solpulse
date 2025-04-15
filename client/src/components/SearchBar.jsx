@@ -17,7 +17,7 @@ function SearchBar({ query, setQuery, filters = [] }) {
     const [errorMessage, setErrorMessage] = useState("");
     const [searchSuggestions, setSearchSuggestions] = useState([]);
     const [selectedFilter, setSelectedFilter] = useState(filters[0] || "all");
-    const [isTyping, setIsTyping] = useState(false); // Track if user is typing
+    const [isTyping, setIsTyping] = useState(false);
     const navigate = useNavigate();
 
     /**
@@ -146,10 +146,3 @@ function SearchBar({ query, setQuery, filters = [] }) {
 }
 
 export default SearchBar;
-
-/**
- * Potential Improvements:
- * - Implement caching to reduce duplicate API calls for the same query.
- * - Enhance filtering logic to support additional categories dynamically.
- * - Improve error handling by displaying a fallback message when API requests fail.
- */

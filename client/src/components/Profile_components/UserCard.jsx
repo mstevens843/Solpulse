@@ -43,7 +43,7 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
     const [viewingType, setViewingType] = useState(""); 
     const navigate = useNavigate();
     const defaultAvatar = "http://localhost:5001/uploads/default-avatar.png";
-    const [hasRequested, setHasRequested] = useState(false); // ✅ NEW
+    const [hasRequested, setHasRequested] = useState(false);
     const [showOptionsMenu, setShowOptionsMenu] = useState(false);
     const optionsRef = useRef(null);
     const [isMuted, setIsMuted] = useState(false);
@@ -161,7 +161,7 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
             reader.onloadend = () => {
                 setTempImage(reader.result);
                 setShowCropModal(true);
-                event.target.value = ""; // ✅ reset input so same file can trigger again
+                event.target.value = ""; 
             };
             reader.readAsDataURL(file);
         }
@@ -171,20 +171,19 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
         onProfilePictureChange(croppedFile);
         setShowCropModal(false);
         setTempImage(null);
-        setShowProfilePicModal(false); // ✅ Close the "choose from library" modal too
-
+        setShowProfilePicModal(false);
     };
 
     const handleProfilePictureError = (e) => {
         const failedSrc = e.target.src;
         const defaultSrc = defaultAvatar;
       
-        // ✅ Only trigger toast if it's a custom profile picture (not the default one)
+        // Only trigger toast if it's a custom profile picture (not the default one)
         if (!failedSrc.includes("default-avatar.png")) {
           toast.warn("Could not load profile picture, using default.");
         }
       
-        // ✅ Set fallback image
+        // Set fallback image
         e.target.src = defaultSrc;
       };
       
@@ -215,7 +214,7 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
         navigate(`/profile/${user.id}`);
     };
 
-    // ✅ Build full profile picture URL
+    // Build full profile picture URL
     const fullProfilePicUrl = useMemo(() => {
         return user?.profilePicture
           ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${user.profilePicture}`
@@ -360,7 +359,7 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
                         </>
                     )}
                 </>
-            )} {/* ✅ This closes user.id === currentUser?.id block */}
+            )} {/*This closes user.id === currentUser?.id block */}
 
             </div>
             
@@ -405,8 +404,8 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
                         className="blocked-btn"
                         onClick={(e) => {
                             e.stopPropagation();
-                            setShowBlockedDropdown(!showBlockedDropdown); // ✅ toggles its own dropdown
-                            setShowOptionsMenu(false); // ✅ ensures the 3-dot one closes
+                            setShowBlockedDropdown(!showBlockedDropdown); // toggles its own dropdown
+                            setShowOptionsMenu(false); // ensures the 3-dot one closes
                         }}
                     >
                         Blocked
@@ -489,7 +488,7 @@ function UserCard({ user, followersCount, followingCount, isInModal, onProfilePi
                         alert(message);
                         toggleTipModal();
                         }}
-                        toggleTipModal={toggleTipModal} // ✅ Passed in here
+                        toggleTipModal={toggleTipModal}
                     />
                     </div>
                 </div>
@@ -526,16 +525,7 @@ UserCard.propTypes = {
     currentUser: PropTypes.object.isRequired,
     onProfilePictureChange: PropTypes.func.isRequired,
     isInModal: PropTypes.bool,
-    canViewConnections: PropTypes.bool // ✅ Add this
+    canViewConnections: PropTypes.bool
 };
 
 export default React.memo(UserCard);
-
-
-/**
- * Potential Improvements:
- * - Improve error handling when fetching profile pictures.
- * - Implement lazy loading for profile images to improve performance.
- * - Add animation effects for smoother modal transitions.
- * - Allow users to remove profile pictures and reset to default.
- */

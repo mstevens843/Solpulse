@@ -68,14 +68,14 @@ router.get('/detailed', authMiddleware, async (req, res) => {
           as: 'notification',
           attributes: ['id', 'isRead'],
           where: {
-            isRead: false // ✅ Only fetch unread message notifications
+            isRead: false //  Only fetch unread message notifications
           },
-          required: true // ✅ Exclude messages without notifications
+          required: true //  Exclude messages without notifications
         },
         {
           model: User,
           as: 'sender',
-          attributes: ['id', 'username', 'profilePicture'] // ✅ include it
+          attributes: ['id', 'username', 'profilePicture'] //  include it
         }
       ],
       order: [['createdAt', 'DESC']],
@@ -96,7 +96,7 @@ router.get('/detailed', authMiddleware, async (req, res) => {
       messages: rows.map((msg) => ({
         id: msg.id,
         sender: msg.sender?.username || `User ${msg.sender?.id || 'unknown'}`,
-        profilePicture: msg.sender?.profilePicture || null, // ✅ Added this
+        profilePicture: msg.sender?.profilePicture || null,
         content: msg.content,
         cryptoTip: msg.cryptoTip !== undefined ? msg.cryptoTip : 0.0,
         read: msg.read,
@@ -110,7 +110,7 @@ router.get('/detailed', authMiddleware, async (req, res) => {
       currentPage: parseInt(page)
     });
   } catch (err) {
-    console.error('❌ Error fetching unread message notifications:', err);
+    console.error(' Error fetching unread message notifications:', err);
     res.status(500).json({ error: 'Failed to fetch messages.' });
   }
 });
@@ -198,7 +198,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
 
 
-// 📤 GET /api/messages/sent
+//  GET /api/messages/sent
 router.get('/sent', authMiddleware, async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
@@ -245,7 +245,7 @@ router.get('/sent', authMiddleware, async (req, res) => {
  * PATCH /api/messages/:id/read
  * Mark a message as read
  * changes -
- * ✅ Key Changes
+ *  Key Changes
  * paranoid: false allows fetching soft-deleted messages.
  *  Added a deletedAt check to return a 410 Gone response for deleted messages.
  */
@@ -290,11 +290,11 @@ router.post(
     check('recipient', 'Recipient username is required').not().isEmpty(),
     check('message', 'Message content is required').not().isEmpty(),
     async (req, res, next) => {
-      // 🔁 Dynamically fetch target user ID from username before running checkBlockStatus
+      //  Dynamically fetch target user ID from username before running checkBlockStatus
       const recipientUser = await User.findOne({ where: { username: req.body.recipient } });
       if (!recipientUser) return res.status(404).json({ error: 'Recipient not found.' });
 
-      req.params.userId = recipientUser.id; // 🔌 Inject userId for middleware
+      req.params.userId = recipientUser.id; //  Inject userId for middleware
       return checkBlockStatus(req, res, next);
     },
   ],
@@ -329,7 +329,7 @@ router.post(
         content: message.trim(),
         cryptoTip: cryptoTip !== undefined && cryptoTip !== null ? parseFloat(cryptoTip) : 0.0,
         read: false,
-        notificationId: notification.id, // ✅ Attach notification ID
+        notificationId: notification.id, //  Attach notification ID
         attachmentPath: req.file ? `/uploads/messages/${req.file.filename}` : null,
       });
 
@@ -347,25 +347,6 @@ router.post(
     }
   }
 );
+
+
 module.exports = router;
-
-/**
- * 🔍 Potential Issues & Optimizations
-1️⃣ No WebSocket Notification for New Messages - skipped
-
-Issue: Messages are stored but don’t trigger real-time updates. - skipped. 
-✅ Fix: Integrate WebSocket event broadcasting:
-io.emit('new-message', { sender: req.user.username, content: message });
-2️⃣ No Message Encryption for Privacy
-
-Issue: Messages are stored in plaintext. - skipped. 
-✅ Fix: Implement AES encryption using crypto-js or similar.
-3️⃣ No Soft Deletion for Messages
-
-Issue: Messages are permanently deleted when marked as read. 
- */
-
-
-
-// Update the POST /api/messages route to use Multer middleware and extract fields from req.body and the uploaded file from req.file.
-// ✅ Updated POST /api/messages Route (with Multer support)

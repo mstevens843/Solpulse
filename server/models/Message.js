@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             },
             cryptoTip: {
-                type: DataTypes.DECIMAL(10, 6), // ✅ Using DECIMAL to avoid floating point rounding issues
+                type: DataTypes.DECIMAL(10, 6), //  Using DECIMAL to avoid floating point rounding issues
                 allowNull: false,
                 defaultValue: 0.0,
                 validate: {
@@ -44,15 +44,15 @@ module.exports = (sequelize, DataTypes) => {
             read: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
-                defaultValue: false, // ✅ Messages are unread by default
+                defaultValue: false, //  Messages are unread by default
             },
             readAt: {
                 type: DataTypes.DATE,
-                allowNull: true, // ✅ Optional timestamp set when message is read
+                allowNull: true, //  Optional timestamp set when message is read
             },
             attachmentPath: {
                 type: DataTypes.STRING,
-                allowNull: true, // ✅ #3 Allow optional file attachment for messages
+                allowNull: true, // Allow optional file attachment for messages
                 validate: {
                     len: {
                         args: [0, 255],
@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
                     },
                 },
             },
-              // ✅ Add the new field here
+
             notificationId: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
@@ -72,12 +72,12 @@ module.exports = (sequelize, DataTypes) => {
             },
             },
         {
-            timestamps: true, // ✅ Automatically includes createdAt and updatedAt
-            paranoid: true,   // ✅ Enables soft deletes
+            timestamps: true, 
+            paranoid: true,   
             indexes: [
-                { fields: ['senderId'] },     // ✅ Optimize sender queries
-                { fields: ['recipientId'] },  // ✅ Optimize recipient inbox lookups
-                { fields: ['read'] },         // ✅ Optimize unread message queries
+                { fields: ['senderId'] },   
+                { fields: ['recipientId'] }, 
+                { fields: ['read'] },        
             ],
         }
     );
@@ -95,7 +95,6 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'recipientId',
             onDelete: 'CASCADE',
         });
-         // ✅ Add this line
         Message.belongsTo(models.Notification, {
             as: 'notification',
             foreignKey: 'notificationId',
@@ -103,14 +102,12 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
-    // ✅ Hook: Prevent users from messaging themselves
     Message.beforeCreate(async (message) => {
         if (message.senderId === message.recipientId) {
             throw new Error('Users cannot send messages to themselves.');
         }
     });
 
-    // ✅ Hook: Auto-set `readAt` when message is marked as read
     Message.beforeUpdate(async (message) => {
         if (message.read && !message.readAt) {
             message.readAt = new Date();
@@ -120,21 +117,3 @@ module.exports = (sequelize, DataTypes) => {
     return Message;
 };
 
-/**
- * Potential Improvements & Optimizations for the Message Model
-✅ Add Indexing for Faster Querying
-
-- senderId, recipientId, and read are indexed to optimize message retrieval.
-
-✅ Prevent Users from Messaging Themselves
-
-- senderId !== recipientId enforced via a beforeCreate hook.
-
-✅ Set readAt Automatically When Message is Read
-
-- Hook auto-sets timestamp on update.
-
-✅ Soft Deletes Enabled
-
-- paranoid: true allows message recovery instead of permanent deletion.
- */

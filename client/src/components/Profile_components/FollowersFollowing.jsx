@@ -11,7 +11,7 @@ import UserCard from "@/components/Profile_components/UserCard";
 import UserListItem from "@/components/Profile_components/UserListItem";
 import "@/css/components/Profile_components/FollowersFollowing.css"; 
 
-const cache = {}; // ✅ Simple in-memory cache
+const cache = {}; // Simple in-memory cache
 
 function FollowersFollowing({ userId, type, onClose, currentUserId }) {
   if (!onClose) {
@@ -21,8 +21,8 @@ function FollowersFollowing({ userId, type, onClose, currentUserId }) {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [retryTrigger, setRetryTrigger] = useState(0); // ✅ To refetch on retry
-  const [activeTab, setActiveTab] = useState(type); // 'followers' or 'following'
+  const [retryTrigger, setRetryTrigger] = useState(0);
+  const [activeTab, setActiveTab] = useState(type); 
   const [mutedUserIds, setMutedUserIds] = useState([]);
   const [blockedUserIds, setBlockedUserIds] = useState([]);
 
@@ -30,8 +30,8 @@ function FollowersFollowing({ userId, type, onClose, currentUserId }) {
 
   /**
    * Fetches followers or following based on type prop.
-   * ✅ Uses cache if available.
-   * ✅ Handles specific error messages.
+   * Uses cache if available.
+   * Handles specific error messages.
    */
   useEffect(() => {
     const fetchMutedAndBlocked = async () => {
@@ -128,12 +128,12 @@ function FollowersFollowing({ userId, type, onClose, currentUserId }) {
       ) : (
         <div className="user-list">
           {list
-            .filter((user) => !blockedUserIds.includes(user.id)) // 🔒 Hide blocked users
+            .filter((user) => !blockedUserIds.includes(user.id)) // Hide blocked users
             .map((user) => (
               <UserListItem
                 key={user.id}
                 user={user}
-                isMuted={mutedUserIds.includes(user.id)} // 🔇 Flag muted users
+                isMuted={mutedUserIds.includes(user.id)} // Flag muted users
                 currentUserId={currentUserId}
                 onClose={onClose}
               />
@@ -145,13 +145,3 @@ function FollowersFollowing({ userId, type, onClose, currentUserId }) {
 }
 
 export default FollowersFollowing;
-
-
-
-/**
- * Potential Improvements:
- * - Improve error messages by differentiating between network errors and empty lists.
- * - Implement a retry mechanism in case of network failures.
- * - Add a loading skeleton to improve UX while fetching data. 
- * - Cache the followers/following list to avoid redundant API calls.
- */

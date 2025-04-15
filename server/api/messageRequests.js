@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/auth');
 const { MessageRequest, Notification, User, Message } = require('../models'); 
-// ^^^ Make sure you have a "Message" model or rename to match your actual model.
 
-// 🔍 GET /api/message-requests/:recipientId/has-requested
+//  GET /api/message-requests/:recipientId/has-requested
 router.get('/:recipientId/has-requested', authMiddleware, async (req, res) => {
   const senderId = req.user.id;
   const { recipientId } = req.params;
@@ -21,7 +20,7 @@ router.get('/:recipientId/has-requested', authMiddleware, async (req, res) => {
   }
 });
 
-// 📥 GET /api/message-requests/incoming — Get all requests sent to you
+//  GET /api/message-requests/incoming — Get all requests sent to you
 router.get('/incoming', authMiddleware, async (req, res) => {
   try {
     const requests = await MessageRequest.findAll({
@@ -43,7 +42,7 @@ router.get('/incoming', authMiddleware, async (req, res) => {
   }
 });
 
-// 📩 POST /api/message-requests/:recipientId — Send request
+//  POST /api/message-requests/:recipientId — Send request
 router.post('/:recipientId', authMiddleware, async (req, res) => {
   const senderId = req.user.id;
   const { recipientId } = req.params;
@@ -80,7 +79,7 @@ router.post('/:recipientId', authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ PUT /api/message-requests/:id/accept — Accept request
+//  PUT /api/message-requests/:id/accept — Accept request
 router.put('/:id/accept', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user.id;
@@ -124,7 +123,7 @@ router.put('/:id/accept', authMiddleware, async (req, res) => {
   }
 });
 
-// ❌ DELETE /api/message-requests/:recipientId/cancel — Sender cancels request
+//  DELETE /api/message-requests/:recipientId/cancel — Sender cancels request
 router.delete('/:recipientId/cancel', authMiddleware, async (req, res) => {
   const { recipientId } = req.params;
   const senderId = req.user.id;
@@ -146,7 +145,7 @@ router.delete('/:recipientId/cancel', authMiddleware, async (req, res) => {
   }
 });
 
-// ❌ DELETE /api/message-requests/:id/deny — Deny request
+//  DELETE /api/message-requests/:id/deny — Deny request
 router.delete('/:id/deny', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user.id;

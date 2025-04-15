@@ -27,7 +27,7 @@ function LikeButton({ postId, originalPostId, initialLikes = 0, currentUser, onL
   const [error, setError] = useState("");
   const actualPostId = originalPostId || postId;
 
-  const debounceRef = useRef(null); // ✅ debounce ref
+  const debounceRef = useRef(null); //  debounce ref
 
   const handleLikeToggle = async () => {
     if (loading || !currentUser?.id) {
@@ -35,13 +35,13 @@ function LikeButton({ postId, originalPostId, initialLikes = 0, currentUser, onL
       return;
     }
 
-    // ✅ Debounce rapid clicks
+    //  Debounce rapid clicks
     if (debounceRef.current) return;
     debounceRef.current = setTimeout(() => {
       debounceRef.current = null;
     }, 600);
 
-    // ✅ Optimistic UI update
+    // Optimistic UI update
     const previousLikes = likes;
     const previousHasLiked = hasLiked;
     const optimisticLike = !hasLiked;
@@ -77,7 +77,7 @@ function LikeButton({ postId, originalPostId, initialLikes = 0, currentUser, onL
       console.error("Error liking/unliking post:", err);
       setError("Failed to update like status. Please try again.");
 
-      // ❌ Rollback optimistic UI
+      // Rollback optimistic UI
       setLikes(previousLikes);
       setHasLiked(previousHasLiked);
     } finally {
@@ -97,12 +97,12 @@ function LikeButton({ postId, originalPostId, initialLikes = 0, currentUser, onL
         {loading ? "..." : hasLiked ? `❤️ ${likes}` : `🤍 ${likes}`}
       </button>
 
-      {/* ✅ Screen reader live update */}
+      {/* Screen reader live update */}
       <span className="visually-hidden" aria-live="polite">
         {hasLiked ? "Post liked." : "Post unliked."}
       </span>
 
-      {/* ✅ Friendly error with retry */}
+      {/*  Friendly error with retry */}
       {error && (
         <div className="like-error" role="alert" aria-live="assertive">
           <p>{error}</p>
@@ -127,19 +127,3 @@ LikeButton.propTypes = {
 };
 
 export default LikeButton;
-
-
-/**
- * Potential Improvements:
- * 1. **Optimize Performance:** - SKIPPED
- *    - Instead of calling `api.post()` every time, debounce the function to reduce network requests.
- *    - Implement optimistic UI updates (assume success, then rollback on error).
- *
- * 2. **Improve Error Handling:**
- *    - Display user-friendly error messages instead of setting raw text in `setError`.
- *    - Implement retry logic in case of temporary server issues.
- *
- * 3. **Enhance Accessibility:**
- *    - Use visually distinct styles for liked/unliked states.
- *    - Add aria-live announcements for screen readers.
- */

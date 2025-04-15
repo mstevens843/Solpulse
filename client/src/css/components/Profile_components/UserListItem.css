@@ -4,13 +4,13 @@
 .user-list-item {
     display: flex;
     align-items: center;
-    width: 100%; /* ✅ Stretch full width */
-    min-height: 75px; /* ✅ Ensure height is adequate */
+    width: 100%; /* Stretch full width */
+    min-height: 75px; /* Ensure height is adequate */
     padding: 0.75rem 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
-    box-sizing: border-box; /* ✅ Ensure padding doesn't overflow width */
+    box-sizing: border-box; /* Ensure padding doesn't overflow width */
   }
   
   .user-list-item:hover {
@@ -33,7 +33,7 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* ✅ Center vertically */
+    justify-content: center; /* Center vertically */
     overflow: hidden;
   }
   

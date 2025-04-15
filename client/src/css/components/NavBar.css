@@ -9,8 +9,8 @@
     align-items: center;
     height: var(--navbar-height);
     padding: 1rem 2rem;
-    background-color: var(--solana-light); /* ✅ updated */
-    color: black;                          /* ✅ updated */
+    background-color: var(--solana-light);
+    color: black;
     border-bottom: 2px solid #00ffcc;
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
     position: fixed;
@@ -21,7 +21,7 @@
     transition: all 0.3s ease-in-out;
   }
   
-  /* ✅ Dark mode override */
+  /* Dark mode override */
   .dark .navbar {
     background-color: var(--solana-dark);
     color: var(--solana-text-light);
@@ -132,7 +132,7 @@ button.logout-button:hover {
     transform: translateY(-2px); 
 }
 
-/* === RESPONSIVE FIXES (Make Navbar Shrink But Stay in Place) === */
+/* RESPONSIVE FIXES (Make Navbar Shrink But Stay in Place) */
 @media (max-width: 1024px) {
     .navbar {
         padding: 0.8rem 1.5rem;
@@ -227,7 +227,6 @@ button.logout-button:hover {
     color: #19fb9b;
   }
 
-  /* Theme Toggle Button */
 /* Theme Toggle Button inside NavBar */
 .theme-nav-toggle {
     bottom: 1rem;

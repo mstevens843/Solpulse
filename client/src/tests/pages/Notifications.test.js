@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import Notifications from '../../pages/Notifications';
+import Notifications from '../../pages/Archive/Notifications';
 import axios from 'axios';
 
 // Mock axios

@@ -16,10 +16,10 @@
 
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Picker } from "emoji-mart"; // ✅ CORRECT
-import data from "@emoji-mart/data";        // ✅ required emoji data
+import { Picker } from "emoji-mart"; 
+import data from "@emoji-mart/data";       
 import { api } from "@/api/apiConfig";
-import { toast } from "react-toastify"; // ✅ Make sure this is imported at the top
+import { toast } from "react-toastify"; 
 import "@/css/components/Post_components/Actions/CommentSection.css";
 
 
@@ -29,10 +29,10 @@ function CommentSection({ postId, originalPostId, onNewComment, setPosts, curren
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [showCommentOverlay, setShowCommentOverlay] = useState(false);
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false); // ✅ emoji toggle
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
 
 
-    const MAX_COMMENT_LENGTH = 280; // ✅ Suggestion 2
+    const MAX_COMMENT_LENGTH = 280; 
 
 
 
@@ -204,23 +204,3 @@ CommentSection.propTypes = {
 
 export default CommentSection;
 
-/**
- * Potential Improvements:
- * - Implement a real-time update for comments instead of requiring a refresh.
- * - Add a character counter to prevent excessively long comments.
- * - Improve error handling by displaying error details when a comment fails to post.
- */
-
-/**
- * ✅ Implemented Suggestion 2: Add Character Counter
-Displays a live character count below the text area.
-
-Caps input at 280 characters (feel free to adjust).
-
-✅ Implemented Suggestion 3: Improved Error Handling
-Shows specific error message from server response if available.
-
-Adds fallback for unknown errors.
-
-
- */

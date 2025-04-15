@@ -22,9 +22,9 @@ const TokenModal = ({ isOpen, onClose, tokens, handleCoinSelect, type }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [sortedTokens, setSortedTokens] = useState([]);
     const [searchedTokens, setSearchedTokens] = useState({});
-    const [selectedMint, setSelectedMint] = useState(null); // ✅ Highlight selected token
-    const [loading, setLoading] = useState(false); // ✅ Loading state
-    const [error, setError] = useState(""); // ✅ Error message state
+    const [selectedMint, setSelectedMint] = useState(null); 
+    const [loading, setLoading] = useState(false); 
+    const [error, setError] = useState(""); 
 
     useEffect(() => {
         if (!tokens) return;
@@ -38,17 +38,17 @@ const TokenModal = ({ isOpen, onClose, tokens, handleCoinSelect, type }) => {
     const handleSearch = async (term) => {
         setSearchTerm(term);
         setError("");
-        setLoading(true); // ✅ Start loading
+        setLoading(true); // Start loading
 
         if (!term) {
             setSortedTokens(tokens);
-            setLoading(false); // ✅ End loading
+            setLoading(false); //  End loading
             return;
         }
 
         if (searchedTokens[term]) {
             setSortedTokens([searchedTokens[term]]);
-            setLoading(false); // ✅ End loading
+            setLoading(false); // End loading
             return;
         }
 
@@ -62,8 +62,8 @@ const TokenModal = ({ isOpen, onClose, tokens, handleCoinSelect, type }) => {
                     symbol: tokenData.symbol || term.slice(0, 6),
                     logoURI: tokenData.logoURI || null,
                     amount: 0,
-                    price: tokenData.price || null, // ✅ Expanded token data
-                    change24h: tokenData.change24h || null, // ✅ Price change
+                    price: tokenData.price || null, // Expanded token data
+                    change24h: tokenData.change24h || null, // Price change
                 };
 
                 setSearchedTokens((prev) => ({ ...prev, [term]: newToken }));
@@ -77,7 +77,7 @@ const TokenModal = ({ isOpen, onClose, tokens, handleCoinSelect, type }) => {
             setSortedTokens([]);
             setError("❌ Failed to fetch token info.");
         } finally {
-            setLoading(false); // ✅ End loading
+            setLoading(false); // End loading
         }
     };
 
@@ -94,8 +94,8 @@ const TokenModal = ({ isOpen, onClose, tokens, handleCoinSelect, type }) => {
                     onChange={(e) => handleSearch(e.target.value)}
                 />
 
-                {loading && <p className="token-loading">Searching...</p>} {/* ✅ Loading message */}
-                {error && <p className="token-error">{error}</p>} {/* ✅ Error display */}
+                {loading && <p className="token-loading">Searching...</p>} {/* Loading message */}
+                {error && <p className="token-error">{error}</p>} {/* Error display */}
 
                 <ul className="token-list">
                     {sortedTokens.length === 0 && !loading && !error ? (
@@ -104,7 +104,7 @@ const TokenModal = ({ isOpen, onClose, tokens, handleCoinSelect, type }) => {
                         sortedTokens.map((token) => (
                             <li
                                 key={token.mint}
-                                className={`token-item ${selectedMint === token.mint ? "selected-token" : ""}`} // ✅ Highlight selected
+                                className={`token-item ${selectedMint === token.mint ? "selected-token" : ""}`} // Highlight selected
                                 onClick={() => {
                                     handleCoinSelect(token, type);
                                     setSelectedMint(token.mint);
@@ -146,24 +146,3 @@ const TokenModal = ({ isOpen, onClose, tokens, handleCoinSelect, type }) => {
 };
 
 export default TokenModal;
-
-
-
-/**
- * 🔹 **Potential Improvements:**
- * 1. **Performance Enhancements**:
- *    - Implement a debounce function for search to reduce API calls.
- *    - Cache more searches to reduce redundant API requests.
- *
- * 2. **Expanded Token Data**:
- *    - Display token market prices and trends in the modal.
- *    - Include an option to filter tokens by category.
- *
- * 3. **User Experience Improvements**:
- *    - Highlight the selected token in the list.
- *    - Add a loading indicator while searching for tokens.
- *
- * 4. **Error Handling**:
- *    - Display an error message if the API request fails.
- *    - Improve user feedback for invalid token searches.
- */

@@ -8,20 +8,10 @@
  * - Exposing authentication state and user details via `AuthContext`.
  */
 
-
 import React, { createContext, useState, useEffect } from "react";
 import { api } from "@/api/apiConfig"; // Axios instance
 
 export const AuthContext = createContext();
-
-
-/**
- * AuthProvider Component
- *
- * - Manages user authentication state.
- * - Loads user details from localStorage or fetches them from the API.
- * - Handles storing and retrieving liked and retweeted posts efficiently.
- */
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -166,11 +156,3 @@ export const AuthProvider = ({ children }) => {
 import { useContext } from "react";
 
 export const useAuth = () => useContext(AuthContext);
-
-/**
- * Potential Improvements: - SKIP ALL FOR NOW
- * - **Token Expiry Handling:** Implement token refresh or auto-logout when token expires.
- * - **Centralized Error Handling:** Create a dedicated error handler to standardize error responses.
- * - **Performance Optimization:** Store user state in a global state manager (e.g., Redux or Zustand).
- * - **Lazy Loading User Data:** Fetch only when required instead of preloading on mount.
- */

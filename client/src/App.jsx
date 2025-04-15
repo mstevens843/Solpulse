@@ -18,9 +18,7 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adap
 import { useContext } from "react";
 import { AuthContext, AuthProvider } from "@/context/AuthContext";
 import socket from "./socket"; // WebSocket instance
-import ScrollToTop from "@/utils/ScrollToTop"; // ✅ Add this at the top
-
-
+import ScrollToTop from "@/utils/ScrollToTop";
 import NavBar from "@/components/NavBar";
 import LandingPage from "./pages/LandingPage";
 import Home from "@/pages/Home"
@@ -64,18 +62,18 @@ function App() {
 
     const { user } = useContext(AuthContext);
     useEffect(() => {
-        // ✅ 1. If user is logged in and has theme in DB, use it and persist to localStorage
+        // 1. If user is logged in and has theme in DB, use it and persist to localStorage
         if (user?.theme) {
           document.documentElement.classList.toggle("dark", user.theme === "dark");
           localStorage.setItem("theme", user.theme);
         } else {
-          // ✅ 2. Otherwise check localStorage or system preference
+          // 2. Otherwise check localStorage or system preference
           const storedTheme = localStorage.getItem("theme");
       
           if (storedTheme === "dark" || storedTheme === "light") {
             document.documentElement.classList.toggle("dark", storedTheme === "dark");
           } else {
-            // ✅ 3. First-time visitor? Respect system preference
+            // 3. First-time visitor? Respect system preference
             const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
             const systemTheme = prefersDark ? "dark" : "light";
             document.documentElement.classList.toggle("dark", prefersDark);
@@ -86,7 +84,7 @@ function App() {
 
     //   useEffect(() => {
     //     const saved = localStorage.getItem("theme");
-    //     const theme = saved || "dark"; // 🔥 default to dark
+    //     const theme = saved || "dark"; // default to dark
     //     document.documentElement.classList.remove("dark", "light");
     //     document.documentElement.classList.add(theme);
     //   }, []);
@@ -171,13 +169,3 @@ function AppContent() {
 }
 
 export default App;
-
-
-
-/**
- * Potential Improvements:
- * - **Lazy Loading:** Implement React's `Suspense` to dynamically load routes and reduce initial load time. - Skipped
- * - **Error Boundary Handling:** Wrap routes inside an error boundary to gracefully catch component errors. - Skipped
- * - **WebSocket Optimizations:** Implement a reconnect mechanism if the WebSocket disconnects unexpectedly. - Skipped
- * - **Enhanced Routing Logic:** Store `hideNavbarOnPaths` in a config file for better maintainability. - Skipped 
- */

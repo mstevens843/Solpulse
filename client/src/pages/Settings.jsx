@@ -8,7 +8,6 @@
  * - Handling account deletion with a confirmation modal.
  */
 
-
 import React, { useState, useEffect } from "react";
 import { api } from "@/api/apiConfig";
 import Loader from "@/components/Loader";
@@ -51,13 +50,13 @@ function Settings() {
         setWalletAddress(cached.walletAddress || "");
       }
   
-      // ✅ Apply theme from localStorage first (for instant UI response)
+      // Apply theme from localStorage first (for instant UI response)
       if (localTheme) {
         setTheme(localTheme);
         document.documentElement.classList.toggle("dark", localTheme === "dark");
       }
   
-      // ✅ Then fetch settings from backend (may override local theme)
+      // Then fetch settings from backend (may override local theme)
       await fetchSettings();
     };
   
@@ -79,9 +78,9 @@ function Settings() {
       setWalletAddress(walletAddress || "");
       setNotifications(notifications || "enabled");
       setTheme(theme || "dark");
-      setThemeLoaded(true); // ✅ after theme is loaded
+      setThemeLoaded(true);
   
-      // ✅ Save to localStorage
+      // Save to localStorage
       localStorage.setItem(
         "userSettings",
         JSON.stringify({ walletAddress, privacy, notifications, theme })
@@ -149,7 +148,7 @@ function Settings() {
   const newTheme = e.target.checked ? "dark" : "light";
   setTheme(newTheme); // Update UI immediately
 
-  // ✅ Apply to <html> tag (instant theme change)
+  // Apply to <html> tag (instant theme change)
   document.documentElement.classList.toggle("dark", newTheme === "dark");
 
   try {
@@ -171,7 +170,7 @@ function Settings() {
         theme: newTheme,
       })
     );
-    localStorage.setItem("theme", newTheme); // ✅ Ensure sync
+    localStorage.setItem("theme", newTheme); // Ensure sync
     toast.success(`✅ Switched to ${newTheme} mode`, {
       autoClose: 3000,
       transition: Slide,
@@ -243,9 +242,30 @@ const handlePrivacyToggle = async (e) => {
    * - Sends a request to delete the account.
    * - Logs the user out after deletion.
    */
-  const confirmDeleteAccount = () => {
-    console.log("Account deleted.");
-    setShowConfirmationModal(false);
+  const confirmDeleteAccount = async () => {
+    try {
+      setLoading(true);
+      const res = await api.delete('/users/delete');
+  
+      toast.success("✅ Account deleted successfully!", {
+        autoClose: 2500,
+        transition: Slide,
+      });
+  
+      setTimeout(() => {
+        localStorage.clear(); // Clear saved settings & tokens
+        window.location.href = "/"; // Redirect to homepage (or login)
+      }, 2500);
+    } catch (err) {
+      console.error("Failed to delete account", err);
+      toast.error("❌ Failed to delete account", {
+        autoClose: 3000,
+        transition: Slide,
+      });
+    } finally {
+      setShowConfirmationModal(false);
+      setLoading(false);
+    }
   };
 
 
@@ -293,20 +313,21 @@ const handlePrivacyToggle = async (e) => {
             </div>
 
             <div className="form-group flex items-center gap-3">
-  <FaUser className="input-icon" />
-  <label htmlFor="privacyToggle" className="flex items-center gap-2 cursor-pointer">
-    <span>Private Account</span>
-    <input
-      id="privacyToggle"
-      type="checkbox"
-      checked={privacy === "private"}
-      onChange={handlePrivacyToggle}
-      className="toggle-switch-privacy"
-      disabled={loading}
-    />
-  </label>
-</div>
-            <div className="form-group">
+              <FaUser className="input-icon" />
+              <label htmlFor="privacyToggle" className="flex items-center gap-2 cursor-pointer">
+                <span>Private Account</span>
+                <input
+                  id="privacyToggle"
+                  type="checkbox"
+                  checked={privacy === "private"}
+                  onChange={handlePrivacyToggle}
+                  className="toggle-switch-privacy"
+                  disabled={loading}
+                />
+              </label>
+            </div>
+            
+              <div className="form-group">
               <label htmlFor="notifications">Notifications:</label>
               <FaBell className="input-icon" />
               <select
@@ -405,11 +426,3 @@ const handlePrivacyToggle = async (e) => {
 }
 
 export default Settings;
-
-/**
- * 🔹 Potential Improvements:
- * - Implement multi-factor authentication (MFA) for added security. - SKIPPED
- * - Allow users to change their email with email verification. - SKIPPED
- * - Store user preferences in the database instead of localStorage for improved security.
- * - Implement session-based authentication to prevent token exposure in localStorage. - WILL IMPLEMENT LATER
- */

@@ -26,7 +26,7 @@ function Messages() {
   const [recipient, setRecipient] = useState("");
   const [suggestedRecipients, setSuggestedRecipients] = useState([]);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
-  const [attachment, setAttachment] = useState(null); // ✅ #2 Track selected file attachment
+  const [attachment, setAttachment] = useState(null); 
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [error, setError] = useState("");
@@ -36,7 +36,7 @@ function Messages() {
   const [showModal, setShowModal] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // ✅ Toggle for emoji picker
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
   const [activeTab, setActiveTab] = useState("inbox");
   const [blockedUserIds, setBlockedUserIds] = useState([]);
   const [mutedUserIds, setMutedUserIds] = useState([]);
@@ -63,8 +63,8 @@ function Messages() {
       }
     };
   
-    fetchBlockedAndMuted();         // ✅ Fetch on mount/tab/page change
-    fetchMessages(currentPage, activeTab); // ✅ Fetch inbox/sent messages
+    fetchBlockedAndMuted();         // Fetch on mount/tab/page change
+    fetchMessages(currentPage, activeTab); //  Fetch inbox/sent messages
   }, [currentPage, activeTab]);
 
   useEffect(() => {
@@ -164,7 +164,7 @@ const handleSendMessage = async (e) => {
     return;
   }
 
-  const formData = new FormData(); // ✅ #2 Using FormData for file + text
+  const formData = new FormData(); // Using FormData for file + text
   formData.append("recipient", recipient.trim());
   formData.append("message", newMessage.trim());
   if (attachment) {
@@ -176,11 +176,11 @@ const handleSendMessage = async (e) => {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    }); // ✅ Send formData instead of newMessageData
+    }); // Send formData instead of newMessageData
 
     setNewMessage("");
     setRecipient("");
-    setAttachment(null); // ✅ #2 Reset attachment state
+    setAttachment(null); // Reset attachment state
     setSuccessMessage("Message sent successfully!");
     setShowModal(false);
     fetchMessages();
@@ -289,7 +289,7 @@ const handleSendMessage = async (e) => {
               <p>
               <strong>{activeTab === "inbox" ? msg.sender : msg.recipient}</strong>: {msg.content}
               </p>
-              {msg.readAt && ( // ✅ #3 Show read receipt timestamp if available
+              {msg.readAt && (
                 <p className="message-read-at">Seen at {new Date(msg.readAt).toLocaleString()}</p>
               )}
             </div>
@@ -387,7 +387,7 @@ const handleSendMessage = async (e) => {
                 required
               />
 
-              {/* ✅ Emoji toggle and picker */}
+              {/* Emoji toggle and picker */}
               <button
                 type="button"
                 className="emoji-toggle-btn"
@@ -400,7 +400,7 @@ const handleSendMessage = async (e) => {
                   data={data}
                   onEmojiSelect={(emoji) => {
                     setNewMessage((prev) => prev + emoji.native);
-                    setShowEmojiPicker(false); // ✅ Auto-close picker after selection
+                    setShowEmojiPicker(false); // Auto-close picker after selection
                   }}
                   title="Pick an emoji"
                   emoji="point_up"
@@ -408,7 +408,7 @@ const handleSendMessage = async (e) => {
                 />
               )}
 
-              {/* ✅ #2 File attachment input */}
+              {/* File attachment input */}
               <label>Attachment:</label>
               <input
                 type="file"
@@ -440,23 +440,3 @@ const handleSendMessage = async (e) => {
 }
 
 export default Messages;
-
-
-/**
- * 🔹 **Potential Improvements:**
- * - Implement real-time message updates using WebSockets. - SKIPPED
- * - Allow file attachments (images, videos) in messages.
- * - Add read receipts to indicate when a message has been seen.
- */
-
-
-//* -----------------------------------------------------------------------------
-//* 🆕 Emoji Picker Support (Send New Message Modal)
-//* -----------------------------------------------------------------------------
-//* 1. Imported `Picker` from `emoji-mart` and its required CSS.
-//* 2. Added `showEmojiPicker` state to control picker visibility.
-//* 3. Added a toggle button (😊) below the message textarea.
-//* 4. When clicked, the picker shows and lets the user select emojis.
-//* 5. Selected emojis are appended to `newMessage` using `emoji.native`.
-//* 6. All existing features (user suggestions, file attachments, etc.) remain intact.
-//* -----------------------------------------------------------------------------

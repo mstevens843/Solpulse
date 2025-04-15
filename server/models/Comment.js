@@ -40,9 +40,9 @@ module.exports = (sequelize, DataTypes) => {
             timestamps: true,
             tableName: 'Comments',
             indexes: [
-                { fields: ['userId'] },        // ✅ Improves filtering by user
-                { fields: ['postId'] },        // ✅ Improves filtering by post
-                { fields: ['createdAt'] },     // ✅ Optimizes time-based queries
+                { fields: ['userId'] },        
+                { fields: ['postId'] },        
+                { fields: ['createdAt'] },     
             ],
         }
     );
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     Comment.associate = (models) => {
         Comment.belongsTo(models.User, {
             foreignKey: 'userId',
-            as: 'commentAuthor', // ✅ Clearer alias for author
+            as: 'commentAuthor', // 
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE',
         });
@@ -66,7 +66,7 @@ module.exports = (sequelize, DataTypes) => {
 
     // **Hooks for Data Integrity**
     Comment.beforeCreate(async (comment) => {
-        // ✅ Prevent whitespace-only comments
+        // Prevent whitespace-only comments
         if (!comment.content.trim()) {
             throw new Error('Comment cannot be empty or contain only whitespace.');
         }
@@ -86,20 +86,3 @@ module.exports = (sequelize, DataTypes) => {
     return Comment;
 };
 
-/**
- * 🔹 Summary of Optimizations
-✅ 🚀 Performance Enhancements
-
-Added indexes (userId, postId, createdAt) → Optimized filtering and sorting.
-Explicit foreign key constraints (onDelete: CASCADE, onUpdate: CASCADE) → Ensures data consistency.
-
-✅ 🔒 Data Integrity Fixes
-
-Prevented empty/whitespace-only comments with a beforeCreate hook.
-Limited content to 500 characters to prevent excessive comment sizes.
-
-✅ 📄 Maintainability & Readability
-
-Renamed associations (commentAuthor) to clarify relationships.
-Added getCommentDetails method to return structured comment data.
- */

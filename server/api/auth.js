@@ -19,9 +19,9 @@ const { rateLimiter } = require('../middleware');
 
 
 // Placeholder token blocklist (in production use Redis or similar)
-const revokedTokens = new Set(); // ✅ Used in logout & middleware in future
+const revokedTokens = new Set(); //  Used in logout & middleware in future
 
-// ✅ Rate limiter for login route (5 attempts per 5 minutes)
+//  Rate limiter for login route (5 attempts per 5 minutes)
 const loginRateLimiter = rateLimiter({
   limit: 5,
   windowMs: 5 * 60 * 1000,
@@ -72,15 +72,15 @@ router.post(
     const { username, email, password, walletAddress } = req.body;
 
     try {
-      // ✅ Check if email is already taken
+      // Check if email is already taken
       const existingEmail = await User.findOne({ where: { email } });
       if (existingEmail) return res.status(400).json({ error: 'Email already in use' });
 
-      // ✅ Check if walletAddress is already taken
+      // Check if walletAddress is already taken
       const existingWallet = await User.findOne({ where: { walletAddress } });
       if (existingWallet) return res.status(400).json({ error: 'Wallet address already in use' });
 
-      // ✅ DO NOT hash manually — model hook will do it
+      // DO NOT hash manually — model hook will do it
       const trimmedPassword = password.trim();
 
       const user = await User.create({
@@ -123,7 +123,7 @@ router.post(
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     const { identifier, password } = req.body;
-    const trimmedPassword = password.trim(); // ✅ Trim it here
+    const trimmedPassword = password.trim(); // Trim it here
 
     try {
       const user = await User.scope('withPassword').findOne({
@@ -132,7 +132,7 @@ router.post(
         },
       });
 
-      // ✅ Use the trimmed password here
+      // Use the trimmed password here
       if (!user || !(await bcrypt.compare(trimmedPassword, user.password))) {
         return res.status(400).json({ error: 'Invalid credentials' });
       }
@@ -147,7 +147,7 @@ router.post(
           id: user.id,
           username: user.username,
           email: user.email,
-          profilePicture: user.profilePicture || null, // ✅ add this!
+          profilePicture: user.profilePicture || null,
         },
       });
     } catch (error) {
@@ -167,7 +167,7 @@ router.post('/logout', (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(' ')[1];
   
-    // ✅ Revoke token if it's present (placeholder logic)
+    //  Revoke token if it's present (placeholder logic)
     if (token) {
       revokedTokens.add(token);
       console.log(`Token revoked: ${token}`);
@@ -188,7 +188,7 @@ router.get('/me', async (req, res, next) => {
     try {
         const decoded = validateToken(req);
         const user = await User.findByPk(decoded.id, {
-          attributes: ['id', 'username', 'email', 'profilePicture'], // ✅ Added profilePicture
+          attributes: ['id', 'username', 'email', 'profilePicture'],
         });
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -228,34 +228,3 @@ router.post('/auth/delete', async (req, res) => {
 });
 
 module.exports = router;
-
-
-
-/**
- * 🔍 Potential Issues & Optimizations
-1️⃣ Password is Stored in Plaintext in /register
-Issue: The password is stored directly without hashing.
-✅ Fix: Hash the password before saving:
-const hashedPassword = await bcrypt.hash(password, 10);
-const user = await User.create({ username, email, password: hashedPassword, walletAddress });
-
-2️⃣ No Refresh Token Implementation
-Issue: If the access token expires, the user has to re-login.
-✅ Fix: Implement refresh tokens for better UX:
-const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-res.status(200).json({ token, refreshToken, user });
-
-3️⃣ No Rate Limiting on Login Route
-Issue: Brute-force attacks could exploit the login endpoint.
-✅ Fix: Use a stricter rate limiter for /login:
-const loginRateLimiter = rateLimiter({ limit: 5, windowMs: 5 * 60 * 1000 });
-router.post('/login', loginRateLimiter, loginHandler);
-
-4️⃣ No Account Verification (Email Confirmation)
-Issue: Users can register with fake emails since no verification is required.
-✅ Fix: Implement an email verification step before allowing login.
-
-5️⃣ Insecure Logout Handling
-Issue: Clearing a cookie is not sufficient if using JWT in local storage.
-✅ Fix: Add token revocation by maintaining a blocklist of revoked tokens in Redis.
- */

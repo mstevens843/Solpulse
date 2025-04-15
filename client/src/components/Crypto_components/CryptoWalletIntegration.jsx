@@ -58,7 +58,7 @@ function CryptoWalletIntegration() {
     };
 
 
-     // ✅ Descriptive Solana RPC error helper
+     //  Descriptive Solana RPC error helper
      const getFriendlyError = (error) => {
         const message = error.message || "";
         if (message.includes("0x1")) return "Transaction simulation failed. Check address or amount.";
@@ -119,7 +119,7 @@ function CryptoWalletIntegration() {
             fetchWalletBalance(wallet.publicKey);
         } catch (error) {
             console.error("Transaction failed:", error);
-            setErrorMessage(getFriendlyError(error)); // ✅ Friendlier errors
+            setErrorMessage(getFriendlyError(error)); // Friendlier errors
         } finally {
             setIsProcessing(false);
         }
@@ -149,7 +149,7 @@ function CryptoWalletIntegration() {
                     value={recipient}
                     onChange={(e) => {
                         setRecipient(e.target.value);
-                        setErrorMessage(""); // ✅ Clear error on change
+                        setErrorMessage(""); // Clear error on change
                     }}
                     aria-label="Enter recipient's wallet address"
                     className="wallet-input"
@@ -162,7 +162,7 @@ function CryptoWalletIntegration() {
                     value={sendAmount}
                     onChange={(e) => {
                         setSendAmount(e.target.value);
-                        setErrorMessage(""); // ✅ Clear error on change
+                        setErrorMessage(""); // Clear error on change
                     }}
                     aria-label="Enter amount to send"
                     className="wallet-input"

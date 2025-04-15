@@ -7,7 +7,6 @@
  * - Calls parent `setPosts` function to ensure UI updates globally.
  */
 
-
 import React, { useState, useContext, useRef } from "react"; // ← add useRef
 import PropTypes from "prop-types";
 import { api } from "@/api/apiConfig"; 
@@ -50,7 +49,7 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
     
         try {
             if (hasRetweeted) {
-                // ✅ UNDO RETWEET
+                //  UNDO RETWEET
                 const response = await api.delete(`/posts/${actualPostId}/retweet`);
                 const updatedRetweets = Math.max(0, response.data.retweets);
     
@@ -132,57 +131,6 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
         }
     };
 
-    // <button
-    //                             className="delete-post-button"
-    //                             onClick={handleDeletePost}
-    //                             disabled={isDeleting}
-    //                         >
-    //                             {isDeleting ? "Processing..." : isRetweet ? "Undo Repost" : "Delete"}
-    //                         </button>
-
-    // const handleDeletePost = async () => {
-    //         setIsDeleting(true);
-    
-    //         try {
-    //             setPosts((prevPosts) =>
-    //                 prevPosts.map((p) => (p.id === post.id ? { ...p, fading: true } : p))
-    //             );
-    
-    //             setTimeout(async () => {
-    //                 await api.delete(`/posts/${post.id}`);
-    
-    //                 setPosts((prevPosts) => prevPosts.filter((p) => p.id !== post.id));
-    
-    //                 toast.success("Post deleted successfully!", {
-    //                     position: "top-right",
-    //                     autoClose: 3000,
-    //                     hideProgressBar: false,
-    //                     closeOnClick: true,
-    //                     pauseOnHover: true,
-    //                     draggable: true,
-    //                     theme: "dark",
-    //                 });
-    //             }, 300);
-    //         } catch (error) {
-    //             console.error("Error deleting post:", error);
-    //             toast.error("Failed to delete post. Please try again.", {
-    //                 position: "top-right",
-    //                 autoClose: 3000,
-    //                 hideProgressBar: false,
-    //                 closeOnClick: true,
-    //                 pauseOnHover: true,
-    //                 draggable: true,
-    //                 theme: "dark",
-    //             });
-    
-    //             setPosts((prevPosts) =>
-    //                 prevPosts.map((p) => (p.id === post.id ? { ...p, fading: false } : p))
-    //             );
-    //         } finally {
-    //             setIsDeleting(false);
-    //         }
-    //     };
-
     return (
         <div className="retweet-button-container">
             <button
@@ -199,7 +147,7 @@ function RetweetButton({ postId, originalPostId, initialRetweets = 0, currentUse
                 )}           
             </button>
 
-            {/* ✅ Show retry button if error */}
+            {/* Show retry button if error */}
             {error && (
             <div className="retweet-error" role="alert" aria-live="assertive">
                 <p>{error}</p>
@@ -225,22 +173,3 @@ RetweetButton.propTypes = {
 };
 
 export default RetweetButton;
-
-
-/**
- * 🔹 **Potential Improvements:**
- * 1. **Optimize Retweet State Handling**:
- *    - Consider using a reducer instead of multiple state updates.
- *    - This can prevent unnecessary re-renders.
- *
- * 2. **Improve Performance with WebSockets**: - SKIPPED
- *    - Implement real-time retweet updates using WebSockets.
- *    - Would eliminate the need for polling or API re-fetching.
- *
- * 3. **Enhance Error Handling**:
- *    - Handle network issues with a retry mechanism.
- *    - Show more detailed errors in the UI.
- *
- * 4. **Add Animation Effects**: - SKIPPED
- *    - Consider adding a fade-in/out animation for smoother retweet toggling.
- */

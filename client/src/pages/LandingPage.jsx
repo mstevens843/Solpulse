@@ -157,14 +157,14 @@ function LandingPage() {
             console.error("Login Error:", err.response?.data || err.message);
             setError(err.response?.data?.error || "Unable to log in. Please try again later.");
     
-            // ✅  Rate limit logic: 3 failed attempts trigger 30s cooldown
+            // Rate limit logic: 3 failed attempts trigger 30s cooldown
             setLoginAttempts((prev) => prev + 1);
             if (loginAttempts + 1 >= 3) {
                 setIsCooldown(true);
                 setTimeout(() => {
                     setIsCooldown(false);
                     setLoginAttempts(0);
-                }, 30000); // ✅  30-second lockout
+                }, 30000); //  30-second lockout
             }
         } finally {
             setLoading(false);
@@ -262,14 +262,3 @@ function LandingPage() {
 }
 
 export default LandingPage;
-
-/**
- * Potential Improvements:
- * - **Auto Redirect Logged-in Users:** If a user is already authenticated, they should be redirected immediately instead of waiting for API validation.
- * - **Rate Limiting on Login Attempts:** Implement a delay for multiple failed login attempts to prevent brute force attacks.
- * - **Security Improvements:**
- *   - Avoid storing passwords in localStorage, even when hashed. - SKIP 
- *   - Implement HTTP-only secure cookies for session storage instead of localStorage for authentication. - SKIP
- * - **Lazy Load CryptoTicker Component:** Since it's not critical to authentication, it can be lazy-loaded for faster performance.
- * - **Enhance UI Feedback:** Consider adding a loading spinner or animation during login attempts for better UX. - SKIP 
- */

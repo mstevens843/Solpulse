@@ -6,8 +6,6 @@
  * - Managing authentication state via context.
  * - Storing user credentials securely if "Remember Me" is enabled.
  */
-
-
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/api/apiConfig";
@@ -26,7 +24,7 @@ const Login = ({ redirectPath = "/dashboard" }) => {
 
     useEffect(() => {
         if (rememberMe && identifier && password) {
-            localStorage.setItem("rememberedIdentifier", identifier); // ✅
+            localStorage.setItem("rememberedIdentifier", identifier);
             localStorage.setItem("rememberedPassword", password);
         }
     }, [rememberMe, identifier, password]);
@@ -64,7 +62,7 @@ const Login = ({ redirectPath = "/dashboard" }) => {
         try {
             console.log("Sending login request to /auth/login...");
             const response = await api.post("/auth/login", {
-                identifier: identifier.trim(), // ✅ Rename to match backend
+                identifier: identifier.trim(), // Rename to match backend
                 password: password.trim(),
             });
 
@@ -165,11 +163,3 @@ const Login = ({ redirectPath = "/dashboard" }) => {
 };
 
 export default Login;
-
-
-/**
- * 🔹 Potential Improvements:
- * - Implement OAuth login options (Google, Twitter, etc.). - SKIPPED
- * - Add rate limiting to prevent brute-force attacks. - SKIPPED
- * - Enhance error handling with specific messages from the backend.
- */

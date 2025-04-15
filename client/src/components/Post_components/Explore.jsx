@@ -8,7 +8,7 @@
  */
 
 
-import React, { useState, useEffect, useCallback, useRef } from "react"; // ✅ Added useRef for infinite scroll
+import React, { useState, useEffect, useCallback, useRef } from "react"; 
 import { api } from "@/api/apiConfig";
 import Post from "@/components/Post_components/Post";
 import SearchBar from "@/components/SearchBar";
@@ -18,21 +18,21 @@ import { useAuth } from "@/context/AuthContext";
 import "@/css/components/Explore.css";
 
 function Explore() {
-  const { currentUser } = useAuth(); // ✅ grabs logged-in user
+  const { currentUser } = useAuth(); /
   const [trendingPosts, setTrendingPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1); // ✅ For pagination
-  const [hasMore, setHasMore] = useState(true); // ✅ Tracks if more posts are available
-  const [filter, setFilter] = useState("24h"); // ✅ Time filter state
-  const observer = useRef(); // ✅ IntersectionObserver ref
+  const [page, setPage] = useState(1); 
+  const [hasMore, setHasMore] = useState(true); 
+  const [filter, setFilter] = useState("24h"); 
+  const observer = useRef(); 
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedPost, setSelectedPost] = useState(null); // modal logic
+  const [selectedPost, setSelectedPost] = useState(null); 
 
 
   /**
-   * ✅ Fetch trending posts with filter & pagination
+   *  Fetch trending posts with filter & pagination
    */
   useEffect(() => {
     const fetchTrending = async () => {
@@ -45,7 +45,7 @@ function Explore() {
         const response = await api.get(`/posts/trending?page=${page}&filter=${filter}`);
         const newPosts = response.data.posts || [];
   
-        // ✅ Check for duplicates or end of list
+        // Check for duplicates or end of list
         const isDuplicatePage =
           newPosts.length === 0 ||
           newPosts.every((newPost) =>
@@ -70,7 +70,7 @@ function Explore() {
           commentCount: countsMap[post.id] || 0,
         }));
 
-        // 🔒 Filter out private posts unless viewer is allowed
+        // Filter out private posts unless viewer is allowed
         const filteredPosts = enrichedPosts.filter((post) => {
           const author = post.user;
           const isPrivate = author?.privacy === "private";
@@ -96,11 +96,11 @@ function Explore() {
       }
     };
   
-    fetchTrending(); // ✅ Make sure this stays inside useEffect
-  }, [page, filter]); // ✅ Dependency array
+    fetchTrending(); // Make sure this stays inside useEffect
+  }, [page, filter]); // Dependency array
 
   /**
-   * ✅ Reset on filter change
+   *  Reset on filter change
    */
   useEffect(() => {
     setTrendingPosts([]);
@@ -111,7 +111,7 @@ function Explore() {
 
 
   /**
-   * ✅ Infinite scroll observer
+   * Infinite scroll observer
    */
   const lastPostRef = useCallback(
     (node) => {
@@ -150,7 +150,7 @@ function Explore() {
         />
       </section>
   
-      {/* ✅ Filter Dropdown */}
+      {/*  Filter Dropdown */}
       <section className="filter-controls">
         <label>Filter by:</label>
         <select value={filter} onChange={(e) => setFilter(e.target.value)}>
@@ -160,12 +160,12 @@ function Explore() {
         </select>
       </section>
   
-      {/* ✅ Trending Section */}
+      {/* Trending Section */}
       <section className="trending-section">
         <h3 className="trending-title">Trending Topics</h3>
   
   
-        {/* ✅ Category Tabs (just once here!) */}
+        {/* Category Tabs (just once here!) */}
         <section className="category-tabs">
           {["All", "🔥 Meme", "🎨 NFT", "🪙 Crypto", "🧠 DAO", "💣 On-chain Drama"].map((cat) => (
             <button
@@ -182,7 +182,7 @@ function Explore() {
   
         {error && <p className="explore-error" role="alert">{error}</p>}
   
-        {/* ✅ Trending Posts */}
+        {/* Trending Posts */}
         {trendingPosts.length === 0 && !loading ? (
           <p className="trending-empty">No trending posts found. Try searching for specific topics.</p>
         ) : (
@@ -207,8 +207,8 @@ function Explore() {
                       post={post}
                       currentUser={currentUser}
                       setPosts={setTrendingPosts}
-                      onClick={() => handlePostClick(post)} // ✅ Add this
-                      fromExplore={true} // ✅ add this here
+                      onClick={() => handlePostClick(post)}
+                      fromExplore={true}
                     />
                   </div>
 
@@ -237,23 +237,3 @@ function Explore() {
 
 
 export default Explore;
-
-
-
-/**
- * 🔹 Potential Improvements:
- * - Implement infinite scrolling for better user experience. 
- * - Allow users to filter trending posts by time period (e.g., Last 24h, This Week).
- * - Add real-time updates to reflect trending posts dynamically.
- */
-
-
-/**
- * ✅ Summary of Implemented Features
-    Feature	✅ Implemented
-    Infinite Scroll	✅ via IntersectionObserver
-    Time Filter (24h, Week, Month)	✅ Dropdown UI + backend param
-    "Live" Updates on Scroll	✅ Pagination + dynamic fetch
-    Clean Reset on Filter Change	✅ useEffect clears old state
-    Accessible Error + Loading States	✅ role="alert" + Loading...
- */

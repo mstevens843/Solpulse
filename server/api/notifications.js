@@ -56,7 +56,7 @@ switch (notification.type) {
         id: notification.id,
         user: notification.userId,
         actor: actor.username,
-        profilePicture: actor.profilePicture || null, // ✅ ADDED here
+        profilePicture: actor.profilePicture || null, 
         type: notification.type,
         message: message,
         amount: notification.amount || null,
@@ -104,7 +104,7 @@ router.get('/full', authMiddleware, async (req, res) => {
             break;
 
           case 'transaction':
-            content = notification.content || null; // ✅ show tip message
+            content = notification.content || null; //  show tip message
             message = `${actor.username} sent you ${notification.amount} SOL`;
             break;
 
@@ -131,7 +131,7 @@ router.get('/full', authMiddleware, async (req, res) => {
           profilePicture: actor.profilePicture || null,
           type: notification.type,
           message,
-          content, // ✅ included for tips/comments/messages
+          content, //  included for tips/comments/messages
           amount: notification.amount || null,
           entityId: notification.entityId || null,
           isRead: notification.isRead,
@@ -158,7 +158,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
   const whereCondition = {
     userId: req.user.id,
-    isRead: false, // ✅ Only fetch unread notifications
+    isRead: false, //  Only fetch unread notifications
   };
 
   if (type) whereCondition.type = type;
@@ -170,7 +170,7 @@ router.get('/', authMiddleware, async (req, res) => {
         {
           model: User,
           as: 'actor',
-          attributes: ['id', 'username', 'profilePicture'], // ✅ match frontend needs
+          attributes: ['id', 'username', 'profilePicture'], //  match frontend needs
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -314,7 +314,7 @@ router.post('/', authMiddleware, async (req, res) => {
       userId,
       amount: type === 'transaction' ? amount : null,
       entityId: entityId || null,
-      content: content || null, // ✅ Add this line
+      content: content || null, //  Add this line
     });
 
     res.status(201).json(newNotification);
@@ -368,28 +368,3 @@ router.get('/tips', authMiddleware, async (req, res) => {
 });
 module.exports = router;
 
-
-
-/**
- * 🔍 Potential Issues & Optimizations
-1️⃣ Inefficient Database Queries for Notifications - SKIPPED
-
-Issue: Each notification fetch requires an additional query to get the actor’s username.
-✅ Fix: Use Sequelize associations to fetch actor data in a single query:
-
-const notifications = await Notification.findAll({
-    where: { userId: req.user.id },
-    include: [{ model: User, as: 'actor', attributes: ['username'] }],
-    order: [['createdAt', 'DESC']],
-});
-2️⃣ No Real-Time WebSocket Updates for New Notifications - SKIPPED
-
-Issue: Users must refresh to see new notifications.
-✅ Fix: Emit WebSocket events for new notifications:
-
-io.emit('new-notification', formattedNotification);
-3️⃣ No Expiry or Auto-Archiving of Old Notifications - SKIPPED 
-
-Issue: Notifications keep accumulating, impacting performance.
-✅ Fix: Implement an auto-delete or archive mechanism for older notifications.
- */

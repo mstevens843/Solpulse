@@ -8,8 +8,6 @@ Contextual follow button (Follow, Following, Follow Back)
 Optional Message or Tip buttons (if needed later)
  */
 
-// UserListItem.js
-
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate, Link } from "react-router-dom";
@@ -49,7 +47,7 @@ function UserListItem({ user, currentUserId, showBio = false, isMuted = false, c
       className={`user-list-item ${isMuted ? "muted-user" : ""}`}
       onClick={!isMuted ? handleClick : undefined} // disable click if muted
     >
-      {/* ✅ Profile picture links to user profile */}
+      {/*  Profile picture links to user profile */}
       <Link
         to={`/profile/${user.id}`}
         onClick={(e) => e.stopPropagation()}
@@ -103,7 +101,7 @@ UserListItem.propTypes = {
     isFollowingYou: PropTypes.bool,
   }).isRequired,
   currentUserId: PropTypes.number,
-  showBio: PropTypes.bool, // <-- new optional prop
+  showBio: PropTypes.bool,
   isMuted: PropTypes.bool,
   customAction: PropTypes.node,
 };

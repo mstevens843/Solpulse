@@ -17,7 +17,7 @@ import { useAuth } from "@/context/AuthContext";
 
 
 const followStatusCache = {}; // { currentUserId: { [targetUserId]: true/false } }
-// 🔁 In-memory follow status cache
+// In-memory follow status cache
 
 const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowToggle, isMuted, setIsMuted, }) => {
   const { user: currentUser } = useAuth(); //  get logged-in user
@@ -73,7 +73,7 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
     try {
       const [followRes, requestRes, userRes] = await Promise.all([
         api.get(`/users/${userId}/is-following`),
-        api.get(`/follow-requests/${userId}/has-requested`), // ✅ FIXED ROUTE
+        api.get(`/follow-requests/${userId}/has-requested`),
         api.get(`/users/${userId}`),
       ]);
   
@@ -113,12 +113,12 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
     try {
       if (isPrivate && !isFollowing) {
         if (hasRequested) {
-          // ✅ Cancel follow request
+          // Cancel follow request
           await api.delete(`/follow-requests/${userId}/cancel`);
           toast.info("Follow request canceled.");
           setHasRequested(false);
         } else {
-          // ✅ Send follow request
+          // Send follow request
           await api.post(`/follow-requests/${userId}`);
           toast.success("Follow request sent.");
           setHasRequested(true);
@@ -126,7 +126,7 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
         return;
       }
   
-      // ✅ Normal public follow/unfollow flow
+      // Normal public follow/unfollow flow
       if (isFollowing) {
         await api.delete(`/users/${userId}/unfollow`);
         setIsFollowing(false);
@@ -282,18 +282,10 @@ const FollowButton = ({ userId, updateCounts, isFollowingYou = false, onFollowTo
 FollowButton.propTypes = {
   userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   updateCounts: PropTypes.func,
-  isFollowingYou: PropTypes.bool, // 🔁 NEW!
+  isFollowingYou: PropTypes.bool, 
   onFollowToggle: PropTypes.func,
   isMuted: PropTypes.bool,
   setIsMuted: PropTypes.func,
 };
 
 export default FollowButton;
-
-
-/**
- * Potential Improvements:
- * - Improve error handling by displaying error messages to users in a toast or notification. - SKIPPED
- * - Consider optimistic UI updates to reduce the delay in toggling follow state.
- * - Implement caching for follow status to reduce unnecessary API calls.
- */

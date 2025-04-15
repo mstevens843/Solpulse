@@ -116,7 +116,7 @@ module.exports = (sequelize, DataTypes) => {
       });
 
 
-      // -- Has Many Comments --
+      // Has Many Comments
       Post.hasMany(models.Comment, {
         foreignKey: 'postId',
         as: 'comments',
@@ -150,7 +150,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     };
   
-    // ✅ Hooks, methods, etc.
+    //  Hooks, methods, etc.
     Post.beforeSave((post) => {
       // Auto-Detect Crypto Tags
       if (!post.cryptoTag && post.content) {
@@ -204,17 +204,3 @@ module.exports = (sequelize, DataTypes) => {
     return Post;
   };
 
-/**
- * ✅ Key Improvements & Fixes
-1️⃣ Performance Enhancements
-✅ Indexes on cryptoTag, likes, and retweets for faster lookups.
-✅ Reduce ENUM Use: Replace ENUM for mediaType with STRING + validate for easier migrations.
-✅ Optimize Hooks: Merge duplicate beforeCreate hooks for efficiency.
-2️⃣ Security Fixes
-✅ Improve Validation for mediaUrl: Allow only image/video/audio formats.
-✅ Prevent cryptoTag from Having Special Characters: Enforce a stricter regex.
-3️⃣ Maintainability & Readability
-✅ Use beforeSave Instead of Multiple beforeCreate Hooks.
-✅ Improve Hashtag & Mention Extraction: Ensure proper format handling.
-✅ Add getFormattedPost Helper Method: Simplifies API responses.
- */
