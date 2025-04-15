@@ -14,7 +14,7 @@ console.log(`Using DB host: ${process.env.DB_HOST}`);
 
 const http = require('http');
 const { Server } = require('socket.io');
-const sequelize = require('./models'); // Sequelize connection
+const sequelize = require('./models/index'); // Sequelize connection
 const app = require('./app'); // Express app configuration
 const commentRoutes = require('./api/comments'); // Comment routes for WebSocket setup
 const { setSocket } = require('./api/comments');
