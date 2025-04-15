@@ -8,16 +8,22 @@ const db = {};
 
 let sequelize;
 
-sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  {
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], {
     ...config,
     logging: env === 'development' ? console.log : false,
-  }
-);
-
+  });
+} else {
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    {
+      ...config,
+      logging: env === 'development' ? console.log : false,
+    }
+  );
+}
 
 
 try {
