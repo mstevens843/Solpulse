@@ -46,7 +46,7 @@ app.use(
  * 
  * - Helmet helps secure the app by setting various HTTP headers. 
  * - `crossOriginResourcePolicy`: false` is set to allow cross-origin sharing.
- */
+ */ 
 app.use(
     helmet({
         crossOriginResourcePolicy:
@@ -102,8 +102,14 @@ app.use("/api", apiRoutes);
  * - Serves uploaderd files from the `uploads` directory.
  * - Uses _dirname for absolute path. 
  */
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); 
-// Removed duplicate static route
+// Add CORS and CORP headers for /uploads
+app.use('/uploads', (req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins to access images
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'); // CRITICAL for <img> tag usage
+    next();
+  });
+  
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 /**
  * Root Route
